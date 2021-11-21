@@ -762,20 +762,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c429fccf6ff785447929cc3c0aa84c64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FLAGDebug: 0
+  FLAGDebug: 1
   AngleMin: 45.1
   AngleMax: 89.999
   MovementAcceleration: 1
   MovementDeceleration: 1
   MovementSpeedMax: 1
-  CamOffsetScale: 1
+  CamOffsetScale: 0
   CameraDistanceDefault: 14.29
   CameraDistanceMax: 25
   CameraDistanceMin: 0
   DeadzoneDimensions:
     serializedVersion: 2
-    x: 0
-    y: 0
+    x: 0.33
+    y: 0.33
     width: 0
     height: 0
   TargetList:

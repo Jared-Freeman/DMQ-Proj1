@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/Resources/PlayerControls.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/Ryan Assets/Resources/PlayerControls.inputactions'
 
 using System;
 using System.Collections;
