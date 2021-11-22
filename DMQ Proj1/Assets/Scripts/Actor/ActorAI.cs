@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class ActorAI : Actor
 {
-    // Start is called before the first frame update
-    void Start()
+    #region members
+    #endregion
+
+    new void Start()
     {
         base.Start();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-       
-    }
 }
