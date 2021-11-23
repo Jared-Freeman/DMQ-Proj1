@@ -17,10 +17,11 @@ public class Actor : MonoBehaviour
 
     public ActorStats Stats;
     public List<ActorAction> Actions;
-    
+    public List<ActorStatusEffect> StatusEffects;
+
 
     #endregion
-    
+
     protected void Start()
     {
         if (Flag_ActorDebug) Debug.Log("Base Actor Start()");
@@ -29,4 +30,8 @@ public class Actor : MonoBehaviour
         Stats = GetComponent<ActorStats>();
     }
 
+    protected void Update()
+    {
+        
+    }
 }
