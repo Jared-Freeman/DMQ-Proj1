@@ -342,6 +342,75 @@ MonoBehaviour:
   EnergyMax: 0
   HpCurrent: 0
   EnergyCurrent: 0
+--- !u!1001 &538284140
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3481842726872539666, guid: bd5b21c2f7fee814b8132eaa3a950ff8,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481842726872539666, guid: bd5b21c2f7fee814b8132eaa3a950ff8,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481842726872539666, guid: bd5b21c2f7fee814b8132eaa3a950ff8,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481842726872539666, guid: bd5b21c2f7fee814b8132eaa3a950ff8,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481842726872539666, guid: bd5b21c2f7fee814b8132eaa3a950ff8,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481842726872539666, guid: bd5b21c2f7fee814b8132eaa3a950ff8,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481842726872539666, guid: bd5b21c2f7fee814b8132eaa3a950ff8,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481842726872539666, guid: bd5b21c2f7fee814b8132eaa3a950ff8,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481842726872539666, guid: bd5b21c2f7fee814b8132eaa3a950ff8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481842726872539666, guid: bd5b21c2f7fee814b8132eaa3a950ff8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481842726872539666, guid: bd5b21c2f7fee814b8132eaa3a950ff8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481842726872579634, guid: bd5b21c2f7fee814b8132eaa3a950ff8,
+        type: 3}
+      propertyPath: m_Name
+      value: RPG-Character
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bd5b21c2f7fee814b8132eaa3a950ff8, type: 3}
 --- !u!1 &586648975
 GameObject:
   m_ObjectHideFlags: 0
@@ -353,13 +422,42 @@ GameObject:
   - component: {fileID: 586648977}
   - component: {fileID: 586648979}
   - component: {fileID: 586648978}
+  - component: {fileID: 586648976}
   m_Layer: 0
   m_Name: Move Proto 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
+--- !u!114 &586648976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 586648975}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d465612b7fc5864eb04bdeec7089fc9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  acceleration: 1
+  damping: 1
+  MoveSpd: 1
+  dashMultiplier: 2
+  jumpHeight: 1
+  dashing: 0
+  HorizontalMovementAngleHost: {fileID: 1244688338}
+  RB: {fileID: 586648978}
+  Input: {fileID: 0}
+  anim: {fileID: 0}
+  VelocityMap: {x: 0, y: 0}
+  InputMap: {x: 0, y: 0}
+  DragVector: {x: 0, y: 0}
+  desiredVelocity: {x: 0, y: 0}
+  normalizdVelocity: {x: 0, y: 0}
+  normalizdVelocityMagnitude: 0
 --- !u!4 &586648977
 Transform:
   m_ObjectHideFlags: 0
@@ -1035,13 +1133,19 @@ MonoBehaviour:
     width: 0
     height: 0
   TargetList:
-  - {fileID: 586648975}
+  - {fileID: 1299992265}
   - {fileID: 1701812745}
   - {fileID: 1044449910}
   CamDistanceDesired: 0
   CamTargetPositionDesired: {x: 0, y: 0, z: 0}
   CamDistanceCurrent: 0
   CamAdditionalOffsetCurrent: 0
+--- !u!1 &1299992265 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3481842726872579634, guid: bd5b21c2f7fee814b8132eaa3a950ff8,
+    type: 3}
+  m_PrefabInstance: {fileID: 538284140}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1329568712
 GameObject:
   m_ObjectHideFlags: 0

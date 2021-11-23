@@ -157,6 +157,10 @@ public class PlayerControler : MonoBehaviour
         Vector3 VelocityMap3 = new Vector3(VelocityMap.x, 0, VelocityMap.y);
         //VelocityMap3 += RetainedVelocity;
 
+        //Debug.DrawRay(gameObject.transform.position, new Vector3(DragVector.x, 0, DragVector.y), Color.red);
+        //Debug.DrawRay(gameObject.transform.position, new Vector3(InputMap.x, 0, InputMap.y), Color.blue);
+        //Debug.DrawRay(gameObject.transform.position, new Vector3(VelocityMap.x, 0, VelocityMap.y), Color.green);
+
         RB.AddForce(VelocityMap3 - RB.velocity, ForceMode.VelocityChange);
     }
     private void UpdateRotation()
