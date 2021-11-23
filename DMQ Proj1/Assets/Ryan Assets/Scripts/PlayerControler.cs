@@ -155,7 +155,9 @@ public class PlayerControler : MonoBehaviour
         }
 
         Vector3 VelocityMap3 = new Vector3(VelocityMap.x, 0, VelocityMap.y);
-        //VelocityMap3 += RetainedVelocity;
+
+        //TODO: Re-add retained velocity information back into RB calculations. Else we don't respect most rigidbody interactions (e.g. falling doesn't work)
+        //VelocityMap3 += RetainedVelocity; //for falling, etc
 
         //Debug.DrawRay(gameObject.transform.position, new Vector3(DragVector.x, 0, DragVector.y), Color.red);
         //Debug.DrawRay(gameObject.transform.position, new Vector3(InputMap.x, 0, InputMap.y), Color.blue);
