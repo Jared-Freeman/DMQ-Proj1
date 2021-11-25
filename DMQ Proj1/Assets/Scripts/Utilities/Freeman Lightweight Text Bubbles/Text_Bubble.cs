@@ -15,7 +15,7 @@ public class Text_Bubble : MonoBehaviour
     public static float text_font_default_size = 20f;
     private string display_message;
     //private TextMesh text_mesh_pro;
-    private TMPro.TextMeshPro text_mesh_pro;
+    public TMPro.TextMeshPro text_mesh_pro;
     private static Color default_color = Color.white;
     #endregion
     #region EVENTS
@@ -34,6 +34,9 @@ public class Text_Bubble : MonoBehaviour
         text_mesh_pro.fontSize = text_font_default_size;
         text_mesh_pro.alignment = TMPro.TextAlignmentOptions.Midline;
 
+    }
+    private void OnEnable()
+    {
         RequestAlignToCameraAnglesEvent?.Invoke(this, new MonobehaviourEventArgs(this));
     }
     #endregion
@@ -81,12 +84,14 @@ public class Text_Bubble : MonoBehaviour
         GameObject goj = new GameObject("Text Bubble");
         Text_Bubble txt = goj.AddComponent<Text_Bubble>();
         txt.UpdateTextMessage(message);
+
         return txt;
     }
     public static Text_Bubble CreateTextBubble(string message, GameObject parent)
     {
         Text_Bubble txt = CreateTextBubble(message);
         txt.gameObject.transform.SetParent(parent.transform);
+        txt.gameObject.transform.localPosition = Vector3.zero;
         return txt;
     }
     public static Text_Bubble CreateTextBubble(string message, GameObject parent, Color color)
@@ -109,7 +114,7 @@ public class Text_Bubble : MonoBehaviour
     }
     #endregion
 
-    void UpdateTextMessage(string message)
+    public void UpdateTextMessage(string message)
     {
         display_message = message;
         text_mesh_pro.text = display_message;

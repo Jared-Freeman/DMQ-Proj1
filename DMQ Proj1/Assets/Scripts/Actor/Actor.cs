@@ -6,8 +6,6 @@ using UnityEngine;
 public class Actor : MonoBehaviour
 {
     #region EVENTS
-    public static event System.EventHandler<MonobehaviourEventArgs> Event_ActorCreate;
-    public static event System.EventHandler<MonobehaviourEventArgs> Event_ActorDestroy;
     #endregion
     #region members
 
@@ -32,14 +30,6 @@ public class Actor : MonoBehaviour
 
         Stats = GetComponent<ActorStats>();
 
-        Event_ActorCreate.Invoke(this, new MonobehaviourEventArgs(this));
-    }
-
-    
-
-    private void OnDestroy()
-    {
-        Event_ActorDestroy.Invoke(this, new MonobehaviourEventArgs(this));
     }
 
     protected void Update()

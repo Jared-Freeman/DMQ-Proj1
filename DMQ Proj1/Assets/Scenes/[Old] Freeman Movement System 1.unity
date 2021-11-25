@@ -994,6 +994,7 @@ GameObject:
   - component: {fileID: 1244688339}
   - component: {fileID: 1244688342}
   - component: {fileID: 1244688343}
+  - component: {fileID: 1244688345}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1145,6 +1146,20 @@ MonoBehaviour:
   CamTargetPositionDesired: {x: 0, y: 0, z: 0}
   CamDistanceCurrent: 0
   CamAdditionalOffsetCurrent: 0
+--- !u!114 &1244688345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244688338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27f283a47b542ac49baae605c1b3bd1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Flag_Debug: 1
+  AttachedCamera: {fileID: 0}
 --- !u!1 &1299992265 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3481842726872579634, guid: bd5b21c2f7fee814b8132eaa3a950ff8,
@@ -1380,6 +1395,7 @@ GameObject:
   - component: {fileID: 1580214732}
   - component: {fileID: 1580214731}
   - component: {fileID: 1580214730}
+  - component: {fileID: 1580214734}
   m_Layer: 0
   m_Name: Actor
   m_TagString: Untagged
@@ -1456,6 +1472,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1580214734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1580214729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a50327a0e0452744799bdf57d7eb31e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AttachedStats: {fileID: 0}
+  StatsText: {fileID: 0}
+  OffsetTransformHost: {fileID: 0}
 --- !u!1 &1701812745
 GameObject:
   m_ObjectHideFlags: 0
