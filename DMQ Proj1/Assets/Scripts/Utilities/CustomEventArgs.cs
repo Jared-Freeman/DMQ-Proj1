@@ -38,6 +38,6 @@ public class MonobehaviourEventArgs : System.EventArgs
 
     public MonobehaviourEventArgs(MonoBehaviour v)
     {
-        this.monobehaviour = v;
+        monobehaviour = v;
     }
 }

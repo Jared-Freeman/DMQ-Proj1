@@ -5,7 +5,10 @@ using UnityEngine;
 [RequireComponent(typeof(ActorStats))]
 public class Actor : MonoBehaviour
 {
-
+    #region EVENTS
+    public static event System.EventHandler<MonobehaviourEventArgs> Event_ActorCreate;
+    public static event System.EventHandler<MonobehaviourEventArgs> Event_ActorDestroy;
+    #endregion
     #region members
 
     private static int IdGenerator = 0;
@@ -28,6 +31,15 @@ public class Actor : MonoBehaviour
         if (Flag_ActorDebug) Debug.Log("Base Actor ID: " + ActorID);
 
         Stats = GetComponent<ActorStats>();
+
+        Event_ActorCreate.Invoke(this, new MonobehaviourEventArgs(this));
+    }
+
+    
+
+    private void OnDestroy()
+    {
+        Event_ActorDestroy.Invoke(this, new MonobehaviourEventArgs(this));
     }
 
     protected void Update()

@@ -48,4 +48,19 @@ public class ActorAction : MonoBehaviour
         return Act;
     }
     #endregion
+
+    #region Methods
+    public void OnActionStart()
+    {
+
+    }
+    public void ActionUpdate()
+    {
+
+    }
+    public void OnActionEnd()
+    {
+
+    }
+    #endregion
 }
