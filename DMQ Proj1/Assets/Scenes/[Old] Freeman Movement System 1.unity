@@ -428,13 +428,16 @@ GameObject:
   - component: {fileID: 586648979}
   - component: {fileID: 586648978}
   - component: {fileID: 586648976}
+  - component: {fileID: 586648982}
+  - component: {fileID: 586648981}
+  - component: {fileID: 586648980}
   m_Layer: 0
-  m_Name: Move Proto 1
+  m_Name: Actor Move Proto 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &586648976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -522,6 +525,55 @@ MonoBehaviour:
   ForceVector_Front: {x: 0, y: 0, z: 0}
   ForceVector_Strafe: {x: 0, y: 0, z: 0}
   MovementDamp: 0.9
+--- !u!114 &586648980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 586648975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a50327a0e0452744799bdf57d7eb31e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AttachedStats: {fileID: 0}
+  StatsText: {fileID: 0}
+  OffsetTransformHost: {fileID: 0}
+  Offset: {x: 0, y: 5, z: 0}
+  FontSize: 4
+--- !u!114 &586648981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 586648975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a04c3f6bc4c74a049837898fdfe80049, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Flag_ActorDebug: 0
+  Stats: {fileID: 0}
+  Actions: []
+  StatusEffects: []
+--- !u!114 &586648982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 586648975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48e57ff7552ce9049b449f01c661137f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HpMax: 33
+  EnergyMax: 33
+  HpCurrent: 0
+  EnergyCurrent: 0
 --- !u!1 &853149245
 GameObject:
   m_ObjectHideFlags: 0
@@ -1158,7 +1210,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27f283a47b542ac49baae605c1b3bd1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Flag_Debug: 1
+  Flag_Debug: 0
   AttachedCamera: {fileID: 0}
 --- !u!1 &1299992265 stripped
 GameObject:
@@ -1487,6 +1539,8 @@ MonoBehaviour:
   AttachedStats: {fileID: 0}
   StatsText: {fileID: 0}
   OffsetTransformHost: {fileID: 0}
+  Offset: {x: 0, y: 2.5, z: 0}
+  FontSize: 5
 --- !u!1 &1701812745
 GameObject:
   m_ObjectHideFlags: 0

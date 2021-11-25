@@ -11,7 +11,7 @@ public class ActorStats_Display : MonoBehaviour
     public Text_Bubble StatsText;
     public GameObject OffsetTransformHost;
 
-    public Vector3 Offset = new Vector3(0, 5, 0);
+    public Vector3 Offset = new Vector3(0, 3, 0);
     public float FontSize = 4;
     #endregion
 
