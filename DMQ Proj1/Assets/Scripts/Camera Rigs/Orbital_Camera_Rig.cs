@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 // DESC:
@@ -28,7 +29,11 @@ public class Orbital_Camera_Rig : MonoBehaviour
     public bool FLAG_invert_yaw = false;
     public bool FLAG_use_initial_camera_distance = false; //sets default camera distance to the distance magnitude between this gameobject and the target
 
-    
+    [Space(10)]
+    [Header("**INPUT**")]
+    public PlayerInput Input;
+    private PlayerControls Controls;
+
     //settings
     [Space(10)]
     [Header("**SETTINGS**")]
@@ -61,6 +66,8 @@ public class Orbital_Camera_Rig : MonoBehaviour
     [SerializeField]
     private float inp_y;
 
+    Vector2 InputMap = Vector2.zero;
+
     private float cam_dist_current;
     private float cam_yaw_current; //euler angle, bounded: [0,360)
     private float cam_pitch_current; //RELATIVE euler angle bounded: [angle_min, angle_max]
@@ -78,6 +85,27 @@ public class Orbital_Camera_Rig : MonoBehaviour
 
         if (FLAG_use_initial_camera_distance) cam_dist_desired = (gameObject.transform.position - target.transform.position).magnitude;
         else cam_dist_desired = cam_dist_default;
+
+
+        InitInput();
+    }
+
+    private void InitInput()
+    {
+        Controls = new PlayerControls();
+        Input.onActionTriggered += HandleInput;
+    }
+
+    #endregion
+
+    #region event handlers
+
+    private void HandleInput(InputAction.CallbackContext ctx)
+    {
+        if (ctx.action.name == Controls.Player.Movement.name)
+        {
+            InputMap = ctx.ReadValue<Vector2>();
+        }
     }
     #endregion
 
@@ -92,9 +120,9 @@ public class Orbital_Camera_Rig : MonoBehaviour
     {
         float delta_time_scaled = 100f * Time.deltaTime;
 
-        inp_x = Input.GetAxis("Mouse X") * input_horizontal_sens * delta_time_scaled;
+        inp_x = InputMap.x * input_horizontal_sens * delta_time_scaled;
         if (FLAG_invert_yaw) inp_x *= -1;
-        inp_y = Input.GetAxis("Mouse Y") * input_vertical_sens * delta_time_scaled;
+        inp_y = InputMap.y * input_vertical_sens * delta_time_scaled;
         if (FLAG_invert_pitch) inp_y *= -1;
 
     }
