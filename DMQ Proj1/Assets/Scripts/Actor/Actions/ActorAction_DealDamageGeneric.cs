@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ActorAction_DealDamageGeneric : ActorAction
 {
+    #region Members
+    #endregion
 
     public static event System.EventHandler<MonobehaviourEventArgs> Action_GenericDamageEvent;
 

@@ -3,26 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
+
 public class ActorAI : Actor
 {
     #region members
-
-    NavMeshAgent NavAgent;
     ActorAI_Logic Logic;
-
     #endregion
 
     new protected void Start()
     {
         base.Start();
-        NavAgent = GetComponent<NavMeshAgent>();
-        if (NavAgent == null) Debug.LogError("Navmesh Agent not discovered!");
+        Logic = GetComponent<ActorAI_Logic>();
     }
 
     new protected void Update()
     {
         base.Update();
+        Logic.UpdateLogic();
 
     }
 }

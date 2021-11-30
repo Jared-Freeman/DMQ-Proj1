@@ -14,7 +14,7 @@ public class ActorDamage
     public float DamageAmount = 0;
 
     ActorDamage() { }
-    ActorDamage(ActorAction CreatorAction, float DamageToDeal = 0, ActorDamageType TypeOfDamage = ActorDamageType.Internal)
+    public ActorDamage(ActorAction CreatorAction, float DamageToDeal = 0, ActorDamageType TypeOfDamage = ActorDamageType.Internal)
     {
         Action = CreatorAction;
         DamageType = TypeOfDamage;

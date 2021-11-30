@@ -36,4 +36,21 @@ public class Actor : MonoBehaviour
     {
         
     }
+
+    //Wasn't sure where else to put this but I figure every actor will need this function. 
+    public void TakeDamage(ActorDamage DamageTaken)
+    {
+        //Take damage
+        Stats.HpCurrent -= DamageTaken.DamageAmount;
+        //Check for status effects depending on type of damage
+
+        //Check if HP has run out
+        if(Stats.HpCurrent <= 0f)
+        {
+            // Actor has run out of HP. Probably want to have an action for handling this later.
+            Debug.Log(gameObject.name + " is dead");
+            gameObject.SetActive(false);
+        }
+            
+    }
 }
