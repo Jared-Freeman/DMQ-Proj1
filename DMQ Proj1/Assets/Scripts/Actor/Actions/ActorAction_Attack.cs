@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MeleeWeapon : MonoBehaviour
+public class ActorAction_Attack : MonoBehaviour
 {
-    public int damage = 1;
+    public int DamageAmount = 1;
 
     [System.Serializable]
     public class AttackPoint
@@ -21,7 +21,7 @@ public class MeleeWeapon : MonoBehaviour
 
     }
 
-    public ParticleSystem hitParticlePrefab;
+    public GameObject hitParticlePrefab;
     public LayerMask targetLayers;
 
     public AttackPoint[] attackPoints = new AttackPoint[0];
@@ -30,65 +30,24 @@ public class MeleeWeapon : MonoBehaviour
     [Header("Audio")] public RandomAudioPlayer hitAudio;
     public RandomAudioPlayer attackAudio;
 
-    public bool throwingHit
-    {
-        get { return m_IsThrowingHit; }
-        set { m_IsThrowingHit = value; }
-    }
-
+    protected bool m_InAttack = false;
     public GameObject m_Owner;
 
     protected Vector3[] m_PreviousPos = null;
     protected Vector3 m_Direction;
 
-    protected bool m_IsThrowingHit = false;
-    protected bool m_InAttack = false;
-
-    const int PARTICLE_COUNT = 10;
-    protected ParticleSystem[] m_ParticlesPool = new ParticleSystem[PARTICLE_COUNT];
-    protected int m_CurrentParticle = 0;
-
     protected static RaycastHit[] s_RaycastHitCache = new RaycastHit[32];
     protected static Collider[] s_ColliderCache = new Collider[32];
 
-    List<Collider> temp = new List<Collider>();
-    bool beenHit = false;
-
-    private void Awake()
-    {
-        if (hitParticlePrefab != null)
-        {
-            for (int i = 0; i < PARTICLE_COUNT; ++i)
-            {
-                m_ParticlesPool[i] = Instantiate(hitParticlePrefab);
-                m_ParticlesPool[i].Stop();
-            }
-        }
-    }
-
-    private void OnEnable()
-    {
-
-    }
-
-    //whoever own the weapon is responsible for calling that. Allow to avoid "self harm"
-    public void SetOwner(GameObject owner)
-    {
-        m_Owner = owner;
-    }
-
     public void BeginAttack(bool thowingAttack)
     {
-        if(m_Owner)
+        if (m_Owner)
         {
-            damage += m_Owner.GetComponent<Status>().atk;
+            DamageAmount += m_Owner.GetComponent<ActorStats>().totalAtk;
         }
 
-        temp.Clear();
-        beenHit = false;
         if (attackAudio != null)
             attackAudio.PlayRandomClip();
-        throwingHit = thowingAttack;
 
         m_InAttack = true;
 
@@ -106,12 +65,11 @@ public class MeleeWeapon : MonoBehaviour
 #endif
         }
     }
-
     public void EndAttack()
     {
         if (m_Owner)
         {
-            damage -= m_Owner.GetComponent<Status>().atk;
+            DamageAmount -= m_Owner.GetComponent<ActorStats>().totalAtk;
         }
         m_InAttack = false;
 
@@ -151,24 +109,10 @@ public class MeleeWeapon : MonoBehaviour
                 for (int k = 0; k < contacts; ++k)
                 {
                     Collider col = s_RaycastHitCache[k].collider;
-                    beenHit = false;
-                    for (int a = 0; a < temp.Count; a++)
-                    {
-                        if(temp[a] == col)
-                        {
-                            beenHit = true;
-                        }
-                        //Debug.Log(temp[a].gameObject.name + " " + a);
-                    }
-                    //Debug.Log(col + " added");
-                    temp.Add(col);
 
                     if (col != null)
                     {
-                        if (!beenHit)
-                        {
-                            CheckDamage(col, pts);
-                        }
+                        CheckDamage(col, pts);
                     }
                 }
 
@@ -183,7 +127,7 @@ public class MeleeWeapon : MonoBehaviour
 
     private bool CheckDamage(Collider other, AttackPoint pts)
     {
-        Status d = other.GetComponent<Status>();
+        ActorStats d = other.GetComponent<ActorStats>();
 
         if (d == null)
         {
@@ -201,7 +145,7 @@ public class MeleeWeapon : MonoBehaviour
             //hit an object that is not in our layer, this end the attack. we "bounce" off it
             return false;
         }
-        
+
         if (hitAudio != null)
         {
             hitAudio.PlayRandomClip();
@@ -212,22 +156,17 @@ public class MeleeWeapon : MonoBehaviour
 
         //Debug.Log("damage " + damage + " to " + other.gameObject.name);
 
-        data.amount = damage;
+        data.amount = DamageAmount;
         data.damager = this;
         data.direction = m_Direction.normalized;
-        data.damageSource = m_Owner.transform.position;
-        data.throwing = m_IsThrowingHit;
+        if(m_Owner)
+            data.damageSource = m_Owner.transform.position;
+        else
+            data.damageSource = transform.position;
         data.stopCamera = false;
 
         d.ApplyDamage(data);
 
-        /*if (hitParticlePrefab != null)
-        {
-            m_ParticlesPool[m_CurrentParticle].transform.position = pts.attackRoot.transform.position;
-            m_ParticlesPool[m_CurrentParticle].time = 0;
-            m_ParticlesPool[m_CurrentParticle].Play();
-            m_CurrentParticle = (m_CurrentParticle + 1) % PARTICLE_COUNT;
-        }*/
 
         return true;
     }
