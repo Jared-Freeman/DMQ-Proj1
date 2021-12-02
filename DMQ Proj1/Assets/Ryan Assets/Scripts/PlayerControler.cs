@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 public class PlayerControler : MonoBehaviour
 {
     #region Members
+    Inventory inventory;
     int resetAttackStatehash = Animator.StringToHash("lastStrike");
     #region variables
     [Header("variables")]
@@ -57,6 +58,7 @@ public class PlayerControler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        inventory = GetComponent<Inventory>();
         RB = gameObject.GetComponent<Rigidbody>();
         if (HorizontalMovementAngleHost == null)
         {
@@ -144,7 +146,7 @@ public class PlayerControler : MonoBehaviour
 
         normalizdVelocity = VelocityMap / MoveSpd;
         normalizdVelocityMagnitude = normalizdVelocity.magnitude;
-        anim.SetFloat("Velocity Z", normalizdVelocityMagnitude);
+        anim.SetFloat("Velocity", normalizdVelocityMagnitude);
         if(VelocityMap.magnitude > 0.1f)
         {
             anim.SetBool("Moving", true);
@@ -237,15 +239,7 @@ public class PlayerControler : MonoBehaviour
                 //JumpInput();
             }
         }
-        if (ctx.action.name == controls.Player.Dash.name)
-        {
-            if (ctx.performed && !dashing)
-            {
-                //SprintMovement();
-                anim.SetTrigger("Dash");
-            }
-        }
-        if (ctx.action.name == controls.Player.Attack1.name)
+        if (ctx.action.name == controls.Player.Attack.name)
         {
             if (ctx.performed)
             {
@@ -253,6 +247,59 @@ public class PlayerControler : MonoBehaviour
             }
             
         }
-    }
+        if (ctx.action.name == controls.Player.SpecialAction.name)
+        {
+            if (ctx.performed)
+            {
+                SpecialActionHandle();
+            }
 
+        }
+        if (ctx.action.name == controls.Player.Wepon1Equip.name)
+        {
+            if (ctx.performed)
+            {
+                if (inventory.currentEquipNumber >= 0)
+                    anim.SetInteger("OldWeapon", inventory.allPossibleWapons[inventory.equipWep[inventory.currentEquipNumber].index].weaponAnimType);
+                else
+                    anim.SetInteger("OldWeapon", -1);
+                if (inventory.currentEquipNumber == 0)
+                {
+                    anim.SetInteger("Weapon", -1);
+                    inventory.changeToNumber = -1;
+                }
+                else
+                {
+                    anim.SetInteger("Weapon", inventory.allPossibleWapons[inventory.equipWep[0].index].weaponAnimType);
+                    inventory.changeToNumber = 0;
+                }
+                anim.SetTrigger("WeaponChangeTrigger");
+
+            }
+        }
+        if (ctx.action.name == controls.Player.Wepon2Equip.name)
+        {
+            if (ctx.performed)
+            {
+                if (inventory.currentEquipNumber == 1)
+                {
+                    anim.SetInteger("Weapon", -1);
+                    inventory.changeToNumber = -1;
+                }
+                else
+                {
+                    anim.SetInteger("Weapon", inventory.allPossibleWapons[inventory.equipWep[1].index].weaponAnimType);
+                    inventory.changeToNumber = 1;
+                }
+                anim.SetTrigger("WeaponChangeTrigger");
+            }
+        }
+    }
+    void SpecialActionHandle()
+    {
+        if(inventory.allPossibleWapons[inventory.equipWep[inventory.currentEquipNumber].index].specialAction == SpecialAction.Dash)
+        {
+            anim.SetTrigger("SpecialAction");
+        }
+    }
 }

@@ -35,7 +35,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Attack1"",
+                    ""name"": ""Attack"",
                     ""type"": ""Button"",
                     ""id"": ""a82f6022-213e-4432-b3bd-f3f958f5bd78"",
                     ""expectedControlType"": ""Button"",
@@ -43,33 +43,25 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Attack2"",
+                    ""name"": ""SpecialAction"",
                     ""type"": ""Button"",
-                    ""id"": ""d54a1cd3-1d00-4736-878c-830882af2b85"",
+                    ""id"": ""3670f9d0-6413-4e4b-a47f-c5f605b16346"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Attack3"",
+                    ""name"": ""Wepon1Equip"",
                     ""type"": ""Button"",
-                    ""id"": ""7ffe070d-f219-46a7-99bd-69d86ce998c9"",
+                    ""id"": ""29968628-a977-44f0-a342-8b289216bbf8"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Attack4"",
+                    ""name"": ""Wepon2Equip"",
                     ""type"": ""Button"",
-                    ""id"": ""a71f9a18-a152-4bed-9f11-e023aca4de2b"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
-                    ""name"": ""Dash"",
-                    ""type"": ""Button"",
-                    ""id"": ""ea421c25-4b1a-45ba-ab38-7ef1914f51a7"",
+                    ""id"": ""71834edd-1541-470a-879b-1c712ee1f204"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -156,55 +148,44 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""e4e3fde3-0672-45c1-81a2-1eed6ee75d0e"",
-                    ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Attack1"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""1ac62940-b2d6-4590-ad63-917a4fe807d3"",
                     ""path"": ""<Gamepad>/buttonWest"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Attack3"",
+                    ""action"": ""Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""d4ff1678-bcae-4fd2-a9da-21e8bacccf71"",
-                    ""path"": ""<Gamepad>/buttonNorth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Attack4"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""817c4068-2a21-45f3-880d-54d2c369e165"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Attack2"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""51b869d9-51cc-4194-8251-0f8133bcd35b"",
+                    ""id"": ""ae9e3405-b0b4-40b5-80dd-6a84e2dd4a88"",
                     ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Dash"",
+                    ""action"": ""SpecialAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ff3fd011-9c1c-4285-bafa-a894851ff550"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Wepon1Equip"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2694bc06-0eae-4296-8088-8ead16da5510"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Wepon2Equip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -217,11 +198,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
-        m_Player_Attack1 = m_Player.FindAction("Attack1", throwIfNotFound: true);
-        m_Player_Attack2 = m_Player.FindAction("Attack2", throwIfNotFound: true);
-        m_Player_Attack3 = m_Player.FindAction("Attack3", throwIfNotFound: true);
-        m_Player_Attack4 = m_Player.FindAction("Attack4", throwIfNotFound: true);
-        m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
+        m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
+        m_Player_SpecialAction = m_Player.FindAction("SpecialAction", throwIfNotFound: true);
+        m_Player_Wepon1Equip = m_Player.FindAction("Wepon1Equip", throwIfNotFound: true);
+        m_Player_Wepon2Equip = m_Player.FindAction("Wepon2Equip", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -273,22 +253,20 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private IPlayerActions m_PlayerActionsCallbackInterface;
     private readonly InputAction m_Player_Movement;
     private readonly InputAction m_Player_Jump;
-    private readonly InputAction m_Player_Attack1;
-    private readonly InputAction m_Player_Attack2;
-    private readonly InputAction m_Player_Attack3;
-    private readonly InputAction m_Player_Attack4;
-    private readonly InputAction m_Player_Dash;
+    private readonly InputAction m_Player_Attack;
+    private readonly InputAction m_Player_SpecialAction;
+    private readonly InputAction m_Player_Wepon1Equip;
+    private readonly InputAction m_Player_Wepon2Equip;
     public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
         public PlayerActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_Player_Movement;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
-        public InputAction @Attack1 => m_Wrapper.m_Player_Attack1;
-        public InputAction @Attack2 => m_Wrapper.m_Player_Attack2;
-        public InputAction @Attack3 => m_Wrapper.m_Player_Attack3;
-        public InputAction @Attack4 => m_Wrapper.m_Player_Attack4;
-        public InputAction @Dash => m_Wrapper.m_Player_Dash;
+        public InputAction @Attack => m_Wrapper.m_Player_Attack;
+        public InputAction @SpecialAction => m_Wrapper.m_Player_SpecialAction;
+        public InputAction @Wepon1Equip => m_Wrapper.m_Player_Wepon1Equip;
+        public InputAction @Wepon2Equip => m_Wrapper.m_Player_Wepon2Equip;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -304,21 +282,18 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Jump.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
-                @Attack1.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack1;
-                @Attack1.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack1;
-                @Attack1.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack1;
-                @Attack2.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack2;
-                @Attack2.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack2;
-                @Attack2.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack2;
-                @Attack3.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack3;
-                @Attack3.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack3;
-                @Attack3.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack3;
-                @Attack4.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack4;
-                @Attack4.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack4;
-                @Attack4.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack4;
-                @Dash.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDash;
-                @Dash.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDash;
-                @Dash.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDash;
+                @Attack.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
+                @Attack.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
+                @Attack.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
+                @SpecialAction.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSpecialAction;
+                @SpecialAction.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSpecialAction;
+                @SpecialAction.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSpecialAction;
+                @Wepon1Equip.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWepon1Equip;
+                @Wepon1Equip.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWepon1Equip;
+                @Wepon1Equip.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWepon1Equip;
+                @Wepon2Equip.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWepon2Equip;
+                @Wepon2Equip.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWepon2Equip;
+                @Wepon2Equip.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWepon2Equip;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -329,21 +304,18 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
-                @Attack1.started += instance.OnAttack1;
-                @Attack1.performed += instance.OnAttack1;
-                @Attack1.canceled += instance.OnAttack1;
-                @Attack2.started += instance.OnAttack2;
-                @Attack2.performed += instance.OnAttack2;
-                @Attack2.canceled += instance.OnAttack2;
-                @Attack3.started += instance.OnAttack3;
-                @Attack3.performed += instance.OnAttack3;
-                @Attack3.canceled += instance.OnAttack3;
-                @Attack4.started += instance.OnAttack4;
-                @Attack4.performed += instance.OnAttack4;
-                @Attack4.canceled += instance.OnAttack4;
-                @Dash.started += instance.OnDash;
-                @Dash.performed += instance.OnDash;
-                @Dash.canceled += instance.OnDash;
+                @Attack.started += instance.OnAttack;
+                @Attack.performed += instance.OnAttack;
+                @Attack.canceled += instance.OnAttack;
+                @SpecialAction.started += instance.OnSpecialAction;
+                @SpecialAction.performed += instance.OnSpecialAction;
+                @SpecialAction.canceled += instance.OnSpecialAction;
+                @Wepon1Equip.started += instance.OnWepon1Equip;
+                @Wepon1Equip.performed += instance.OnWepon1Equip;
+                @Wepon1Equip.canceled += instance.OnWepon1Equip;
+                @Wepon2Equip.started += instance.OnWepon2Equip;
+                @Wepon2Equip.performed += instance.OnWepon2Equip;
+                @Wepon2Equip.canceled += instance.OnWepon2Equip;
             }
         }
     }
@@ -352,10 +324,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     {
         void OnMovement(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
-        void OnAttack1(InputAction.CallbackContext context);
-        void OnAttack2(InputAction.CallbackContext context);
-        void OnAttack3(InputAction.CallbackContext context);
-        void OnAttack4(InputAction.CallbackContext context);
-        void OnDash(InputAction.CallbackContext context);
+        void OnAttack(InputAction.CallbackContext context);
+        void OnSpecialAction(InputAction.CallbackContext context);
+        void OnWepon1Equip(InputAction.CallbackContext context);
+        void OnWepon2Equip(InputAction.CallbackContext context);
     }
 }

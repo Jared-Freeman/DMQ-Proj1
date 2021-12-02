@@ -22,7 +22,7 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Attack1",
+                    "name": "Attack",
                     "type": "Button",
                     "id": "a82f6022-213e-4432-b3bd-f3f958f5bd78",
                     "expectedControlType": "Button",
@@ -30,33 +30,25 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Attack2",
+                    "name": "SpecialAction",
                     "type": "Button",
-                    "id": "d54a1cd3-1d00-4736-878c-830882af2b85",
+                    "id": "3670f9d0-6413-4e4b-a47f-c5f605b16346",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
                 },
                 {
-                    "name": "Attack3",
+                    "name": "Wepon1Equip",
                     "type": "Button",
-                    "id": "7ffe070d-f219-46a7-99bd-69d86ce998c9",
+                    "id": "29968628-a977-44f0-a342-8b289216bbf8",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
                 },
                 {
-                    "name": "Attack4",
+                    "name": "Wepon2Equip",
                     "type": "Button",
-                    "id": "a71f9a18-a152-4bed-9f11-e023aca4de2b",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Dash",
-                    "type": "Button",
-                    "id": "ea421c25-4b1a-45ba-ab38-7ef1914f51a7",
+                    "id": "71834edd-1541-470a-879b-1c712ee1f204",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -143,55 +135,44 @@
                 {
                     "name": "",
                     "id": "e4e3fde3-0672-45c1-81a2-1eed6ee75d0e",
-                    "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Attack1",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "1ac62940-b2d6-4590-ad63-917a4fe807d3",
                     "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Attack3",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "d4ff1678-bcae-4fd2-a9da-21e8bacccf71",
-                    "path": "<Gamepad>/buttonNorth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Attack4",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "817c4068-2a21-45f3-880d-54d2c369e165",
-                    "path": "<Gamepad>/buttonSouth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Attack2",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "51b869d9-51cc-4194-8251-0f8133bcd35b",
+                    "id": "ae9e3405-b0b4-40b5-80dd-6a84e2dd4a88",
                     "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Dash",
+                    "action": "SpecialAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ff3fd011-9c1c-4285-bafa-a894851ff550",
+                    "path": "<Gamepad>/dpad/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Wepon1Equip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2694bc06-0eae-4296-8088-8ead16da5510",
+                    "path": "<Gamepad>/dpad/right",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Wepon2Equip",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
