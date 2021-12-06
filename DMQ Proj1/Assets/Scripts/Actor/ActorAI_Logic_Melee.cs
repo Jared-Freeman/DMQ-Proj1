@@ -10,7 +10,7 @@ public class ActorAI_Logic_Melee : ActorAI_Logic
     public float AttackCooldown = 1.0f;
     public float AggroDistance = 20;
     public bool isAggro;
-    ActorAction_MeleeAttack MeleeAttack;
+    ActorAction_Attack MeleeAttack;
     ActorAction_MoveToTarget MoveTo;
     #endregion
 
@@ -20,7 +20,7 @@ public class ActorAI_Logic_Melee : ActorAI_Logic
     {
         base.Start();
         animator = GetComponent<Animator>();
-        MeleeAttack = GetComponent<ActorAction_MeleeAttack>();
+        MeleeAttack = GetComponent<ActorAction_Attack>();
         MoveTo = GetComponent<ActorAction_MoveToTarget>();
         CurrentAttackCooldown = 0f;
         isAggro = false;
@@ -55,13 +55,15 @@ public class ActorAI_Logic_Melee : ActorAI_Logic
                     if (CurrentAttackCooldown >= AttackCooldown)
                     {
                         //Attack
-                        MeleeAttack.OnActionEnd();
+                        Debug.Log("Attacking");
+                        animator.SetTrigger("Attack1h1");
+                        MeleeAttack.BeginAttack(true);
                         CurrentAttackCooldown = 0f;
                     }
                 }
             }
             MoveTo.ActionUpdate();
-            if (CurrentAttackCooldown < 1.0f)
+            if (CurrentAttackCooldown < AttackCooldown)
                 CurrentAttackCooldown += Time.deltaTime;
         }
     }

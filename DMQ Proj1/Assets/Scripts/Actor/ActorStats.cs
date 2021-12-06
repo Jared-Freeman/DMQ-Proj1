@@ -28,7 +28,7 @@ public class ActorStats : MonoBehaviour
     public int totalAtk = 0;
     public int totalDef = 0;
 
-    protected float m_timeSinceLastHit = 0.0f;
+    public float m_timeSinceLastHit = 0.0f;
     protected Collider m_Collider;
 
     System.Action schedule;
@@ -37,13 +37,14 @@ public class ActorStats : MonoBehaviour
     public bool isInvulnerable { get; set; }
 
     public UnityEvent OnDeath, OnReceiveDamage, OnHitWhileInvulnerable, OnBecomeVulnerable, OnResetDamage;
-
+    Actor actor;
 
     void Start()
     {
         ResetDamage();
         m_Collider = GetComponent<Collider>();
         CalculateStats();
+        actor = GetComponent<Actor>();
     }
     public void ResetDamage()
     {
@@ -79,14 +80,20 @@ public class ActorStats : MonoBehaviour
         positionToDamager -= transform.up * Vector3.Dot(transform.up, positionToDamager);
 
         isInvulnerable = true;
-
+        m_timeSinceLastHit = 1.0f;
 
         HpCurrent -= Mathf.Max(data.amount - totalDef, 0);
 
         if (HpCurrent <= 0)
+        {
             schedule += OnDeath.Invoke; //This avoid race condition when objects kill each other.
+            actor.ActorDead();
+        }
         else
+        {
             OnReceiveDamage.Invoke();
+        }
+            
 
     }
 }

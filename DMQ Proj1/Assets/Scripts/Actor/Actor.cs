@@ -20,7 +20,6 @@ public class Actor : MonoBehaviour
     public List<ActorAction> Actions;
     public List<ActorStatusEffect> StatusEffects;
 
-
     #endregion
 
     protected void Start()
@@ -29,14 +28,23 @@ public class Actor : MonoBehaviour
         if (Flag_ActorDebug) Debug.Log("Base Actor ID: " + ActorID);
 
         Stats = GetComponent<ActorStats>();
-
     }
 
     protected void Update()
     {
-        
+        if (Stats.m_timeSinceLastHit > 0)
+            Stats.m_timeSinceLastHit -= Time.deltaTime;
+        else if (Stats.m_timeSinceLastHit < 0)
+        {
+            Stats.isInvulnerable = false;
+        }
     }
-
+    public void ActorDead()
+    {
+        // Actor has run out of HP. Probably want to have an action for handling this later.
+        Debug.Log(gameObject.name + " is dead");
+        gameObject.SetActive(false);
+    }
     //Wasn't sure where else to put this but I figure every actor will need this function. 
     public void TakeDamage(ActorDamage DamageTaken)
     {
@@ -47,9 +55,7 @@ public class Actor : MonoBehaviour
         //Check if HP has run out
         if(Stats.HpCurrent <= 0f)
         {
-            // Actor has run out of HP. Probably want to have an action for handling this later.
-            Debug.Log(gameObject.name + " is dead");
-            gameObject.SetActive(false);
+            ActorDead();
         }
             
     }

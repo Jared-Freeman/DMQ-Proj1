@@ -43,7 +43,7 @@ public class ActorAction_Attack : MonoBehaviour
     {
         if (m_Owner)
         {
-            DamageAmount += m_Owner.GetComponent<ActorStats>().totalAtk;
+            DamageAmount = m_Owner.GetComponent<ActorStats>().totalAtk;
         }
 
         if (attackAudio != null)
@@ -154,7 +154,7 @@ public class ActorAction_Attack : MonoBehaviour
 
         DamageMessage data;
 
-        //Debug.Log("damage " + damage + " to " + other.gameObject.name);
+        //Debug.Log("damage " + DamageAmount + " to " + other.gameObject.name);
 
         data.amount = DamageAmount;
         data.damager = this;
