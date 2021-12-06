@@ -8,6 +8,8 @@ public class ActorAI_Logic_Melee : ActorAI_Logic
     public Actor TargetActor;
     public float CurrentAttackCooldown;
     public float AttackCooldown = 1.0f;
+    public float AggroDistance = 20;
+    public bool isAggro;
     ActorAction_MeleeAttack MeleeAttack;
     ActorAction_MoveToTarget MoveTo;
     #endregion
@@ -21,12 +23,19 @@ public class ActorAI_Logic_Melee : ActorAI_Logic
         MeleeAttack = GetComponent<ActorAction_MeleeAttack>();
         MoveTo = GetComponent<ActorAction_MoveToTarget>();
         CurrentAttackCooldown = 0f;
-        MoveTo.OnActionStart();
+        isAggro = false;
+        //MoveTo.OnActionStart();
     }
 
     // Update is called once per frame
     void Update()
     {
+        //Replace with event based interrupt later
+        if((TargetActor.transform.position - gameObject.transform.position).sqrMagnitude < (AggroDistance * AggroDistance) && !isAggro)
+        {
+            MoveTo.OnActionStart();
+            isAggro =true;
+        }
         float hVelocity = NavAgent.velocity.x;
         float vVelocity = NavAgent.velocity.y;
         var speed = Mathf.Max(Mathf.Abs(hVelocity), Mathf.Abs(vVelocity));
@@ -36,22 +45,25 @@ public class ActorAI_Logic_Melee : ActorAI_Logic
 
     new void UpdateLogic()
     {
-        if (NavAgent.remainingDistance <= NavAgent.stoppingDistance)
+        if(isAggro)
         {
-            if (!NavAgent.hasPath || NavAgent.velocity.sqrMagnitude == 0f)
+            if (NavAgent.remainingDistance <= NavAgent.stoppingDistance)
             {
-                //Destination reached
-                if (CurrentAttackCooldown >= AttackCooldown)
+                if (!NavAgent.hasPath || NavAgent.velocity.sqrMagnitude == 0f)
                 {
-                    //Attack
-                    MeleeAttack.OnActionEnd();
-                    CurrentAttackCooldown = 0f;
+                    //Destination reached
+                    if (CurrentAttackCooldown >= AttackCooldown)
+                    {
+                        //Attack
+                        MeleeAttack.OnActionEnd();
+                        CurrentAttackCooldown = 0f;
+                    }
                 }
             }
+            MoveTo.ActionUpdate();
+            if (CurrentAttackCooldown < 1.0f)
+                CurrentAttackCooldown += Time.deltaTime;
         }
-        MoveTo.ActionUpdate();
-        if (CurrentAttackCooldown < 1.0f)
-            CurrentAttackCooldown += Time.deltaTime;
     }
     #endregion
 
