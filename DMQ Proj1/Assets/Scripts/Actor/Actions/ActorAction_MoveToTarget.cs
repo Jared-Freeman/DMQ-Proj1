@@ -19,7 +19,7 @@ public class ActorAction_MoveToTarget : MonoBehaviour
     #region Methods
     public void OnActionStart()
     {
-        Logic.NavAgent.SetDestination(Logic.TargetActor.transform.position);
+        //Logic.NavAgent.SetDestination(Logic.TargetActor.transform.position);
     }
     public void ActionUpdate()
     {

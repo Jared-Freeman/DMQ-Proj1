@@ -11,6 +11,7 @@ public class ActorAI_Logic : MonoBehaviour
 
     public ActorAI AttachedActor;
     public NavMeshAgent NavAgent;
+    public Animator animator;
     #endregion
 
     protected void Start()

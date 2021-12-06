@@ -17,15 +17,20 @@ public class ActorAI_Logic_Melee : ActorAI_Logic
     new protected void Start()
     {
         base.Start();
+        animator = GetComponent<Animator>();
         MeleeAttack = GetComponent<ActorAction_MeleeAttack>();
         MoveTo = GetComponent<ActorAction_MoveToTarget>();
-        CurrentAttackCooldown = AttackCooldown;
+        CurrentAttackCooldown = 0f;
         MoveTo.OnActionStart();
     }
 
     // Update is called once per frame
     void Update()
     {
+        float hVelocity = NavAgent.velocity.x;
+        float vVelocity = NavAgent.velocity.y;
+        var speed = Mathf.Max(Mathf.Abs(hVelocity), Mathf.Abs(vVelocity));
+        animator.SetFloat("speedv", speed);
         UpdateLogic();
     }
 
