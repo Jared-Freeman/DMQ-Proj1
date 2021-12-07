@@ -65,6 +65,6 @@ public class GraphicsManager : MonoBehaviour
     //Function to set Graphic Quality Level
     public void setGraphicsQuality(int index)
     {
-        QualitySettings.SetQualityLevel(index);
+        QualitySettings.SetQualityLevel(index + 1);
     }
 }
