@@ -3,20 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class Move : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 10f;
     [SerializeField] GameObject[] fires;
-    //AudioSource audioSource;
+    AudioSource audioSource;
     void Start(){
          
-       // audioSource = GetComponent<AudioSource>();
+     //FireShot();
     }
 
     void Update(){
         
-        PlayerControls();
-        ProcessFiring();
+       PlayerControls();
+       ProcessFiring();
+       //ActivateFire();
        
     }
     void ProcessFiring(){
@@ -53,3 +54,6 @@ public class PlayerMovement : MonoBehaviour
         transform.Translate(xValue,0,zValue);
     }
 }
+/*void FireShot(){
+    audioSource = GetComponent<AudioSource>();
+}*/

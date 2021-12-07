@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 3334765711893563624}
   - component: {fileID: 3334765711893563625}
   - component: {fileID: 3334765711893563621}
-  - component: {fileID: 3334765711893563630}
   - component: {fileID: 7186544278000854428}
+  - component: {fileID: 568237424848397564}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -113,21 +113,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 116
   m_CollisionDetection: 0
---- !u!114 &3334765711893563630
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3334765711893563631}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5988c89414b58344d9a9f0470497f73a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 10
-  fires:
-  - {fileID: 4849478189923871690}
 --- !u!82 &7186544278000854428
 AudioSource:
   m_ObjectHideFlags: 0
@@ -224,6 +209,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &568237424848397564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3334765711893563631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28fdf79f11464924c9942416b19cc48e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 10
+  fires: []
 --- !u!1001 &3130684667831394572
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -301,6 +300,21 @@ PrefabInstance:
       propertyPath: CollisionModule.collisionMessages
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6721359361135105902, guid: 11a35f8952cd5034bb24718f9e523976,
+        type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.26306906
+      objectReference: {fileID: 0}
+    - target: {fileID: 6721359361135105902, guid: 11a35f8952cd5034bb24718f9e523976,
+        type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0.16078429
+      objectReference: {fileID: 0}
+    - target: {fileID: 6721359361135105902, guid: 11a35f8952cd5034bb24718f9e523976,
+        type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 0.8
+      objectReference: {fileID: 0}
     - target: {fileID: 7511621162157247174, guid: 11a35f8952cd5034bb24718f9e523976,
         type: 3}
       propertyPath: m_Name
@@ -308,12 +322,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 11a35f8952cd5034bb24718f9e523976, type: 3}
---- !u!1 &4849478189923871690 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7511621162157247174, guid: 11a35f8952cd5034bb24718f9e523976,
-    type: 3}
-  m_PrefabInstance: {fileID: 3130684667831394572}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1689327127929002380 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4324545313067612288, guid: 11a35f8952cd5034bb24718f9e523976,
