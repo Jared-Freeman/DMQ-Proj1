@@ -65,6 +65,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""QuitGame"",
+                    ""type"": ""Button"",
+                    ""id"": ""08bc675e-131a-4b0b-b55e-851452e5dbc0"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -158,8 +166,30 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""9aa6dbee-a1f0-4bc3-a6dd-747a028f9326"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""ae9e3405-b0b4-40b5-80dd-6a84e2dd4a88"",
                     ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SpecialAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5e4be3cd-bc0c-46a0-a1ca-ab6e103df223"",
+                    ""path"": ""<Keyboard>/v"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -180,12 +210,34 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""0f5484cf-2f4c-4d2f-a76d-2489ed0bebdd"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Wepon1Equip"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""2694bc06-0eae-4296-8088-8ead16da5510"",
                     ""path"": ""<Gamepad>/dpad/right"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Wepon2Equip"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ae757537-7b9c-45e0-bb70-01153ab9537c"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""QuitGame"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -202,6 +254,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Player_SpecialAction = m_Player.FindAction("SpecialAction", throwIfNotFound: true);
         m_Player_Wepon1Equip = m_Player.FindAction("Wepon1Equip", throwIfNotFound: true);
         m_Player_Wepon2Equip = m_Player.FindAction("Wepon2Equip", throwIfNotFound: true);
+        m_Player_QuitGame = m_Player.FindAction("QuitGame", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -257,6 +310,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Player_SpecialAction;
     private readonly InputAction m_Player_Wepon1Equip;
     private readonly InputAction m_Player_Wepon2Equip;
+    private readonly InputAction m_Player_QuitGame;
     public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
@@ -267,6 +321,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @SpecialAction => m_Wrapper.m_Player_SpecialAction;
         public InputAction @Wepon1Equip => m_Wrapper.m_Player_Wepon1Equip;
         public InputAction @Wepon2Equip => m_Wrapper.m_Player_Wepon2Equip;
+        public InputAction @QuitGame => m_Wrapper.m_Player_QuitGame;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -294,6 +349,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Wepon2Equip.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWepon2Equip;
                 @Wepon2Equip.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWepon2Equip;
                 @Wepon2Equip.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWepon2Equip;
+                @QuitGame.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnQuitGame;
+                @QuitGame.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnQuitGame;
+                @QuitGame.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnQuitGame;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -316,6 +374,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Wepon2Equip.started += instance.OnWepon2Equip;
                 @Wepon2Equip.performed += instance.OnWepon2Equip;
                 @Wepon2Equip.canceled += instance.OnWepon2Equip;
+                @QuitGame.started += instance.OnQuitGame;
+                @QuitGame.performed += instance.OnQuitGame;
+                @QuitGame.canceled += instance.OnQuitGame;
             }
         }
     }
@@ -328,5 +389,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnSpecialAction(InputAction.CallbackContext context);
         void OnWepon1Equip(InputAction.CallbackContext context);
         void OnWepon2Equip(InputAction.CallbackContext context);
+        void OnQuitGame(InputAction.CallbackContext context);
     }
 }

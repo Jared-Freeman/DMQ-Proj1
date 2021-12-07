@@ -294,6 +294,13 @@ public class PlayerControler : MonoBehaviour
                 anim.SetTrigger("WeaponChangeTrigger");
             }
         }
+        if (ctx.action.name == controls.Player.QuitGame.name)
+        {
+            if (ctx.performed)
+            {
+                Application.Quit();
+            }
+        }
     }
     void SpecialActionHandle()
     {
