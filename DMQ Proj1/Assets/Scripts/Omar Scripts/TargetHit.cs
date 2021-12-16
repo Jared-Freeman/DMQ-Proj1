@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TargetHit : MonoBehaviour{
+public class TargetHit_2 : MonoBehaviour{
 
     [SerializeField] ParticleSystem hit;
     void OnParticleCollision(GameObject other){

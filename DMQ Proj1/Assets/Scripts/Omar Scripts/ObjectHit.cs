@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectHit : MonoBehaviour
+public class ObjectHit_2 : MonoBehaviour
 {
     [SerializeField] ParticleSystem bumpedWall;
     //Need to figure out how to add sound and trigger only when collision is detected

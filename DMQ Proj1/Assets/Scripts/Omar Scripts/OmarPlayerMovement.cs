@@ -3,11 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-<<<<<<< Updated upstream:DMQ Proj1/Assets/OmarsScript/Move.cs
-public class Move : MonoBehaviour
-=======
-public class OmarPlayerMovement : MonoBehaviour
->>>>>>> Stashed changes:DMQ Proj1/Assets/Scripts/Omar Scripts/OmarPlayerMovement.cs
+
+public class OmarPlayerMovement_2 : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 10f;
     [SerializeField] GameObject[] fires;

@@ -3,25 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-<<<<<<< Updated upstream:DMQ Proj1/Assets/OmarsScript/Move.cs
-public class Move : MonoBehaviour
-=======
 public class OmarPlayerMovement : MonoBehaviour
->>>>>>> Stashed changes:DMQ Proj1/Assets/Scripts/Omar Scripts/OmarPlayerMovement.cs
 {
     [SerializeField] float moveSpeed = 10f;
     [SerializeField] GameObject[] fires;
-    AudioSource audioSource;
+    //AudioSource audioSource;
     void Start(){
          
-     //FireShot();
+       // audioSource = GetComponent<AudioSource>();
     }
 
     void Update(){
         
-       PlayerControls();
-       ProcessFiring();
-       //ActivateFire();
+        PlayerControls();
+        ProcessFiring();
        
     }
     void ProcessFiring(){
@@ -58,6 +53,3 @@ public class OmarPlayerMovement : MonoBehaviour
         transform.Translate(xValue,0,zValue);
     }
 }
-/*void FireShot(){
-    audioSource = GetComponent<AudioSource>();
-}*/

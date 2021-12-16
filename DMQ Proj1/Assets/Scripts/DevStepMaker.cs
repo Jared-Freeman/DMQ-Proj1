@@ -41,7 +41,7 @@ public class DevStepMaker : MonoBehaviour
 
     public void DoStep()
     {
-        Debug.Log("Dostep");
+        //Debug.Log("Dostep");
         index += Random.Range(1,3);
         index %= stepSounds.Count;
         AudioSource.PlayClipAtPoint(stepSounds[index].clip, CurStepLocation);
