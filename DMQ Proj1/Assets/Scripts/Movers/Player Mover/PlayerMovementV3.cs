@@ -2,11 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Events;
+
+public struct PlayerMovementEventArgs
+{
+    public PlayerMovementEventArgs(string str)
+    {
+        test = str;
+    }
+    public string test;
+};
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovementV3 : MonoBehaviour
 {
     #region Members
+
+    Inventory inventory;
+    
+
+
     [Range(.1f, 5000f)]
     [Tooltip("m / sec^2")]
     public float FrontAcceleration = 1;
@@ -34,6 +49,7 @@ public class PlayerMovementV3 : MonoBehaviour
     [Space(10)]
 
     public GameObject HorizontalMovementAngleHost;
+
 
     [Space(30)]
 
@@ -67,19 +83,89 @@ public class PlayerMovementV3 : MonoBehaviour
     public float MovementDamp = .9f;
     #endregion
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        RB = gameObject.GetComponent<Rigidbody>();
-        if (HorizontalMovementAngleHost == null)
-        {
-            HorizontalMovementAngleHost = gameObject;
-        }
+    #region EVENTS
 
-        InitInput();
+    //TODO: figure out what event arg type(s) to use and why
+    public class PlayerMovementEvent : UnityEvent<PlayerMovementEventArgs> { };
+
+    [SerializeField] public PlayerMovementEvent Event_AttackStart;
+    [SerializeField] public PlayerMovementEvent Event_ChangeWeapon;
+    [SerializeField] public PlayerMovementEvent Event_SpecialActionStart;
+
+    void InitializeEvents()
+    {
+        if (Event_AttackStart == null) Event_AttackStart = new PlayerMovementEvent();
+        if (Event_ChangeWeapon == null) Event_ChangeWeapon = new PlayerMovementEvent();
+        if (Event_SpecialActionStart == null) Event_SpecialActionStart = new PlayerMovementEvent();
     }
 
-    // Update is called once per frame
+    void AttackEvent()
+    {
+        Event_AttackStart?.Invoke(new PlayerMovementEventArgs());
+    }
+    void ChangeWeaponEvent()
+    {
+        if (inventory.currentEquipNumber == 0)
+        {
+            inventory.changeToNumber = -1;
+        }
+        else
+        {
+            inventory.changeToNumber = 0;
+        }
+        if (inventory.currentEquipNumber == 1)
+        {
+            inventory.changeToNumber = -1;
+        }
+        else
+        {
+            inventory.changeToNumber = 1;
+        }
+        Event_ChangeWeapon?.Invoke(new PlayerMovementEventArgs());
+    }
+    void SpecialActionEvent()
+    {
+        Event_SpecialActionStart?.Invoke(new PlayerMovementEventArgs());
+    }
+
+    #endregion
+
+    #region Init
+    private void Awake()
+    {
+        InitInput();
+        InitializeEvents();
+    }
+
+    void Start()
+    {
+        if(inventory == null) inventory = GetComponent<Inventory>();
+        if (inventory == null) Debug.LogException(new System.Exception("PlayerMovement: No inventory found"));
+
+        RB = gameObject.GetComponent<Rigidbody>();
+        if (RB == null) RB = gameObject.AddComponent<Rigidbody>();
+
+        if (HorizontalMovementAngleHost == null) HorizontalMovementAngleHost = gameObject;
+
+        //Event_AttackStart.AddListener(testfunction);
+        //Event_AttackStart?.Invoke(new PlayerMovementEventArgs("test"));
+    }
+    //void testfunction(PlayerMovementEventArgs args)
+    //{
+    //    Debug.Log(args.test);
+    //}
+
+
+    private void OnEnable()
+    {
+        controls.Enable();
+    }
+    private void OnDisable()
+    {
+        controls.Disable();
+    }
+    #endregion
+
     void Update()
     {
         if (new Vector3(RB.velocity.x, 0, RB.velocity.z).sqrMagnitude > MoveSpd * MoveSpd * 4)
@@ -88,6 +174,7 @@ public class PlayerMovementV3 : MonoBehaviour
         }
 
         UpdateMovementStates();
+
     }
 
     private void FixedUpdate()
@@ -108,32 +195,32 @@ public class PlayerMovementV3 : MonoBehaviour
         //[maybe] sprint
     }
 
-
-    #region Input Gatherers
+    #region Input Handlers
+    // This function is called in Awake(), and creates controls 
+    // + registers all the events that may occur due to player input
     private void InitInput()
     {
         controls = new PlayerControls();
-        Input.onActionTriggered += HandleInput;
+
+        //GAMEPAD EVENTS REGISTER //////////////////////////////////////
+        //register reading movement values from input
+        controls.Gamepad.Movement.performed += ctx =>           InputMap = ctx.ReadValue<Vector2>();
+        controls.Gamepad.Movement.canceled += ctx =>            InputMap = Vector2.zero;
+        controls.Gamepad.Attack.performed += ctx =>             AttackEvent();
+        controls.Gamepad.SpecialAction.performed += ctx =>      SpecialActionEvent();
+        controls.Gamepad.Wepon1Equip.performed += ctx =>        ChangeWeaponEvent();
+        controls.Gamepad.Wepon2Equip.performed += ctx =>        ChangeWeaponEvent();
+
+        //MOUSE AND KEYBOARD EVENTS REGISTER //////////////////////////////////////
+        //register reading movement values from input
+        controls.MouseAndKeyboard.Movement.performed += ctx =>          InputMap = ctx.ReadValue<Vector2>();
+        controls.MouseAndKeyboard.Movement.canceled += ctx =>           InputMap = Vector2.zero;
+        controls.MouseAndKeyboard.Attack.performed += ctx =>            AttackEvent();
+        controls.MouseAndKeyboard.SpecialAction.performed += ctx =>     SpecialActionEvent();
+        controls.MouseAndKeyboard.Wepon1Equip.performed += ctx =>       ChangeWeaponEvent();
+        controls.MouseAndKeyboard.Wepon2Equip.performed += ctx =>       ChangeWeaponEvent();
+
     }
-
-    private void HandleInput(InputAction.CallbackContext ctx)
-    {
-        if (ctx.action.name == controls.Player.Movement.name)
-        {
-            InputMap = ctx.ReadValue<Vector2>();
-        }
-        if (ctx.action.name == controls.Player.Jump.name)
-        {
-            if (ctx.performed)
-            {
-                //JumpInput();
-            }
-        }
-    }
-
-    #endregion
-
-    #region Input Handlers
     //in fixed dt
     private void HorizontalMovementInput()
     {
@@ -147,7 +234,12 @@ public class PlayerMovementV3 : MonoBehaviour
         //InputMap.x = ConstructionVector1.x + ConstructionVector2.x;
         //InputMap.y = ConstructionVector1.z + ConstructionVector2.z;
 
+        //transform.Translate(new Vector3(InputMap.x, 0, InputMap.y) * MoveSpd * Time.deltaTime, Space.World);
+        //return;
 
+
+
+        //TODO: investigate replacing InputMap with a newly instantiated vector2. would it mess with this script in another method?
         if (InputMap.sqrMagnitude > 1)
         {
             InputMap.Normalize();
@@ -203,43 +295,9 @@ public class PlayerMovementV3 : MonoBehaviour
 
     private void JumpInput()
     {
-        //Debug.Log("JumpInput");
-
         StopCoroutine(JumpStart());
         StartCoroutine(JumpStart());
-
-        //float JumpSpeed = Mathf.Sqrt(JumpHeight * -2f * Physics.gravity.y);
-        //RB.AddForce(JumpSpeed * Vector3.up, ForceMode.VelocityChange);
-
-        //StartCoroutine(JumpNormal(1));
-        //RB.AddForce(HorizontalMovementAngleHost.transform.forward * 5 * RB.mass, ForceMode.Impulse);
     }
-
-    private void CrouchInputStart()
-    {
-        Debug.Log("CrouchInputStart");
-
-    }
-
-    private void CrouchInputEnd()
-    {
-        Debug.Log("CrouchInputEnd");
-
-    }
-
-    private void SprintMovementStart()
-    {
-        Debug.Log("SprintMovementStart");
-
-    }
-
-    private void SprintMovementEnd()
-    {
-        Debug.Log("SprintMovementEnd");
-
-    }
-    #endregion
-
     public IEnumerator JumpNormal(float duration)
     {
         float StartTime = Time.time;
@@ -263,4 +321,5 @@ public class PlayerMovementV3 : MonoBehaviour
         RB.AddForce(JumpSpeed * Vector3.up, ForceMode.VelocityChange);
 
     }
+    #endregion
 }
