@@ -18,69 +18,39 @@ public class PlayerMovementV3 : MonoBehaviour
 {
     #region Members
 
-    Inventory inventory;
-    
-
-
-    [Range(.1f, 5000f)]
-    [Tooltip("m / sec^2")]
+    [Range(.1f, 5000f)] [Tooltip("m / sec^2")]
     public float FrontAcceleration = 1;
-    [Range(.1f, 5000f)]
-    [Tooltip("m / sec^2")]
+    [Range(.1f, 5000f)] [Tooltip("m / sec^2")]
     public float DampAcceleration = 1;
     [Tooltip("Meters / sec")]
     public float MoveSpd = 1;
+
+
     [Header("Currently Obsolete")]
-    [Tooltip("Meters / sec")]
-    public float MoveSpdStrafe = 1;
     [Tooltip("1.5x true value seems to be ideal rn")]
     public float JumpHeight = 1;
-    [Tooltip("Scaled by Mass")]
-    public float AddedDownwardForce = 1;
-
-    [Space(10)]
-
-
-    [Header("Input")]
-    public PlayerInput Input;
-    private PlayerControls controls;
-
-
-    [Space(10)]
-
+    [Tooltip("Determines current \"north\" that the InputMap direction is relative to")]
     public GameObject HorizontalMovementAngleHost;
+    [Tooltip("Scaled by Mass")] public float AddedDownwardForce = 1;
 
 
-    [Space(30)]
-
-    [SerializeField]
-    private Rigidbody RB;
 
     [Space(10)]
-
-    [SerializeField]
-    float InputStrafe = 0;
-    [SerializeField]
-    float InputFront = 0;
-
-    [Space(10)]
-
-    [SerializeField]
-    Vector2 VelocityMap = Vector2.zero; //affects horizontal movement velocity. Controlled via input
-    [SerializeField]
-    Vector2 InputMap = Vector2.zero;
-    [SerializeField]
-    Vector2 DragVector = Vector2.zero;
+    [Header("External Object Refs")]
+    public PlayerInput Input;
+    [SerializeField] private Inventory inventory;
+    private PlayerControls controls;
+    [SerializeField] private Rigidbody RB;
 
     [Space(10)]
+    [SerializeField] Vector2 VelocityMap = Vector2.zero; //affects horizontal movement velocity. Controlled via input
+    [SerializeField] Vector2 InputMap = Vector2.zero;
+    [SerializeField] Vector2 DragVector = Vector2.zero;
+    [SerializeField] Vector3 AddVelocity = Vector2.zero;
 
-    [SerializeField]
-    Vector3 ForceVector_Front = Vector3.zero;
-    [SerializeField]
-    Vector3 ForceVector_Strafe = Vector3.zero;
+    //state variables
+    private bool IsDashing;
 
-    [Range(0, 1.0f)]
-    public float MovementDamp = .9f;
     #endregion
 
     #region EVENTS
@@ -139,7 +109,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
     void Start()
     {
-        if(inventory == null) inventory = GetComponent<Inventory>();
+        if (inventory == null) inventory = GetComponent<Inventory>();
         if (inventory == null) Debug.LogException(new System.Exception("PlayerMovement: No inventory found"));
 
         RB = gameObject.GetComponent<Rigidbody>();
@@ -168,10 +138,10 @@ public class PlayerMovementV3 : MonoBehaviour
 
     void Update()
     {
-        if (new Vector3(RB.velocity.x, 0, RB.velocity.z).sqrMagnitude > MoveSpd * MoveSpd * 4)
-        {
-            Debug.Log("Exceeding");
-        }
+        //if (new Vector3(RB.velocity.x, 0, RB.velocity.z).sqrMagnitude > MoveSpd * MoveSpd * 4)
+        //{
+        //    Debug.Log("Exceeding");
+        //}
 
         UpdateMovementStates();
 
@@ -179,10 +149,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //if (new Vector3(RB.velocity.x, 0, RB.velocity.z).sqrMagnitude < MoveSpd * MoveSpd * 4)
         HorizontalMovementInput();
-
-        //RB.AddForce(Vector3.down * AddedDownwardForce * RB.mass * Time.fixedDeltaTime, ForceMode.Force);
     }
 
     private void UpdateMovementStates()
@@ -204,26 +171,268 @@ public class PlayerMovementV3 : MonoBehaviour
 
         //GAMEPAD EVENTS REGISTER //////////////////////////////////////
         //register reading movement values from input
-        controls.Gamepad.Movement.performed += ctx =>           InputMap = ctx.ReadValue<Vector2>();
-        controls.Gamepad.Movement.canceled += ctx =>            InputMap = Vector2.zero;
-        controls.Gamepad.Attack.performed += ctx =>             AttackEvent();
-        controls.Gamepad.SpecialAction.performed += ctx =>      SpecialActionEvent();
-        controls.Gamepad.Wepon1Equip.performed += ctx =>        ChangeWeaponEvent();
-        controls.Gamepad.Wepon2Equip.performed += ctx =>        ChangeWeaponEvent();
+        controls.Gamepad.Movement.performed += ctx => InputMap = ctx.ReadValue<Vector2>();
+        controls.Gamepad.Movement.canceled += ctx => InputMap = Vector2.zero;
+        controls.Gamepad.Attack.performed += ctx => AttackEvent();
+        controls.Gamepad.SpecialAction.performed += ctx => SpecialActionEvent();
+        controls.Gamepad.Wepon1Equip.performed += ctx => ChangeWeaponEvent();
+        controls.Gamepad.Wepon2Equip.performed += ctx => ChangeWeaponEvent();
 
         //MOUSE AND KEYBOARD EVENTS REGISTER //////////////////////////////////////
         //register reading movement values from input
-        controls.MouseAndKeyboard.Movement.performed += ctx =>          InputMap = ctx.ReadValue<Vector2>();
-        controls.MouseAndKeyboard.Movement.canceled += ctx =>           InputMap = Vector2.zero;
-        controls.MouseAndKeyboard.Attack.performed += ctx =>            AttackEvent();
-        controls.MouseAndKeyboard.SpecialAction.performed += ctx =>     SpecialActionEvent();
-        controls.MouseAndKeyboard.Wepon1Equip.performed += ctx =>       ChangeWeaponEvent();
-        controls.MouseAndKeyboard.Wepon2Equip.performed += ctx =>       ChangeWeaponEvent();
+        controls.MouseAndKeyboard.Movement.performed += ctx => InputMap = ctx.ReadValue<Vector2>();
+        controls.MouseAndKeyboard.Movement.canceled += ctx => InputMap = Vector2.zero;
+        controls.MouseAndKeyboard.Attack.performed += ctx => AttackEvent();
+        controls.MouseAndKeyboard.SpecialAction.performed += ctx => SpecialActionEvent();
+        controls.MouseAndKeyboard.Wepon1Equip.performed += ctx => ChangeWeaponEvent();
+        controls.MouseAndKeyboard.Wepon2Equip.performed += ctx => ChangeWeaponEvent();
 
     }
-    //in fixed dt
+
+    [SerializeField] Vector3 TestVelocity = Vector3.zero;
+    //[SerializeField] float MoveSpd = 10f;
+    [SerializeField] float TestAccel = 100f;
+
+
+    [SerializeField] Vector3 LargestVelocityChange = Vector3.zero;
+    [SerializeField] float LargestVelocityChangeMagnitude = 0;
+
+
+    enum MovementModel { DebugMovementModel, ContinuousV1, ContinuousV2, VelocityChangeV1};
     private void HorizontalMovementInput()
     {
+        //In case we ever want to change movement models
+        MovementModel CurrentModel = MovementModel.ContinuousV1;
+        switch (CurrentModel)
+        {
+            case MovementModel.ContinuousV1:
+                ContinuousMovementModel();
+                break;
+            case MovementModel.ContinuousV2:
+                ContinuousMovementModelV2();
+                break;
+            case MovementModel.VelocityChangeV1:
+                VelocityChangeModel();
+                break;
+            case MovementModel.DebugMovementModel:
+                DebugMovementModel();
+                break;
+            default:
+                DebugMovementModel();
+                break;
+        };
+    }
+
+    #region Movement Models
+    void DebugMovementModel()
+    {
+
+    }
+
+
+    void ContinuousMovementModel()
+    {
+        //F = ma = mv/t
+        //Cache m/t (we compute v later)
+        float ForceCoefficient = RB.mass / Time.fixedDeltaTime;
+
+        //Create direction of movement desired by player
+        Vector3 InputDirection = new Vector3(InputMap.x, 0, InputMap.y); //TODO: processing based on horizontal angle host
+
+        //If a direction exists, accelerate towards it. otherwise decelerate towards 0
+        if (InputDirection.sqrMagnitude == 0)
+        {
+            //apply the brakes
+
+            //for comparison to make sure we dont go in the opposite direction
+            Vector3 Temp = TestVelocity;
+
+            TestVelocity = TestVelocity - (TestVelocity.normalized * TestAccel * Time.fixedDeltaTime);
+
+            //clamp to 0
+            if (Vector3.Dot(TestVelocity, Temp) < 0) TestVelocity = Vector3.zero;
+        }
+        else
+        {
+            //accel
+            TestVelocity = TestVelocity + new Vector3(InputMap.x, 0, InputMap.y).normalized * TestAccel * Time.fixedDeltaTime;
+
+            //clamp desired velocity max to move speed max
+            if (TestVelocity.sqrMagnitude > MoveSpd * MoveSpd)
+                TestVelocity = TestVelocity.normalized * MoveSpd;
+
+        }
+
+
+
+
+        Vector3 TestVelocityDiff = Vector3.zero;
+
+        //Filtered velocity represents the maximum velocity we can affect in this timestep (the rigidbody can exceed this by a LOT in normal gameplay)
+        Vector3 FilteredVelocity = RB.velocity;
+        //max is clamped to current player-desired velocity max.
+        if (FilteredVelocity.sqrMagnitude > TestVelocity.sqrMagnitude) FilteredVelocity = TestVelocity.magnitude * FilteredVelocity.normalized;
+
+        //compute parallel component of current velocity to desired velocity
+        if (TestVelocity.sqrMagnitude != 0) // parallel component of RB velocity to the intended velocity
+            TestVelocityDiff = (Vector3.Dot(TestVelocity, FilteredVelocity) / TestVelocity.magnitude) * TestVelocity.normalized;
+
+
+
+
+        AddVelocity = (TestVelocity - TestVelocityDiff);
+
+        //Damp (within standard movement speed control)
+        if (InputDirection.sqrMagnitude > 0 && RB.velocity.sqrMagnitude <= MoveSpd * MoveSpd)
+        {
+            RB.AddForce(AddVelocity * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
+
+
+            if ((AddVelocity).sqrMagnitude < (RB.velocity - TestVelocityDiff).sqrMagnitude)
+            {
+                //RB.AddForce(-(RB.velocity - TestVelocityDiff).normalized * AddVelocity.magnitude * ForceCoefficient, ForceMode.Force);
+                RB.AddForce(-(RB.velocity - TestVelocityDiff) * ForceCoefficient, ForceMode.Force);
+            }
+            else
+            {
+                RB.AddForce(-(RB.velocity - TestVelocityDiff) * ForceCoefficient, ForceMode.Force);
+            }
+            float a = 2;
+            Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + .75f, transform.position.z), -(RB.velocity - TestVelocityDiff) * a, Color.red);
+        }
+        //Damp (exceeding movement speed max)
+        else
+        {
+            //We are adding 
+            RB.AddForce(AddVelocity * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
+        }
+
+
+
+
+
+        // for testing
+        {
+            float a = 2;
+            Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + 1.5f, transform.position.z), AddVelocity * a, Color.cyan);
+            //Debug.DrawRay(transform.position, (RB.velocity + AddVelocity) * a, Color.magenta);
+            Debug.DrawRay(transform.position, new Vector3(RB.velocity.x, RB.velocity.y + .1f, RB.velocity.z) * a, Color.gray);
+        
+            //OBSERVATION: We never alter more than MoveSpd's worth of velocity 
+            if((-(RB.velocity - TestVelocityDiff) + AddVelocity).sqrMagnitude > LargestVelocityChangeMagnitude * LargestVelocityChangeMagnitude)
+            {
+                LargestVelocityChange = (-(RB.velocity - TestVelocityDiff) + AddVelocity);
+                LargestVelocityChangeMagnitude  = (-(RB.velocity - TestVelocityDiff) + AddVelocity).magnitude;
+            }
+        }
+    }
+
+
+    void ContinuousMovementModelV2()
+    {
+
+        //float MoveSpd = 10f;
+        //float TestAccel = 100f;
+
+        float ForceCoefficient = RB.mass / Time.fixedDeltaTime;
+
+        Vector3 InputDirection = new Vector3(InputMap.x, 0, InputMap.y); //TODO: processing based on horizontal angle host
+        if (InputDirection.sqrMagnitude == 0)
+        {
+            //apply the brakes
+            Vector3 Temp = TestVelocity;
+
+            TestVelocity = TestVelocity - (TestVelocity.normalized * TestAccel * Time.fixedDeltaTime);
+            //if (Vector3.Angle(TestVelocity, Temp) > 60) TestVelocity = Vector3.zero;
+            if (Vector3.Dot(TestVelocity, Temp) < 0) TestVelocity = Vector3.zero;
+        }
+        else
+        {
+            //accel
+            TestVelocity = TestVelocity + new Vector3(InputMap.x, 0, InputMap.y).normalized * TestAccel * Time.fixedDeltaTime;
+        }
+
+
+
+        if (TestVelocity.sqrMagnitude > MoveSpd * MoveSpd)
+            TestVelocity = TestVelocity.normalized * MoveSpd;
+
+
+        Vector3 TestVelocityDiff = Vector3.zero;
+        if (TestVelocity.sqrMagnitude != 0) // parallel component of RB velocity to the intended velocity
+            TestVelocityDiff = (Vector3.Dot(TestVelocity, RB.velocity) / TestVelocity.magnitude) * TestVelocity.normalized;
+
+
+        AddVelocity = (TestVelocity - TestVelocityDiff);
+
+        // Damp ////////////////////////////////////////////////
+        //Vector3 ForceDamp = Vector3.zero;
+        //if ((AddVelocity + RB.velocity).sqrMagnitude > MoveSpd * MoveSpd)
+        //{
+        //    ForceDamp = -RB.velocity.normalized * TestAccel * RB.mass;
+        //    if (ForceDamp.sqrMagnitude > RB.velocity.sqrMagnitude)
+        //        RB.AddForce(-RB.velocity, ForceMode.Force);
+        //    else
+        //        RB.AddForce(ForceDamp, ForceMode.Force);
+        //}
+        ////////////////////////////////////////////////
+
+
+        ////////////////////////////////////////////////
+        //DragVector = Vector3.zero;
+        ////kill all stuff not in the dir we wanna go
+        //if (InputDirection.sqrMagnitude > 0)
+        //{
+        //    DragVector = Vector2.Perpendicular(InputDirection);
+        //}
+        //else
+        //{
+        //    DragVector = -1 * AddVelocity;
+        //}
+        //DragVector.Normalize();
+
+        //DragVector *= Vector2.Dot(DragVector, -1 * AddVelocity) * Time.fixedDeltaTime * DampAcceleration;
+        //if (DragVector.sqrMagnitude > AddVelocity.sqrMagnitude)
+        //{
+        //    DragVector = Vector2.zero;
+        //    AddVelocity = InputDirection.normalized * AddVelocity.magnitude * Vector2.Dot(AddVelocity, InputDirection);
+        //}
+
+        //apply additional velocity
+        //ProcessedInputMap *= FrontAcceleration * Time.fixedDeltaTime;
+        //VelocityMap += ProcessedInputMap * FrontAcceleration * Time.fixedDeltaTime;
+        //AddVelocity += new Vector3(DragVector.x, 0, DragVector.y);
+        //////////////////////////////////////////////
+        ///
+        RB.AddForce(AddVelocity * ForceCoefficient, ForceMode.Force);
+
+        if (InputDirection.sqrMagnitude > 0)
+        {
+            if ((AddVelocity).sqrMagnitude < (RB.velocity - TestVelocityDiff).sqrMagnitude)
+            {
+                //RB.AddForce(-(RB.velocity - TestVelocityDiff).normalized * AddVelocity.magnitude * ForceCoefficient, ForceMode.Force);
+                RB.AddForce(-(RB.velocity - TestVelocityDiff) * ForceCoefficient, ForceMode.Force);
+            }
+            else
+            {
+                RB.AddForce(-(RB.velocity - TestVelocityDiff) * ForceCoefficient, ForceMode.Force);
+            }
+        }
+
+        // for testing
+        {
+            float a = 2;
+            Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + 1.5f, transform.position.z), AddVelocity * a, Color.cyan);
+            Debug.DrawRay(transform.position, (RB.velocity + AddVelocity) * a, Color.magenta);
+            Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + .75f, transform.position.z), -(RB.velocity - TestVelocityDiff) * a, Color.red);
+            Debug.DrawRay(transform.position, new Vector3(RB.velocity.x, RB.velocity.y + .1f, RB.velocity.z) * a, Color.gray);
+        }
+    }
+
+
+    void VelocityChangeModel()
+    {
+        //Velocity Change Model
         Vector3 RetainedVelocity = new Vector3(0, RB.velocity.y, 0);
 
         //Vector3 ConstructionVector1 = Vector3.zero;
@@ -231,25 +440,20 @@ public class PlayerMovementV3 : MonoBehaviour
         //ConstructionVector2 = HorizontalMovementAngleHost.transform.right * InputStrafe;
         //ConstructionVector1 = HorizontalMovementAngleHost.transform.forward * InputFront;
 
-        //InputMap.x = ConstructionVector1.x + ConstructionVector2.x;
-        //InputMap.y = ConstructionVector1.z + ConstructionVector2.z;
+        //ProcessedInputMap.x = ConstructionVector1.x + ConstructionVector2.x;
+        //ProcessedInputMap.y = ConstructionVector1.z + ConstructionVector2.z;
 
-        //transform.Translate(new Vector3(InputMap.x, 0, InputMap.y) * MoveSpd * Time.deltaTime, Space.World);
-        //return;
-
-
-
-        //TODO: investigate replacing InputMap with a newly instantiated vector2. would it mess with this script in another method?
-        if (InputMap.sqrMagnitude > 1)
+        Vector2 ProcessedInputMap = InputMap;
+        if (ProcessedInputMap.sqrMagnitude > 1)
         {
-            InputMap.Normalize();
+            ProcessedInputMap.Normalize();
         }
 
         DragVector = Vector3.zero;
         //kill all stuff not in the dir we wanna go
-        if (InputMap.x != 0 || InputMap.y != 0)
+        if (ProcessedInputMap.x != 0 || ProcessedInputMap.y != 0)
         {
-            DragVector = Vector2.Perpendicular(InputMap);
+            DragVector = Vector2.Perpendicular(ProcessedInputMap);
         }
         else
         {
@@ -261,12 +465,12 @@ public class PlayerMovementV3 : MonoBehaviour
         if (DragVector.sqrMagnitude > VelocityMap.sqrMagnitude)
         {
             DragVector = Vector2.zero;
-            VelocityMap = InputMap.normalized * VelocityMap.magnitude * Vector2.Dot(VelocityMap, InputMap);
+            VelocityMap = ProcessedInputMap.normalized * VelocityMap.magnitude * Vector2.Dot(VelocityMap, ProcessedInputMap);
         }
 
         //apply additional velocity
-        //InputMap *= FrontAcceleration * Time.fixedDeltaTime;
-        VelocityMap += InputMap * FrontAcceleration * Time.fixedDeltaTime;
+        //ProcessedInputMap *= FrontAcceleration * Time.fixedDeltaTime;
+        VelocityMap += ProcessedInputMap * FrontAcceleration * Time.fixedDeltaTime;
         VelocityMap += DragVector;
 
 
@@ -276,7 +480,7 @@ public class PlayerMovementV3 : MonoBehaviour
         }
 
         Debug.DrawRay(gameObject.transform.position, new Vector3(DragVector.x, 0, DragVector.y), Color.magenta);
-        Debug.DrawRay(gameObject.transform.position, new Vector3(InputMap.x * 1.5f, .6f, InputMap.y * 1.5f), Color.green);
+        Debug.DrawRay(gameObject.transform.position, new Vector3(ProcessedInputMap.x * 1.5f, .6f, ProcessedInputMap.y * 1.5f), Color.green);
         Debug.DrawRay(gameObject.transform.position, new Vector3(VelocityMap.x, 0, VelocityMap.y), Color.cyan);
 
         Vector3 VelocityMap3 = new Vector3(VelocityMap.x, 0, VelocityMap.y);
@@ -292,6 +496,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
         //RB.MovePosition( RB.position + Displacement );
     }
+    #endregion
 
     private void JumpInput()
     {
@@ -320,6 +525,10 @@ public class PlayerMovementV3 : MonoBehaviour
         float JumpSpeed = Mathf.Sqrt(JumpHeight * -2f * Physics.gravity.y);
         RB.AddForce(JumpSpeed * Vector3.up, ForceMode.VelocityChange);
 
+    }
+    private IEnumerator DoDash()
+    {
+        yield return new WaitForFixedUpdate();
     }
     #endregion
 }

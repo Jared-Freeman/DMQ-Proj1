@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &9162247238335278277
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4572633760109155035}
+  - component: {fileID: 5050224297069456702}
+  m_Layer: 0
+  m_Name: Weapon Inventory (12_19_2021)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4572633760109155035
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9162247238335278277}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5050224297069456702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9162247238335278277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6088da7fe51d3414ea9ed57fb8837830, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allPossibleWapons:
+  - name: Sword
+    weaponAttack: 2
+    model:
+    - {fileID: 100050, guid: 9d8cbe7d7c34ac442baea6cd0ea39cd0, type: 3}
+    - {fileID: 0}
+    specialAction: 1
+    weaponAnimType: 0
+  - name: Mace and Shield
+    weaponAttack: 1
+    model:
+    - {fileID: 100050, guid: b3df587f1bf34c24c914acee829b0aec, type: 3}
+    - {fileID: 8551830189272046972, guid: 552d4400945a67d4781f85f3de81f6b9, type: 3}
+    specialAction: 2
+    weaponAnimType: 0
+  equipWep:
+  - index: 0
+    name: 
+  - index: 1
+    name: 
+  handPostions:
+  - {fileID: 0}
+  - {fileID: 0}
+  currentEquipNumber: -1
+  changeToNumber: -1
