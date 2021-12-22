@@ -23,6 +23,8 @@ public class PlayerMovementV3 : MonoBehaviour
     public float FrontAcceleration = 1;
     [Range(.1f, 5000f)] [Tooltip("m / sec^2")]
     public float DampAcceleration = 1;
+    [Range(.1f, 5000f)] [Tooltip("m / sec^2")]
+    public float Deceleration = 20;
     [Tooltip("Meters / sec")]
     public float MoveSpd = 1;
 
@@ -229,6 +231,8 @@ public class PlayerMovementV3 : MonoBehaviour
     //Debug members
     [SerializeField] Vector3 LargestVelocityChange = Vector3.zero;
     [SerializeField] float LargestVelocityChangeMagnitude = 0;
+    [SerializeField] Vector3 LargestAddVelocityChange = Vector3.zero;
+    [SerializeField] float LargestAddVelocityChangeMagnitude = 0;
 
     enum MovementModel { DebugMovementModel, ContinuousV1, ContinuousV2, VelocityChangeV1 };
 
@@ -274,6 +278,10 @@ public class PlayerMovementV3 : MonoBehaviour
         //Create direction of movement desired by player
         Vector3 InputDirection = new Vector3(InputMap.x, 0, InputMap.y); //TODO: processing based on horizontal angle host
 
+        //Naive model
+        //if(InputDirection.sqrMagnitude > 1) InputDirection = InputDirection.normalized;
+        //TestVelocity = Vector3.zero; if (InputDirection.sqrMagnitude > 0) TestVelocity = InputDirection * MoveSpd;
+
         //If a direction exists, accelerate towards it. otherwise decelerate towards 0
         if (InputDirection.sqrMagnitude == 0)
         {
@@ -312,10 +320,29 @@ public class PlayerMovementV3 : MonoBehaviour
         if (TestVelocity.sqrMagnitude != 0) // parallel component of RB velocity to the intended velocity
             TestVelocityDiff = (Vector3.Dot(TestVelocity, FilteredVelocity) / TestVelocity.magnitude) * TestVelocity.normalized;
 
+        //Recall that we are comparing parallel vectors here
+        if(Vector3.Dot(TestVelocity, RB.velocity) < 0)
+        {
+            //decelerating. Parallel component of velocity can be at MOST Deceleration * Time.FixedDeltaTime            
+            Vector3 Parallel = Vector3.zero;
+            Vector3 Perpendicular = Vector3.zero;
+
+            Parallel = (Vector3.Dot(TestVelocity, FilteredVelocity) / FilteredVelocity.magnitude) * FilteredVelocity.normalized;
+            //Perpendicular = TestVelocity - Parallel;
+
+            AddVelocity = (Parallel.normalized * Deceleration * Time.fixedDeltaTime) + Perpendicular;
+            //AddVelocity = ((-Parallel.normalized * Deceleration * Time.fixedDeltaTime) + Perpendicular);
 
 
+            //AddVelocity = (TestVelocity - TestVelocityDiff);
+            //if (AddVelocity.sqrMagnitude > Deceleration * Deceleration * Time.fixedDeltaTime * Time.fixedDeltaTime) AddVelocity = AddVelocity.normalized * Deceleration * Time.fixedDeltaTime;
+        }
+        else
+        {
+            //sustaining velocity
+            AddVelocity = (TestVelocity - TestVelocityDiff);
+        }
 
-        AddVelocity = (TestVelocity - TestVelocityDiff);
 
         //Damp (within standard movement speed control)
         if (InputDirection.sqrMagnitude > 0 && RB.velocity.sqrMagnitude <= MoveSpd * MoveSpd)
@@ -370,6 +397,11 @@ public class PlayerMovementV3 : MonoBehaviour
             {
                 LargestVelocityChange = (-(RB.velocity - TestVelocityDiff) + AddVelocity);
                 LargestVelocityChangeMagnitude = (-(RB.velocity - TestVelocityDiff) + AddVelocity).magnitude;
+            }
+            if ((AddVelocity).sqrMagnitude > LargestAddVelocityChangeMagnitude * LargestAddVelocityChangeMagnitude)
+            {
+                LargestAddVelocityChange = AddVelocity;
+                LargestAddVelocityChangeMagnitude = (AddVelocity).magnitude;
             }
         }
     }

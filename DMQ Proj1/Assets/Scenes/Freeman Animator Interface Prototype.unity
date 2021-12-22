@@ -13989,6 +13989,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FrontAcceleration: 75
   DampAcceleration: 50
+  Deceleration: 3
   MoveSpd: 6
   JumpHeight: 1
   HorizontalMovementAngleHost: {fileID: 6436032598716304838}
@@ -14004,6 +14005,8 @@ MonoBehaviour:
   TestAccel: 122
   LargestVelocityChange: {x: 0, y: 0, z: 0}
   LargestVelocityChangeMagnitude: 0
+  LargestAddVelocityChange: {x: 0, y: 0, z: 0}
+  LargestAddVelocityChangeMagnitude: 0
 --- !u!114 &6436032598716304840
 MonoBehaviour:
   m_ObjectHideFlags: 0
