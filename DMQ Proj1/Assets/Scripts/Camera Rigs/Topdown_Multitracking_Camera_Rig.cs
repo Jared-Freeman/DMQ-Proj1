@@ -164,7 +164,7 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
         float T_param = (transform.position - CamPositionDesired).magnitude / LeashDistance;
         //Debug.Log(T_param);
         T_param = Freeman_Utilities.MapValueFromRangeToRange(T_param, 0, LeashDistance, 0, 1);
-        if(FLAGDebug) Debug.Log(1-T_param);
+        //if(FLAGDebug) Debug.Log(1-T_param);
 
         transform.position = Vector3.Lerp(transform.position, CamPositionDesired, 1-T_param); //TODO: Make this actually smart
     }

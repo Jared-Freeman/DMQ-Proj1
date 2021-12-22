@@ -1,14 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-public class DebugApplyRandomImpulse : MonoBehaviour
+public class DebugApplyImpulseTowardsTarget : MonoBehaviour
 {
-    
     PlayerControls controls;
     Rigidbody RB;
-    public float ForceAmount = 10f;
+    public float ForceAmount = 30f;
+    public Transform Target;
 
     #region init
     private void Awake()
@@ -32,16 +31,10 @@ public class DebugApplyRandomImpulse : MonoBehaviour
         controls.Disable();
     }
     #endregion
-    
+
     void SpecialActionEvent()
     {
-        Vector3 RandomDirection = Vector3.zero;
-
-        RandomDirection.x = Random.Range(-1, 1);
-        RandomDirection.y = Random.Range(-1, 1);
-        RandomDirection.z = Random.Range(-1, 1);
-
-        RB.AddForce(RandomDirection.normalized * ForceAmount * RB.mass, ForceMode.Impulse);
+        Debug.Log("Impulse!");
+        RB.AddForce((Target.position - transform.position).normalized * ForceAmount * RB.mass, ForceMode.Impulse);
     }
-
 }
