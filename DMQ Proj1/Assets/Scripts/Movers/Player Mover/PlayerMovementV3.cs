@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
 
+//TODO: Figure out what data to store in this event args message
 public struct PlayerMovementEventArgs
 {
     public PlayerMovementEventArgs(string str)
@@ -17,7 +18,7 @@ public struct PlayerMovementEventArgs
 public class PlayerMovementV3 : MonoBehaviour
 {
     #region Members
-
+    //Behavior properties (TODO: clean up. Not really using diff accelerations rn)
     [Range(.1f, 5000f)] [Tooltip("m / sec^2")]
     public float FrontAcceleration = 1;
     [Range(.1f, 5000f)] [Tooltip("m / sec^2")]
@@ -25,7 +26,7 @@ public class PlayerMovementV3 : MonoBehaviour
     [Tooltip("Meters / sec")]
     public float MoveSpd = 1;
 
-
+    //TODO: impl this stuff
     [Header("Currently Obsolete")]
     [Tooltip("1.5x true value seems to be ideal rn")]
     public float JumpHeight = 1;
@@ -34,7 +35,7 @@ public class PlayerMovementV3 : MonoBehaviour
     [Tooltip("Scaled by Mass")] public float AddedDownwardForce = 1;
 
 
-
+    //External objects
     [Space(10)]
     [Header("External Object Refs")]
     public PlayerInput Input;
@@ -42,14 +43,12 @@ public class PlayerMovementV3 : MonoBehaviour
     private PlayerControls controls;
     [SerializeField] private Rigidbody RB;
 
+    //Horizontal movement state vectors (TODO: clean up)
     [Space(10)]
     [SerializeField] Vector2 VelocityMap = Vector2.zero; //affects horizontal movement velocity. Controlled via input
     [SerializeField] Vector2 InputMap = Vector2.zero;
     [SerializeField] Vector2 DragVector = Vector2.zero;
     [SerializeField] Vector3 AddVelocity = Vector2.zero;
-
-    //state variables
-    private bool IsDashing;
 
     #endregion
 
@@ -58,6 +57,7 @@ public class PlayerMovementV3 : MonoBehaviour
     //TODO: figure out what event arg type(s) to use and why
     public class PlayerMovementEvent : UnityEvent<PlayerMovementEventArgs> { };
 
+    //Not that these events are not static (aka they are instantiated, not global events when invoked)
     [SerializeField] public PlayerMovementEvent Event_AttackStart;
     [SerializeField] public PlayerMovementEvent Event_ChangeWeapon;
     [SerializeField] public PlayerMovementEvent Event_SpecialActionStart;
@@ -136,6 +136,7 @@ public class PlayerMovementV3 : MonoBehaviour
     }
     #endregion
 
+    #region Update Methods
     void Update()
     {
         //if (new Vector3(RB.velocity.x, 0, RB.velocity.z).sqrMagnitude > MoveSpd * MoveSpd * 4)
@@ -146,23 +147,22 @@ public class PlayerMovementV3 : MonoBehaviour
         UpdateMovementStates();
 
     }
-
-    private void FixedUpdate()
-    {
-        HorizontalMovementInput();
-    }
-
     private void UpdateMovementStates()
     {
         //grounded
 
-        //exceeding influencible speed
+        //exceeding influencible speed (maybe)
 
         //[maybe] crouched
         //[maybe] sprint
     }
-
-    #region Input Handlers
+    private void FixedUpdate()
+    {
+        HorizontalMovementInput();
+    }
+    #endregion
+        
+    #region Input Event Dispatcher
     // This function is called in Awake(), and creates controls 
     // + registers all the events that may occur due to player input
     private void InitInput()
@@ -188,17 +188,49 @@ public class PlayerMovementV3 : MonoBehaviour
         controls.MouseAndKeyboard.Wepon2Equip.performed += ctx => ChangeWeaponEvent();
 
     }
+    #endregion
+
+    #region Jump Movement Models
+    private void JumpInput()
+    {
+        StopCoroutine(JumpStart());
+        StartCoroutine(JumpStart());
+    }
+    public IEnumerator JumpNormal(float duration)
+    {
+        float StartTime = Time.time;
+        float LastCurTime = Time.time;
+        float CurTime = Time.time;
+        while (Mathf.Abs(CurTime - StartTime) < duration)
+        {
+            LastCurTime = CurTime;
+            CurTime = Time.time;
+            RB.AddForce(HorizontalMovementAngleHost.transform.forward * 50 * RB.mass * (Mathf.Abs(CurTime - LastCurTime) / duration), ForceMode.Force);
+
+            yield return new WaitForFixedUpdate();
+        }
+
+    }
+    public IEnumerator JumpStart()
+    {
+        yield return new WaitForFixedUpdate();
+
+        float JumpSpeed = Mathf.Sqrt(JumpHeight * -2f * Physics.gravity.y);
+        RB.AddForce(JumpSpeed * Vector3.up, ForceMode.VelocityChange);
+    }
+    #endregion
+    
+    #region Horizontal Movement Models
 
     [SerializeField] Vector3 TestVelocity = Vector3.zero;
-    //[SerializeField] float MoveSpd = 10f;
     [SerializeField] float TestAccel = 100f;
 
-
+    //Debug members
     [SerializeField] Vector3 LargestVelocityChange = Vector3.zero;
     [SerializeField] float LargestVelocityChangeMagnitude = 0;
 
 
-    enum MovementModel { DebugMovementModel, ContinuousV1, ContinuousV2, VelocityChangeV1};
+    enum MovementModel { DebugMovementModel, ContinuousV1, ContinuousV2, VelocityChangeV1 };
     private void HorizontalMovementInput()
     {
         //In case we ever want to change movement models
@@ -222,8 +254,6 @@ public class PlayerMovementV3 : MonoBehaviour
                 break;
         };
     }
-
-    #region Movement Models
     void DebugMovementModel()
     {
 
@@ -317,12 +347,12 @@ public class PlayerMovementV3 : MonoBehaviour
             Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + 1.5f, transform.position.z), AddVelocity * a, Color.cyan);
             //Debug.DrawRay(transform.position, (RB.velocity + AddVelocity) * a, Color.magenta);
             Debug.DrawRay(transform.position, new Vector3(RB.velocity.x, RB.velocity.y + .1f, RB.velocity.z) * a, Color.gray);
-        
+
             //OBSERVATION: We never alter more than MoveSpd's worth of velocity 
-            if((-(RB.velocity - TestVelocityDiff) + AddVelocity).sqrMagnitude > LargestVelocityChangeMagnitude * LargestVelocityChangeMagnitude)
+            if ((-(RB.velocity - TestVelocityDiff) + AddVelocity).sqrMagnitude > LargestVelocityChangeMagnitude * LargestVelocityChangeMagnitude)
             {
                 LargestVelocityChange = (-(RB.velocity - TestVelocityDiff) + AddVelocity);
-                LargestVelocityChangeMagnitude  = (-(RB.velocity - TestVelocityDiff) + AddVelocity).magnitude;
+                LargestVelocityChangeMagnitude = (-(RB.velocity - TestVelocityDiff) + AddVelocity).magnitude;
             }
         }
     }
@@ -498,37 +528,9 @@ public class PlayerMovementV3 : MonoBehaviour
     }
     #endregion
 
-    private void JumpInput()
-    {
-        StopCoroutine(JumpStart());
-        StartCoroutine(JumpStart());
-    }
-    public IEnumerator JumpNormal(float duration)
-    {
-        float StartTime = Time.time;
-        float LastCurTime = Time.time;
-        float CurTime = Time.time;
-        while (Mathf.Abs(CurTime - StartTime) < duration)
-        {
-            LastCurTime = CurTime;
-            CurTime = Time.time;
-            RB.AddForce(HorizontalMovementAngleHost.transform.forward * 50 * RB.mass * (Mathf.Abs(CurTime - LastCurTime) / duration), ForceMode.Force);
-
-            yield return new WaitForFixedUpdate();
-        }
-
-    }
-    public IEnumerator JumpStart()
-    {
-        yield return new WaitForFixedUpdate();
-
-        float JumpSpeed = Mathf.Sqrt(JumpHeight * -2f * Physics.gravity.y);
-        RB.AddForce(JumpSpeed * Vector3.up, ForceMode.VelocityChange);
-
-    }
+    //NYI
     private IEnumerator DoDash()
     {
         yield return new WaitForFixedUpdate();
     }
-    #endregion
 }
