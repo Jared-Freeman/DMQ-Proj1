@@ -372,8 +372,9 @@ public class PlayerMovementV3 : MonoBehaviour
             Vector3 ModifiedVelocity = AddVelocity + RB.velocity;
 
             Vector3 ParachuteVelocity = Vector3.zero;
-            if(ModifiedVelocity.sqrMagnitude > RB.velocity.sqrMagnitude) ParachuteVelocity = -(RB.velocity - ModifiedVelocity).magnitude * ModifiedVelocity.normalized;
-                       
+            //if (ModifiedVelocity.sqrMagnitude > RB.velocity.sqrMagnitude) ParachuteVelocity = -(RB.velocity - ModifiedVelocity).magnitude * ModifiedVelocity.normalized;
+            if (ModifiedVelocity.sqrMagnitude > RB.velocity.sqrMagnitude) ParachuteVelocity = Mathf.Abs(ModifiedVelocity.magnitude - RB.velocity.magnitude) * -ModifiedVelocity.normalized; //TODO: Optimize this!
+
             RB.AddForce((AddVelocity + ParachuteVelocity) * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
 
 

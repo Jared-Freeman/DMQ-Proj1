@@ -156,15 +156,17 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
         CamPositionDesired += Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized * -1f * CamAdditionalOffsetCurrent * CamOffsetScale;
 
         //Larger deadzones will make a Lerp method look ugly. Eventually want to implement a "thruster" approach for interp
-        transform.position = Vector3.Lerp(transform.position, CamPositionDesired, Mathf.Clamp(.95f * Time.deltaTime, 0, 1)); //TODO: Make this actually smart
+        //transform.position = Vector3.Lerp(transform.position, CamPositionDesired, Mathf.Clamp(1.45f * Time.deltaTime, 0, 1)); //TODO: Make this actually smart
 
 
         //Eventually fix this or whatever
-        //float LeashDistance = 3f;
-        //float T_param = (transform.position - CamPositionDesired).sqrMagnitude / (LeashDistance * LeashDistance);
-        //T_param = Mathf.Clamp(T_param, 0, 1);
+        float LeashDistance = 6f;
+        float T_param = (transform.position - CamPositionDesired).magnitude / LeashDistance;
+        //Debug.Log(T_param);
+        T_param = Freeman_Utilities.MapValueFromRangeToRange(T_param, 0, LeashDistance, 0, 1);
+        if(FLAGDebug) Debug.Log(1-T_param);
 
-        //transform.position = Vector3.Lerp(transform.position, CamPositionDesired, T_param); //TODO: Make this actually smart
+        transform.position = Vector3.Lerp(transform.position, CamPositionDesired, 1-T_param); //TODO: Make this actually smart
     }
 
     private bool CameraTargetIsInDeadzone()
