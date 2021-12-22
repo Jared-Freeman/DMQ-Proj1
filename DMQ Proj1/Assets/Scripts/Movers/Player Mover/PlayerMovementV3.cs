@@ -222,6 +222,7 @@ public class PlayerMovementV3 : MonoBehaviour
     
     #region Horizontal Movement Models
 
+    //TODO: Move these over to / combine with behavior properties
     [SerializeField] Vector3 TestVelocity = Vector3.zero;
     [SerializeField] float TestAccel = 100f;
 
@@ -229,12 +230,14 @@ public class PlayerMovementV3 : MonoBehaviour
     [SerializeField] Vector3 LargestVelocityChange = Vector3.zero;
     [SerializeField] float LargestVelocityChangeMagnitude = 0;
 
-
     enum MovementModel { DebugMovementModel, ContinuousV1, ContinuousV2, VelocityChangeV1 };
+
+    //This method is called in FixedUpdate()
     private void HorizontalMovementInput()
     {
         //In case we ever want to change movement models
         MovementModel CurrentModel = MovementModel.ContinuousV1;
+
         switch (CurrentModel)
         {
             case MovementModel.ContinuousV1:
@@ -254,6 +257,8 @@ public class PlayerMovementV3 : MonoBehaviour
                 break;
         };
     }
+
+
     void DebugMovementModel()
     {
 
@@ -327,14 +332,26 @@ public class PlayerMovementV3 : MonoBehaviour
             {
                 RB.AddForce(-(RB.velocity - TestVelocityDiff) * ForceCoefficient, ForceMode.Force);
             }
+
+
             float a = 2;
             Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + .75f, transform.position.z), -(RB.velocity - TestVelocityDiff) * a, Color.red);
         }
         //Damp (exceeding movement speed max)
         else
         {
-            //We are adding 
-            RB.AddForce(AddVelocity * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
+            //"Parachute" idea: Add the velocity * forceCoefficient, but pull "backward" on the rigidbody by the amount needed to maintain current velocity (a direction change, but not a velocity one)
+
+            Vector3 ModifiedVelocity = AddVelocity + RB.velocity;
+
+            Vector3 ParachuteVelocity = Vector3.zero;
+            if(ModifiedVelocity.sqrMagnitude > RB.velocity.sqrMagnitude) ParachuteVelocity = -(RB.velocity - ModifiedVelocity).magnitude * ModifiedVelocity.normalized;
+                       
+            RB.AddForce((AddVelocity + ParachuteVelocity) * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
+
+
+            float a = 2;
+            Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + .75f, transform.position.z), ParachuteVelocity * a, Color.green);
         }
 
 
