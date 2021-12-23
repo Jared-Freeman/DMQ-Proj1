@@ -277,7 +277,41 @@ public class PlayerMovementV3 : MonoBehaviour
 
         //Create direction of movement desired by player
         Vector3 InputDirection = new Vector3(InputMap.x, 0, InputMap.y); //TODO: processing based on horizontal angle host
+        {
+            float AngleDiff = Vector3.SignedAngle(RB.velocity.normalized, InputDirection, Vector3.up);
 
+            //TODO: Consider adding these to movement properties (global scope)
+            float MIN_ANGLE_TOLERANCE = 38.0f; //Very important. Controls the arc of player slide control when turning. Stay below 90!
+            float MAX_ANGLE_TOLERANCE = 134.9f; //Less important. Controls the angle tolerance for braking. Stay above 90, and stay above MIN!
+
+            //Preprocessing input. Clamp to within 180deg if we are going beyond standard movement speed
+            //TODO: verify angle computation is correct in all cases
+            if (
+                RB.velocity.sqrMagnitude != 0 
+                && (RB.velocity.sqrMagnitude > MoveSpd * MoveSpd) 
+                && Mathf.Abs(AngleDiff) > MIN_ANGLE_TOLERANCE 
+                && Mathf.Abs(AngleDiff) < MAX_ANGLE_TOLERANCE
+                ) 
+            {
+                float AngleDelta = 0;
+                if (AngleDiff > 0)  AngleDelta = -(MIN_ANGLE_TOLERANCE - Mathf.Abs(AngleDiff));
+                else                AngleDelta = (MIN_ANGLE_TOLERANCE - Mathf.Abs(AngleDiff));
+                
+                float SinD, CosD;
+                SinD = Mathf.Sin(Mathf.Deg2Rad * AngleDelta);
+                CosD = Mathf.Cos(Mathf.Deg2Rad * AngleDelta);
+
+                //reassign clamped value
+                InputDirection = new Vector3(
+                    (CosD * InputDirection.x - SinD * InputDirection.z)
+                    , InputDirection.y
+                    , (SinD * InputDirection.x + CosD * InputDirection.z)
+                    );
+
+                float a = 5;
+                Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z), InputDirection * a, Color.yellow);
+            }
+        }
         //Naive model
         //if(InputDirection.sqrMagnitude > 1) InputDirection = InputDirection.normalized;
         //TestVelocity = Vector3.zero; if (InputDirection.sqrMagnitude > 0) TestVelocity = InputDirection * MoveSpd;
@@ -298,7 +332,7 @@ public class PlayerMovementV3 : MonoBehaviour
         else
         {
             //accel
-            TestVelocity = TestVelocity + new Vector3(InputMap.x, 0, InputMap.y).normalized * TestAccel * Time.fixedDeltaTime;
+            TestVelocity = TestVelocity + InputDirection.normalized * TestAccel * Time.fixedDeltaTime;
 
             //clamp desired velocity max to move speed max
             if (TestVelocity.sqrMagnitude > MoveSpd * MoveSpd)
@@ -391,7 +425,7 @@ public class PlayerMovementV3 : MonoBehaviour
             float a = 2;
             Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + 1.5f, transform.position.z), AddVelocity * a, Color.cyan);
             //Debug.DrawRay(transform.position, (RB.velocity + AddVelocity) * a, Color.magenta);
-            Debug.DrawRay(transform.position, new Vector3(RB.velocity.x, RB.velocity.y + .1f, RB.velocity.z) * a, Color.gray);
+            Debug.DrawRay(transform.position, new Vector3(RB.velocity.x, RB.velocity.y + .1f, RB.velocity.z) * a, Color.white);
 
             //OBSERVATION: We never alter more than MoveSpd's worth of velocity 
             if ((-(RB.velocity - TestVelocityDiff) + AddVelocity).sqrMagnitude > LargestVelocityChangeMagnitude * LargestVelocityChangeMagnitude)

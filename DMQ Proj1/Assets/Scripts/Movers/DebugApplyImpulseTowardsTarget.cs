@@ -34,7 +34,7 @@ public class DebugApplyImpulseTowardsTarget : MonoBehaviour
 
     void SpecialActionEvent()
     {
-        Debug.Log("Impulse!");
+        //Debug.Log("Impulse!");
         RB.AddForce((Target.position - transform.position).normalized * ForceAmount * RB.mass, ForceMode.Impulse);
     }
 }
