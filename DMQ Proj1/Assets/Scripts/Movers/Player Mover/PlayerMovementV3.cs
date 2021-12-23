@@ -19,12 +19,14 @@ public class PlayerMovementV3 : MonoBehaviour
 {
     #region Members
     //Flags
+    [Header("__FLAGS__")]
     public bool FLAGCollectDebugTelemetry = false;
     public bool FLAGDisplayDebugGizmos = false;
 
 
 
     //Behavior properties (TODO: clean up. Not really using diff accelerations rn)
+    [Header("__MOVEMENT PROPERTIES__")]
     [Range(.1f, 2000f)] [Tooltip("Used in Velocity Change movement style ONLY. m / sec^2")]
     public float DampAcceleration = 1;
 
@@ -44,7 +46,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
 
     //TODO: impl this stuff
-    [Header("Currently Obsolete")]
+    [Header("__OBSOLETE__")]
     [Tooltip("1.5x true value seems to be ideal rn")]
     public float JumpHeight = 1;
     [Tooltip("Determines current \"north\" that the InputMap direction is relative to")]
@@ -56,20 +58,29 @@ public class PlayerMovementV3 : MonoBehaviour
 
     //External objects
     [Space(10)]
-    [Header("External Object Refs")]
+    [Header("__EXTERNAL OBJECT REFS__")]
     public PlayerInput Input;
     [SerializeField] private Inventory inventory;
     private PlayerControls controls;
     [SerializeField] private Rigidbody RB;
 
 
+    //Debug members
+    [Header("__DEBUG TELEMETRY__")]
+    [SerializeField] Vector2 InputMap = Vector2.zero; //Raw input from input events
 
-    //Horizontal movement state vectors (TODO: clean up)
-    [Space(10)]
-    [SerializeField] Vector2 VelocityMap = Vector2.zero; //affects horizontal movement velocity. Controlled via input
-    [SerializeField] Vector2 InputMap = Vector2.zero;
-    [SerializeField] Vector2 DragVector = Vector2.zero;
+    [Header("** continuous force model")]
+    [SerializeField] Vector3 DesiredVelocity = Vector3.zero;
     [SerializeField] Vector3 AddVelocity = Vector2.zero;
+    [Space(6)]
+    [SerializeField] Vector3 LargestVelocityChange = Vector3.zero;
+    [SerializeField] float LargestVelocityChangeMagnitude = 0;
+    [SerializeField] Vector3 LargestAddVelocityChange = Vector3.zero;
+    [SerializeField] float LargestAddVelocityChangeMagnitude = 0;
+
+    [Header("** velocity change model")]
+    [SerializeField] Vector2 VelocityMap = Vector2.zero; //affects horizontal movement velocity. Controlled via input
+    [SerializeField] Vector2 DragVector = Vector2.zero;
 
     #endregion
 
@@ -247,16 +258,6 @@ public class PlayerMovementV3 : MonoBehaviour
     
     #region Horizontal Movement Models
 
-    //TODO: Move these over to / combine with behavior properties
-
-    //Debug members
-    [Header("Debug Telemetry")]
-    [SerializeField] Vector3 DesiredVelocity = Vector3.zero;
-    [SerializeField] Vector3 LargestVelocityChange = Vector3.zero;
-    [SerializeField] float LargestVelocityChangeMagnitude = 0;
-    [SerializeField] Vector3 LargestAddVelocityChange = Vector3.zero;
-    [SerializeField] float LargestAddVelocityChangeMagnitude = 0;
-    
 
     //This method is called in FixedUpdate()
     private void HorizontalMovementInput()
