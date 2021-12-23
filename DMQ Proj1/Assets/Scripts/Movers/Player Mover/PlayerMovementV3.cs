@@ -18,6 +18,10 @@ public struct PlayerMovementEventArgs
 public class PlayerMovementV3 : MonoBehaviour
 {
     #region Members
+    //Flags
+    public bool FLAGCollectDebugTelemetry = false;
+    public bool FLAGDisplayDebugGizmos = false;
+
     //Behavior properties (TODO: clean up. Not really using diff accelerations rn)
     [Range(.1f, 5000f)] [Tooltip("m / sec^2")]
     public float FrontAcceleration = 1;
@@ -27,6 +31,8 @@ public class PlayerMovementV3 : MonoBehaviour
     public float Deceleration = 20;
     [Tooltip("Meters / sec")]
     public float MoveSpd = 1;
+    [Tooltip("Affects how the rigidbody forces are applied")]
+    public MovementModel MovementStyle = MovementModel.ContinuousAdvanced;
 
     //TODO: impl this stuff
     [Header("Currently Obsolete")]
@@ -233,24 +239,23 @@ public class PlayerMovementV3 : MonoBehaviour
     [SerializeField] float LargestVelocityChangeMagnitude = 0;
     [SerializeField] Vector3 LargestAddVelocityChange = Vector3.zero;
     [SerializeField] float LargestAddVelocityChangeMagnitude = 0;
-
-    enum MovementModel { DebugMovementModel, ContinuousV1, ContinuousV2, VelocityChangeV1 };
+    
+    public enum MovementModel { DebugMovementModel, ContinuousAdvanced, ContinuousSimple, VelocityChange };
 
     //This method is called in FixedUpdate()
     private void HorizontalMovementInput()
     {
-        //In case we ever want to change movement models
-        MovementModel CurrentModel = MovementModel.ContinuousV1;
+        //In case we ever want to change movement models, MovementStyle is implemented as a public, alterable property using Unity inspector
 
-        switch (CurrentModel)
+        switch (MovementStyle)
         {
-            case MovementModel.ContinuousV1:
+            case MovementModel.ContinuousAdvanced:
                 ContinuousMovementModel();
                 break;
-            case MovementModel.ContinuousV2:
+            case MovementModel.ContinuousSimple:
                 ContinuousMovementModelV2();
                 break;
-            case MovementModel.VelocityChangeV1:
+            case MovementModel.VelocityChange:
                 VelocityChangeModel();
                 break;
             case MovementModel.DebugMovementModel:
@@ -308,8 +313,11 @@ public class PlayerMovementV3 : MonoBehaviour
                     , (SinD * InputDirection.x + CosD * InputDirection.z)
                     );
 
-                float a = 5;
-                Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z), InputDirection * a, Color.yellow);
+                if(FLAGDisplayDebugGizmos)
+                {
+                    float a = 5;
+                    Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z), InputDirection * a, Color.yellow);
+                }
             }
         }
         //Naive model
@@ -395,8 +403,11 @@ public class PlayerMovementV3 : MonoBehaviour
             }
 
 
-            float a = 2;
-            Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + .75f, transform.position.z), -(RB.velocity - TestVelocityDiff) * a, Color.red);
+            if (FLAGDisplayDebugGizmos)
+            {
+                float a = 2;
+                Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + .75f, transform.position.z), -(RB.velocity - TestVelocityDiff) * a, Color.red);
+            }
         }
         //Damp (exceeding movement speed max)
         else
@@ -412,21 +423,27 @@ public class PlayerMovementV3 : MonoBehaviour
             RB.AddForce((AddVelocity + ParachuteVelocity) * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
 
 
-            float a = 2;
-            Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + .75f, transform.position.z), ParachuteVelocity * a, Color.green);
+            if (FLAGDisplayDebugGizmos)
+            {
+                float a = 2;
+                Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + .75f, transform.position.z), ParachuteVelocity * a, Color.green);
+            }
         }
 
 
 
 
 
-        // for testing
+        // for debug
+        if (FLAGDisplayDebugGizmos)
         {
             float a = 2;
             Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + 1.5f, transform.position.z), AddVelocity * a, Color.cyan);
             //Debug.DrawRay(transform.position, (RB.velocity + AddVelocity) * a, Color.magenta);
             Debug.DrawRay(transform.position, new Vector3(RB.velocity.x, RB.velocity.y + .1f, RB.velocity.z) * a, Color.white);
-
+        }
+        if (FLAGCollectDebugTelemetry)
+        {
             //OBSERVATION: We never alter more than MoveSpd's worth of velocity 
             if ((-(RB.velocity - TestVelocityDiff) + AddVelocity).sqrMagnitude > LargestVelocityChangeMagnitude * LargestVelocityChangeMagnitude)
             {
@@ -534,6 +551,7 @@ public class PlayerMovementV3 : MonoBehaviour
         }
 
         // for testing
+        if (FLAGDisplayDebugGizmos)
         {
             float a = 2;
             Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + 1.5f, transform.position.z), AddVelocity * a, Color.cyan);
@@ -593,9 +611,12 @@ public class PlayerMovementV3 : MonoBehaviour
             VelocityMap = VelocityMap.normalized * MoveSpd * 2; //max spd clamp
         }
 
-        Debug.DrawRay(gameObject.transform.position, new Vector3(DragVector.x, 0, DragVector.y), Color.magenta);
-        Debug.DrawRay(gameObject.transform.position, new Vector3(ProcessedInputMap.x * 1.5f, .6f, ProcessedInputMap.y * 1.5f), Color.green);
-        Debug.DrawRay(gameObject.transform.position, new Vector3(VelocityMap.x, 0, VelocityMap.y), Color.cyan);
+        if (FLAGDisplayDebugGizmos)
+        {
+            Debug.DrawRay(gameObject.transform.position, new Vector3(DragVector.x, 0, DragVector.y), Color.magenta);
+            Debug.DrawRay(gameObject.transform.position, new Vector3(ProcessedInputMap.x * 1.5f, .6f, ProcessedInputMap.y * 1.5f), Color.green);
+            Debug.DrawRay(gameObject.transform.position, new Vector3(VelocityMap.x, 0, VelocityMap.y), Color.cyan);
+        }
 
         Vector3 VelocityMap3 = new Vector3(VelocityMap.x, 0, VelocityMap.y);
         VelocityMap3 += RetainedVelocity;
