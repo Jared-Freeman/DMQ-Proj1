@@ -10,49 +10,59 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
     #region members
 
     //flags
-    [Space(10)]
-    [Header("**FLAGS**")]
-
-    //NYI
+    [Header("__FLAGS__")]
+    [Tooltip("For console output, draw rays...")]
     public bool FLAGDebug = false; //For console output, draw rays...
 
 
+    
     //settings
-    [Space(10)]
-    [Header("**SETTINGS**")]
+    [Header("__SETTINGS__")]
 
     [Range(-89.999f, 89.999f)]
     public float AngleMin = 0; //bounded to (-90,90), must be <= angle_max
+
     [Range(-89.999f, 89.999f)]
     public float AngleMax = 89.999f; //bounded to (-90,90)
 
+    //NYI
     public float MovementAcceleration = 1f;
     public float MovementDeceleration = 1f;
     public float MovementSpeedMax = 1f;
 
     [Range(0f, 1f)]
     public float CamOffsetScale = 1f;
+
     [Min(0f)]
     public float CameraDistanceDefault = 1f;
+
     [Min(.1f)]
     public float CameraDistanceMax = 1f;
+
     [Min(0f)]
     public float CameraDistanceMin = 1f;
 
     [Tooltip("X and Y should be zeroed. The length and width represent proportions of screen size and must be bounded between [0,1]")]
     public Rect DeadzoneDimensions = Rect.zero; //Centered at center of screen
 
+
+
+    //External refs
+    [Header("__EXTERNAL OBJECTS__")]
     public List<GameObject> TargetList;
-        
-    [Space(10)]
-    [Header("**SERIALIZED FIELDS**")]
+    private Camera AttachedCamera;
+
+
+
+    //Debug stuff. Note these data items are actually used in the script
+    [Header("__DEBUG TELEMETRY__")]
 
     //desired states
     [SerializeField]
     private float CamDistanceDesired; //NOTE: This is a SCALAR not a vector!
     [SerializeField]
-    private Vector3 CamTargetPositionDesired = Vector3.zero; //NOTE: This is a SCALAR not a vector!
-    private Vector3 CamPositionDesired = Vector3.zero; //NOTE: This is a SCALAR not a vector!
+    private Vector3 CamTargetPositionDesired = Vector3.zero;
+    private Vector3 CamPositionDesired = Vector3.zero;
 
     //state variables
     [SerializeField]
@@ -60,7 +70,6 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
     [SerializeField]
     private float CamAdditionalOffsetCurrent;
 
-    private Camera AttachedCamera;
 
 
     #endregion
@@ -126,8 +135,11 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
         float MaxY = Mathf.NegativeInfinity, MinY = Mathf.Infinity;
         foreach (GameObject GO in TargetList)
         {
-            if (FLAGDebug) Debug.Log(gameObject.name + ": targetlist chk");
-            if (FLAGDebug) Debug.DrawRay(GO.transform.position, Vector3.up * 7f, Color.cyan);
+            if (FLAGDebug)
+            {
+                Debug.Log(gameObject.name + ": targetlist chk");
+                Debug.DrawRay(GO.transform.position, Vector3.up * 7f, Color.cyan);
+            }
 
             if (GO.transform.position.x < MinX) MinX = GO.transform.position.x;
             if (GO.transform.position.x > MaxX) MaxX = GO.transform.position.x;
@@ -141,9 +153,12 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
 
         CamTargetPositionDesired = new Vector3((MaxX + MinX) / 2, (MaxY + MinY) / 2, (MaxZ + MinZ) / 2);
 
-        if (FLAGDebug) Debug.DrawRay(CamTargetPositionDesired, Vector3.up * 2f, Color.green);
-        if (FLAGDebug) Debug.DrawRay(CamTargetPositionDesired, Vector3.forward * 2f, Color.blue);
-        if (FLAGDebug) Debug.DrawRay(CamTargetPositionDesired, Vector3.right * 2f, Color.red);
+        if (FLAGDebug)
+        {
+            Debug.DrawRay(CamTargetPositionDesired, Vector3.up * 2f, Color.green);
+            Debug.DrawRay(CamTargetPositionDesired, Vector3.forward * 2f, Color.blue);
+            Debug.DrawRay(CamTargetPositionDesired, Vector3.right * 2f, Color.red);
+        }
         //CamPositionDesired = new Vector3(4,0,4);
     }
 
@@ -171,9 +186,12 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
 
     private bool CameraTargetIsInDeadzone()
     {
+        //Exit if deadzone doesnt exist
+        if (DeadzoneDimensions.height <= 0 || DeadzoneDimensions.width <= 0) return false;
+        
+
         Vector3 ScreenPosition = AttachedCamera.WorldToScreenPoint(CamTargetPositionDesired);
-
-
+        
         float H_half = .5f * Screen.height * Mathf.Clamp(DeadzoneDimensions.height, 0, 1);
 
         //check x dims
