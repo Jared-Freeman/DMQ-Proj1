@@ -303,8 +303,8 @@ public class PlayerMovementV3 : MonoBehaviour
             float AngleDiff = Vector3.SignedAngle(RB.velocity.normalized, InputDirection, Vector3.up);
 
             //TODO: Consider adding these to movement properties (global scope)
-            float MIN_ANGLE_TOLERANCE = 38.0f; //Very important. Controls the arc of player slide control when turning. Stay below 90!
-            float MAX_ANGLE_TOLERANCE = 134.9f; //Less important. Controls the angle tolerance for braking. Stay above 90, and stay above MIN!
+            float MIN_ANGLE_TOLERANCE = 40.0f; //Very important. Controls the arc of player slide control when turning. Stay below 90!
+            float MAX_ANGLE_TOLERANCE = 158.4f; //Less important. Controls the angle tolerance for braking. Stay above 90, and stay above MIN!
 
             //Preprocessing input. Clamp to within 180deg if we are going beyond standard movement speed
             //TODO: verify angle computation is correct in all cases
