@@ -45,6 +45,8 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
     [Tooltip("X and Y should be zeroed. The length and width represent proportions of screen size and must be bounded between [0,1]")]
     public Rect DeadzoneDimensions = Rect.zero; //Centered at center of screen
 
+    public enum MovementStyle {DebugMovement, LerpSimple, LogVelocity};
+    public MovementStyle MovementType = MovementStyle.LogVelocity;
 
 
     //External refs
@@ -81,51 +83,24 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
     }
     #endregion
 
+    #region Update
+
     private void Update()
     {
+        //These methods must be executed in this order
         UpdateTargetDesiredPosition();
-        CamDistanceDesired = CameraDistanceDefault;
-        CamPositionDesired = CamTargetPositionDesired + (transform.forward * -1f * CamDistanceDesired);
+        UpdateCamDistanceDesired();
+        UpdateCamPositionDesired();
 
         if (!CameraTargetIsInDeadzone())
         {
             InterpolateToDesiredPosition();
         }
 
-
-
         if (FLAGDebug) Debug.DrawRay(transform.position, transform.forward * 50, Color.blue);
     }
 
-    //TODO: Cache most of these computations and recalculate them only when we change the state variables
-    //TODO: Parameterize the strength of additional offset (based on parallel linear component distance between closest and furthest tracked obj)
-    private float ComputeAdditionalOffset()
-    {
-        float h, sigma1, sigma2, sigma3, theta; // delta1;
-        h = transform.position.y - CamTargetPositionDesired.y; if (h < 0) return 0;
-        sigma1 = Vector3.Angle(transform.forward, Vector3.ProjectOnPlane(transform.forward, Vector3.up));
-        sigma2 = 90 - sigma1;
-        theta = GetComponent<Camera>().GetGateFittedFieldOfView();
-        sigma3 = (theta/2) - sigma2; //can be negative
-        //delta1 = 180 - (180 - sigma1) - theta / 2;
-
-        float a, b, c;
-        a = CamDistanceDesired * Mathf.Cos(Mathf.Deg2Rad * sigma1);
-        b = h * Mathf.Tan(Mathf.Deg2Rad * (sigma2 + theta/2));
-        c = b - a;
-
-        float aa = 0, ab = 0;
-        aa = CamDistanceDesired * Mathf.Sin(Mathf.Deg2Rad * sigma2);
-        if(sigma3 > 0)
-        {
-            ab = h * Mathf.Tan(Mathf.Deg2Rad * sigma3);
-        }
-
-        //if (FLAGDebug) Debug.Log("ANGLES: " + " " + theta + " " +/* delta1 +*/ " " + sigma1 + " " + sigma2 + " " + sigma3);
-        //if (FLAGDebug) Debug.Log("MEASUREMENTS: " + h + " " + a + " " + b + " " + c + " " + aa + " " + ab);
-
-        return (c - aa - ab) / 2;
-    }
+    #region Update Vars
 
     private void UpdateTargetDesiredPosition()
     {
@@ -162,17 +137,82 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
         //CamPositionDesired = new Vector3(4,0,4);
     }
 
-    private void InterpolateToDesiredPosition()
+    private void UpdateCamDistanceDesired()
     {
-        /* TODO: Add-in offset component in screen-space computations (or after computation?)
-        */
+        CamDistanceDesired = CameraDistanceDefault;
+        CamPositionDesired = CamTargetPositionDesired + (transform.forward * -1f * CamDistanceDesired);
+    }
+
+    private void UpdateCamPositionDesired()
+    {
+        //TODO: Add-in offset component in screen-space computations (or after computation?)
         CamAdditionalOffsetCurrent = 0f; //Can re-add offset when it's fully parameterized       
         CamAdditionalOffsetCurrent = ComputeAdditionalOffset();
         CamPositionDesired += Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized * -1f * CamAdditionalOffsetCurrent * CamOffsetScale;
+    }
 
+    //TODO: Cache most of these computations and recalculate them only when we change the state variables
+    //TODO: Parameterize the strength of additional offset (based on parallel linear component distance between closest and furthest tracked obj)
+    private float ComputeAdditionalOffset()
+    {
+        float h, sigma1, sigma2, sigma3, theta; // delta1;
+        h = transform.position.y - CamTargetPositionDesired.y; if (h < 0) return 0;
+        sigma1 = Vector3.Angle(transform.forward, Vector3.ProjectOnPlane(transform.forward, Vector3.up));
+        sigma2 = 90 - sigma1;
+        theta = GetComponent<Camera>().GetGateFittedFieldOfView();
+        sigma3 = (theta / 2) - sigma2; //can be negative
+        //delta1 = 180 - (180 - sigma1) - theta / 2;
+
+        float a, b, c;
+        a = CamDistanceDesired * Mathf.Cos(Mathf.Deg2Rad * sigma1);
+        b = h * Mathf.Tan(Mathf.Deg2Rad * (sigma2 + theta / 2));
+        c = b - a;
+
+        float aa = 0, ab = 0;
+        aa = CamDistanceDesired * Mathf.Sin(Mathf.Deg2Rad * sigma2);
+        if (sigma3 > 0)
+        {
+            ab = h * Mathf.Tan(Mathf.Deg2Rad * sigma3);
+        }
+
+        //if (FLAGDebug) Debug.Log("ANGLES: " + " " + theta + " " +/* delta1 +*/ " " + sigma1 + " " + sigma2 + " " + sigma3);
+        //if (FLAGDebug) Debug.Log("MEASUREMENTS: " + h + " " + a + " " + b + " " + c + " " + aa + " " + ab);
+
+        return (c - aa - ab) / 2;
+    }
+    #endregion
+
+    #endregion
+
+    #region Movement
+    private void InterpolateToDesiredPosition()
+    {
+
+        switch (MovementType)
+        {
+            case MovementStyle.DebugMovement:
+                DebugMovement();
+                break;
+            case MovementStyle.LogVelocity:
+                LogVelocityMovement();
+                break;
+            case MovementStyle.LerpSimple:
+                LerpSimpleMovement();
+                break;
+            default:
+                break;
+        };
+    }
+
+    void DebugMovement()
+    {
+        transform.position = CamPositionDesired;
+    }
+
+    void LerpSimpleMovement()
+    {
         //Larger deadzones will make a Lerp method look ugly. Eventually want to implement a "thruster" approach for interp
         //transform.position = Vector3.Lerp(transform.position, CamPositionDesired, Mathf.Clamp(1.45f * Time.deltaTime, 0, 1)); //TODO: Make this actually smart
-
 
         //Eventually fix this or whatever
         float LeashDistance = 6f;
@@ -181,8 +221,15 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
         T_param = Freeman_Utilities.MapValueFromRangeToRange(T_param, 0, LeashDistance, 0, 1);
         //if(FLAGDebug) Debug.Log(1-T_param);
 
-        transform.position = Vector3.Lerp(transform.position, CamPositionDesired, 1-T_param); //TODO: Make this actually smart
+        transform.position = Vector3.Lerp(transform.position, CamPositionDesired, 1 - T_param); //TODO: Make this actually smart
+
     }
+
+    void LogVelocityMovement()
+    {
+
+    }
+    #endregion
 
     private bool CameraTargetIsInDeadzone()
     {
