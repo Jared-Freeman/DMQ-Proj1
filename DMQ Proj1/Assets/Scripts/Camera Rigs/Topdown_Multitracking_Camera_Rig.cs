@@ -48,6 +48,11 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
     public enum MovementStyle {DebugMovement, LerpSimple, LogVelocity};
     public MovementStyle MovementType = MovementStyle.LogVelocity;
 
+    //Movement Style specific properties
+    [Header("*** Movement Style Properties ***")]
+    public float LogVelocity_Acceleration = 14f; //we express acceleration using this and a standard log function
+    [Min(.000001f)]
+    public float LogVelocity_CameraSoftRadius = 8f;
 
     //External refs
     [Header("__EXTERNAL OBJECTS__")]
@@ -187,7 +192,6 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
     #region Movement
     private void InterpolateToDesiredPosition()
     {
-
         switch (MovementType)
         {
             case MovementStyle.DebugMovement:
@@ -227,6 +231,23 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
 
     void LogVelocityMovement()
     {
+        float delta = (transform.position - CamPositionDesired).magnitude / LogVelocity_CameraSoftRadius;
+
+        float CurrentMoveSpeed = Mathf.Log(delta + 1, 2) * LogVelocity_Acceleration; //CurrentMoveSpeed: [0, +inf)
+
+        if (FLAGDebug) Debug.Log(CurrentMoveSpeed);
+
+        float DisplacementMagnitude = CurrentMoveSpeed * Time.deltaTime;
+        Vector3 Distance = (CamPositionDesired - transform.position);
+        float DisplacementToleranceScale = 1.001f;
+        if (Distance.sqrMagnitude > DisplacementMagnitude * DisplacementMagnitude * DisplacementToleranceScale)
+        {
+            transform.position = transform.position + Distance.normalized * DisplacementMagnitude;
+        }
+        else
+        {
+            transform.position = CamPositionDesired;
+        }
 
     }
     #endregion
