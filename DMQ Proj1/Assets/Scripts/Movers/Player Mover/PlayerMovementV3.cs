@@ -404,7 +404,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
 
         //Damp (within standard movement speed control)
-        if (InputDirection.sqrMagnitude > 0 && RB.velocity.sqrMagnitude <= MoveSpd * MoveSpd)
+        if (/*InputDirection.sqrMagnitude > 0 && */RB.velocity.sqrMagnitude <= MoveSpd * MoveSpd) //First check was causing sloppy deceleration within standard MoveSpd
         {
             RB.AddForce(AddVelocity * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
 
