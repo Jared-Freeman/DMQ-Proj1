@@ -22,15 +22,6 @@ public class GenericProjectileMover : MonoBehaviour
 
     public MovementStyleOptions MovementTypeOptions;
 
-    [System.Serializable]
-    public struct GenericProjectileMessagePayload
-    {
-        public string TestMessage;
-        public List<ProjectileEffect> PayloadEffects;
-    };
-
-    public GenericProjectileMessagePayload Payload; //TODO: make this extendable or something
-
     //state variables (you can use these however you want in your mover)
     //counters
     float ProjectileTimeAlive = 0;
@@ -179,7 +170,13 @@ public class GenericProjectileMover : MonoBehaviour
 
     void LinearSimpleMovement()
     {
-        transform.position += MovementTypeOptions.LinearSimpleOptions.InitialDirection.normalized * MovementTypeOptions.LinearSimpleOptions.Speed * Time.deltaTime;
+        //transform.position += MovementTypeOptions.LinearSimpleOptions.InitialDirection.normalized * MovementTypeOptions.LinearSimpleOptions.Speed * Time.deltaTime;
+
+        transform.Translate(MovementTypeOptions.LinearSimpleOptions.InitialDirection.normalized * MovementTypeOptions.LinearSimpleOptions.Speed * Time.deltaTime);
+        if(ProjectileTimeAlive > MovementTypeOptions.LinearSimpleOptions.MaxProjectileDuration)
+        {
+
+        }
     }
 
 
