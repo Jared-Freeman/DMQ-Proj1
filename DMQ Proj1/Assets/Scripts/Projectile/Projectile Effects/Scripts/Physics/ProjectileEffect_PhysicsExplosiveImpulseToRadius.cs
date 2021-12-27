@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq; //For ToList()
 
-[CreateAssetMenu(fileName = "ProjectileEffect_PhysicsExplosiveImpulse", menuName = "ScriptableObjects/ProjectileEffect/ProjectileEffect_PhysicsExplosiveImpulseToRadiusScriptableObject", order = 1)]
+[CreateAssetMenu(fileName = "ProjectileEffect_PhysicsExplosiveImpulse", menuName = "ScriptableObjects/ProjectileEffect/Physics/Explosive Impulse to Targets in Radius", order = 1)]
 public class ProjectileEffect_PhysicsExplosiveImpulseToRadius : ProjectileEffect
 {
     #region Members
@@ -25,9 +25,7 @@ public class ProjectileEffect_PhysicsExplosiveImpulseToRadius : ProjectileEffect
     {
         base.PerformPayloadEffect(Projectile);
 
-        //Get all RBs in radius
-        List<Rigidbody> RBs = new List<Rigidbody>();
-
+        //Get all Colliders in radius
         List<Collider> Colliders;
 
         Vector3 ExpPosition = Projectile.transform.position;
