@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a685ff2abfa860845b117ba984577b30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MovementType: 2
+  MovementType: 5
   MovementTypeOptions:
     LinearSimpleOptions:
       InitialDirection: {x: -1, y: 0, z: 0}
@@ -172,12 +172,12 @@ MonoBehaviour:
         - serializedVersion: 3
           time: 0
           value: 0
-          inSlope: 2
-          outSlope: 2
-          tangentMode: 34
+          inSlope: 4.142343
+          outSlope: 4.142343
+          tangentMode: 0
           weightedMode: 0
           inWeight: 0
-          outWeight: 0.33333334
+          outWeight: 0.09761905
         - serializedVersion: 3
           time: 0.5
           value: 1
@@ -190,33 +190,30 @@ MonoBehaviour:
         - serializedVersion: 3
           time: 1
           value: 0
-          inSlope: -2
-          outSlope: -2
-          tangentMode: 34
+          inSlope: -3.928325
+          outSlope: -3.928325
+          tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0.10238099
           outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
       MaxHeight: 3
     PhysicsContinuousForceOptions:
-      InitialDirection: {x: 0, y: 0, z: 0}
-      Speed: 0
+      FLAGScaleForceByMass: 0
+      Direction: {x: 1, y: 0, z: 0}
+      ForcePerSecond: 5
     PhysicsImpulseOptions:
-      InitialDirection: {x: 0, y: 0, z: 0}
-      Speed: 0
-      MaxProjectileDuration: 0
-      MaxCollisions: 0
+      FLAGScaleForceByMass: 1
+      FLAGUseSpeedComputationInsteadOfForce: 0
+      Direction: {x: 0.3, y: 1, z: 0}
+      Force: 5555
+      Speed: 13
     HomingSimpleOptions:
-      InitialDirection: {x: 0, y: 0, z: 0}
-      Speed: 0
-      MaxProjectileDuration: 0
-      MaxCollisions: 0
-  ParaS_ImpactTarget: {x: 0, y: 0, z: 0}
-  ParaS_InitialPosition: {x: 0, y: 0, z: 0}
-  ParaS_Speed: 0
-  ParaS_CurrentTimestamp: 0
+      Target: {fileID: 776937329}
+      Speed: 2
+      TurnRate: 70
 --- !u!114 &98659923
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -250,7 +247,7 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 98659921}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
@@ -310,7 +307,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 98659921}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -1.5}
+  m_LocalPosition: {x: -0.5, y: 1, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -327,7 +324,7 @@ Rigidbody:
   m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 1
   m_Constraints: 0
@@ -783,6 +780,99 @@ MonoBehaviour:
   CamTargetPositionDesired: {x: 0, y: 0, z: 0}
   CamDistanceCurrent: 0
   CamAdditionalOffsetCurrent: 0
+--- !u!1 &776937329
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 776937333}
+  - component: {fileID: 776937332}
+  - component: {fileID: 776937331}
+  - component: {fileID: 776937330}
+  m_Layer: 0
+  m_Name: HomingTarget
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!135 &776937330
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 776937329}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &776937331
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 776937329}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 18943def07ffda04d89f6f8bdb1b4e6f, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &776937332
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 776937329}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &776937333
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 776937329}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7, y: 1, z: -0.5}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &957548939
 GameObject:
   m_ObjectHideFlags: 0
@@ -1803,22 +1893,19 @@ MonoBehaviour:
         m_RotationOrder: 4
       MaxHeight: 0
     PhysicsContinuousForceOptions:
-      InitialDirection: {x: 0, y: 0, z: 0}
-      Speed: 0
+      FLAGScaleForceByMass: 0
+      Direction: {x: 0, y: 0, z: 0}
+      ForcePerSecond: 0
     PhysicsImpulseOptions:
-      InitialDirection: {x: 0, y: 0, z: 0}
-      Speed: 0
-      MaxProjectileDuration: 0
-      MaxCollisions: 0
+      FLAGScaleForceByMass: 0
+      FLAGUseSpeedComputationInsteadOfForce: 1
+      Direction: {x: 0, y: 0, z: 0}
+      Force: 0
+      Speed: 13
     HomingSimpleOptions:
-      InitialDirection: {x: 0, y: 0, z: 0}
+      Target: {fileID: 0}
       Speed: 0
-      MaxProjectileDuration: 0
-      MaxCollisions: 0
-  ParaS_ImpactTarget: {x: 0, y: 0, z: 0}
-  ParaS_InitialPosition: {x: 0, y: 0, z: 0}
-  ParaS_Speed: 0
-  ParaS_CurrentTimestamp: 0
+      TurnRate: 0
 --- !u!114 &1910455291
 MonoBehaviour:
   m_ObjectHideFlags: 0

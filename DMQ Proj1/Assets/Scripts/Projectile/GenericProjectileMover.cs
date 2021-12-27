@@ -71,7 +71,7 @@ public class GenericProjectileMover : MonoBehaviour
                 break;
 
             case MovementStyle.HomingSimple:
-
+                InitHomingSimple();
                 break;
         };
     }
@@ -343,14 +343,40 @@ public class GenericProjectileMover : MonoBehaviour
     [System.Serializable]
     public struct HomingSimpleMovementOptions
     {
-        public Vector3 InitialDirection;
+        public GameObject Target;
         public float Speed;
+        [Min(0f)] [Tooltip("Degrees per second")]
+        public float TurnRate; //Deg / Sec
     };
+
+    //members
+    Vector3 HSM_CurrentDirection = Vector3.zero;
+
+    //initialization
+    void InitHomingSimple()
+    {
+        RB.isKinematic = true;
+        if (MovementTypeOptions.HomingSimpleOptions.Target == null)
+        {
+            Debug.LogError("No GameObject assigned!");
+        }
+        else
+        {
+            HSM_CurrentDirection = (MovementTypeOptions.HomingSimpleOptions.Target.transform.position - transform.position).normalized;
+        }
+
+    }
 
     //update
     void HomingSimpleMovement()
     {
+        HSM_CurrentDirection = Vector3.RotateTowards(
+            HSM_CurrentDirection
+            , (MovementTypeOptions.HomingSimpleOptions.Target.transform.position - transform.position).normalized
+            , Mathf.Deg2Rad * MovementTypeOptions.HomingSimpleOptions.TurnRate * Time.deltaTime
+            , 0);
 
+        transform.position += HSM_CurrentDirection * MovementTypeOptions.HomingSimpleOptions.Speed * Time.deltaTime;
     }
 
 
