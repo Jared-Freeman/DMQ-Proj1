@@ -15,12 +15,14 @@ public class ProjectileEffect_ApplyDamageToActor : ProjectileEffect
 
     public override void PerformPayloadEffect(GenericProjectile Projectile, Collider Col = null)
     {
-        if(Col != null)
+        base.PerformPayloadEffect(Projectile, Col);
+        if (Col != null)
         {
             //Check to see if target is an actor
-            if (Col.GetComponent<ActorStats>() != null)
+            ActorStats Stats = Col.GetComponent<ActorStats>();
+
+            if (Stats != null)
             {
-                ActorStats Stats = Col.GetComponent<ActorStats>();
                 //Send Damage message to actor
                 DamageMessage Message = new DamageMessage
                 {

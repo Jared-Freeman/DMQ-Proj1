@@ -195,10 +195,10 @@ MonoBehaviour:
     EndProjectileEffects:
       ProjectileFXList: []
     CollisionEnterProjectileEffects:
-      ProjectileFXList:
-      - {fileID: 11400000, guid: cab36a4ffce1e044c9e15425df215316, type: 2}
-    CollisionStayProjectileEffects:
       ProjectileFXList: []
+    CollisionStayProjectileEffects:
+      ProjectileFXList:
+      - {fileID: 11400000, guid: 9e34ca84241792548ac4c27edaf1b277, type: 2}
     CollisionExitProjectileEffects:
       ProjectileFXList: []
     StartProjectileEffects:
@@ -1408,7 +1408,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-2650
+  m_Name: pb_Mesh15710
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1645,6 +1645,61 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1887681349}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1887681351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1887681350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed011630c08666a4fa5562184efcedeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Flag_ActorDebug: 0
+  Stats: {fileID: 0}
+  Actions: []
+  StatusEffects: []
+  controller: {fileID: 0}
+  attack: {fileID: 0}
+--- !u!114 &1887681352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1887681350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48e57ff7552ce9049b449f01c661137f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HpMax: 2
+  EnergyMax: 0
+  HpCurrent: 0
+  EnergyCurrent: 0
+  invulnerabiltyTime: 0
+  atk: 0
+  def: 0
+  totalAtk: 0
+  totalDef: 0
+  m_timeSinceLastHit: 0
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  OnReceiveDamage:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHitWhileInvulnerable:
+    m_PersistentCalls:
+      m_Calls: []
+  OnBecomeVulnerable:
+    m_PersistentCalls:
+      m_Calls: []
+  OnResetDamage:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1910455288
 GameObject:
   m_ObjectHideFlags: 0

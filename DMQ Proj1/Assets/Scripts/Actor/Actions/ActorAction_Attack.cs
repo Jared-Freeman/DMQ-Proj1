@@ -164,6 +164,7 @@ public class ActorAction_Attack : MonoBehaviour
         else
             data.damageSource = transform.position;
         data.stopCamera = false;
+        data.FLAG_IgnoreInvulnerability = false;
 
         d.ApplyDamage(data);
 

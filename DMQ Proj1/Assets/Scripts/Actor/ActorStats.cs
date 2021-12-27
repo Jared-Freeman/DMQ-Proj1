@@ -66,8 +66,8 @@ public class ActorStats : MonoBehaviour
         {//ignore damage if already dead. TODO : may have to change that if we want to detect hit on death...
             return;
         }
-
-        if (isInvulnerable)
+        
+        if (isInvulnerable && !data.FLAG_IgnoreInvulnerability)
         {
             OnHitWhileInvulnerable.Invoke();
             return;
@@ -106,4 +106,6 @@ public struct DamageMessage
     public Vector3 damageSource;
 
     public bool stopCamera;
+
+    public bool FLAG_IgnoreInvulnerability; //Useful for consistent DOT damage. Default (because struct) == FALSE
 }

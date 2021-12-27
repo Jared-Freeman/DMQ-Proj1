@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //TODO: Consider a less expensive way to compute this (a Coroutine with OnDOTEnter() OnDOTExit() and lower frequency???)
-[CreateAssetMenu(fileName = "ProjectileEffect", menuName = "ScriptableObjects/ProjectileEffect/Actor/Apply Damage Over Time to Actor", order = 1)]
+[CreateAssetMenu(fileName = "ProjectileEffect", menuName = "ScriptableObjects/ProjectileEffect/Actor/Apply Damage Over Time to Actor (Fixed DT)", order = 1)]
 public class ProjectileEffect_ApplyDamageOverTimeToActor : ProjectileEffect
 {
     [System.Serializable]
@@ -16,7 +16,8 @@ public class ProjectileEffect_ApplyDamageOverTimeToActor : ProjectileEffect
 
     public override void PerformPayloadEffect(GenericProjectile Projectile, Collider Col = null)
     {
-        if(Col != null)
+        base.PerformPayloadEffect(Projectile, Col);
+        if (Col != null)
         {
             //Check to see if target is an actor
             ActorStats Stats = Col.GetComponent<ActorStats>();
@@ -28,7 +29,8 @@ public class ProjectileEffect_ApplyDamageOverTimeToActor : ProjectileEffect
                 {
                     amount = Options.DamagePerSecond * Time.fixedDeltaTime,
                     damageSource = Projectile.transform.position,
-                    direction = (Col.gameObject.transform.position - Projectile.transform.position).normalized
+                    direction = (Col.gameObject.transform.position - Projectile.transform.position).normalized,
+                    FLAG_IgnoreInvulnerability = true
                 };
 
                 Stats.ApplyDamage(Message);
