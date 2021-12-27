@@ -61,8 +61,6 @@ public class GenericProjectileMover : MonoBehaviour
                         , MovementTypeOptions.ParabolicSimpleOptions.InitialHorizontalDirection.y)
                     * MovementTypeOptions.ParabolicSimpleOptions.LaunchDistance);
 
-                ParaS_Speed = MovementTypeOptions.ParabolicSimpleOptions.LaunchDistance / MovementTypeOptions.ParabolicSimpleOptions.TravelTime;
-
                 ParaS_InitialPosition = transform.position;
 
                 AnimationCurve Curv = MovementTypeOptions.ParabolicSimpleOptions.HeightOverTime;
@@ -233,7 +231,6 @@ public class GenericProjectileMover : MonoBehaviour
     Vector3 ParaS_ImpactTarget = Vector3.zero;
     [SerializeField]
     Vector3 ParaS_InitialPosition = Vector3.zero;
-    public float ParaS_Speed;
     public float ParaS_CurrentTimestamp = 0f;
     void ParabolicSimpleMovement()
     {
