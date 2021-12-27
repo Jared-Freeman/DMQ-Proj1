@@ -27,7 +27,7 @@ public class GenericProjectileMover : MonoBehaviour
     float ProjectileTimeAlive = 0;
     float ProjectileCollisions = 0;
 
-
+    private Rigidbody RB;
 
     #endregion
 
@@ -35,6 +35,9 @@ public class GenericProjectileMover : MonoBehaviour
 
     private void Start()
     {
+        RB = GetComponent<Rigidbody>();
+        if (RB == null) RB = new Rigidbody();
+
         InitializeMovementMethod();
     }
 
@@ -54,23 +57,7 @@ public class GenericProjectileMover : MonoBehaviour
                 break;
 
             case MovementStyle.ParabolicSimple:
-                ParaS_ImpactTarget = transform.position 
-                    + (new Vector3(
-                        MovementTypeOptions.ParabolicSimpleOptions.InitialHorizontalDirection.x
-                        , 0
-                        , MovementTypeOptions.ParabolicSimpleOptions.InitialHorizontalDirection.y)
-                    * MovementTypeOptions.ParabolicSimpleOptions.LaunchDistance);
-
-                ParaS_InitialPosition = transform.position;
-
-                AnimationCurve Curv = MovementTypeOptions.ParabolicSimpleOptions.HeightOverTime;
-                if(Curv == null)
-                {
-                    //This creates a faux linear projectile
-                    MovementTypeOptions.ParabolicSimpleOptions.HeightOverTime = AnimationCurve.Constant(0, 1, 0);
-                    //Add a keyframe for apex of parabolic arc
-                    MovementTypeOptions.ParabolicSimpleOptions.HeightOverTime.AddKey(new Keyframe(.5f, 1));
-                }
+                InitParabolicSimple();
                 break;
 
             //Impl in Fixed FixedUpdateMovement()
@@ -80,6 +67,8 @@ public class GenericProjectileMover : MonoBehaviour
 
             //Impl in Fixed FixedUpdateMovement()
             case MovementStyle.PhysicsImpulse:
+
+                InitPhysicsImpulse();
 
                 break;
 
@@ -179,8 +168,8 @@ public class GenericProjectileMover : MonoBehaviour
         public LinearSimpleMovementOptions LinearSimpleOptions;
         public ParabolicSimpleMovementOptions ParabolicSimpleOptions;
         public PhysicsContinuousForceMovementOptions PhysicsContinuousForceOptions;
-        public LinearSimpleMovementOptions PhysicsImpulseOptions;
-        public LinearSimpleMovementOptions HomingSimpleOptions;
+        public PhysicsImpulseMovementOptions PhysicsImpulseOptions;
+        public HomingSimpleMovementOptions HomingSimpleOptions;
     }
 
     /// <summary>
@@ -211,7 +200,7 @@ public class GenericProjectileMover : MonoBehaviour
 
 
     /// <summary>
-    /// Moves in a simple parabolic arc based on an initial 2D direction, distance, and travel time
+    /// Moves in a simple parabolic arc based on an initial 2D direction, distance, travel time, and an AnimationCurve to describe height over time
     /// </summary>
     [System.Serializable]
     public struct ParabolicSimpleMovementOptions
@@ -227,11 +216,33 @@ public class GenericProjectileMover : MonoBehaviour
         public float MaxHeight;
     };
 
-    [SerializeField]
+    //members
     Vector3 ParaS_ImpactTarget = Vector3.zero;
-    [SerializeField]
     Vector3 ParaS_InitialPosition = Vector3.zero;
-    public float ParaS_CurrentTimestamp = 0f;
+    float ParaS_CurrentTimestamp = 0f;
+
+    //init
+    void InitParabolicSimple()
+    {
+        ParaS_ImpactTarget = transform.position
+            + (new Vector3(
+                MovementTypeOptions.ParabolicSimpleOptions.InitialHorizontalDirection.x
+                , 0
+                , MovementTypeOptions.ParabolicSimpleOptions.InitialHorizontalDirection.y)
+            * MovementTypeOptions.ParabolicSimpleOptions.LaunchDistance);
+
+        ParaS_InitialPosition = transform.position;
+
+        AnimationCurve Curv = MovementTypeOptions.ParabolicSimpleOptions.HeightOverTime;
+        if (Curv == null)
+        {
+            //This creates a faux linear projectile
+            MovementTypeOptions.ParabolicSimpleOptions.HeightOverTime = AnimationCurve.Constant(0, 1, 0);
+            //Add a keyframe for apex of parabolic arc
+            MovementTypeOptions.ParabolicSimpleOptions.HeightOverTime.AddKey(new Keyframe(.5f, 1));
+        }
+    }
+    //update
     void ParabolicSimpleMovement()
     {
         ParaS_CurrentTimestamp += Time.deltaTime;
@@ -257,6 +268,7 @@ public class GenericProjectileMover : MonoBehaviour
         public float Speed;
     };
 
+    //update
     void PhysicsContinuousForceMovement()
     {
 
@@ -265,15 +277,39 @@ public class GenericProjectileMover : MonoBehaviour
 
 
     /// <summary>
-    /// 
+    /// Simply applies a physics impulse to the object. There are a few options to scale the force or to use a velocity change instead
     /// </summary>
     [System.Serializable]
     public struct PhysicsImpulseMovementOptions
     {
-        public Vector3 InitialDirection;
+        public bool FLAGScaleForceByMass;
+        public bool FLAGUseSpeedComputationInsteadOfForce; //Switches the behavior to compute outgoing speed of object instead of a raw force
+
+        public Vector3 Direction;
+        public float Force;
         public float Speed;
     };
 
+    //init
+    void InitPhysicsImpulse()
+    {
+        RB.isKinematic = false;
+
+        if(MovementTypeOptions.PhysicsImpulseOptions.FLAGUseSpeedComputationInsteadOfForce)
+        {
+            RB.AddForce(MovementTypeOptions.PhysicsImpulseOptions.Direction.normalized * MovementTypeOptions.PhysicsImpulseOptions.Speed, ForceMode.VelocityChange);
+        }
+        else if(MovementTypeOptions.PhysicsImpulseOptions.FLAGScaleForceByMass)
+        {
+            RB.AddForce(MovementTypeOptions.PhysicsImpulseOptions.Direction.normalized * MovementTypeOptions.PhysicsImpulseOptions.Force * RB.mass, ForceMode.Impulse);
+        }
+        else
+        {
+            RB.AddForce(MovementTypeOptions.PhysicsImpulseOptions.Direction.normalized * MovementTypeOptions.PhysicsImpulseOptions.Force, ForceMode.Impulse);
+        }
+    }
+
+    //update
     void PhysicsImpulseMovement()
     {
 
