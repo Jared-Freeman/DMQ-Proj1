@@ -62,14 +62,12 @@ public class GenericProjectileMover : MonoBehaviour
 
             //Impl in Fixed FixedUpdateMovement()
             case MovementStyle.PhysicsContinuousForce:
-
+                InitPhysicsContinuous();
                 break;
 
             //Impl in Fixed FixedUpdateMovement()
             case MovementStyle.PhysicsImpulse:
-
                 InitPhysicsImpulse();
-
                 break;
 
             case MovementStyle.HomingSimple:
@@ -158,7 +156,7 @@ public class GenericProjectileMover : MonoBehaviour
     }
     #endregion
 
-    #region Movement Methods
+    #region Movement Methods (Option Struct's, Update's and Start's)
     /// <summary>
     /// A container struct for organizing options in the inspector. All MovementOptions structs should have a member here!
     /// </summary>
@@ -258,22 +256,6 @@ public class GenericProjectileMover : MonoBehaviour
 
 
 
-    /// <summary>
-    /// 
-    /// </summary>
-    [System.Serializable]
-    public struct PhysicsContinuousForceMovementOptions
-    {
-        public Vector3 InitialDirection;
-        public float Speed;
-    };
-
-    //update
-    void PhysicsContinuousForceMovement()
-    {
-
-    }
-
 
 
     /// <summary>
@@ -309,10 +291,48 @@ public class GenericProjectileMover : MonoBehaviour
         }
     }
 
-    //update
+    //fixed update
     void PhysicsImpulseMovement()
     {
 
+    }
+
+
+
+    /// <summary>
+    /// Basically just attaching a thruster to the back of the projectile. 
+    /// Designers can disable gravity on the rigidbody to make this MovementType similar to a missile.
+    /// </summary>
+    [System.Serializable]
+    public struct PhysicsContinuousForceMovementOptions
+    {
+        public bool FLAGScaleForceByMass;
+        public Vector3 Direction;
+        public float ForcePerSecond;
+    };
+
+    //init
+    void InitPhysicsContinuous()
+    {
+        RB.isKinematic = false;
+
+        if (MovementTypeOptions.PhysicsContinuousForceOptions.Direction.sqrMagnitude == 0)
+        {
+            Debug.LogError("Projectile Direction not set!");
+        }
+    }
+
+    //fixed update
+    void PhysicsContinuousForceMovement()
+    {
+        if(MovementTypeOptions.PhysicsContinuousForceOptions.FLAGScaleForceByMass)
+        {
+            RB.AddForce(MovementTypeOptions.PhysicsContinuousForceOptions.Direction.normalized * MovementTypeOptions.PhysicsContinuousForceOptions.ForcePerSecond * RB.mass * Time.fixedDeltaTime, ForceMode.Force);
+        }
+        else
+        {
+            RB.AddForce(MovementTypeOptions.PhysicsContinuousForceOptions.Direction.normalized * MovementTypeOptions.PhysicsContinuousForceOptions.ForcePerSecond * Time.fixedDeltaTime, ForceMode.Force);
+        }
     }
 
 
@@ -327,6 +347,7 @@ public class GenericProjectileMover : MonoBehaviour
         public float Speed;
     };
 
+    //update
     void HomingSimpleMovement()
     {
 
