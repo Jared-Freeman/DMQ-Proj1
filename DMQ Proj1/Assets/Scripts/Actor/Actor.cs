@@ -7,6 +7,7 @@ public class Actor : MonoBehaviour
 {
     #region EVENTS
     #endregion
+
     #region members
 
     private static int IdGenerator = 0;
@@ -28,6 +29,7 @@ public class Actor : MonoBehaviour
         if (Flag_ActorDebug) Debug.Log("Base Actor ID: " + ActorID);
 
         Stats = GetComponent<ActorStats>();
+        if (Stats == null) Debug.LogError("No ActorStats found!");
     }
 
     protected void Update()

@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ProjectileEffect", menuName = "ScriptableObjects/ProjectileEffect/Actor/Apply Damage to Actor", order = 1)]
-public class ProjectileEffect_ApplyDamageToActor : ProjectileEffect
+//TODO: Consider a less expensive way to compute this (a Coroutine with OnDOTEnter() OnDOTExit() and lower frequency???)
+[CreateAssetMenu(fileName = "ProjectileEffect", menuName = "ScriptableObjects/ProjectileEffect/Actor/Apply Damage Over Time to Actor", order = 1)]
+public class ProjectileEffect_ApplyDamageOverTimeToActor : ProjectileEffect
 {
     [System.Serializable]
     public struct ActorApplyDamageOptions
     {
-        public float DamageAmount;
+        public float DamagePerSecond;
 
     };
     public ActorApplyDamageOptions Options;
@@ -18,13 +19,14 @@ public class ProjectileEffect_ApplyDamageToActor : ProjectileEffect
         if(Col != null)
         {
             //Check to see if target is an actor
-            if (Col.GetComponent<ActorStats>() != null)
+            ActorStats Stats = Col.GetComponent<ActorStats>();
+
+            if (Stats != null)
             {
-                ActorStats Stats = Col.GetComponent<ActorStats>();
                 //Send Damage message to actor
                 DamageMessage Message = new DamageMessage
                 {
-                    amount = Options.DamageAmount,
+                    amount = Options.DamagePerSecond * Time.fixedDeltaTime,
                     damageSource = Projectile.transform.position,
                     direction = (Col.gameObject.transform.position - Projectile.transform.position).normalized
                 };
@@ -32,5 +34,6 @@ public class ProjectileEffect_ApplyDamageToActor : ProjectileEffect
                 Stats.ApplyDamage(Message);
             }
         }
+
     }
 }

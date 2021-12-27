@@ -9,6 +9,7 @@ public class Actor_Player : Actor
     // Start is called before the first frame update
     new void Start()
     {
+        base.Start();
         controller = GetComponent<PlayerControler>(); 
     }
 

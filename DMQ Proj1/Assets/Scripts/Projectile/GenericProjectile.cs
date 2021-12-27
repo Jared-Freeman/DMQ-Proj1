@@ -15,11 +15,11 @@ public class GenericProjectile : MonoBehaviour
     {
         public List<ProjectileEffect> ProjectileFXList;
 
-        public void PerformProjectileEffects(GenericProjectile Projectile)
+        public void PerformProjectileEffects(GenericProjectile Projectile, Collider Col = null)
         {
             foreach (ProjectileEffect PE in ProjectileFXList)
             {
-                PE.PerformPayloadEffect(Projectile);
+                PE.PerformPayloadEffect(Projectile, Col);
             }
         }
     };
@@ -65,29 +65,29 @@ public class GenericProjectile : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("Collision Enter!");
-        ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this);
+        ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, collision.collider);
     }
     private void OnCollisionStay(Collision collision)
     {
-        ProjectileFX.CollisionStayProjectileEffects.PerformProjectileEffects(this);
+        ProjectileFX.CollisionStayProjectileEffects.PerformProjectileEffects(this, collision.collider);
     }
     private void OnCollisionExit(Collision collision)
     {
-        ProjectileFX.CollisionExitProjectileEffects.PerformProjectileEffects(this);
+        ProjectileFX.CollisionExitProjectileEffects.PerformProjectileEffects(this, collision.collider);
     }
 
     //Currently, we consider Trigger / Collision to proc the same Projectile FX
     private void OnTriggerEnter(Collider other)
     {
-        ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this);
+        ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, other);
     }
     private void OnTriggerStay(Collider other)
     {
-        ProjectileFX.CollisionStayProjectileEffects.PerformProjectileEffects(this);
+        ProjectileFX.CollisionStayProjectileEffects.PerformProjectileEffects(this, other);
     }
     private void OnTriggerExit(Collider other)
     {
-        ProjectileFX.CollisionExitProjectileEffects.PerformProjectileEffects(this);
+        ProjectileFX.CollisionExitProjectileEffects.PerformProjectileEffects(this, other);
     }
     #endregion
 }
