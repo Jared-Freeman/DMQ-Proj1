@@ -159,7 +159,7 @@ MonoBehaviour:
   MovementTypeOptions:
     LinearSimpleOptions:
       InitialDirection: {x: -1, y: 0, z: 0}
-      Speed: 0.5
+      Speed: 0
       MaxProjectileDuration: 6
       MaxCollisions: 0
     ParabolicSimpleOptions:
@@ -191,17 +191,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Mover: {fileID: 0}
-  EndProjectileEffects:
-    ProjectileFXList: []
-  CollisionEnterProjectileEffects:
-    ProjectileFXList:
-    - {fileID: 11400000, guid: c810d9b67c87ec445ba9851a47d176f5, type: 2}
-  CollisionStayProjectileEffects:
-    ProjectileFXList: []
-  CollisionExitProjectileEffects:
-    ProjectileFXList: []
-  StartProjectileEffects:
-    ProjectileFXList: []
+  ProjectileFX:
+    EndProjectileEffects:
+      ProjectileFXList: []
+    CollisionEnterProjectileEffects:
+      ProjectileFXList:
+      - {fileID: 0}
+    CollisionStayProjectileEffects:
+      ProjectileFXList: []
+    CollisionExitProjectileEffects:
+      ProjectileFXList: []
+    StartProjectileEffects:
+      ProjectileFXList: []
 --- !u!135 &98659924
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -210,7 +211,7 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 98659921}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
@@ -270,7 +271,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 98659921}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: -1.5}
+  m_LocalPosition: {x: 0, y: 1, z: -1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1626,6 +1627,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2470850773499493256, guid: 6edf70c9a9b3ef14b872b0fc7751c8bf,
+        type: 3}
+      propertyPath: FLAGDisplayDebugGizmos
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2470850773499493257, guid: 6edf70c9a9b3ef14b872b0fc7751c8bf,
         type: 3}
       propertyPath: m_Name
@@ -1720,17 +1726,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Mover: {fileID: 0}
-  EndProjectileEffects:
-    ProjectileFXList: []
-  CollisionEnterProjectileEffects:
-    ProjectileFXList:
-    - {fileID: 11400000, guid: c810d9b67c87ec445ba9851a47d176f5, type: 2}
-  CollisionStayProjectileEffects:
-    ProjectileFXList: []
-  CollisionExitProjectileEffects:
-    ProjectileFXList: []
-  StartProjectileEffects:
-    ProjectileFXList: []
+  ProjectileFX:
+    EndProjectileEffects:
+      ProjectileFXList: []
+    CollisionEnterProjectileEffects:
+      ProjectileFXList: []
+    CollisionStayProjectileEffects:
+      ProjectileFXList: []
+    CollisionExitProjectileEffects:
+      ProjectileFXList: []
+    StartProjectileEffects:
+      ProjectileFXList: []
 --- !u!1 &2081235745
 GameObject:
   m_ObjectHideFlags: 0

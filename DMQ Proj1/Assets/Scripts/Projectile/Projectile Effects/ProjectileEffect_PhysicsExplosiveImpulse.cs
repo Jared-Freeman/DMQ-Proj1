@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq; //For ToList()
 
-[CreateAssetMenu(fileName = "ProjectileEffect_PhysicsExplosiveImpulse", menuName = "ScriptableObjects/ProjectileEffect/ProjectileEffect_PhysicsExplosiveImpulseScriptableObject", order = 1)]
-public class ProjectileEffect_PhysicsExplosiveImpulse : ProjectileEffect
+[CreateAssetMenu(fileName = "ProjectileEffect_PhysicsExplosiveImpulse", menuName = "ScriptableObjects/ProjectileEffect/ProjectileEffect_PhysicsExplosiveImpulseToRadiusScriptableObject", order = 1)]
+public class ProjectileEffect_PhysicsExplosiveImpulseToRadius : ProjectileEffect
 {
     #region Members
 

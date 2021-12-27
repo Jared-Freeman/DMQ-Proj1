@@ -9,11 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5499619b58747044b8d44d93d77d03e1, type: 3}
-  m_Name: '[Proto] Explosive Impulse'
-  m_EditorClassIdentifier: 
-  test: 122
+  m_Script: {fileID: 0}
+  m_Name: Radius Explosion 1
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileEffect_PhysicsExplosiveImpulseToRadius
   Options:
-    FLAG_ScaleForceByTargetMass: 0
-    ExplosiveForce: 122
-    ExplosiveRadius: 4
+    FLAG_ScaleForceByTargetMass: 1
+    ExplosiveForce: 5
+    ExplosiveRadius: 5
