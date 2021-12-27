@@ -36,7 +36,7 @@ public class Actor : MonoBehaviour
     {
         if (Stats.m_timeSinceLastHit > 0)
             Stats.m_timeSinceLastHit -= Time.deltaTime;
-        else if (Stats.m_timeSinceLastHit < 0)
+        else
         {
             Stats.isInvulnerable = false;
         }
