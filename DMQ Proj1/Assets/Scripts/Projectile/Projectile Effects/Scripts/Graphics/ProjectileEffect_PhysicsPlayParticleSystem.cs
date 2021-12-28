@@ -10,10 +10,14 @@ public class ProjectileEffect_PhysicsPlayParticleSystem : ProjectileEffect
     [System.Serializable]
     public struct EffectOptions
     {
-        public ParticleSystem ParticleSystemToPlay;
+        public GameObject PrefabWithParticleSystem;
 
     };
     public EffectOptions Options;
+
+    private GameObject ParticleSystemHost;
+    private ParticleSystem PS_Instance;
+    private ProjectileEffect_PhysicsPlayParticleSystemMonoBehaviour HelperMonobehaviour;
 
     #endregion
 
@@ -22,14 +26,24 @@ public class ProjectileEffect_PhysicsPlayParticleSystem : ProjectileEffect
     {
         base.PerformPayloadEffect(Projectile, Col);
 
-        if(Options.ParticleSystemToPlay != null)
+        if(Options.PrefabWithParticleSystem != null)
         {
             Vector3 EffectPosition = Projectile.transform.position;
+            
+            ParticleSystemHost = GameObject.Instantiate(Options.PrefabWithParticleSystem);
+            ParticleSystemHost.name = "ParticleSystemHost";
+            PS_Instance = ParticleSystemHost.GetComponent<ParticleSystem>();
 
+            if (ParticleSystemHost.GetComponent<ParticleSystem>() == null) Debug.LogError("NULL");
+
+            HelperMonobehaviour = ParticleSystemHost.AddComponent<ProjectileEffect_PhysicsPlayParticleSystemMonoBehaviour>();
+
+            HelperMonobehaviour.PlayParticleSystemOnce(EffectPosition);
         }
         else
         {
             Debug.LogError("ProjectileEffect_PhysicsPlayParticleSystem Asset must have a ParticleSystem specified!");
         }
     }
+
 }
