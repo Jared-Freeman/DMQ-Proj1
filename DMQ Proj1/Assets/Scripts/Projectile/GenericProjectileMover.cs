@@ -338,7 +338,7 @@ public class GenericProjectileMover : MonoBehaviour
 
 
     /// <summary>
-    /// 
+    /// Turns towards the target at a rate of TurnRate degrees per second
     /// </summary>
     [System.Serializable]
     public struct HomingSimpleMovementOptions

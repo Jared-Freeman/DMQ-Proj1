@@ -7,12 +7,20 @@ public class ActorStats_Display : MonoBehaviour
 {
 
     #region members
-    public ActorStats AttachedStats;
-    public Text_Bubble StatsText;
-    public GameObject OffsetTransformHost;
-
+    [Header("Properties")]
     public Vector3 Offset = new Vector3(0, 3, 0);
     public float FontSize = 4;
+       
+    [Header("Can be left empty")]
+    public GameObject OptionalParent;
+    
+    [Header("Auto-Attached Refs")]
+    public ActorStats AttachedStats;
+    public Text_Bubble StatsText;
+
+    //private members
+    private GameObject OffsetTransformHost;
+
     #endregion
 
     // Start is called before the first frame update
@@ -23,7 +31,14 @@ public class ActorStats_Display : MonoBehaviour
 
         OffsetTransformHost = new GameObject();
         OffsetTransformHost.name = "ActorStats Display Host";
-        OffsetTransformHost.transform.SetParent(gameObject.transform);
+        if (OptionalParent != null)
+        {
+            OffsetTransformHost.transform.SetParent(OptionalParent.transform);
+        }
+        else
+        {
+            OffsetTransformHost.transform.SetParent(gameObject.transform);
+        }
         OffsetTransformHost.transform.localPosition = new Vector3(0, 0, 0);
         OffsetTransformHost.transform.localPosition += Offset;
 
