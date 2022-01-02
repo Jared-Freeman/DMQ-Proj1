@@ -142,7 +142,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &98659922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2533,12 +2533,14 @@ MonoBehaviour:
   InputMap: {x: 0, y: 0}
   DesiredVelocity: {x: 0, y: 0, z: 0}
   AddVelocity: {x: 0, y: 0, z: 0}
+  VelocityMap: {x: 0, y: 0}
+  DragVector: {x: 0, y: 0}
   LargestVelocityChange: {x: 0, y: 0, z: 0}
   LargestVelocityChangeMagnitude: 0
   LargestAddVelocityChange: {x: 0, y: 0, z: 0}
   LargestAddVelocityChangeMagnitude: 0
-  VelocityMap: {x: 0, y: 0}
-  DragVector: {x: 0, y: 0}
+  ShootableProjectile: {fileID: 4137619294522910768, guid: 961458e380399624087eb024148c65e6,
+    type: 3}
 --- !u!114 &2470850771628589262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13065,6 +13067,85 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!1001 &4137619294539223249
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4137619294522910768, guid: 961458e380399624087eb024148c65e6,
+        type: 3}
+      propertyPath: m_Name
+      value: '[Projectile] Shootable Projectile 1'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4137619294522910768, guid: 961458e380399624087eb024148c65e6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4137619294522910770, guid: 961458e380399624087eb024148c65e6,
+        type: 3}
+      propertyPath: MovementTypeOptions.HomingSimpleOptions.Target
+      value: 
+      objectReference: {fileID: 135633063}
+    - target: {fileID: 4137619294522910777, guid: 961458e380399624087eb024148c65e6,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4137619294522910777, guid: 961458e380399624087eb024148c65e6,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4137619294522910777, guid: 961458e380399624087eb024148c65e6,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4137619294522910777, guid: 961458e380399624087eb024148c65e6,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4137619294522910777, guid: 961458e380399624087eb024148c65e6,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4137619294522910777, guid: 961458e380399624087eb024148c65e6,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4137619294522910777, guid: 961458e380399624087eb024148c65e6,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4137619294522910777, guid: 961458e380399624087eb024148c65e6,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4137619294522910777, guid: 961458e380399624087eb024148c65e6,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4137619294522910777, guid: 961458e380399624087eb024148c65e6,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4137619294522910777, guid: 961458e380399624087eb024148c65e6,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 961458e380399624087eb024148c65e6, type: 3}
 --- !u!4 &4200319616268939361
 Transform:
   m_ObjectHideFlags: 0
