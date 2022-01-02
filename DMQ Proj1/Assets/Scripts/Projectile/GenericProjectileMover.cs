@@ -33,11 +33,14 @@ public class GenericProjectileMover : MonoBehaviour
 
     #region Initialization
 
-    private void Start()
+    private void Awake()
     {
         RB = GetComponent<Rigidbody>();
         if (RB == null) RB = new Rigidbody();
+    }
 
+    private void Start()
+    {
         InitializeMovementMethod();
     }
 

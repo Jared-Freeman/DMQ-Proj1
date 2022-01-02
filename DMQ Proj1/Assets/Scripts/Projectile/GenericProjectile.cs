@@ -42,14 +42,17 @@ public class GenericProjectile : MonoBehaviour
     #endregion
 
     #region Initialization
-    void Start()
+
+    private void Awake()
     {
         Mover = GetComponent<GenericProjectileMover>();
         if (Mover == null) Mover = new GenericProjectileMover();
         RB = GetComponent<Rigidbody>();
         if (RB == null) RB = new Rigidbody();
+    }
 
-
+    void Start()
+    {
         ProjectileFX.StartProjectileEffects.PerformProjectileEffects(this);
     }
     #endregion

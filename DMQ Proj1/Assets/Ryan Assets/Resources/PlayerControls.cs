@@ -178,7 +178,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""5e4be3cd-bc0c-46a0-a1ca-ab6e103df223"",
-                    ""path"": ""<Keyboard>/v"",
+                    ""path"": ""<Keyboard>/leftShift"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -283,6 +283,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Aim"",
+                    ""type"": ""Value"",
+                    ""id"": ""02866cb5-9d7b-45e0-a662-362ab5d7c798"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -351,6 +359,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3b69bbcc-501e-4c25-bef2-5469ac915403"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Aim"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -403,6 +422,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""type"": ""Button"",
                     ""id"": ""fddaf0f9-9659-4e82-9205-ac814015b4c0"",
                     ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Aim"",
+                    ""type"": ""Value"",
+                    ""id"": ""9bdd143a-98db-4024-aa26-5013e3a36e5f"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """"
                 }
@@ -466,7 +493,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""c161ee2f-0c0b-49cb-a723-1baa44b7ac21"",
-                    ""path"": ""<Keyboard>/f"",
+                    ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -488,7 +515,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""6786fc1e-1fef-46ca-bc76-f8d5409aaada"",
-                    ""path"": ""<Keyboard>/v"",
+                    ""path"": ""<Keyboard>/leftShift"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -517,6 +544,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Wepon2Equip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7ec9fbba-a1d2-446d-888f-75e445e59454"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Aim"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -540,6 +578,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Gamepad_SpecialAction = m_Gamepad.FindAction("SpecialAction", throwIfNotFound: true);
         m_Gamepad_Wepon1Equip = m_Gamepad.FindAction("Wepon1Equip", throwIfNotFound: true);
         m_Gamepad_Wepon2Equip = m_Gamepad.FindAction("Wepon2Equip", throwIfNotFound: true);
+        m_Gamepad_Aim = m_Gamepad.FindAction("Aim", throwIfNotFound: true);
         // MouseAndKeyboard
         m_MouseAndKeyboard = asset.FindActionMap("MouseAndKeyboard", throwIfNotFound: true);
         m_MouseAndKeyboard_Movement = m_MouseAndKeyboard.FindAction("Movement", throwIfNotFound: true);
@@ -548,6 +587,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_MouseAndKeyboard_Attack = m_MouseAndKeyboard.FindAction("Attack", throwIfNotFound: true);
         m_MouseAndKeyboard_Wepon2Equip = m_MouseAndKeyboard.FindAction("Wepon2Equip", throwIfNotFound: true);
         m_MouseAndKeyboard_Wepon1Equip = m_MouseAndKeyboard.FindAction("Wepon1Equip", throwIfNotFound: true);
+        m_MouseAndKeyboard_Aim = m_MouseAndKeyboard.FindAction("Aim", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -684,6 +724,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Gamepad_SpecialAction;
     private readonly InputAction m_Gamepad_Wepon1Equip;
     private readonly InputAction m_Gamepad_Wepon2Equip;
+    private readonly InputAction m_Gamepad_Aim;
     public struct GamepadActions
     {
         private @PlayerControls m_Wrapper;
@@ -694,6 +735,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @SpecialAction => m_Wrapper.m_Gamepad_SpecialAction;
         public InputAction @Wepon1Equip => m_Wrapper.m_Gamepad_Wepon1Equip;
         public InputAction @Wepon2Equip => m_Wrapper.m_Gamepad_Wepon2Equip;
+        public InputAction @Aim => m_Wrapper.m_Gamepad_Aim;
         public InputActionMap Get() { return m_Wrapper.m_Gamepad; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -721,6 +763,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Wepon2Equip.started -= m_Wrapper.m_GamepadActionsCallbackInterface.OnWepon2Equip;
                 @Wepon2Equip.performed -= m_Wrapper.m_GamepadActionsCallbackInterface.OnWepon2Equip;
                 @Wepon2Equip.canceled -= m_Wrapper.m_GamepadActionsCallbackInterface.OnWepon2Equip;
+                @Aim.started -= m_Wrapper.m_GamepadActionsCallbackInterface.OnAim;
+                @Aim.performed -= m_Wrapper.m_GamepadActionsCallbackInterface.OnAim;
+                @Aim.canceled -= m_Wrapper.m_GamepadActionsCallbackInterface.OnAim;
             }
             m_Wrapper.m_GamepadActionsCallbackInterface = instance;
             if (instance != null)
@@ -743,6 +788,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Wepon2Equip.started += instance.OnWepon2Equip;
                 @Wepon2Equip.performed += instance.OnWepon2Equip;
                 @Wepon2Equip.canceled += instance.OnWepon2Equip;
+                @Aim.started += instance.OnAim;
+                @Aim.performed += instance.OnAim;
+                @Aim.canceled += instance.OnAim;
             }
         }
     }
@@ -757,6 +805,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_MouseAndKeyboard_Attack;
     private readonly InputAction m_MouseAndKeyboard_Wepon2Equip;
     private readonly InputAction m_MouseAndKeyboard_Wepon1Equip;
+    private readonly InputAction m_MouseAndKeyboard_Aim;
     public struct MouseAndKeyboardActions
     {
         private @PlayerControls m_Wrapper;
@@ -767,6 +816,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @Attack => m_Wrapper.m_MouseAndKeyboard_Attack;
         public InputAction @Wepon2Equip => m_Wrapper.m_MouseAndKeyboard_Wepon2Equip;
         public InputAction @Wepon1Equip => m_Wrapper.m_MouseAndKeyboard_Wepon1Equip;
+        public InputAction @Aim => m_Wrapper.m_MouseAndKeyboard_Aim;
         public InputActionMap Get() { return m_Wrapper.m_MouseAndKeyboard; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -794,6 +844,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Wepon1Equip.started -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnWepon1Equip;
                 @Wepon1Equip.performed -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnWepon1Equip;
                 @Wepon1Equip.canceled -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnWepon1Equip;
+                @Aim.started -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnAim;
+                @Aim.performed -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnAim;
+                @Aim.canceled -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnAim;
             }
             m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface = instance;
             if (instance != null)
@@ -816,6 +869,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Wepon1Equip.started += instance.OnWepon1Equip;
                 @Wepon1Equip.performed += instance.OnWepon1Equip;
                 @Wepon1Equip.canceled += instance.OnWepon1Equip;
+                @Aim.started += instance.OnAim;
+                @Aim.performed += instance.OnAim;
+                @Aim.canceled += instance.OnAim;
             }
         }
     }
@@ -838,6 +894,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnSpecialAction(InputAction.CallbackContext context);
         void OnWepon1Equip(InputAction.CallbackContext context);
         void OnWepon2Equip(InputAction.CallbackContext context);
+        void OnAim(InputAction.CallbackContext context);
     }
     public interface IMouseAndKeyboardActions
     {
@@ -847,5 +904,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnAttack(InputAction.CallbackContext context);
         void OnWepon2Equip(InputAction.CallbackContext context);
         void OnWepon1Equip(InputAction.CallbackContext context);
+        void OnAim(InputAction.CallbackContext context);
     }
 }

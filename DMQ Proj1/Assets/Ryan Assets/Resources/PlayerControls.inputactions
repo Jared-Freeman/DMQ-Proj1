@@ -165,7 +165,7 @@
                 {
                     "name": "",
                     "id": "5e4be3cd-bc0c-46a0-a1ca-ab6e103df223",
-                    "path": "<Keyboard>/v",
+                    "path": "<Keyboard>/leftShift",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -270,6 +270,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Aim",
+                    "type": "Value",
+                    "id": "02866cb5-9d7b-45e0-a662-362ab5d7c798",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -338,6 +346,17 @@
                     "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3b69bbcc-501e-4c25-bef2-5469ac915403",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Aim",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -390,6 +409,14 @@
                     "type": "Button",
                     "id": "fddaf0f9-9659-4e82-9205-ac814015b4c0",
                     "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Aim",
+                    "type": "Value",
+                    "id": "9bdd143a-98db-4024-aa26-5013e3a36e5f",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": ""
                 }
@@ -453,7 +480,7 @@
                 {
                     "name": "",
                     "id": "c161ee2f-0c0b-49cb-a723-1baa44b7ac21",
-                    "path": "<Keyboard>/f",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -475,7 +502,7 @@
                 {
                     "name": "",
                     "id": "6786fc1e-1fef-46ca-bc76-f8d5409aaada",
-                    "path": "<Keyboard>/v",
+                    "path": "<Keyboard>/leftShift",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -502,6 +529,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Wepon2Equip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7ec9fbba-a1d2-446d-888f-75e445e59454",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Aim",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

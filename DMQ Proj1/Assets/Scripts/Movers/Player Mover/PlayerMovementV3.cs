@@ -65,22 +65,27 @@ public class PlayerMovementV3 : MonoBehaviour
     [SerializeField] private Rigidbody RB;
 
 
-    //Debug members
+    //State vars
+    Vector2 AimDirection = Vector2.zero;
+
     [Header("__DEBUG TELEMETRY__")]
     [SerializeField] Vector2 InputMap = Vector2.zero; //Raw input from input events
 
     [Header("** continuous force model")]
     [SerializeField] Vector3 DesiredVelocity = Vector3.zero;
     [SerializeField] Vector3 AddVelocity = Vector2.zero;
+       
+    [Header("** velocity change model")]
+    [SerializeField] Vector2 VelocityMap = Vector2.zero; //affects horizontal movement velocity. Controlled via input
+    [SerializeField] Vector2 DragVector = Vector2.zero;
+
+
+    //Debug members
     [Space(6)]
     [SerializeField] Vector3 LargestVelocityChange = Vector3.zero;
     [SerializeField] float LargestVelocityChangeMagnitude = 0;
     [SerializeField] Vector3 LargestAddVelocityChange = Vector3.zero;
     [SerializeField] float LargestAddVelocityChangeMagnitude = 0;
-
-    [Header("** velocity change model")]
-    [SerializeField] Vector2 VelocityMap = Vector2.zero; //affects horizontal movement velocity. Controlled via input
-    [SerializeField] Vector2 DragVector = Vector2.zero;
 
     #endregion
 
@@ -103,6 +108,8 @@ public class PlayerMovementV3 : MonoBehaviour
 
     void AttackEvent()
     {
+        Debug.Log("Attack");
+        ShootProjectile(); //TODO: Remove after testing
         Event_AttackStart?.Invoke(new PlayerMovementEventArgs());
     }
     void ChangeWeaponEvent()
@@ -127,6 +134,7 @@ public class PlayerMovementV3 : MonoBehaviour
     }
     void SpecialActionEvent()
     {
+        StartCoroutine(DoDash());
         Event_SpecialActionStart?.Invoke(new PlayerMovementEventArgs());
     }
 
@@ -134,12 +142,6 @@ public class PlayerMovementV3 : MonoBehaviour
 
     #region Init
     private void Awake()
-    {
-        InitInput();
-        InitializeEvents();
-    }
-
-    void Start()
     {
         if (inventory == null) inventory = GetComponent<Inventory>();
         if (inventory == null) Debug.LogException(new System.Exception("PlayerMovement: No inventory found"));
@@ -153,6 +155,12 @@ public class PlayerMovementV3 : MonoBehaviour
 
         if (HorizontalMovementAngleHost == null) HorizontalMovementAngleHost = gameObject;
 
+        InitInput();
+        InitializeEvents();
+    }
+
+    void Start()
+    {
         //Event_AttackStart.AddListener(testfunction);
         //Event_AttackStart?.Invoke(new PlayerMovementEventArgs("test"));
     }
@@ -182,7 +190,10 @@ public class PlayerMovementV3 : MonoBehaviour
 
         UpdateMovementStates();
 
+        Debug.DrawRay(transform.position, new Vector3(AimDirection.x, transform.position.y, AimDirection.y) * 5f, Color.yellow);
+
     }
+
     private void UpdateMovementStates()
     {
         //grounded
@@ -192,6 +203,7 @@ public class PlayerMovementV3 : MonoBehaviour
         //[maybe] crouched
         //[maybe] sprint
     }
+
     private void FixedUpdate()
     {
         HorizontalMovementInput();
@@ -214,6 +226,9 @@ public class PlayerMovementV3 : MonoBehaviour
         controls.Gamepad.Wepon1Equip.performed += ctx => ChangeWeaponEvent();
         controls.Gamepad.Wepon2Equip.performed += ctx => ChangeWeaponEvent();
 
+        controls.Gamepad.Aim.performed += ctx => AimDirection = ctx.ReadValue<Vector2>().normalized;
+        //controls.Gamepad.Aim.canceled += ctx => AimDirection = Vector2.zero;
+
         //MOUSE AND KEYBOARD EVENTS REGISTER //////////////////////////////////////
         //register reading movement values from input
         controls.MouseAndKeyboard.Movement.performed += ctx => InputMap = ctx.ReadValue<Vector2>();
@@ -222,6 +237,14 @@ public class PlayerMovementV3 : MonoBehaviour
         controls.MouseAndKeyboard.SpecialAction.performed += ctx => SpecialActionEvent();
         controls.MouseAndKeyboard.Wepon1Equip.performed += ctx => ChangeWeaponEvent();
         controls.MouseAndKeyboard.Wepon2Equip.performed += ctx => ChangeWeaponEvent();
+
+        //Convert to screen space to achieve direction
+        controls.MouseAndKeyboard.Aim.performed += ctx =>
+        {
+            Vector3 V = Camera.main.WorldToScreenPoint(transform.position);
+            AimDirection = (ctx.ReadValue<Vector2>() - new Vector2(V.x, V.y)).normalized;
+        };
+        //controls.MouseAndKeyboard.Aim.canceled += ctx => AimDirection = Vector2.zero;
 
     }
     #endregion
@@ -653,6 +676,26 @@ public class PlayerMovementV3 : MonoBehaviour
     //NYI
     private IEnumerator DoDash()
     {
+        //Simple impulse model
+        float ImpulseForce = 10f;
+        RB.AddForce(new Vector3(InputMap.x, 0, InputMap.y).normalized * ImpulseForce * RB.mass, ForceMode.Impulse);
         yield return new WaitForFixedUpdate();
+    }
+
+
+    public GameObject ShootableProjectile;
+    void ShootProjectile()
+    {
+        GenericProjectile P_Template = ShootableProjectile.GetComponent<GenericProjectile>();
+        if (ShootableProjectile != null && P_Template != null)
+        {
+            Vector3 AimDir3 = new Vector3(AimDirection.x, 0, AimDirection.y);
+            
+            GameObject P = Instantiate(ShootableProjectile);
+            GenericProjectile Proj = P.GetComponent<GenericProjectile>();
+
+            P.transform.position = transform.position + (AimDir3).normalized * 1.5f + new Vector3(0, 1f, 0); //arbitrary spawn loc
+            Proj.Mover.MovementTypeOptions.PhysicsImpulseOptions.Direction = AimDir3.normalized;
+        }
     }
 }
