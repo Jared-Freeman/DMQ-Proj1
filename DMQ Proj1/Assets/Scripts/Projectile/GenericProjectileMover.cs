@@ -17,6 +17,9 @@ public class GenericProjectileMover : MonoBehaviour
 {
     #region Members
 
+    //flags
+    public bool FLAG_FaceRigidbodyVelocity = false;
+
     public enum MovementStyle { None, LinearSimple, ParabolicSimple, PhysicsImpulse, PhysicsContinuousForce, HomingSimple };
     [SerializeField] MovementStyle MovementType = MovementStyle.LinearSimple; //DO NOT CHANGE THIS DURING RUNTIME!    
 
@@ -80,9 +83,10 @@ public class GenericProjectileMover : MonoBehaviour
     }
     #endregion
 
-    #region Update Methods
+    #region Update Methodss
     void Update()
     {
+        if(FLAG_FaceRigidbodyVelocity) FaceVelocityForward();
         UpdateMovement();
         ProjectileTimeAlive += Time.deltaTime;
     }
@@ -385,6 +389,11 @@ public class GenericProjectileMover : MonoBehaviour
 
 
     #endregion
+
+    void FaceVelocityForward()
+    {
+        transform.forward = RB.velocity.normalized;
+    }
 
     //Can probably add event handlers PER movement style by just adding a switch statement into any event handler here
     #region Event Handlers
