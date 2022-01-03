@@ -108,7 +108,6 @@ public class PlayerMovementV3 : MonoBehaviour
 
     void AttackEvent()
     {
-        Debug.Log("Attack");
         ShootProjectile(); //TODO: Remove after testing
         Event_AttackStart?.Invoke(new PlayerMovementEventArgs());
     }

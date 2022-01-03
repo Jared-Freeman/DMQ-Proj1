@@ -93,6 +93,7 @@ public class GenericProjectileMover : MonoBehaviour
     private void FixedUpdate()
     {
         FixedUpdateMovement();
+
     }
 
     void UpdateMovement()
