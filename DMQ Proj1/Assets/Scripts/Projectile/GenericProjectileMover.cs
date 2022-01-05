@@ -393,7 +393,7 @@ public class GenericProjectileMover : MonoBehaviour
 
     void FaceVelocityForward()
     {
-        transform.forward = RB.velocity.normalized;
+        if(RB.velocity.sqrMagnitude != 0) transform.forward = RB.velocity.normalized;
     }
 
     //Can probably add event handlers PER movement style by just adding a switch statement into any event handler here
