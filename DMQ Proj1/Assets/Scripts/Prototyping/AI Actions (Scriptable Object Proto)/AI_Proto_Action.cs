@@ -2,7 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "AI_Proto_Action", menuName = "ScriptableObjects/AI_Proto_Action/AI_Proto_Action_SO", order = 1)] //May want to remove this from menu
+//Actions operate on their AttachedLogic, and may contain additional state variables, etc when needed
 public class AI_Proto_Action : ScriptableObject
 {
+    protected AI_Proto_Logic AttachedLogic;
+
+    public virtual void Invoke(AI_Proto_Logic Logic)
+    {
+        AttachedLogic = Logic;
+    }
 }
