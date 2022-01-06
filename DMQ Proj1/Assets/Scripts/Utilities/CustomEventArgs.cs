@@ -41,3 +41,20 @@ public class MonobehaviourEventArgs : System.EventArgs
         monobehaviour = v;
     }
 }
+
+//I made earlier classes were made without namespace respect...
+namespace CSEventArgs
+{
+
+    public class LightArgs : System.EventArgs
+    {
+        public Light light;
+
+        public LightArgs(Light v)
+        {
+            light = v;
+        }
+    }
+
+
+}
