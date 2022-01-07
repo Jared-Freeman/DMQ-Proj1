@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
-    public List<Weapon> allPossibleWapons = new List<Weapon>();
+    public AllPossibleWeapons allPossibleWapons;
 
     public WeaponHolder[] equipWep = new WeaponHolder[2];
     //0 is right hand, 1 is left hand
@@ -37,26 +37,24 @@ public class Inventory : MonoBehaviour
         {
             for (int i = 0; i < handPostions.Length; i++)
             {
-                if (handPostions[i] != null &&
-                    allPossibleWapons[equipWep[equipNum].index].model[i] != null)
+                if (handPostions[i] != null)
                 {
-                    GameObject w = Instantiate(allPossibleWapons[equipWep[equipNum].index].model[i], handPostions[i].position, handPostions[i].rotation);
-                    w.transform.parent = handPostions[i];
+                    //number of models fills number of hand positions
+                    if (allPossibleWapons.weaponList[equipWep[equipNum].index].model.Length > i)
+                    {
+                        //something there
+                        if (allPossibleWapons.weaponList[equipWep[equipNum].index].model[i] != null)
+                        {
+                            GameObject w = Instantiate(allPossibleWapons.weaponList[equipWep[equipNum].index].model[i], handPostions[i].position, handPostions[i].rotation);
+                            w.transform.parent = handPostions[i];
+                        }
+                    }
                 }
             }
         }
 
         currentEquipNumber = equipNum;
     }
-}
-[System.Serializable]
-public class Weapon
-{
-    public string name;
-    public int weaponAttack = 0;
-    public GameObject[] model = new GameObject[2];
-    public SpecialAction specialAction;
-    public int weaponAnimType = 0;
 }
 
 [System.Serializable]

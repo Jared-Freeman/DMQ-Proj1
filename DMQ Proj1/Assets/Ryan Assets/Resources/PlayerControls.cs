@@ -133,6 +133,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""a505b4e1-c875-400f-9922-d47f670b2a3c"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""80f2e6d3-5a08-4eea-9246-e24f00f1dd37"",
                     ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
