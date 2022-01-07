@@ -77,7 +77,7 @@ public class PlayerControler : MonoBehaviour
     {
         if (new Vector3(RB.velocity.x, 0, RB.velocity.z).sqrMagnitude > MoveSpd * MoveSpd * 4)
         {
-            Debug.Log("Exceeding");
+            //Debug.Log("Exceeding");
         }
         if(anim.GetCurrentAnimatorStateInfo(0).tagHash == resetAttackStatehash)
         {
@@ -260,7 +260,7 @@ public class PlayerControler : MonoBehaviour
             if (ctx.performed)
             {
                 if (inventory.currentEquipNumber >= 0)
-                    anim.SetInteger("OldWeapon", inventory.allPossibleWapons[inventory.equipWep[inventory.currentEquipNumber].index].weaponAnimType);
+                    anim.SetInteger("OldWeapon", inventory.allPossibleWapons.weaponList[inventory.equipWep[inventory.currentEquipNumber].index].weaponAnimType);
                 else
                     anim.SetInteger("OldWeapon", -1);
                 if (inventory.currentEquipNumber == 0)
@@ -270,7 +270,7 @@ public class PlayerControler : MonoBehaviour
                 }
                 else
                 {
-                    anim.SetInteger("Weapon", inventory.allPossibleWapons[inventory.equipWep[0].index].weaponAnimType);
+                    anim.SetInteger("Weapon", inventory.allPossibleWapons.weaponList[inventory.equipWep[0].index].weaponAnimType);
                     inventory.changeToNumber = 0;
                 }
                 anim.SetTrigger("WeaponChangeTrigger");
@@ -288,7 +288,7 @@ public class PlayerControler : MonoBehaviour
                 }
                 else
                 {
-                    anim.SetInteger("Weapon", inventory.allPossibleWapons[inventory.equipWep[1].index].weaponAnimType);
+                    anim.SetInteger("Weapon", inventory.allPossibleWapons.weaponList[inventory.equipWep[1].index].weaponAnimType);
                     inventory.changeToNumber = 1;
                 }
                 anim.SetTrigger("WeaponChangeTrigger");
@@ -304,8 +304,9 @@ public class PlayerControler : MonoBehaviour
     }
     void SpecialActionHandle()
     {
-        if(inventory.allPossibleWapons[inventory.equipWep[inventory.currentEquipNumber].index].specialAction == SpecialAction.Dash)
+        if(inventory.allPossibleWapons.weaponList[inventory.equipWep[inventory.currentEquipNumber].index].specialAction == SpecialAction.Dash)
         {
+            Debug.Log("aa");
             anim.SetTrigger("SpecialAction");
         }
     }
