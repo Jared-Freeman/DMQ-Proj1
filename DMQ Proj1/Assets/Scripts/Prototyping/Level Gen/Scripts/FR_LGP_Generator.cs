@@ -629,7 +629,7 @@ public class FR_LGP_Generator : MonoBehaviour
         GMask.DebugPopulateGridSequential();
 
         //GMask.DebugRenderGrid(Parent, Instance);
-        InstantiateConnections(Parent);
+        InstantiateConnections(Parent, 40f);
 
         //Loop: Preplace object, Link objects
 
