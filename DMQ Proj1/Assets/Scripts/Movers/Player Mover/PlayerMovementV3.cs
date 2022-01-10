@@ -23,6 +23,7 @@ public class PlayerMovementV3 : MonoBehaviour
     public bool FLAGCollectDebugTelemetry = false;
     public bool FLAGDisplayDebugGizmos = false;
 
+    private bool FLAG_PlayerMovementEnabled = true;
 
 
     //Behavior properties (TODO: clean up. Not really using diff accelerations rn)
@@ -133,7 +134,7 @@ public class PlayerMovementV3 : MonoBehaviour
     }
     void SpecialActionEvent()
     {
-        StartCoroutine(DoDash());
+        StartCoroutine(DoDashV2());
         Event_SpecialActionStart?.Invoke(new PlayerMovementEventArgs());
     }
 
@@ -211,7 +212,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
     private void FixedUpdate()
     {
-        HorizontalMovementInput();
+        if(FLAG_PlayerMovementEnabled) HorizontalMovementInput();
     }
     #endregion
         
@@ -765,7 +766,105 @@ public class PlayerMovementV3 : MonoBehaviour
         yield return new WaitForFixedUpdate();
     }
 
+    public AnimationCurve DashSpeedScale;
+    private float DashDuration = .25f;
+    private float DashSpeed = 30f;
+    private IEnumerator DoDashV2()
+    {
+        FLAG_PlayerMovementEnabled = false;
+        yield return new WaitForFixedUpdate();
 
+
+        Vector3 DesiredVelocityDiff = Vector3.zero;
+        float ForceCoefficient = RB.mass / Time.fixedDeltaTime;
+
+        Vector3 FilteredRBVelocity = new Vector3(RB.velocity.x, 0, RB.velocity.z);
+
+        Vector3 DashDesiredVelocityRaw = new Vector3(InputMap.x, 0, InputMap.y).normalized * DashSpeed;
+        Vector3 DashDesiredVelocity = DashDesiredVelocityRaw;
+        Vector3 DashAddVelocity = Vector3.zero;
+
+        //Filtered velocity represents the maximum velocity we can affect in this timestep (the rigidbody can exceed this by a LOT in normal gameplay)
+        Vector3 FilteredVelocity = FilteredRBVelocity;
+
+        float DashSpeedCoef = 0;
+
+        float TimeStart = Time.time;
+        float TimeCurrent = Time.time;
+        while(TimeCurrent - TimeStart < DashDuration)
+        {
+            TimeCurrent = Time.time;
+            DashSpeedCoef = DashSpeedScale.Evaluate((TimeCurrent - TimeStart) / DashDuration);
+            DashDesiredVelocity = DashDesiredVelocityRaw * DashSpeedCoef;
+
+            ForceCoefficient = RB.mass / Time.fixedDeltaTime;
+
+            FilteredRBVelocity = new Vector3(RB.velocity.x, 0, RB.velocity.z);
+
+            FilteredVelocity = FilteredRBVelocity;
+            //max is clamped to current player-desired velocity max.
+            if (FilteredVelocity.sqrMagnitude > DashDesiredVelocity.sqrMagnitude) FilteredVelocity = DashDesiredVelocity.magnitude * FilteredVelocity.normalized;
+
+
+
+            //compute parallel component of current velocity to desired velocity
+            if (DashDesiredVelocity.sqrMagnitude != 0) // parallel component of RB velocity to the intended velocity
+                DesiredVelocityDiff = (Vector3.Dot(DashDesiredVelocity, FilteredVelocity) / DashDesiredVelocity.magnitude) * DashDesiredVelocity.normalized;
+
+            //Recall that we are comparing parallel vectors here
+            if (Vector3.Dot(DashDesiredVelocity, FilteredRBVelocity) < 0)
+            {
+                //decelerating. Parallel component of velocity can be at MOST Deceleration * Time.FixedDeltaTime            
+                Vector3 Parallel = Vector3.zero;
+                Vector3 Perpendicular = Vector3.zero;
+
+                Parallel = (Vector3.Dot(DashDesiredVelocity, FilteredVelocity) / FilteredVelocity.magnitude) * FilteredVelocity.normalized;
+                //Perpendicular = DashDesiredVelocity - Parallel;
+
+                DashAddVelocity = (Parallel.normalized * Deceleration * Time.fixedDeltaTime) + Perpendicular;
+                //DashAddVelocity = ((-Parallel.normalized * Deceleration * Time.fixedDeltaTime) + Perpendicular);
+
+
+                //DashAddVelocity = (DashDesiredVelocity - DesiredVelocityDiff);
+                //if (DashAddVelocity.sqrMagnitude > Deceleration * Deceleration * Time.fixedDeltaTime * Time.fixedDeltaTime) DashAddVelocity = DashAddVelocity.normalized * Deceleration * Time.fixedDeltaTime;
+            }
+            else
+            {
+                //sustaining velocity
+                DashAddVelocity = (DashDesiredVelocity - DesiredVelocityDiff);
+            }
+
+
+            //Damp (within standard movement speed control)
+            if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= MoveSpd * MoveSpd || true) //First check was causing sloppy deceleration within standard MoveSpd
+            {
+                RB.AddForce(DashAddVelocity * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
+
+
+                if ((DashAddVelocity).sqrMagnitude < (FilteredRBVelocity - DesiredVelocityDiff).sqrMagnitude)
+                {
+                    //RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff).normalized * DashAddVelocity.magnitude * ForceCoefficient, ForceMode.Force);
+                    RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff) * ForceCoefficient, ForceMode.Force);
+                }
+                else
+                {
+                    RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff) * ForceCoefficient, ForceMode.Force);
+                }
+
+
+                if (FLAGDisplayDebugGizmos)
+                {
+                    float a = 2;
+                    Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + .75f, transform.position.z), -(FilteredRBVelocity - DesiredVelocityDiff) * a, Color.red);
+                }
+            }
+
+            yield return new WaitForFixedUpdate();
+        }
+        FLAG_PlayerMovementEnabled = true;
+    }
+
+    //TODO: Move this to another script
     public GameObject ShootableProjectile;
     void ShootProjectile()
     {

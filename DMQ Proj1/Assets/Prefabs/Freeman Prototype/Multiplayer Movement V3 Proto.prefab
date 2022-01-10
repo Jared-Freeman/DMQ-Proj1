@@ -11160,6 +11160,30 @@ MonoBehaviour:
   LargestVelocityChangeMagnitude: 0
   LargestAddVelocityChange: {x: 0, y: 0, z: 0}
   LargestAddVelocityChangeMagnitude: 0
+  DashSpeedScale:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0.00837203
+      outSlope: 0.00837203
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.050505713
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -2.970035
+      outSlope: -2.970035
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.022742629
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   ShootableProjectile: {fileID: 4137619294522910768, guid: 961458e380399624087eb024148c65e6,
     type: 3}
 --- !u!54 &819451193061632155
