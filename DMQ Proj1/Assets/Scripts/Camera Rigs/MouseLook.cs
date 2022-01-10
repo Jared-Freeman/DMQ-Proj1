@@ -14,8 +14,8 @@ public class MouseLook : MonoBehaviour
     [Range(0f,90f)]
     public float UpperLookBoundary = 90f;
 
-    [SerializeField]
-    private float xRotation = 0f;
+    //[SerializeField]
+    //private float xRotation = 0f;
 
     [SerializeField]
     private float Inp_x = 0f;

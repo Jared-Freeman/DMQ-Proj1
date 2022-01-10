@@ -407,7 +407,8 @@ public class FR_LGP_Generator : MonoBehaviour
                     {
                         for (int k = 0; k < Grid[i, j].NESW.Length; k++) Grid[i, j].NESW[k] = false;
 
-                        if (false) Debug.DrawRay(SpawnPosition, Vector3.up * Mask[i, j] * scale, Color.blue, Mathf.Infinity);
+                        bool Draw = false;
+                        if (Draw) Debug.DrawRay(SpawnPosition, Vector3.up * Mask[i, j] * scale, Color.blue, Mathf.Infinity);
                     }
                 }
             }
@@ -675,7 +676,7 @@ public class FR_LGP_Generator : MonoBehaviour
     {
         float sz_spacing = Spacing;
         float sz = sz_spacing * .9f;
-        float sz_scale = .1f;
+        //float sz_scale = .1f;
 
         int N = 0, E = 1, S = 2, W = 3;
 

@@ -404,6 +404,8 @@ public class PlayerMovementV3 : MonoBehaviour
 
         Vector3 FilteredRBVelocity = new Vector3(RB.velocity.x, 0, RB.velocity.z);
 
+        //TODO: Improve: Clamp maximum allowable velocity gains based on some Acceleration
+
         //Create direction of movement desired by player
         Vector3 InputDirection = new Vector3(InputMap.x, 0, InputMap.y); //TODO: processing based on horizontal angle host
         {
@@ -834,7 +836,7 @@ public class PlayerMovementV3 : MonoBehaviour
                 DashAddVelocity = (DashDesiredVelocity - DesiredVelocityDiff);
             }
 
-
+            //TODO: Figure out + impl best practice for dash Dampening
             //Damp (within standard movement speed control)
             if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= MoveSpd * MoveSpd || true) //First check was causing sloppy deceleration within standard MoveSpd
             {

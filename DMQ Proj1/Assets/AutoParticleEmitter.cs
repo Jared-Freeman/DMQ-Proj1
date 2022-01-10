@@ -9,8 +9,12 @@ public class AutoParticleEmitter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        particleSyst.loop = true;
-        particleSyst.Play();
+        if(particleSyst != null)
+        {
+            var Main = particleSyst.main;
+            Main.loop = true;
+            particleSyst.Play();
+        }
     }
 
 }
