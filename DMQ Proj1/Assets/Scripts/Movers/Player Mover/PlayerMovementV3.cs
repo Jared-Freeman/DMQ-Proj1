@@ -143,7 +143,11 @@ public class PlayerMovementV3 : MonoBehaviour
     private void Awake()
     {
         if (inventory == null) inventory = GetComponent<Inventory>();
-        if (inventory == null) Debug.LogException(new System.Exception("PlayerMovement: No inventory found"));
+        if (inventory == null) Debug.LogError("PlayerMovement: No inventory found");
+
+        if (Input == null) Input = GetComponent<PlayerInput>();
+        if (Input == null) Debug.LogError("No Input found");
+
 
         RB = gameObject.GetComponent<Rigidbody>();
         if (RB == null)
@@ -171,10 +175,12 @@ public class PlayerMovementV3 : MonoBehaviour
 
     private void OnEnable()
     {
+        Input.enabled = true;
         controls.Enable();
     }
     private void OnDisable()
     {
+        Input.enabled = false;
         controls.Disable();
     }
     #endregion
@@ -214,36 +220,112 @@ public class PlayerMovementV3 : MonoBehaviour
     // + registers all the events that may occur due to player input
     private void InitInput()
     {
+
         controls = new PlayerControls();
 
-        //GAMEPAD EVENTS REGISTER //////////////////////////////////////
-        //register reading movement values from input
-        controls.Gamepad.Movement.performed += ctx => InputMap = ctx.ReadValue<Vector2>();
-        controls.Gamepad.Movement.canceled += ctx => InputMap = Vector2.zero;
-        controls.Gamepad.Attack.performed += ctx => AttackEvent();
-        controls.Gamepad.SpecialAction.performed += ctx => SpecialActionEvent();
-        controls.Gamepad.Wepon1Equip.performed += ctx => ChangeWeaponEvent();
-        controls.Gamepad.Wepon2Equip.performed += ctx => ChangeWeaponEvent();
-
-        controls.Gamepad.Aim.performed += ctx => AimDirection = ctx.ReadValue<Vector2>().normalized;
-        //controls.Gamepad.Aim.canceled += ctx => AimDirection = Vector2.zero;
-
-        //MOUSE AND KEYBOARD EVENTS REGISTER //////////////////////////////////////
-        //register reading movement values from input
-        controls.MouseAndKeyboard.Movement.performed += ctx => InputMap = ctx.ReadValue<Vector2>();
-        controls.MouseAndKeyboard.Movement.canceled += ctx => InputMap = Vector2.zero;
-        controls.MouseAndKeyboard.Attack.performed += ctx => AttackEvent();
-        controls.MouseAndKeyboard.SpecialAction.performed += ctx => SpecialActionEvent();
-        controls.MouseAndKeyboard.Wepon1Equip.performed += ctx => ChangeWeaponEvent();
-        controls.MouseAndKeyboard.Wepon2Equip.performed += ctx => ChangeWeaponEvent();
-
-        //Convert to screen space to achieve direction
-        controls.MouseAndKeyboard.Aim.performed += ctx =>
+        //set up action map
+        if(Input.currentControlScheme == controls.MouseAndKeyboardScheme.name)
         {
-            Vector3 V = Camera.main.WorldToScreenPoint(transform.position);
-            AimDirection = (ctx.ReadValue<Vector2>() - new Vector2(V.x, V.y)).normalized;
+            Input.SwitchCurrentActionMap(controls.MouseAndKeyboardScheme.name);
+        }
+        else if (Input.currentControlScheme == controls.GamepadScheme.name)
+        {
+            Input.SwitchCurrentActionMap(controls.GamepadScheme.name);
+        }
+
+        //please someone find a better way to do this (and retain multiplayer functionality)
+        Input.onActionTriggered += ctx =>
+        {
+            ////MOUSE AND KEYBOARD EVENTS REGISTER //////////////////////////////////////
+            if (ctx.action.actionMap.name == controls.MouseAndKeyboardScheme.name)
+            {
+                if (ctx.performed)
+                {
+                    //MnK
+                    if (ctx.action.name == controls.MouseAndKeyboard.Movement.name) InputMap = ctx.ReadValue<Vector2>();
+
+                    else if (ctx.action.name == controls.MouseAndKeyboard.Attack.name) AttackEvent();
+
+                    else if (ctx.action.name == controls.MouseAndKeyboard.SpecialAction.name) SpecialActionEvent();
+
+                    else if (ctx.action.name == controls.MouseAndKeyboard.Wepon1Equip.name) ChangeWeaponEvent();
+
+                    else if (ctx.action.name == controls.MouseAndKeyboard.Wepon2Equip.name) ChangeWeaponEvent();
+
+                    else if (ctx.action.name == controls.MouseAndKeyboard.Aim.name)
+                    {
+                        Vector3 V = Camera.main.WorldToScreenPoint(transform.position);
+                        AimDirection = (ctx.ReadValue<Vector2>() - new Vector2(V.x, V.y)).normalized;
+                    }
+                }
+
+
+                else if (ctx.canceled)
+                {
+                    //MnK
+                    if (ctx.action.name == controls.MouseAndKeyboard.Movement.name) InputMap = Vector2.zero;
+                }
+            }
+
+
+
+            ////GAMEPAD EVENTS REGISTER //////////////////////////////////////
+            else if (ctx.action.actionMap.name == controls.GamepadScheme.name)
+            {
+                if (ctx.performed)
+                {
+                    //Gamepad
+                    if (ctx.action.name == controls.Gamepad.Movement.name) InputMap = ctx.ReadValue<Vector2>();
+
+                    else if (ctx.action.name == controls.Gamepad.Attack.name) AttackEvent();
+
+                    else if (ctx.action.name == controls.Gamepad.SpecialAction.name) SpecialActionEvent();
+
+                    else if (ctx.action.name == controls.Gamepad.Wepon1Equip.name) ChangeWeaponEvent();
+
+                    else if (ctx.action.name == controls.Gamepad.Wepon2Equip.name) ChangeWeaponEvent();
+
+                    else if (ctx.action.name == controls.Gamepad.Aim.name) AimDirection = ctx.ReadValue<Vector2>().normalized;
+                }
+
+
+                else if (ctx.canceled)
+                {
+                    //Gamepad
+                    if (ctx.action.name == controls.Gamepad.Movement.name) InputMap = Vector2.zero;
+                }
+            }
         };
-        //controls.MouseAndKeyboard.Aim.canceled += ctx => AimDirection = Vector2.zero;
+
+
+        ////GAMEPAD EVENTS REGISTER //////////////////////////////////////
+        ////register reading movement values from input
+        //controls.Gamepad.Movement.performed += ctx => InputMap = ctx.ReadValue<Vector2>();
+        //controls.Gamepad.Movement.canceled += ctx => InputMap = Vector2.zero;
+        //controls.Gamepad.Attack.performed += ctx => AttackEvent();
+        //controls.Gamepad.SpecialAction.performed += ctx => SpecialActionEvent();
+        //controls.Gamepad.Wepon1Equip.performed += ctx => ChangeWeaponEvent();
+        //controls.Gamepad.Wepon2Equip.performed += ctx => ChangeWeaponEvent();
+
+        //controls.Gamepad.Aim.performed += ctx => AimDirection = ctx.ReadValue<Vector2>().normalized;
+        ////controls.Gamepad.Aim.canceled += ctx => AimDirection = Vector2.zero;
+
+        ////MOUSE AND KEYBOARD EVENTS REGISTER //////////////////////////////////////
+        ////register reading movement values from input
+        //controls.MouseAndKeyboard.Movement.performed += ctx => InputMap = ctx.ReadValue<Vector2>();
+        //controls.MouseAndKeyboard.Movement.canceled += ctx => InputMap = Vector2.zero;
+        //controls.MouseAndKeyboard.Attack.performed += ctx => AttackEvent();
+        //controls.MouseAndKeyboard.SpecialAction.performed += ctx => SpecialActionEvent();
+        //controls.MouseAndKeyboard.Wepon1Equip.performed += ctx => ChangeWeaponEvent();
+        //controls.MouseAndKeyboard.Wepon2Equip.performed += ctx => ChangeWeaponEvent();
+
+        ////Convert to screen space to achieve direction
+        //controls.MouseAndKeyboard.Aim.performed += ctx =>
+        //{
+        //    Vector3 V = Camera.main.WorldToScreenPoint(transform.position);
+        //    AimDirection = (ctx.ReadValue<Vector2>() - new Vector2(V.x, V.y)).normalized;
+        //};
+        ////controls.MouseAndKeyboard.Aim.canceled += ctx => AimDirection = Vector2.zero;
 
     }
     #endregion
