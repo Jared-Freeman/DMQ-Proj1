@@ -401,10 +401,12 @@ public class PlayerMovementV3 : MonoBehaviour
         //Cache m/t (we compute v later)
         float ForceCoefficient = RB.mass / Time.fixedDeltaTime;
 
+        Vector3 FilteredRBVelocity = new Vector3(RB.velocity.x, 0, RB.velocity.z);
+
         //Create direction of movement desired by player
         Vector3 InputDirection = new Vector3(InputMap.x, 0, InputMap.y); //TODO: processing based on horizontal angle host
         {
-            float AngleDiff = Vector3.SignedAngle(RB.velocity.normalized, InputDirection, Vector3.up);
+            float AngleDiff = Vector3.SignedAngle(FilteredRBVelocity.normalized, InputDirection, Vector3.up);
 
             //TODO: Consider adding these to movement properties (global scope)
             float MIN_ANGLE_TOLERANCE = 40.0f; //Very important. Controls the arc of player slide control when turning. Stay below 90!
@@ -413,8 +415,8 @@ public class PlayerMovementV3 : MonoBehaviour
             //Preprocessing input. Clamp to within 180deg if we are going beyond standard movement speed
             //TODO: verify angle computation is correct in all cases
             if (
-                RB.velocity.sqrMagnitude != 0 
-                && (RB.velocity.sqrMagnitude > MoveSpd * MoveSpd) 
+                FilteredRBVelocity.sqrMagnitude != 0 
+                && (FilteredRBVelocity.sqrMagnitude > MoveSpd * MoveSpd) 
                 && Mathf.Abs(AngleDiff) > MIN_ANGLE_TOLERANCE 
                 && Mathf.Abs(AngleDiff) < MAX_ANGLE_TOLERANCE
                 ) 
@@ -475,7 +477,7 @@ public class PlayerMovementV3 : MonoBehaviour
         Vector3 DesiredVelocityDiff = Vector3.zero;
 
         //Filtered velocity represents the maximum velocity we can affect in this timestep (the rigidbody can exceed this by a LOT in normal gameplay)
-        Vector3 FilteredVelocity = RB.velocity;
+        Vector3 FilteredVelocity = FilteredRBVelocity;
         //max is clamped to current player-desired velocity max.
         if (FilteredVelocity.sqrMagnitude > DesiredVelocity.sqrMagnitude) FilteredVelocity = DesiredVelocity.magnitude * FilteredVelocity.normalized;
 
@@ -484,7 +486,7 @@ public class PlayerMovementV3 : MonoBehaviour
             DesiredVelocityDiff = (Vector3.Dot(DesiredVelocity, FilteredVelocity) / DesiredVelocity.magnitude) * DesiredVelocity.normalized;
 
         //Recall that we are comparing parallel vectors here
-        if(Vector3.Dot(DesiredVelocity, RB.velocity) < 0)
+        if(Vector3.Dot(DesiredVelocity, FilteredRBVelocity) < 0)
         {
             //decelerating. Parallel component of velocity can be at MOST Deceleration * Time.FixedDeltaTime            
             Vector3 Parallel = Vector3.zero;
@@ -508,26 +510,26 @@ public class PlayerMovementV3 : MonoBehaviour
 
 
         //Damp (within standard movement speed control)
-        if (/*InputDirection.sqrMagnitude > 0 && */RB.velocity.sqrMagnitude <= MoveSpd * MoveSpd) //First check was causing sloppy deceleration within standard MoveSpd
+        if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= MoveSpd * MoveSpd) //First check was causing sloppy deceleration within standard MoveSpd
         {
             RB.AddForce(AddVelocity * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
 
 
-            if ((AddVelocity).sqrMagnitude < (RB.velocity - DesiredVelocityDiff).sqrMagnitude)
+            if ((AddVelocity).sqrMagnitude < (FilteredRBVelocity - DesiredVelocityDiff).sqrMagnitude)
             {
-                //RB.AddForce(-(RB.velocity - DesiredVelocityDiff).normalized * AddVelocity.magnitude * ForceCoefficient, ForceMode.Force);
-                RB.AddForce(-(RB.velocity - DesiredVelocityDiff) * ForceCoefficient, ForceMode.Force);
+                //RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff).normalized * AddVelocity.magnitude * ForceCoefficient, ForceMode.Force);
+                RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff) * ForceCoefficient, ForceMode.Force);
             }
             else
             {
-                RB.AddForce(-(RB.velocity - DesiredVelocityDiff) * ForceCoefficient, ForceMode.Force);
+                RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff) * ForceCoefficient, ForceMode.Force);
             }
 
 
             if (FLAGDisplayDebugGizmos)
             {
                 float a = 2;
-                Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + .75f, transform.position.z), -(RB.velocity - DesiredVelocityDiff) * a, Color.red);
+                Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + .75f, transform.position.z), -(FilteredRBVelocity - DesiredVelocityDiff) * a, Color.red);
             }
         }
         //Damp (exceeding movement speed max)
@@ -535,11 +537,11 @@ public class PlayerMovementV3 : MonoBehaviour
         {
             //"Parachute" idea: Add the velocity * forceCoefficient, but pull "backward" on the rigidbody by the amount needed to maintain current velocity (a direction change, but not a velocity one)
 
-            Vector3 ModifiedVelocity = AddVelocity + RB.velocity;
+            Vector3 ModifiedVelocity = AddVelocity + FilteredRBVelocity;
 
             Vector3 ParachuteVelocity = Vector3.zero;
-            //if (ModifiedVelocity.sqrMagnitude > RB.velocity.sqrMagnitude) ParachuteVelocity = -(RB.velocity - ModifiedVelocity).magnitude * ModifiedVelocity.normalized;
-            if (ModifiedVelocity.sqrMagnitude > RB.velocity.sqrMagnitude) ParachuteVelocity = Mathf.Abs(ModifiedVelocity.magnitude - RB.velocity.magnitude) * -ModifiedVelocity.normalized; //TODO: Optimize this!
+            //if (ModifiedVelocity.sqrMagnitude > FilteredRBVelocity.sqrMagnitude) ParachuteVelocity = -(FilteredRBVelocity - ModifiedVelocity).magnitude * ModifiedVelocity.normalized;
+            if (ModifiedVelocity.sqrMagnitude > FilteredRBVelocity.sqrMagnitude) ParachuteVelocity = Mathf.Abs(ModifiedVelocity.magnitude - FilteredRBVelocity.magnitude) * -ModifiedVelocity.normalized; //TODO: Optimize this!
 
             RB.AddForce((AddVelocity + ParachuteVelocity) * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
 
@@ -560,16 +562,16 @@ public class PlayerMovementV3 : MonoBehaviour
         {
             float a = 2;
             Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + 1.5f, transform.position.z), AddVelocity * a, Color.cyan);
-            //Debug.DrawRay(transform.position, (RB.velocity + AddVelocity) * a, Color.magenta);
+            //Debug.DrawRay(transform.position, (FilteredRBVelocity + AddVelocity) * a, Color.magenta);
             Debug.DrawRay(transform.position, new Vector3(RB.velocity.x, RB.velocity.y + .1f, RB.velocity.z) * a, Color.white);
         }
         if (FLAGCollectDebugTelemetry)
         {
             //OBSERVATION: We never alter more than MoveSpd's worth of velocity 
-            if ((-(RB.velocity - DesiredVelocityDiff) + AddVelocity).sqrMagnitude > LargestVelocityChangeMagnitude * LargestVelocityChangeMagnitude)
+            if ((-(FilteredRBVelocity - DesiredVelocityDiff) + AddVelocity).sqrMagnitude > LargestVelocityChangeMagnitude * LargestVelocityChangeMagnitude)
             {
-                LargestVelocityChange = (-(RB.velocity - DesiredVelocityDiff) + AddVelocity);
-                LargestVelocityChangeMagnitude = (-(RB.velocity - DesiredVelocityDiff) + AddVelocity).magnitude;
+                LargestVelocityChange = (-(FilteredRBVelocity - DesiredVelocityDiff) + AddVelocity);
+                LargestVelocityChangeMagnitude = (-(FilteredRBVelocity - DesiredVelocityDiff) + AddVelocity).magnitude;
             }
             if ((AddVelocity).sqrMagnitude > LargestAddVelocityChangeMagnitude * LargestAddVelocityChangeMagnitude)
             {
