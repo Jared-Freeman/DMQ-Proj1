@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using UnityEngine.InputSystem;
+
 [RequireComponent(typeof(Camera))]
 public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
 {
@@ -57,6 +59,7 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
     //External refs
     [Header("__EXTERNAL OBJECTS__")]
     public List<GameObject> TargetList;
+    public PlayerInputManager PlayerInputMgr;
     private Camera AttachedCamera;
 
 
@@ -82,24 +85,46 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
     #endregion
 
     #region initialization
-    private void Start()
+    private void Awake()
     {
         AttachedCamera = GetComponent<Camera>();
+        if (TargetList == null) TargetList = new List<GameObject>();
     }
+
+    #region Events
+    private void OnEnable()
+    {
+        PlayerInputMgr.onPlayerJoined += context => 
+        {
+            TargetList.Add(context.gameObject);
+        };
+    }
+    private void OnDisable()
+    {
+        PlayerInputMgr.onPlayerLeft += context =>
+        {
+            TargetList.Remove(context.gameObject);
+        };
+    }
+    #endregion
+
     #endregion
 
     #region Update
 
     private void Update()
     {
-        //These methods must be executed in this order
-        UpdateTargetDesiredPosition();
-        UpdateCamDistanceDesired();
-        UpdateCamPositionDesired();
-
-        if (!CameraTargetIsInDeadzone())
+        if(TargetList.Count > 0)
         {
-            InterpolateToDesiredPosition();
+            //These methods must be executed in this order
+            UpdateTargetDesiredPosition();
+            UpdateCamDistanceDesired();
+            UpdateCamPositionDesired();
+
+            if (!CameraTargetIsInDeadzone())
+            {
+                InterpolateToDesiredPosition();
+            }
         }
 
         if (FLAGDebug) Debug.DrawRay(transform.position, transform.forward * 50, Color.blue);

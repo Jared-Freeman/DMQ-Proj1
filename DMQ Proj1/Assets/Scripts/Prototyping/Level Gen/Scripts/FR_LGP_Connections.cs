@@ -14,7 +14,7 @@ public class FR_LGP_Connections : MonoBehaviour
     {
         if(FLAG_DrawGizmos)
         {
-            //Gizmos.DrawWireCube(transform.position, new Vector3(VolumeSize, VolumeSize, VolumeSize));
+            Gizmos.DrawWireCube(transform.position, new Vector3(VolumeSize, VolumeSize, VolumeSize));
             //Gizmos.DrawIcon(transform.position + Vector3.forward * VolumeSize, "test");
 
             //Draw Cardinal icons

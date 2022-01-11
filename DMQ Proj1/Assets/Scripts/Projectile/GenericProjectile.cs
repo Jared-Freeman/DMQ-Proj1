@@ -67,7 +67,6 @@ public class GenericProjectile : MonoBehaviour
     //Collision FX
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Collision Enter!");
         ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, collision.collider);
     }
     private void OnCollisionStay(Collision collision)
