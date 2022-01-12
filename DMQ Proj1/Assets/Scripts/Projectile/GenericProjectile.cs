@@ -6,6 +6,55 @@ using UnityEngine;
 [RequireComponent(typeof(GenericProjectileMover))]
 public class GenericProjectile : MonoBehaviour
 {
+    public static GenericProjectile SpawnProjectile
+        (
+        GenericProjectile Template,
+        Vector3 InitialPosition = default,
+        Vector3 LaunchDirection = default, 
+        GameObject Target = null
+        )
+    {
+        GameObject GO = Instantiate(Template.gameObject);
+        GenericProjectile PR = GO.GetComponent<GenericProjectile>();
+
+        if (PR == null) return null;
+                       
+        switch (PR.Mover.MovementType)
+        {
+            case GenericProjectileMover.MovementStyle.None:
+                break;
+
+            case GenericProjectileMover.MovementStyle.LinearSimple:
+                PR.Mover.MovementTypeOptions.LinearSimpleOptions.InitialDirection = LaunchDirection;
+                break;
+
+            case GenericProjectileMover.MovementStyle.ParabolicSimple:
+                PR.Mover.MovementTypeOptions.ParabolicSimpleOptions.InitialHorizontalDirection = new Vector2(LaunchDirection.x, LaunchDirection.z);
+                if (Target != null)
+                    PR.Mover.MovementTypeOptions.ParabolicSimpleOptions.LaunchDistance = (GO.transform.position - Target.transform.position).magnitude;
+                break;
+
+            //Impl in Fixed FixedUpdateMovement()
+            case GenericProjectileMover.MovementStyle.PhysicsContinuousForce:
+                PR.Mover.MovementTypeOptions.PhysicsContinuousForceOptions.Direction = LaunchDirection;
+                break;
+
+            //Impl in Fixed FixedUpdateMovement()
+            case GenericProjectileMover.MovementStyle.PhysicsImpulse:
+                PR.Mover.MovementTypeOptions.PhysicsImpulseOptions.Direction = LaunchDirection;
+                break;
+
+            case GenericProjectileMover.MovementStyle.HomingSimple:
+                if(Target != null)
+                    PR.Mover.MovementTypeOptions.HomingSimpleOptions.Target = Target;   
+                break;
+        };
+        
+        GO.transform.position = InitialPosition;
+
+        return GO.GetComponent<GenericProjectile>();
+    }
+
     #region Members
     public GenericProjectileMover Mover;
     private Rigidbody RB; //Its a good idea to initially make this Kinematic. Could be done in script idk...
