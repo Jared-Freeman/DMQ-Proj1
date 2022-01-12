@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// Sends the ActorAction Attack that has been loaded in the AttackAction param to the Target param
+/// </summary>
 [RequireComponent(typeof(Actor))]
 [RequireComponent(typeof(PlayerInput))]
 public class AP2_Debug_LaunchAttackMessage : MonoBehaviour
 {
     //refs
     public GameObject Target;
-    public AP2_ActorAction_AttackTarget AttackAction;
+    public AP2.AP2_ActorAction_AttackTarget AttackAction;
 
     //refs
     private Actor _Actor;
