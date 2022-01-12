@@ -93,8 +93,29 @@ public class ActorStats : MonoBehaviour
         {
             OnReceiveDamage.Invoke();
         }
-            
 
+
+    }
+
+    //TODO: Make more robust
+    public void ApplyDamage(AP2_DamageMessage data)
+    {
+        if (HpCurrent <= 0)
+        {//ignore damage if already dead. TODO : may have to change that if we want to detect hit on death...
+            return;
+        }
+
+        HpCurrent -= Mathf.Max(data.DamageAmount, 0);
+
+        if (HpCurrent <= 0)
+        {
+            schedule += OnDeath.Invoke; //This avoid race condition when objects kill each other.
+            actor.ActorDead();
+        }
+        else
+        {
+            OnReceiveDamage.Invoke();
+        }
     }
 }
 [System.Serializable]
