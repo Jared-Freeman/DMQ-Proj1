@@ -5,7 +5,7 @@ using UnityEngine;
 //HOW TO ADD A NEW MOVEMENT STYLE:
 // 1. Add a MovementStyle enum
 // 2. Add a case in the UpdateMovement() AND FixedUpdateMovement() switch statements for your enum (with an appropriately named method). 
-//    * See how I did it if you're not super sure what to do.
+//    * See how I did it if you're not super sure what to do. Update should either occur in fixed update OR update (mutually exclusive); fixed update supports Rigidbody Physics movers.
 // 3. Add a [System.Serializable] struct (using your naming convention) containing public movement options for your method
 // 4. Add this struct as a public member to the MovementStyleOptions struct
 // 5. Implement your method! Note that your method is being called in Update()
@@ -21,7 +21,7 @@ public class GenericProjectileMover : MonoBehaviour
     public bool FLAG_FaceRigidbodyVelocity = false;
 
     public enum MovementStyle { None, LinearSimple, ParabolicSimple, PhysicsImpulse, PhysicsContinuousForce, HomingSimple };
-    [SerializeField] MovementStyle MovementType = MovementStyle.LinearSimple; //DO NOT CHANGE THIS DURING RUNTIME!    
+    public MovementStyle MovementType = MovementStyle.LinearSimple; //DO NOT CHANGE THIS DURING RUNTIME!    
 
     public MovementStyleOptions MovementTypeOptions;
 
@@ -83,7 +83,7 @@ public class GenericProjectileMover : MonoBehaviour
     }
     #endregion
 
-    #region Update Methodss
+    #region Update Methods
     void Update()
     {
         if(FLAG_FaceRigidbodyVelocity) FaceVelocityForward();
