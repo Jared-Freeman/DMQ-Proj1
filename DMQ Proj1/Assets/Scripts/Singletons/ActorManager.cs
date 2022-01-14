@@ -12,12 +12,15 @@ public class ActorManager : Singleton<ActorManager>
 
     public bool FLAG_Debug = false;
 
-    public List<Actor> ActorList { get; } = new List<Actor>();
+    public List<Actor> ActorList = new List<Actor>();
 
     #region Initialization
     protected override void Awake()
     {
         base.Awake();
+
+        //ActorList.Clear();
+        //PrintActorList();
 
         ////add any actors, if they exist
         //List<Actor> DanglingActors = FindObjectsOfType<Actor>().ToList();
@@ -37,6 +40,17 @@ public class ActorManager : Singleton<ActorManager>
         EventUnsubscribe();
     }
     #endregion
+
+    public void PrintActorList()
+    {
+
+        print("Count = " + ActorList.Count + ", Cap = " + ActorList.Capacity);
+        foreach(Actor a in ActorList)
+        {
+            if (a == null) print("null found in actorlist!");
+            print(a.name);
+        }
+    }
 
     #region Events
 
