@@ -13,3 +13,47 @@ public static class Freeman_Utilities
         return Mathf.Lerp(range_b_start, range_b_end, normal);
     }
 }
+
+namespace Utils
+{
+    [System.Serializable]
+    public class CooldownTracker
+    {
+        public float Cooldown = 1f;
+        //[Min(1)] public int MaxCharges = 1;
+
+        private float LastUsedTime;
+
+        public CooldownTracker()
+        {
+        }
+        public CooldownTracker(float CooldownTime): base()
+        {
+            Cooldown = CooldownTime;
+        }
+
+        //Must be called to start running the cooldown tracker
+        public void InitializeCooldown()
+        {
+            LastUsedTime = Time.time;
+        }
+
+        //Returns true if Cooldown was used.
+        public bool ConsumeCooldown()
+        {
+            if(CanUseCooldown())
+            {
+                LastUsedTime = Time.time;
+                return true;
+            }
+            return false;
+        }
+
+        //Return true if Cooldown CAN be used
+        public bool CanUseCooldown()
+        {
+            if(Time.time - LastUsedTime >= Cooldown) return true;
+            return false;
+        }
+    }
+}
