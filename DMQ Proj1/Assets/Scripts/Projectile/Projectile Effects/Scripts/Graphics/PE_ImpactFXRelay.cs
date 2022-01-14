@@ -17,14 +17,16 @@ public class PE_ImpactFXRelay : ProjectileEffect
 
     };
     public EffectOptions Options;
+    
+    #endregion
 
     public override void PerformPayloadEffect(GenericProjectile Projectile, Collider Col = null)
     {
         base.PerformPayloadEffect(Projectile, Col);
 
-        foreach(var F in Options.FX)
+        foreach (var F in Options.FX)
         {
-            if(Options.AdjustFXRotation)
+            if (Options.AdjustFXRotation)
             {
                 F.SpawnImpactEffect(null, Projectile.gameObject.transform.position, Projectile.gameObject.transform.forward);
             }
@@ -34,6 +36,4 @@ public class PE_ImpactFXRelay : ProjectileEffect
             }
         }
     }
-
-    #endregion
 }
