@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f490a31b86dc6f44d8234f47aed5c8bf, type: 3}
-  m_Name: DM 1
+  m_Script: {fileID: 11500000, guid: 7e5770bc6feb4af418382a30d536c6ad, type: 3}
+  m_Name: DIIR 1
   m_EditorClassIdentifier: 
-  Caster: {fileID: 0}
-  CasterOffset: {x: 0, y: 0, z: 0}
-  DamageSource: {fileID: 0}
-  DamageSourceOffset: {x: 0, y: 0, z: 0}
-  DamageAmount: 1
+  FLAG_Debug: 1
+  Options:
+    DamageMessage: {fileID: 11400000, guid: edce1d14dd7fa2b44b6423ee8fff1859, type: 2}
+  SpecialOptions:
+    MaxRange: 8

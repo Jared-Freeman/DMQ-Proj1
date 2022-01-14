@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AP2
 {
     /// <summary>
-    /// Generic Impl of this Action
+    /// Applies damage to Target if within range
     /// </summary>
     [CreateAssetMenu(fileName = "ActorAction", menuName = "ScriptableObjects/Actor Actions/Attack/Attack Target/Damage Target if in Range", order = 1)]
     public class AttackTarget_DamageIfInRange : AP2_ActorAction_AttackTarget
@@ -31,8 +31,10 @@ namespace AP2
                 && (Owner.gameObject.transform.position - Target.transform.position).sqrMagnitude <= SpecialOptions.MaxRange * SpecialOptions.MaxRange
                 )
             {
+                if (FLAG_Debug) Debug.Log("In range. Sending Damage Message");
                 Target.GetComponent<ActorStats>().ApplyDamage(Options.DamageMessage);
             }
+            else if (FLAG_Debug) Debug.Log("null stats, or not in range");
         }
     }
 }

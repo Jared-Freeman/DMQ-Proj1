@@ -472,6 +472,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632147, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: HpMax
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 819451193061632155, guid: 90a421146e3d0e94aa41ff79354e625d,
         type: 3}
       propertyPath: m_Constraints
@@ -5619,6 +5624,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
+      propertyPath: AttackAction
+      value: 
+      objectReference: {fileID: 11400000, guid: 1001be58deac178479d8e92dc250f61d,
+        type: 2}
+    - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
       propertyPath: Options.LungePause
       value: 0.6
       objectReference: {fileID: 0}
@@ -5626,6 +5637,11 @@ PrefabInstance:
         type: 3}
       propertyPath: Options.LungeSpeed
       value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
+      propertyPath: Options.AttackRange
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}

@@ -34,6 +34,7 @@ namespace AP2
 
             public float LungeStartTime = 0f;
             public bool CanTurn = false;
+            public int CurrentAttacksInvoked = 0;
         }
 
         //inspector helper
@@ -41,8 +42,13 @@ namespace AP2
         public class AIOptions
         {
             public bool DrawDebugGizmos = false;
+
+            [Min(0f)]
+            public float AttackRange = 1.25f;
+
             public float MovementSpeed = 2f; //TODO: Currently not hooked up to navmesh agent
             public float StopSlideDistance = .5f;
+                       
             public float AggroRadius = 20;
 
             [Tooltip("Max angle the agent can move toward without needing to stop and turn")]
@@ -174,6 +180,9 @@ namespace AP2
                     break;
 
                 case State.Lunging:
+                    //new attack
+                    Info.CurrentAttacksInvoked = 0;
+                    //disable turning
                     Info.CanTurn = false;
                     NavAgent.speed = Options.LungeSpeed;
                     NavAgent.SetDestination(transform.position + (transform.forward * (Options.LungeDistance + Options.StopSlideDistance)));
@@ -363,6 +372,13 @@ namespace AP2
 
         private void Lunge()
         {
+
+            if (CurrentTarget != null && (CurrentTarget.transform.position - transform.position).sqrMagnitude < Options.AttackRange * Options.AttackRange)
+            {
+                Debug.Log("ATTACKING " + CurrentTarget.name);
+                AttackAction.AttackTarget(AttachedActor, CurrentTarget);
+            }
+
             if (NavAgent.remainingDistance < .002f || (Time.time - Info.LungeStartTime) > Options.LungeTimeout) //magic number :(
             {
                 NavAgent.SetDestination(transform.position);
