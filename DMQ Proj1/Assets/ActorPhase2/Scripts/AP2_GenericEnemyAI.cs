@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AP2
 {
-    //This class is intended to simply walk to a point near the player, cast an attack (for some time period), and attack the player,
+    //This class is intended to simply walk to a point near the player, lunge, and perform an attack at the end of the lunge
     public class AP2_GenericEnemyAI : ActorAI_Logic
     {
         private static float _RoutineSleepDuration = .125f; //8 times / sec
@@ -59,6 +59,9 @@ namespace AP2
 
             [Tooltip("Deg/sec")]
             public float TurningRate = 360f;
+
+            public AnimationCurve GrowCurve;
+            public float GrowDuration = .5f;
 
             public TargetPriority _TargetPriority = TargetPriority.Proximity;
         }
@@ -155,7 +158,6 @@ namespace AP2
             {
                 case State.Idle:
                     Info.CanTurn = true;
-                    NavAgent.SetDestination(transform.position);
                     break;
 
                 case State.Chasing:
@@ -166,12 +168,13 @@ namespace AP2
                     Info.CanTurn = true;
                     NavAgent.SetDestination(transform.position + (transform.forward * Options.StopSlideDistance));
                     Info.LungeStartTime = Time.time;
+                    StartCoroutine(I_IncreaseScale());
                     break;
 
                 case State.Lunging:
                     Info.CanTurn = false;
                     NavAgent.speed = Options.LungeSpeed;
-                    NavAgent.SetDestination(transform.position + (transform.forward * Options.LungeDistance));
+                    NavAgent.SetDestination(transform.position + (transform.forward * (Options.LungeDistance + Options.StopSlideDistance)));
                     break;
 
                 case State.Attacking:
@@ -188,6 +191,20 @@ namespace AP2
 
 
         #region Utility Routines
+        private IEnumerator I_IncreaseScale()
+        {
+            var DefaultScale = transform.localScale;
+
+            float StartTime = Time.time;
+            while (CurrentState == State.PrepToLunge && Time.time - StartTime < Options.GrowDuration )
+            {
+                transform.localScale = DefaultScale * Options.GrowCurve.Evaluate((Time.time - StartTime) / Options.GrowDuration);
+                yield return null;
+            }
+
+            transform.localScale = DefaultScale;
+        }
+
         private IEnumerator I_TurnInterpolate()
         {
             bool FLAG_Done = false;
@@ -299,7 +316,10 @@ namespace AP2
             {
                 ChangeState(State.Idle);
             }
-            else if ((CurrentTarget.transform.position - transform.position).sqrMagnitude <= Options.LungePrepareDistance * Options.LungePrepareDistance)
+            else if (
+                (CurrentTarget.transform.position - transform.position).sqrMagnitude <= Options.LungePrepareDistance * Options.LungePrepareDistance
+                && (NavAgent.path.corners.Length < 3) //straight shot
+                )
             {
                 ChangeState(State.PrepToLunge);
             }
@@ -315,6 +335,8 @@ namespace AP2
 
         private void WaitToLunge()
         {
+            UnityEngine.AI.NavMeshPath NavPath = new UnityEngine.AI.NavMeshPath();
+
             if (CurrentTarget == null)
             {
                 ChangeState(State.Idle);
@@ -324,6 +346,10 @@ namespace AP2
                 ChangeState(State.Chasing);
             }
             else if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) > Options.MaxFacingAngle / 2)
+            {
+                ChangeState(State.Chasing);
+            }
+            else if(NavAgent.CalculatePath(CurrentTarget.transform.position, NavPath) && NavPath.corners.Length > 2)
             {
                 ChangeState(State.Chasing);
             }
@@ -339,7 +365,7 @@ namespace AP2
             {
                 NavAgent.SetDestination(transform.position);
                 NavAgent.speed = Options.MovementSpeed;
-                ChangeState(State.Idle);
+                ChangeState(State.Chasing);
             }
         }
         #endregion
