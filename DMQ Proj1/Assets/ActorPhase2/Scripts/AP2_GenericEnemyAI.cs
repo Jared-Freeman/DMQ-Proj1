@@ -200,6 +200,24 @@ namespace AP2
 
         }
 
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (CurrentState == State.Lunging)
+            {
+                if (
+                    CurrentTarget != null
+                    && Info.CurrentAttacksInvoked < 1
+                    && collision.rigidbody.gameObject == CurrentTarget
+                    && (CurrentTarget.transform.position - transform.position).sqrMagnitude < Options.AttackRange * Options.AttackRange) //can probably remove w new syst
+                {
+                    if (FLAG_Debug) Debug.Log("ATTACKING " + CurrentTarget.name);
+                    AttackAction.AttackTarget(AttachedActor, CurrentTarget);
+                    Info.CurrentAttacksInvoked++;
+                }
+
+            }
+        }
+
 
         #region Utility Routines
         private IEnumerator I_IncreaseScale()
@@ -372,16 +390,6 @@ namespace AP2
 
         private void Lunge()
         {
-
-            if (
-                CurrentTarget != null 
-                && Info.CurrentAttacksInvoked < 1
-                && (CurrentTarget.transform.position - transform.position).sqrMagnitude < Options.AttackRange * Options.AttackRange)
-            {
-                if(FLAG_Debug) Debug.Log("ATTACKING " + CurrentTarget.name);
-                AttackAction.AttackTarget(AttachedActor, CurrentTarget);
-                Info.CurrentAttacksInvoked++;
-            }
 
             if (NavAgent.remainingDistance < .002f || (Time.time - Info.LungeStartTime) > Options.LungeTimeout) //magic number :(
             {
