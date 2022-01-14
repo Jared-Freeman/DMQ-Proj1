@@ -14,11 +14,15 @@ public class ActorAI_Logic : MonoBehaviour
     public Animator animator;
     #endregion
 
-    protected void Start()
+    protected virtual void Awake()
     {
         AttachedActor = GetComponent<ActorAI>();
         NavAgent = GetComponent<NavMeshAgent>();
         if (NavAgent == null) Debug.LogError("Navmesh Agent not discovered!");
+    }
+
+    protected virtual void Start()
+    {
     }
 
     public void UpdateLogic()

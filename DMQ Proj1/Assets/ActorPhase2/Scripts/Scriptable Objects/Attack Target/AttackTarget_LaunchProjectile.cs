@@ -25,9 +25,9 @@ namespace AP2
         [Header("Add the Damage Message to the Projectile as a ProjectileEffect!")]
         public MoreOptions SpecialOptions;
 
-        public override void PerformAction(Actor Owner)
+        public override void AttackTarget(Actor Owner, GameObject Target)
         {
-            base.PerformAction(Owner);
+            base.AttackTarget(Owner, Target);
 
             if (FLAG_Debug) Debug.Log(Owner.name);
 
@@ -36,11 +36,11 @@ namespace AP2
             {
                 //TODO: Consider event dispatch here
 
-                Vector3 LaunchDir = (Options.Target.transform.position - Owner.gameObject.transform.position).normalized;
+                Vector3 LaunchDir = (Target.transform.position - Owner.gameObject.transform.position).normalized;
                 Vector3 LaunchPos = Owner.gameObject.transform.position
                     + LaunchDir * SpecialOptions.Offset_Forward;
 
-                GenericProjectile Proj = GenericProjectile.SpawnProjectile(Projectile_Template, LaunchPos, LaunchDir, Options.Target);
+                GenericProjectile Proj = GenericProjectile.SpawnProjectile(Projectile_Template, LaunchPos, LaunchDir, Target);
 
 
                 //if (Proj != null)

@@ -7,15 +7,21 @@ public class ActorStats : MonoBehaviour
 {
 
     #region members
-    
+
+    //might eventually want to perform a method call to alter these values 
+    //(i.e., changing max health reduces current health by (newmax - max))
     [Header("Default Values")]
     public float HpMax = 0;
     public float EnergyMax = 0;
 
+    //probably want to increase protection on current (state) variables
     [Header("Current Values")]
     public float HpCurrent;
     public float EnergyCurrent;
 
+    //how do we impl this to not mess with stuff like damage over time (DoT)?
+    //Should we make invuln into a comm channel sort of thing? 
+    //(?) enum InvulnerabilityHandling { Normal, IgnoreInvulnerabilityFrames, WaitUntilInvulnerabilityFramesOver }
     [Tooltip("Time that this gameObject is invulnerable for, after receiving damage.")]
     public float invulnerabiltyTime;
 
@@ -37,6 +43,10 @@ public class ActorStats : MonoBehaviour
     public bool isInvulnerable { get; set; }
 
     public UnityEvent OnDeath, OnReceiveDamage, OnHitWhileInvulnerable, OnBecomeVulnerable, OnResetDamage;
+
+
+
+    //refs
     Actor actor;
 
     void Start()

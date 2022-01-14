@@ -14,13 +14,12 @@ namespace AP2
         [System.Serializable]
         public struct ScriptOptions
         {
-            public GameObject Target;
             public AP2_DamageMessage DamageMessage;
         }
 
         public ScriptOptions Options;
 
-        public override void PerformAction(Actor Owner)
+        public virtual void AttackTarget(Actor Owner, GameObject Target)
         {
             if (FLAG_Debug) Debug.Log("PerformAction()");
 
@@ -34,16 +33,16 @@ namespace AP2
     [CreateAssetMenu(fileName = "ActorAction", menuName = "ScriptableObjects/Actor Actions/Attack/Attack Target/Generic Attack", order = 1)]
     public class AttackTarget_Generic : AP2_ActorAction_AttackTarget
     {
-        public override void PerformAction(Actor Owner)
+        public override void AttackTarget(Actor Owner, GameObject Target)
         {
-            base.PerformAction(Owner);
+            base.AttackTarget(Owner, Target);
 
             //TODO: Consider event dispatch here
 
             //This base behavior simply applies damage immediately
-            if (Options.Target.GetComponent<ActorStats>() != null)
+            if (Target.GetComponent<ActorStats>() != null)
             {
-                Options.Target.GetComponent<ActorStats>().ApplyDamage(Options.DamageMessage);
+                Target.GetComponent<ActorStats>().ApplyDamage(Options.DamageMessage);
             }
         }
     }

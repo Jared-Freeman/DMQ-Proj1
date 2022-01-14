@@ -119,11 +119,8 @@ public class AP2_Debug_LaunchAttackMessage : MonoBehaviour
     {
         if (AttackAction != null)
         {
-            //load attack options
-            AttackAction.Options.Target = Target;
-
             //dispatch action
-            AttackAction.PerformAction(_Actor);
+            AttackAction.AttackTarget(_Actor, Target);
         }
         else
             Debug.LogError("ActorAction not found!");
