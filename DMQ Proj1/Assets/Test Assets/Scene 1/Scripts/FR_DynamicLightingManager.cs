@@ -6,7 +6,7 @@ using System.Linq;
 
 //For dynamically enabling/disabling lights based on distance.
 //Not applicable for extremely distant lights, or lights that must always be on
-public class FR_DynamicLightingManager : MonoBehaviour
+public class FR_DynamicLightingManager : Singleton<FR_DynamicLightingManager>
 {
     #region Members
 
@@ -91,8 +91,10 @@ public class FR_DynamicLightingManager : MonoBehaviour
 
     #region Initialization
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         if (LightsInScene != null)
         {
             LightsInScene.Clear();

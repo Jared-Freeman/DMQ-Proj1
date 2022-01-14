@@ -5609,6 +5609,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
+      propertyPath: FLAG_Debug
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
       propertyPath: Options.LungePause
       value: 1
       objectReference: {fileID: 0}
@@ -5644,6 +5649,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
+      propertyPath: Options.DrawDebugGizmos
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
       propertyPath: Options.LungePrepareDistance
       value: 7.5
       objectReference: {fileID: 0}
@@ -5655,11 +5665,21 @@ PrefabInstance:
     - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
       propertyPath: Options.GrowCurve.m_Curve.Array.size
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
       propertyPath: Options.GrowCurve.m_Curve.Array.data[1].time
+      value: 0.34166086
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
+      propertyPath: Options.GrowCurve.m_Curve.Array.data[2].time
+      value: 0.7659442
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
+      propertyPath: Options.GrowCurve.m_Curve.Array.data[3].time
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
@@ -5670,37 +5690,87 @@ PrefabInstance:
     - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
       propertyPath: Options.GrowCurve.m_Curve.Array.data[1].value
+      value: 1.0182407
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
+      propertyPath: Options.GrowCurve.m_Curve.Array.data[2].value
+      value: 1.0965298
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
+      propertyPath: Options.GrowCurve.m_Curve.Array.data[3].value
       value: 1.1
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
       propertyPath: Options.GrowCurve.m_Curve.Array.data[0].inSlope
-      value: -0.49101108
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
       propertyPath: Options.GrowCurve.m_Curve.Array.data[1].inSlope
-      value: -0.1736787
+      value: 0.17841806
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
+      propertyPath: Options.GrowCurve.m_Curve.Array.data[2].inSlope
+      value: 0.05057268
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
+      propertyPath: Options.GrowCurve.m_Curve.Array.data[3].inSlope
+      value: 0.00054179603
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
       propertyPath: Options.GrowCurve.m_Curve.Array.data[0].outSlope
-      value: -0.49101108
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
       propertyPath: Options.GrowCurve.m_Curve.Array.data[1].inWeight
-      value: 0.057815015
+      value: 0.33333334
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
       propertyPath: Options.GrowCurve.m_Curve.Array.data[1].outSlope
-      value: -0.1736787
+      value: 0.17841806
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
+      propertyPath: Options.GrowCurve.m_Curve.Array.data[2].inWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
+      propertyPath: Options.GrowCurve.m_Curve.Array.data[2].outSlope
+      value: 0.05057268
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
+      propertyPath: Options.GrowCurve.m_Curve.Array.data[3].inWeight
+      value: 0.13266711
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
+      propertyPath: Options.GrowCurve.m_Curve.Array.data[3].outSlope
+      value: 0.00054179603
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
       propertyPath: Options.GrowCurve.m_Curve.Array.data[0].outWeight
-      value: 0.03866664
+      value: 0.08603379
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
+      propertyPath: Options.GrowCurve.m_Curve.Array.data[1].outWeight
+      value: 0.11882478
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
+      propertyPath: Options.GrowCurve.m_Curve.Array.data[2].outWeight
+      value: 0.1938403
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
