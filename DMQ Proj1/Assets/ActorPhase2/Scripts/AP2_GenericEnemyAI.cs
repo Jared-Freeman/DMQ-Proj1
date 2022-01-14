@@ -56,6 +56,8 @@ namespace AP2
             public float LungePause = 2f;
             [Min(0f)]
             public float LungeSpeed = 8f;
+            [Min(0f)]
+            public float LungeTimeout = 1.25f;
 
             [Tooltip("Deg/sec")]
             public float TurningRate = 360f;
@@ -361,7 +363,7 @@ namespace AP2
 
         private void Lunge()
         {
-            if (NavAgent.remainingDistance < .002f) //magic number :(
+            if (NavAgent.remainingDistance < .002f || (Time.time - Info.LungeStartTime) > Options.LungeTimeout) //magic number :(
             {
                 NavAgent.SetDestination(transform.position);
                 NavAgent.speed = Options.MovementSpeed;
