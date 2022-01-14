@@ -7,15 +7,21 @@ public class ActorStats : MonoBehaviour
 {
 
     #region members
-    
+
+    //might eventually want to perform a method call to alter these values 
+    //(i.e., changing max health reduces current health by (newmax - max))
     [Header("Default Values")]
     public float HpMax = 0;
     public float EnergyMax = 0;
 
+    //probably want to increase protection on current (state) variables
     [Header("Current Values")]
     public float HpCurrent;
     public float EnergyCurrent;
 
+    //how do we impl this to not mess with stuff like damage over time (DoT)?
+    //Should we make invuln into a comm channel sort of thing? 
+    //(?) enum InvulnerabilityHandling { Normal, IgnoreInvulnerabilityFrames, WaitUntilInvulnerabilityFramesOver }
     [Tooltip("Time that this gameObject is invulnerable for, after receiving damage.")]
     public float invulnerabiltyTime;
 
@@ -37,6 +43,10 @@ public class ActorStats : MonoBehaviour
     public bool isInvulnerable { get; set; }
 
     public UnityEvent OnDeath, OnReceiveDamage, OnHitWhileInvulnerable, OnBecomeVulnerable, OnResetDamage;
+
+
+
+    //refs
     Actor actor;
 
     void Start()
@@ -93,8 +103,29 @@ public class ActorStats : MonoBehaviour
         {
             OnReceiveDamage.Invoke();
         }
-            
 
+
+    }
+
+    //TODO: Make more robust
+    public void ApplyDamage(AP2_DamageMessage data)
+    {
+        if (HpCurrent <= 0)
+        {//ignore damage if already dead. TODO : may have to change that if we want to detect hit on death...
+            return;
+        }
+
+        HpCurrent -= Mathf.Max(data.DamageAmount, 0);
+
+        if (HpCurrent <= 0)
+        {
+            schedule += OnDeath.Invoke; //This avoid race condition when objects kill each other.
+            actor.ActorDead();
+        }
+        else
+        {
+            OnReceiveDamage.Invoke();
+        }
     }
 }
 [System.Serializable]
