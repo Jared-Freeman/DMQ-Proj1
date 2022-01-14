@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 78f952a33bbbb3c4a916a725beb2866f, type: 2}
+  - {fileID: 2100000, guid: 1560482b31ccc1d4e9fb6ee4e88d92b8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -116,6 +116,7 @@ MonoBehaviour:
     CollisionEnterProjectileEffects:
       ProjectileFXList:
       - {fileID: 11400000, guid: 0538fe4c154c8a64db7c4071eeaa3e26, type: 2}
+      - {fileID: 11400000, guid: 4201ff62f2e58584ba884bd387731a29, type: 2}
     CollisionStayProjectileEffects:
       ProjectileFXList: []
     CollisionExitProjectileEffects:
@@ -269,7 +270,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 1560482b31ccc1d4e9fb6ee4e88d92b8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
