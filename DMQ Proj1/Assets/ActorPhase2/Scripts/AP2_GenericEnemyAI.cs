@@ -373,10 +373,14 @@ namespace AP2
         private void Lunge()
         {
 
-            if (CurrentTarget != null && (CurrentTarget.transform.position - transform.position).sqrMagnitude < Options.AttackRange * Options.AttackRange)
+            if (
+                CurrentTarget != null 
+                && Info.CurrentAttacksInvoked < 1
+                && (CurrentTarget.transform.position - transform.position).sqrMagnitude < Options.AttackRange * Options.AttackRange)
             {
-                Debug.Log("ATTACKING " + CurrentTarget.name);
+                if(FLAG_Debug) Debug.Log("ATTACKING " + CurrentTarget.name);
                 AttackAction.AttackTarget(AttachedActor, CurrentTarget);
+                Info.CurrentAttacksInvoked++;
             }
 
             if (NavAgent.remainingDistance < .002f || (Time.time - Info.LungeStartTime) > Options.LungeTimeout) //magic number :(
