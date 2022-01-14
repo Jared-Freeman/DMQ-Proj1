@@ -2,10 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+namespace CSEventArgs
+{
+    public class ActorEventArgs : System.EventArgs
+    {
+        public Actor _Actor;
+        
+        public ActorEventArgs(Actor a)
+        {
+            _Actor = a;
+        }
+    }
+}
+
 [RequireComponent(typeof(ActorStats))]
 public class Actor : MonoBehaviour
 {
     #region EVENTS
+
+    public static event System.EventHandler<CSEventArgs.ActorEventArgs> OnActorCreated;
+    public static event System.EventHandler<CSEventArgs.ActorEventArgs> OnActorDestroyed;
+
     #endregion
 
     #region members
@@ -16,7 +33,7 @@ public class Actor : MonoBehaviour
 
     public bool Flag_ActorDebug = false;
 
-
+    public Team _Team;
     public ActorStats Stats;
     public List<ActorAction> Actions;
     public List<ActorStatusEffect> StatusEffects;
@@ -30,6 +47,14 @@ public class Actor : MonoBehaviour
 
         Stats = GetComponent<ActorStats>();
         if (Stats == null) Debug.LogError("No ActorStats found!");
+
+        OnActorCreated?.Invoke(this, new CSEventArgs.ActorEventArgs(this));
+    }
+
+
+    private void OnDestroy()
+    {
+        OnActorDestroyed?.Invoke(this, new CSEventArgs.ActorEventArgs(this));
     }
 
     protected void Update()
