@@ -123,6 +123,13 @@ MonoBehaviour:
       ProjectileFXList: []
     StartProjectileEffects:
       ProjectileFXList: []
+  DestroyOptions:
+    FLAG_UseDuration: 0
+    Duration: 0
+    FLAG_UseCollisionEnters: 1
+    CollisionEnters: 1
+    FLAG_UseCollisionStayDuration: 0
+    CollisionStayDuration: 0
 --- !u!114 &4137619294522910770
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,7 +217,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 1
   m_Constraints: 116
-  m_CollisionDetection: 3
+  m_CollisionDetection: 0
 --- !u!1 &7330679137305064190
 GameObject:
   m_ObjectHideFlags: 0

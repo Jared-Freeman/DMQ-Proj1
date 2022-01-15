@@ -6,6 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(GenericProjectileMover))]
 public class GenericProjectile : MonoBehaviour
 {
+    #region Static Methods
+
     public static GenericProjectile SpawnProjectile
         (
         GenericProjectile Template,
@@ -55,6 +57,9 @@ public class GenericProjectile : MonoBehaviour
         return GO.GetComponent<GenericProjectile>();
     }
 
+    #endregion
+
+
     #region Members
     public GenericProjectileMover Mover;
     private Rigidbody RB; //Its a good idea to initially make this Kinematic. Could be done in script idk...
@@ -102,6 +107,31 @@ public class GenericProjectile : MonoBehaviour
     }
     public GenericProjectileEffectDestroyOptions DestroyOptions;
 
+    private StateInfo Info;
+    private class StateInfo
+    {
+        public float StartTimestamp = Time.time;
+        public float Duration = 0;
+        public int CollisionEnters = 0;
+        public float CollisionStayDuration = 0;
+    }
+
+    //public-facing state info
+    public float TimeAlive
+    {
+        get
+        {
+            return Info.Duration;
+        }
+    }
+    public int CollisionCount
+    {
+        get
+        {
+            return Info.CollisionEnters;
+        }
+    }
+
     #endregion
 
     #region Events
@@ -116,18 +146,30 @@ public class GenericProjectile : MonoBehaviour
         if (Mover == null) Mover = new GenericProjectileMover();
         RB = GetComponent<Rigidbody>();
         if (RB == null) RB = new Rigidbody();
+
+
     }
 
     void Start()
     {
+        Info = new StateInfo();
         ProjectileFX.StartProjectileEffects.PerformProjectileEffects(this);
     }
     #endregion
 
+    private void FixedUpdate()
+    {
+        Info.Duration += Time.fixedDeltaTime;
+        if(DestroyOptions.FLAG_UseDuration && Mathf.Abs(Info.StartTimestamp - Time.time) > Mathf.Abs(DestroyOptions.Duration))
+        {
+            DestroyProjectile();
+        }
+    }
 
     void DestroyProjectile()
     {
-        Destroy(this);
+        ProjectileFX.EndProjectileEffects.PerformProjectileEffects(this);
+        Destroy(gameObject);
     }
 
     #region Collision FX Invokers
@@ -135,10 +177,22 @@ public class GenericProjectile : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, collision.collider);
+
+        Info.CollisionEnters++;
+        if(DestroyOptions.FLAG_UseCollisionEnters && Info.CollisionEnters >= DestroyOptions.CollisionEnters)
+        {
+            DestroyProjectile();
+        }
     }
     private void OnCollisionStay(Collision collision)
     {
         ProjectileFX.CollisionStayProjectileEffects.PerformProjectileEffects(this, collision.collider);
+
+        Info.CollisionStayDuration += Time.fixedDeltaTime;
+        if(DestroyOptions.FLAG_UseCollisionStayDuration && Info.CollisionStayDuration > DestroyOptions.CollisionStayDuration)
+        {
+            DestroyProjectile();
+        }
     }
     private void OnCollisionExit(Collision collision)
     {
@@ -149,10 +203,22 @@ public class GenericProjectile : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, other);
+
+        Info.CollisionEnters++;
+        if (DestroyOptions.FLAG_UseCollisionEnters && Info.CollisionEnters >= DestroyOptions.CollisionEnters)
+        {
+            DestroyProjectile();
+        }
     }
     private void OnTriggerStay(Collider other)
     {
         ProjectileFX.CollisionStayProjectileEffects.PerformProjectileEffects(this, other);
+
+        Info.CollisionStayDuration += Time.fixedDeltaTime;
+        if (DestroyOptions.FLAG_UseCollisionStayDuration && Info.CollisionStayDuration > DestroyOptions.CollisionStayDuration)
+        {
+            DestroyProjectile();
+        }
     }
     private void OnTriggerExit(Collider other)
     {
