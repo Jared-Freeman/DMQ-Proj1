@@ -84,6 +84,24 @@ public class GenericProjectile : MonoBehaviour
     };
     public GenericProjectileEffectOptions ProjectileFX;
 
+    //My best attempt at describing how a projectile is allowed to despawn
+    [System.Serializable]
+    public struct GenericProjectileEffectDestroyOptions
+    {
+        public bool FLAG_UseDuration;
+        public float Duration;
+        
+        [Header("Doubles as TriggerEnter if Collider == Trigger")]
+        public bool FLAG_UseCollisionEnters;
+        public int CollisionEnters;
+
+        [Header("Doubles as TriggerStay if Collider == Trigger")]
+        public bool FLAG_UseCollisionStayDuration;
+        public int CollisionStayDuration;
+
+    }
+    public GenericProjectileEffectDestroyOptions DestroyOptions;
+
     #endregion
 
     #region Events
