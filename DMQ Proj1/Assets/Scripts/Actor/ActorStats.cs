@@ -8,6 +8,8 @@ public class ActorStats : MonoBehaviour
 
     #region members
 
+    public bool FLAG_Debug = false;
+
     //might eventually want to perform a method call to alter these values 
     //(i.e., changing max health reduces current health by (newmax - max))
     [Header("Default Values")]
@@ -112,7 +114,7 @@ public class ActorStats : MonoBehaviour
     //TODO: Make more robust
     public void ApplyDamage(AP2_DamageMessage AP2Data)
     {
-        Debug.Log("Damage Taken");
+        if(FLAG_Debug) Debug.Log("Damage Taken");
 
         if (HpCurrent <= 0)
         {//ignore damage if already dead. TODO : may have to change that if we want to detect hit on death...
