@@ -241,7 +241,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh17624
+  m_Name: pb_Mesh16046
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1029,7 +1029,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh17318
+  m_Name: pb_Mesh15740
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1192,7 +1192,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh17402
+  m_Name: pb_Mesh15824
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3276,7 +3276,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh17560
+  m_Name: pb_Mesh15982
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3951,7 +3951,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh17530
+  m_Name: pb_Mesh15952
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -4300,6 +4300,107 @@ PrefabInstance:
     - target: {fileID: 819451193061632145, guid: 90a421146e3d0e94aa41ff79354e625d,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashCooldown
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashImpactEffect
+      value: 
+      objectReference: {fileID: 11400000, guid: 8db999520b835834f8c4a75965a00ff2,
+        type: 2}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.data[1].time
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.data[2].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.data[0].value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.data[0].inSlope
+      value: 22.950819
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.data[2].inSlope
+      value: -2.4655948
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.data[0].outSlope
+      value: 22.950819
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.data[1].inWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.data[2].inWeight
+      value: 0.020258825
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.data[2].outSlope
+      value: -2.4655948
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.data[0].outWeight
+      value: 0.023809524
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.data[1].outWeight
+      value: 0.040127613
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.data[0].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.data[1].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: Options._DashSpeedScale.m_Curve.Array.data[2].tangentMode
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

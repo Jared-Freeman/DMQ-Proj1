@@ -72,6 +72,8 @@ public class ActorStats : MonoBehaviour
 
     public void ApplyDamage(DamageMessage data)
     {
+        Debug.Log("false Taken");
+
         if (HpCurrent <= 0)
         {//ignore damage if already dead. TODO : may have to change that if we want to detect hit on death...
             return;
@@ -108,14 +110,16 @@ public class ActorStats : MonoBehaviour
     }
 
     //TODO: Make more robust
-    public void ApplyDamage(AP2_DamageMessage data)
+    public void ApplyDamage(AP2_DamageMessage AP2Data)
     {
+        Debug.Log("Damage Taken");
+
         if (HpCurrent <= 0)
         {//ignore damage if already dead. TODO : may have to change that if we want to detect hit on death...
             return;
         }
 
-        HpCurrent -= Mathf.Max(data.DamageAmount, 0);
+        HpCurrent -= Mathf.Max(AP2Data.DamageAmount, 0);
 
         if (HpCurrent <= 0)
         {

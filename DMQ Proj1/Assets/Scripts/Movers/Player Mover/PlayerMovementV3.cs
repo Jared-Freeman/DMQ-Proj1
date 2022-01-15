@@ -25,6 +25,18 @@ public class PlayerMovementV3 : MonoBehaviour
 
     private bool FLAG_PlayerMovementEnabled = true;
 
+    public PlayerMovementV3Options Options = new PlayerMovementV3Options(); 
+    //helper
+    [System.Serializable]
+    public class PlayerMovementV3Options
+    {
+        public float _DashCooldown;
+        public AnimationCurve _DashSpeedScale;
+        public float _DashDuration = .25f;
+        public float _DashSpeed = 30f;
+        public ImpactFX.ImpactEffect _DashImpactEffect;
+
+    }
 
     //Behavior properties (TODO: clean up. Not really using diff accelerations rn)
     [Header("__MOVEMENT PROPERTIES__")]
@@ -80,6 +92,18 @@ public class PlayerMovementV3 : MonoBehaviour
     [SerializeField] Vector2 VelocityMap = Vector2.zero; //affects horizontal movement velocity. Controlled via input
     [SerializeField] Vector2 DragVector = Vector2.zero;
 
+    public enum State { Standing, Moving, Sliding, Dashing }
+    public State CurrentState { get; private set; }
+
+    private StateInfo _Info;
+    //helper
+    public struct StateInfo
+    {
+        public Utils.CooldownTracker Dash_Cooldown;
+        public float Dash_LastStartTime;
+        public Vector3 _DashDesiredDirection;
+    }
+
 
     //Debug members
     [Space(6)]
@@ -134,22 +158,25 @@ public class PlayerMovementV3 : MonoBehaviour
     }
     void SpecialActionEvent()
     {
-        StartCoroutine(DoDashV2());
-        Event_SpecialActionStart?.Invoke(new PlayerMovementEventArgs());
+        if(CurrentState != State.Dashing && _Info.Dash_Cooldown.CanUseCooldown())
+        {
+            ChangeState(State.Dashing);
+            Event_SpecialActionStart?.Invoke(new PlayerMovementEventArgs());
+        }
     }
 
     #endregion
 
-    #region Init
+    #region Initialization
     private void Awake()
     {
+        //Refs
         if (inventory == null) inventory = GetComponent<Inventory>();
         if (inventory == null) Debug.LogError("PlayerMovement: No inventory found");
 
         if (Input == null) Input = GetComponent<PlayerInput>();
         if (Input == null) Debug.LogError("No Input found");
-
-
+        
         RB = gameObject.GetComponent<Rigidbody>();
         if (RB == null)
         {
@@ -159,8 +186,18 @@ public class PlayerMovementV3 : MonoBehaviour
 
         if (HorizontalMovementAngleHost == null) HorizontalMovementAngleHost = gameObject;
 
+
+        //Dispatch to other Inits
         InitInput();
         InitializeEvents();
+
+
+        //init state vars
+        CurrentState = State.Moving;
+
+        _Info.Dash_Cooldown = new Utils.CooldownTracker(Options._DashCooldown);
+        _Info.Dash_Cooldown.InitializeCooldown();
+        _Info.Dash_LastStartTime = Time.time;
     }
 
     void Start()
@@ -186,36 +223,114 @@ public class PlayerMovementV3 : MonoBehaviour
     }
     #endregion
 
-    #region Update Methods
     void Update()
     {
-        //if (new Vector3(RB.velocity.x, 0, RB.velocity.z).sqrMagnitude > MoveSpd * MoveSpd * 4)
-        //{
-        //    Debug.Log("Exceeding");
-        //}
-
-        UpdateMovementStates();
-
         Debug.DrawRay(transform.position, new Vector3(AimDirection.x, transform.position.y, AimDirection.y) * 5f, Color.yellow);
-
-    }
-
-    private void UpdateMovementStates()
-    {
-        //grounded
-
-        //exceeding influencible speed (maybe)
-
-        //[maybe] crouched
-        //[maybe] sprint
     }
 
     private void FixedUpdate()
     {
-        if(FLAG_PlayerMovementEnabled) HorizontalMovementInput();
+        if(FLAG_PlayerMovementEnabled) 
+        {
+            switch(CurrentState)
+            {
+                case State.Moving:
+                    HorizontalMovementInput();
+                    break;
+
+
+                case State.Dashing:
+                    DoDashV3();
+                    break;
+
+
+                case State.Sliding: //NYI
+                    break;
+
+
+                case State.Standing: //NYI
+                    break;
+
+
+            }
+        }
     }
+
+    #region State Transitions
+
+    // Place State start stuff here
+    private void ChangeState(State S)
+    {        
+        StateEnd(S);
+
+        CurrentState = S;
+
+        switch(S)
+        {
+            case State.Moving:
+
+                break;
+
+
+            case State.Dashing:
+
+                _Info._DashDesiredDirection = new Vector3(InputMap.x, 0, InputMap.y).normalized * Options._DashSpeed;
+                _Info.Dash_LastStartTime = Time.time;
+                _Info.Dash_Cooldown.ConsumeCooldown();
+
+                break;
+
+
+            case State.Sliding:
+
+                break;
+
+
+            case State.Standing:
+
+                break;
+
+
+            default:
+                Debug.LogError("ChangeState(): unrecognized state: " + S.ToString() + ". Does an implementation exist?");
+                break;
+        }
+    }
+
+    // Place State End stuff here
+    private void StateEnd(State S)
+    {
+
+        switch (S)
+        {
+            case State.Moving:
+
+                break;
+
+
+            case State.Dashing:
+
+                break;
+
+
+            case State.Sliding:
+
+                break;
+
+
+            case State.Standing:
+
+                break;
+
+
+            default:
+                Debug.LogError("StateEnd(): unrecognized state: " + S.ToString() + ". Does an implementation exist?");
+                break;
+        }
+    }
+
     #endregion
-        
+
     #region Input Event Dispatcher
     // This function is called in Awake(), and creates controls 
     // + registers all the events that may occur due to player input
@@ -759,21 +874,117 @@ public class PlayerMovementV3 : MonoBehaviour
     }
     #endregion
 
-    //NYI
-    private IEnumerator DoDash()
+    private void OnCollisionEnter(Collision collision)
     {
-        //Simple impulse model
-        float ImpulseForce = 10f;
-        RB.AddForce(new Vector3(InputMap.x, 0, InputMap.y).normalized * ImpulseForce * RB.mass, ForceMode.Impulse);
-        yield return new WaitForFixedUpdate();
+        //TODO: Consider multiple styles of collision handling
+        if (CurrentState == State.Dashing && collision.rigidbody.mass >= RB.mass)
+        {
+            //IFX
+            if(Options._DashImpactEffect != null)
+            {
+                Options._DashImpactEffect.SpawnImpactEffect(null, collision.transform.position, collision.transform.forward);
+            }
+
+            //impart physic impulse. Cancel remaining dash
+            if(collision.rigidbody != null)
+            {
+                RB.AddForce(-RB.velocity.normalized * RB.mass, ForceMode.Impulse);
+                collision.rigidbody.AddForce(RB.velocity.normalized * 20f * collision.rigidbody.mass, ForceMode.Impulse);
+            }
+
+            ChangeState(State.Moving);
+        }
     }
 
-    public AnimationCurve DashSpeedScale;
-    private float DashDuration = .25f;
-    private float DashSpeed = 30f;
+    #region Dash Movement Models
+
+
+
+    private void DoDashV3()
+    {
+        if (FLAGCollectDebugTelemetry) Debug.Log("Dashing");
+                       
+
+        if (Mathf.Abs(Time.time - _Info.Dash_LastStartTime) < Mathf.Abs(Options._DashDuration))
+        {
+            Vector3 DesiredVelocityDiff = Vector3.zero;
+            Vector3 DashAddVelocity = Vector3.zero;
+            float DashSpeedCoef = Options._DashSpeedScale.Evaluate((Time.time - _Info.Dash_LastStartTime) / Options._DashDuration);
+            Vector3 DashDesiredVelocity = _Info._DashDesiredDirection * DashSpeedCoef;
+            float ForceCoefficient = RB.mass / Time.fixedDeltaTime;
+            Vector3 FilteredRBVelocity = new Vector3(RB.velocity.x, 0, RB.velocity.z);
+            //Filtered velocity represents the maximum velocity we can affect in this timestep (the rigidbody can exceed this by a LOT in normal gameplay)
+            Vector3 FilteredVelocity = FilteredRBVelocity;
+
+            //max is clamped to current player-desired velocity max.
+            if (FilteredVelocity.sqrMagnitude > DashDesiredVelocity.sqrMagnitude) FilteredVelocity = DashDesiredVelocity.magnitude * FilteredVelocity.normalized;
+            
+
+            //compute parallel component of current velocity to desired velocity
+            if (DashDesiredVelocity.sqrMagnitude != 0) // parallel component of RB velocity to the intended velocity
+                DesiredVelocityDiff = (Vector3.Dot(DashDesiredVelocity, FilteredVelocity) / DashDesiredVelocity.magnitude) * DashDesiredVelocity.normalized;
+
+            //Recall that we are comparing parallel vectors here
+            if (Vector3.Dot(DashDesiredVelocity, FilteredRBVelocity) < 0)
+            {
+                //decelerating. Parallel component of velocity can be at MOST Deceleration * Time.FixedDeltaTime            
+                Vector3 Parallel = Vector3.zero;
+                Vector3 Perpendicular = Vector3.zero;
+
+                Parallel = (Vector3.Dot(DashDesiredVelocity, FilteredVelocity) / FilteredVelocity.magnitude) * FilteredVelocity.normalized;
+                //Perpendicular = DashDesiredVelocity - Parallel;
+
+                DashAddVelocity = (Parallel.normalized * Deceleration * Time.fixedDeltaTime) + Perpendicular;
+                //DashAddVelocity = ((-Parallel.normalized * Deceleration * Time.fixedDeltaTime) + Perpendicular);
+
+
+                //DashAddVelocity = (DashDesiredVelocity - DesiredVelocityDiff);
+                //if (DashAddVelocity.sqrMagnitude > Deceleration * Deceleration * Time.fixedDeltaTime * Time.fixedDeltaTime) DashAddVelocity = DashAddVelocity.normalized * Deceleration * Time.fixedDeltaTime;
+            }
+            else
+            {
+                //sustaining velocity
+                DashAddVelocity = (DashDesiredVelocity - DesiredVelocityDiff);
+            }
+
+            //TODO: Figure out + impl best practice for dash Dampening
+            //Damp (within standard movement speed control)
+            if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= MoveSpd * MoveSpd || true) //First check was causing sloppy deceleration within standard MoveSpd
+            {
+                RB.AddForce(DashAddVelocity * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
+
+
+                if ((DashAddVelocity).sqrMagnitude < (FilteredRBVelocity - DesiredVelocityDiff).sqrMagnitude)
+                {
+                    //RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff).normalized * DashAddVelocity.magnitude * ForceCoefficient, ForceMode.Force);
+                    RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff) * ForceCoefficient, ForceMode.Force);
+                }
+                else
+                {
+                    RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff) * ForceCoefficient, ForceMode.Force);
+                }
+
+
+                if (FLAGDisplayDebugGizmos)
+                {
+                    float a = 2;
+                    Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + .75f, transform.position.z), -(FilteredRBVelocity - DesiredVelocityDiff) * a, Color.red);
+                }
+            }
+
+        }
+        else
+        {
+            ChangeState(State.Moving);
+        }
+
+    }
+
+    //Old Impl
     private IEnumerator DoDashV2()
     {
-        FLAG_PlayerMovementEnabled = false;
+        ChangeState(State.Dashing);
+
         yield return new WaitForFixedUpdate();
 
 
@@ -782,7 +993,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
         Vector3 FilteredRBVelocity = new Vector3(RB.velocity.x, 0, RB.velocity.z);
 
-        Vector3 DashDesiredVelocityRaw = new Vector3(InputMap.x, 0, InputMap.y).normalized * DashSpeed;
+        Vector3 DashDesiredVelocityRaw = new Vector3(InputMap.x, 0, InputMap.y).normalized * Options._DashSpeed;
         Vector3 DashDesiredVelocity = DashDesiredVelocityRaw;
         Vector3 DashAddVelocity = Vector3.zero;
 
@@ -793,10 +1004,10 @@ public class PlayerMovementV3 : MonoBehaviour
 
         float TimeStart = Time.time;
         float TimeCurrent = Time.time;
-        while(TimeCurrent - TimeStart < DashDuration)
+        while(TimeCurrent - TimeStart < Options._DashDuration)
         {
             TimeCurrent = Time.time;
-            DashSpeedCoef = DashSpeedScale.Evaluate((TimeCurrent - TimeStart) / DashDuration);
+            DashSpeedCoef = Options._DashSpeedScale.Evaluate((TimeCurrent - TimeStart) / Options._DashDuration);
             DashDesiredVelocity = DashDesiredVelocityRaw * DashSpeedCoef;
 
             ForceCoefficient = RB.mass / Time.fixedDeltaTime;
@@ -863,8 +1074,21 @@ public class PlayerMovementV3 : MonoBehaviour
 
             yield return new WaitForFixedUpdate();
         }
-        FLAG_PlayerMovementEnabled = true;
+
+
+        ChangeState(State.Moving);
     }
+
+    //Old Impl
+    private IEnumerator DoDash()
+    {
+        //Simple impulse model
+        float ImpulseForce = 10f;
+        RB.AddForce(new Vector3(InputMap.x, 0, InputMap.y).normalized * ImpulseForce * RB.mass, ForceMode.Impulse);
+        yield return new WaitForFixedUpdate();
+    }
+
+    #endregion
 
     //TODO: Move this to another script
     public GameObject ShootableProjectile;
