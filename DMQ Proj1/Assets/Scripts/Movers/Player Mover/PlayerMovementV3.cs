@@ -35,7 +35,6 @@ public class PlayerMovementV3 : MonoBehaviour
         public float _DashDuration = .25f;
         public float _DashSpeed = 30f;
         public ImpactFX.ImpactEffect _DashImpactEffect;
-
     }
 
     //Behavior properties (TODO: clean up. Not really using diff accelerations rn)
@@ -370,8 +369,41 @@ public class PlayerMovementV3 : MonoBehaviour
 
                     else if (ctx.action.name == controls.MouseAndKeyboard.Aim.name)
                     {
-                        Vector3 V = Camera.main.WorldToScreenPoint(transform.position);
-                        AimDirection = (ctx.ReadValue<Vector2>() - new Vector2(V.x, V.y)).normalized;
+                        if (Camera.main == null) return;
+
+                        Vector2 In = ctx.ReadValue<Vector2>();
+
+                        //improved aiming using raycast to plane
+                        if (Camera.main.GetComponent<Topdown_Multitracking_Camera_Rig>() != null)
+                        {
+
+                            //TODO: Consider CamDistanceCurrent improvement. We need a distance from camera to EACH PLAYER, projected onto "2d world plane." 
+                            //For now this should be a fairly strong approximation (but maybe could be broken)
+                            Plane CursorPlane = new Plane(Vector3.up, Camera.main.GetComponent<Topdown_Multitracking_Camera_Rig>().CamDistanceCurrent);
+
+                            Ray RayToCursorPlane = Camera.main.ScreenPointToRay(new Vector3(In.x, In.y, 0));
+
+
+                            Vector3 Hit = Vector3.zero;
+                            if (CursorPlane.Raycast(RayToCursorPlane, out float Point))
+                            {
+                                Hit = RayToCursorPlane.GetPoint(Point);
+                            }
+
+                            //TOOD: Consider this for relaying info to other subsystems
+                            //At this point, Hit == the point on plane where player clicked. Could be useful??
+
+                            Vector3 V = Vector3.ProjectOnPlane((Hit - transform.position), Vector3.up);
+
+                            AimDirection = (new Vector2(V.x, V.z)).normalized;
+                        }
+                        else
+                        {
+                            Vector3 V = Camera.main.WorldToScreenPoint(transform.position);
+                            //Vector3 V = Camera.main.WorldToScreenPoint(transform.position + new Vector3(0, ShootableProjectileHeightOffset, 0)); //hmm 
+
+                            AimDirection = (In - new Vector2(V.x, V.y)).normalized;
+                        }
                     }
                 }
 
@@ -1092,6 +1124,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
     //TODO: Move this to another script
     public GameObject ShootableProjectile;
+    public float ShootableProjectileHeightOffset = 1f;
     void ShootProjectile()
     {
         GenericProjectile P_Template = ShootableProjectile.GetComponent<GenericProjectile>();
@@ -1102,7 +1135,7 @@ public class PlayerMovementV3 : MonoBehaviour
             GameObject P = Instantiate(ShootableProjectile);
             GenericProjectile Proj = P.GetComponent<GenericProjectile>();
 
-            P.transform.position = transform.position + (AimDir3).normalized * 1.5f + new Vector3(0, 1f, 0); //arbitrary spawn loc
+            P.transform.position = transform.position + (AimDir3).normalized * 1.5f + new Vector3(0, ShootableProjectileHeightOffset, 0); //arbitrary spawn loc
             Proj.Mover.MovementTypeOptions.PhysicsImpulseOptions.Direction = AimDir3.normalized;
         }
     }
