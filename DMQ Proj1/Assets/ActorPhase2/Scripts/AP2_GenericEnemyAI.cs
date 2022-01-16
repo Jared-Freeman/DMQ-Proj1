@@ -8,10 +8,6 @@ namespace AP2
     //This class is intended to simply walk to a point near the player, lunge, and perform an attack at the end of the lunge
     public class AP2_GenericEnemyAI : ActorAI_Logic
     {
-        private static float _RoutineSleepDuration = .125f; //8 times / sec
-
-        public bool FLAG_Debug = false;
-
         public Utils.CooldownTracker AttackCooldown;
         public AP2.AP2_ActorAction_AttackTarget AttackAction;
         
@@ -75,7 +71,6 @@ namespace AP2
         }
 
         public enum State { Idle, Chasing, PrepToLunge, Lunging, Attacking }
-        public enum TargetPriority { None, Proximity }
         #endregion
 
 

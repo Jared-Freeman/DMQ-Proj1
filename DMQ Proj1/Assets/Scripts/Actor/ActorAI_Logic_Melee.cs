@@ -19,7 +19,7 @@ public class ActorAI_Logic_Melee : ActorAI_Logic
     new protected void Start()
     {
         base.Start();
-        animator = GetComponent<Animator>();
+        Animator = GetComponent<Animator>();
         MeleeAttack = GetComponent<ActorAction_Attack>();
         MoveTo = GetComponent<ActorAction_MoveToTarget>();
         CurrentAttackCooldown = 0f;
@@ -39,7 +39,7 @@ public class ActorAI_Logic_Melee : ActorAI_Logic
         float hVelocity = NavAgent.velocity.x;
         float vVelocity = NavAgent.velocity.y;
         var speed = Mathf.Max(Mathf.Abs(hVelocity), Mathf.Abs(vVelocity));
-        animator.SetFloat("speedv", speed);
+        Animator.SetFloat("speedv", speed);
         UpdateLogic();
     }
 
@@ -56,7 +56,7 @@ public class ActorAI_Logic_Melee : ActorAI_Logic
                     {
                         //Attack
                         Debug.Log("Attacking");
-                        animator.SetTrigger("Attack1h1");
+                        Animator.SetTrigger("Attack1h1");
                         MeleeAttack.BeginAttack(true);
                         CurrentAttackCooldown = 0f;
                     }

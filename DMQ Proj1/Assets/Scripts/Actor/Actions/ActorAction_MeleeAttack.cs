@@ -30,7 +30,7 @@ public class ActorAction_MeleeAttack : MonoBehaviour
     }
     public void OnActionEnd()
     {
-        Logic.animator.SetTrigger("Attack1h1");
+        Logic.Animator.SetTrigger("Attack1h1");
         ActorDamage AttackDamage = new ActorDamage(null, DamageAmount, ActorDamageType.Internal);
         Logic.TargetActor.TakeDamage(AttackDamage);
         Debug.Log(Logic.TargetActor.name + "is hit");
