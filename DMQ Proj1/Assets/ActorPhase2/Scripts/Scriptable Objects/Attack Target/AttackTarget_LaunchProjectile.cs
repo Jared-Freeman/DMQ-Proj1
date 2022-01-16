@@ -16,6 +16,7 @@ namespace AP2
             //TODO: Consider changing how projectile offset is handled
             [Tooltip("Negative Values == backwards")]
             public float Offset_Forward = 1f;
+            public float Offset_Vertical = 1f;
             //[Tooltip("Negative Values == left")]
             //public float Offset_Horizontal = 0f;
             //[Tooltip("Negative Values == down")]
@@ -39,6 +40,7 @@ namespace AP2
                 Vector3 LaunchDir = (Target.transform.position - Owner.gameObject.transform.position).normalized;
                 Vector3 LaunchPos = Owner.gameObject.transform.position
                     + LaunchDir * SpecialOptions.Offset_Forward;
+                LaunchPos.y = SpecialOptions.Offset_Vertical;
 
                 GenericProjectile Proj = GenericProjectile.SpawnProjectile(Projectile_Template, LaunchPos, LaunchDir, Target);
 

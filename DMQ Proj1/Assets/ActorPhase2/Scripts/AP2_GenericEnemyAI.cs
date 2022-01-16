@@ -229,7 +229,7 @@ namespace AP2
             transform.localScale = DefaultScale;
         }
 
-        private IEnumerator I_TurnInterpolate()
+        protected IEnumerator I_TurnInterpolate()
         {
             bool FLAG_Done = false;
             while (!FLAG_Done)

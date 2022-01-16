@@ -56,4 +56,51 @@ namespace Utils
             return false;
         }
     }
+
+    public static class AI
+    {
+        /// <summary>
+        /// Finds a random point in the specified, 2.5D radius (where y is specified by center argument)
+        /// </summary>
+        /// <param name="center"> Center of circular search </param>
+        /// <param name="MinRange"> Inner radius of circular search </param>
+        /// <param name="MaxRange"> Outer radius of circular search </param>
+        /// <param name="result"> Resulting point </param>
+        /// <param name="CheckCount"> Number of checks before considered unsuccessful </param>
+        /// <returns></returns>
+        public static bool RandomPointInCircle(Vector3 center, float MinRange, float MaxRange, out Vector3 result, int CheckCount = 30)
+        {
+            if (MinRange < 0 || MaxRange < 0)
+            {
+                result = Vector3.zero;
+                return false;
+            }
+
+            MinRange = Mathf.Min(MinRange, MaxRange);
+            float MinSquared = MinRange * MinRange;
+            float RandomRadius;
+            float RandomAngle;
+            Vector2 CircleSample;
+
+            for (int i = 0; i < CheckCount; i++)
+            {
+                RandomRadius = Random.Range(MinRange, MaxRange);
+                RandomAngle = Random.Range(0, 360);
+
+                CircleSample.x = RandomRadius * Mathf.Cos(RandomAngle);
+                CircleSample.y = RandomRadius * Mathf.Sin(RandomAngle);
+
+                Vector3 randomPoint = center + new Vector3(CircleSample.x, center.y, CircleSample.y);
+                UnityEngine.AI.NavMeshHit hit;
+                if (UnityEngine.AI.NavMesh.SamplePosition(randomPoint, out hit, 1.0f, UnityEngine.AI.NavMesh.AllAreas))
+                {
+                    result = hit.position;
+                    return true;
+                }
+            }
+
+            result = Vector3.zero;
+            return false;
+        }
+    }
 }

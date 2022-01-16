@@ -59,7 +59,12 @@ public class GenericProjectileMover : MonoBehaviour
                 break;
 
             case MovementStyle.LinearSimple:
+                if(FLAG_FaceRigidbodyVelocity)
+                {
+                    Debug.DrawRay(transform.position, MovementTypeOptions.LinearSimpleOptions.InitialDirection.normalized * 5f, Color.cyan, 5f);
 
+                    transform.rotation = Quaternion.LookRotation(MovementTypeOptions.LinearSimpleOptions.InitialDirection.normalized, Vector3.up);
+                }
                 break;
 
             case MovementStyle.ParabolicSimple:
@@ -86,7 +91,7 @@ public class GenericProjectileMover : MonoBehaviour
     #region Update Methods
     void Update()
     {
-        if(FLAG_FaceRigidbodyVelocity) FaceVelocityForward();
+        if (FLAG_FaceRigidbodyVelocity) FaceVelocityForward();
         UpdateMovement();
         ProjectileTimeAlive += Time.deltaTime;
     }
@@ -194,13 +199,7 @@ public class GenericProjectileMover : MonoBehaviour
 
     void LinearSimpleMovement()
     {
-        //transform.position += MovementTypeOptions.LinearSimpleOptions.InitialDirection.normalized * MovementTypeOptions.LinearSimpleOptions.Speed * Time.deltaTime;
-
-        transform.Translate(MovementTypeOptions.LinearSimpleOptions.InitialDirection.normalized * MovementTypeOptions.LinearSimpleOptions.Speed * Time.deltaTime);
-        if(ProjectileTimeAlive > MovementTypeOptions.LinearSimpleOptions.MaxProjectileDuration)
-        {
-
-        }
+        transform.position += MovementTypeOptions.LinearSimpleOptions.InitialDirection.normalized * MovementTypeOptions.LinearSimpleOptions.Speed * Time.deltaTime;
     }
 
 
@@ -259,6 +258,17 @@ public class GenericProjectileMover : MonoBehaviour
         Vector3 NextPosition = (ParaS_ImpactTarget - ParaS_InitialPosition).normalized * AnimationCoefficient * MovementTypeOptions.ParabolicSimpleOptions.LaunchDistance;
         NextPosition.y += MovementTypeOptions.ParabolicSimpleOptions.HeightOverTime.Evaluate(AnimationCoefficient) * MovementTypeOptions.ParabolicSimpleOptions.MaxHeight;
 
+        //tinybrain velocity approximation
+        if(FLAG_FaceRigidbodyVelocity)
+        {
+            //MovementTypeOptions.ParabolicSimpleOptions.HeightOverTime.
+
+            
+
+            transform.rotation = Quaternion.LookRotation(MovementTypeOptions.ParabolicSimpleOptions.InitialHorizontalDirection, Vector3.up);
+
+
+        }
         transform.position = NextPosition;
     }
 
@@ -393,7 +403,17 @@ public class GenericProjectileMover : MonoBehaviour
 
     void FaceVelocityForward()
     {
-        if(RB.velocity.sqrMagnitude != 0) transform.forward = RB.velocity.normalized;
+        switch(MovementType)
+        {
+            case MovementStyle.PhysicsContinuousForce:
+            case MovementStyle.PhysicsImpulse:
+                if (RB.velocity.sqrMagnitude != 0) transform.forward = RB.velocity.normalized;
+                break;
+
+
+            default:
+                break;
+        }
     }
 
     //Can probably add event handlers PER movement style by just adding a switch statement into any event handler here

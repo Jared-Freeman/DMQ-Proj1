@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class IFX_Previewer : MonoBehaviour
 {
+    [Header("Toggle to run in Play mode")]
     public bool PlayEffect;
     public ImpactFX.ImpactEffect PreviewEffect;
 

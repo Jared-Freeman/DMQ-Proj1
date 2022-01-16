@@ -374,6 +374,7 @@ public class PlayerMovementV3 : MonoBehaviour
                         Vector2 In = ctx.ReadValue<Vector2>();
 
                         //improved aiming using raycast to plane
+                        //TODO: Consider a "raycast to model" approach; consider modifying the CursorPlane to be inline with the projectile spawn height
                         if (Camera.main.GetComponent<Topdown_Multitracking_Camera_Rig>() != null)
                         {
 
@@ -908,20 +909,31 @@ public class PlayerMovementV3 : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        //No rigidbody means we should just slap the wall or whatever
+        if(collision.rigidbody == null)
+        {
+            //IFX
+            if (Options._DashImpactEffect != null)
+            {
+                Options._DashImpactEffect.SpawnImpactEffect(null, collision.contacts[0].point, collision.contacts[0].normal);
+            }
+            ChangeState(State.Moving);
+        }
+
         //TODO: Consider multiple styles of collision handling
-        if (CurrentState == State.Dashing && collision.rigidbody.mass >= RB.mass)
+        else if (CurrentState == State.Dashing && collision.rigidbody.mass >= RB.mass)
         {
             //IFX
             if(Options._DashImpactEffect != null)
             {
-                Options._DashImpactEffect.SpawnImpactEffect(null, collision.transform.position, collision.transform.forward);
+                Options._DashImpactEffect.SpawnImpactEffect(null, collision.contacts[0].point, collision.contacts[0].normal);
             }
 
             //impart physic impulse. Cancel remaining dash
             if(collision.rigidbody != null)
             {
-                RB.AddForce(-RB.velocity.normalized * RB.mass, ForceMode.Impulse);
-                collision.rigidbody.AddForce(RB.velocity.normalized * 20f * collision.rigidbody.mass, ForceMode.Impulse);
+                RB.AddForce(-RB.velocity * RB.mass, ForceMode.Impulse);
+                collision.rigidbody.AddForce(RB.velocity * RB.mass, ForceMode.Impulse);
             }
 
             ChangeState(State.Moving);
