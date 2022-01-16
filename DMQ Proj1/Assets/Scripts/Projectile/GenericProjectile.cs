@@ -61,7 +61,7 @@ public class GenericProjectile : MonoBehaviour
 
 
     #region Members
-    public GenericProjectileMover Mover;
+    public GenericProjectileMover Mover { get; protected set; }
     private Rigidbody RB; //Its a good idea to initially make this Kinematic. Could be done in script idk...
 
     [System.Serializable]
