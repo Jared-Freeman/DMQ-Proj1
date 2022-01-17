@@ -4427,12 +4427,28 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
         type: 3}
+      propertyPath: RunOptions.Deceleration
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
       propertyPath: DashOptions._DashCooldown
       value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
         type: 3}
       propertyPath: Options._DashImpactEffect
+      value: 
+      objectReference: {fileID: 11400000, guid: 8db999520b835834f8c4a75965a00ff2,
+        type: 2}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: RunOptions.DampAcceleration
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: DashOptions._DashImpactEffect
       value: 
       objectReference: {fileID: 11400000, guid: 8db999520b835834f8c4a75965a00ff2,
         type: 2}
