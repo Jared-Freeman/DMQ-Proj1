@@ -42,10 +42,10 @@ namespace AP2
                     + LaunchDir * SpecialOptions.Offset_Forward;
                 LaunchPos.y = SpecialOptions.Offset_Vertical;
 
-                GenericProjectile Proj = GenericProjectile.SpawnProjectile(Projectile_Template, LaunchPos, LaunchDir, Target);
+                GenericProjectile Proj = GenericProjectile.SpawnProjectile(Projectile_Template, LaunchPos, LaunchDir, new Vector2(LaunchDir.x, LaunchDir.z), Target);
 
                 Proj.ActorOwner = Owner;
-                Proj.gameObject.layer = Owner._Team.Options.Layer;
+                Proj.gameObject.layer = Owner._Team.Options.NoCollideLayer; //TODO: Distinguish between collisions and nocollisions
 
                 //if (Proj != null)
                 //{
