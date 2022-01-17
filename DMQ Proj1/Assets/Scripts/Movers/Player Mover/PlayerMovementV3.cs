@@ -91,18 +91,18 @@ public class PlayerMovementV3 : MonoBehaviour
         //[Header("__MOVEMENT PROPERTIES__")]
         [Range(.1f, 2000f)]
         [Tooltip("Used in Velocity Change movement style ONLY. m / sec^2")]
-        public float DampAcceleration = 1;
+        public float DampAcceleration = 50;
 
         [Range(.1f, 2000f)]
         [Tooltip("m / sec^2")]
-        public float Deceleration = 20;
+        public float Deceleration = 3;
 
         [Range(.1f, 2000f)]
         [Tooltip("m / sec^2")]
         public float HorizontalAcceleration = 100f;
 
         [Tooltip("Meters / sec")]
-        public float MoveSpd = 6;
+        public float MoveSpd = 7.5f;
 
     }
 
