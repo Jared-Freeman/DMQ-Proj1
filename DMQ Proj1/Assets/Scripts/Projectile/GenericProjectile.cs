@@ -11,7 +11,8 @@ public class GenericProjectile : MonoBehaviour
         (
         GenericProjectile Template,
         Vector3 InitialPosition = default,
-        Vector3 LaunchDirection = default, 
+        Vector3 LaunchDirection = default,
+        Vector3 LaunchDirection_2D = default,
         GameObject Target = null
         )
     {
@@ -19,37 +20,41 @@ public class GenericProjectile : MonoBehaviour
         GenericProjectile PR = GO.GetComponent<GenericProjectile>();
 
         if (PR == null) return null;
-                       
+
+        PR.Info = new StateInfo(LaunchDirection, LaunchDirection_2D, Target);
+            
+        /* Old Info setting model
         switch (PR._Data.MoveOptions.MovementType)
         {
             case ProjectileMoveStyle.None:
                 break;
 
             case ProjectileMoveStyle.LinearSimple:
-                PR._Data.MoveOptions.MovementTypeOptions.LinearSimpleOptions.InitialDirection = LaunchDirection;
+                PR.Info.InitialDirection = LaunchDirection;
                 break;
 
             case ProjectileMoveStyle.ParabolicSimple:
-                PR._Data.MoveOptions.MovementTypeOptions.ParabolicSimpleOptions.InitialHorizontalDirection = new Vector2(LaunchDirection.x, LaunchDirection.z);
+                PR.Info.InitialHorizontalDirection = new Vector2(LaunchDirection.x, LaunchDirection.z);
                 if (Target != null)
-                    PR._Data.MoveOptions.MovementTypeOptions.ParabolicSimpleOptions.LaunchDistance = (GO.transform.position - Target.transform.position).magnitude;
+                    PR.Info.LaunchDistance = (GO.transform.position - Target.transform.position).magnitude;
                 break;
 
             //Impl in Fixed FixedUpdateMovement()
             case ProjectileMoveStyle.PhysicsContinuousForce:
-                PR._Data.MoveOptions.MovementTypeOptions.PhysicsContinuousForceOptions.Direction = LaunchDirection;
+                PR.Info.Direction = LaunchDirection;
                 break;
 
             //Impl in Fixed FixedUpdateMovement()
             case ProjectileMoveStyle.PhysicsImpulse:
-                PR._Data.MoveOptions.MovementTypeOptions.PhysicsImpulseOptions.Direction = LaunchDirection;
+                PR.Info.Direction = LaunchDirection;
                 break;
 
             case ProjectileMoveStyle.HomingSimple:
                 if(Target != null)
-                    PR._Data.MoveOptions.MovementTypeOptions.HomingSimpleOptions.Target = Target;   
+                    PR.Info.Target = Target;   
                 break;
         };
+        */
         
         GO.transform.position = InitialPosition;
 
@@ -65,61 +70,43 @@ public class GenericProjectile : MonoBehaviour
 
     public ProjectilePreset _Data;
 
-    /* old on-board data
-    // -------------------------------------------------------------------
-    [System.Serializable]
-    public struct GenericProjectileMessagePayload
-    {
-        public List<ProjectileEffect> ProjectileFXList;
 
-        public void PerformProjectileEffects(GenericProjectile Projectile, Collider Col = null)
+    public StateInfo Info;
+
+    public struct StateInfo
+    {
+        public StateInfo(Vector3 dir, Vector2 dir_2D, GameObject target)
         {
-            foreach (ProjectileEffect PE in ProjectileFXList)
-            {
-                PE.PerformPayloadEffect(Projectile, Col);
-            }
+            StartTimestamp = Time.time;
+            Duration = 0f;
+            CollisionEnters = 0;
+            CollisionStayDuration = 0;
+            InitialDirection = dir;
+            InitialHorizontalDirection = dir_2D;
+            LaunchDistance = 0;
+            Direction = dir;
+            Target = target;
         }
-    };
 
-    [System.Serializable]
-    public struct GenericProjectileEffectOptions
-    {
-        public GenericProjectileMessagePayload EndProjectileEffects;
-        public GenericProjectileMessagePayload CollisionEnterProjectileEffects;
-        public GenericProjectileMessagePayload CollisionStayProjectileEffects;
-        public GenericProjectileMessagePayload CollisionExitProjectileEffects;
-        public GenericProjectileMessagePayload StartProjectileEffects;
-    };
-    public GenericProjectileEffectOptions ProjectileFX;
-
-    //My best attempt at describing how a projectile is allowed to despawn
-    [System.Serializable]
-    public struct GenericProjectileEffectDestroyOptions
-    {
-        public bool FLAG_UseDuration;
+        public float StartTimestamp;
         public float Duration;
-
-        [Header("Doubles as TriggerEnter if Collider == Trigger")]
-        public bool FLAG_UseCollisionEnters;
         public int CollisionEnters;
-
-        [Header("Doubles as TriggerStay if Collider == Trigger")]
-        public bool FLAG_UseCollisionStayDuration;
-        public int CollisionStayDuration;
-
-    }
-    public GenericProjectileEffectDestroyOptions DestroyOptions;
-    // -------------------------------------------------------------------
-    */
+        public float CollisionStayDuration;
 
 
-    private StateInfo Info;
-    private class StateInfo
-    {
-        public float StartTimestamp = Time.time;
-        public float Duration = 0;
-        public int CollisionEnters = 0;
-        public float CollisionStayDuration = 0;
+        //Style-Specific stuff ---------------------
+        public Vector3 InitialDirection;
+
+
+        public Vector2 InitialHorizontalDirection;
+        public float LaunchDistance;
+
+
+        public Vector3 Direction;
+
+
+        public GameObject Target;
+        //End Style-Specific stuff ---------------------
     }
 
     //public-facing state info
@@ -140,9 +127,6 @@ public class GenericProjectile : MonoBehaviour
 
     #endregion
 
-    #region Events
-
-    #endregion
 
     #region Initialization
 
@@ -160,8 +144,6 @@ public class GenericProjectile : MonoBehaviour
 
     void Start()
     {
-        Info = new StateInfo();
-
         InitializeMovementMethod();
 
         _Data.ProjectileFX.StartProjectileEffects.PerformProjectileEffects(this);
@@ -288,9 +270,9 @@ public class GenericProjectile : MonoBehaviour
             case ProjectileMoveStyle.LinearSimple:
                 if (_Data.MoveOptions.FLAG_FaceRigidbodyVelocity)
                 {
-                    Debug.DrawRay(transform.position, _Data.MoveOptions.MovementTypeOptions.LinearSimpleOptions.InitialDirection.normalized * 5f, Color.cyan, 5f);
+                    Debug.DrawRay(transform.position, Info.InitialDirection.normalized * 5f, Color.cyan, 5f);
 
-                    transform.rotation = Quaternion.LookRotation(_Data.MoveOptions.MovementTypeOptions.LinearSimpleOptions.InitialDirection.normalized, Vector3.up);
+                    transform.rotation = Quaternion.LookRotation(Info.InitialDirection.normalized, Vector3.up);
                 }
                 break;
 
@@ -387,7 +369,7 @@ public class GenericProjectile : MonoBehaviour
     #region Movement Methods (Option Struct's, Update's and Start's)
     void LinearSimpleMovement()
     {
-        transform.position += _Data.MoveOptions.MovementTypeOptions.LinearSimpleOptions.InitialDirection.normalized * _Data.MoveOptions.MovementTypeOptions.LinearSimpleOptions.Speed * Time.deltaTime;
+        transform.position += Info.InitialDirection.normalized * _Data.MoveOptions.MovementTypeOptions.LinearSimpleOptions.Speed * Time.deltaTime;
     }
 
     // ---------------------------------------------------------------------- 
@@ -400,10 +382,10 @@ public class GenericProjectile : MonoBehaviour
     {
         ParaS_ImpactTarget = transform.position
             + (new Vector3(
-                _Data.MoveOptions.MovementTypeOptions.ParabolicSimpleOptions.InitialHorizontalDirection.x
+                Info.InitialHorizontalDirection.x
                 , 0
-                , _Data.MoveOptions.MovementTypeOptions.ParabolicSimpleOptions.InitialHorizontalDirection.y)
-            * _Data.MoveOptions.MovementTypeOptions.ParabolicSimpleOptions.LaunchDistance);
+                , Info.InitialHorizontalDirection.y)
+            * Info.LaunchDistance);
 
         ParaS_InitialPosition = transform.position;
 
@@ -424,7 +406,7 @@ public class GenericProjectile : MonoBehaviour
 
         float AnimationCoefficient = ParaS_CurrentTimestamp / _Data.MoveOptions.MovementTypeOptions.ParabolicSimpleOptions.TravelTime;
 
-        Vector3 NextPosition = (ParaS_ImpactTarget - ParaS_InitialPosition).normalized * AnimationCoefficient * _Data.MoveOptions.MovementTypeOptions.ParabolicSimpleOptions.LaunchDistance;
+        Vector3 NextPosition = (ParaS_ImpactTarget - ParaS_InitialPosition).normalized * AnimationCoefficient * Info.LaunchDistance;
         NextPosition.y += _Data.MoveOptions.MovementTypeOptions.ParabolicSimpleOptions.HeightOverTime.Evaluate(AnimationCoefficient) * _Data.MoveOptions.MovementTypeOptions.ParabolicSimpleOptions.MaxHeight;
 
         //tinybrain velocity approximation
@@ -434,7 +416,7 @@ public class GenericProjectile : MonoBehaviour
 
 
 
-            transform.rotation = Quaternion.LookRotation(_Data.MoveOptions.MovementTypeOptions.ParabolicSimpleOptions.InitialHorizontalDirection, Vector3.up);
+            transform.rotation = Quaternion.LookRotation(Info.InitialHorizontalDirection, Vector3.up);
 
 
         }
@@ -450,15 +432,15 @@ public class GenericProjectile : MonoBehaviour
 
         if (_Data.MoveOptions.MovementTypeOptions.PhysicsImpulseOptions.FLAGUseSpeedComputationInsteadOfForce)
         {
-            RB.AddForce(_Data.MoveOptions.MovementTypeOptions.PhysicsImpulseOptions.Direction.normalized * _Data.MoveOptions.MovementTypeOptions.PhysicsImpulseOptions.Speed, ForceMode.VelocityChange);
+            RB.AddForce(Info.Direction.normalized * _Data.MoveOptions.MovementTypeOptions.PhysicsImpulseOptions.Speed, ForceMode.VelocityChange);
         }
         else if (_Data.MoveOptions.MovementTypeOptions.PhysicsImpulseOptions.FLAGScaleForceByMass)
         {
-            RB.AddForce(_Data.MoveOptions.MovementTypeOptions.PhysicsImpulseOptions.Direction.normalized * _Data.MoveOptions.MovementTypeOptions.PhysicsImpulseOptions.Force * RB.mass, ForceMode.Impulse);
+            RB.AddForce(Info.Direction.normalized * _Data.MoveOptions.MovementTypeOptions.PhysicsImpulseOptions.Force * RB.mass, ForceMode.Impulse);
         }
         else
         {
-            RB.AddForce(_Data.MoveOptions.MovementTypeOptions.PhysicsImpulseOptions.Direction.normalized * _Data.MoveOptions.MovementTypeOptions.PhysicsImpulseOptions.Force, ForceMode.Impulse);
+            RB.AddForce(Info.Direction.normalized * _Data.MoveOptions.MovementTypeOptions.PhysicsImpulseOptions.Force, ForceMode.Impulse);
         }
     }
     //fixed update
@@ -475,7 +457,7 @@ public class GenericProjectile : MonoBehaviour
     {
         RB.isKinematic = false;
 
-        if (_Data.MoveOptions.MovementTypeOptions.PhysicsContinuousForceOptions.Direction.sqrMagnitude == 0)
+        if (Info.Direction.sqrMagnitude == 0)
         {
             Debug.LogError("Projectile Direction not set!");
         }
@@ -485,11 +467,11 @@ public class GenericProjectile : MonoBehaviour
     {
         if (_Data.MoveOptions.MovementTypeOptions.PhysicsContinuousForceOptions.FLAGScaleForceByMass)
         {
-            RB.AddForce(_Data.MoveOptions.MovementTypeOptions.PhysicsContinuousForceOptions.Direction.normalized * _Data.MoveOptions.MovementTypeOptions.PhysicsContinuousForceOptions.ForcePerSecond * RB.mass * Time.fixedDeltaTime, ForceMode.Force);
+            RB.AddForce(Info.Direction.normalized * _Data.MoveOptions.MovementTypeOptions.PhysicsContinuousForceOptions.ForcePerSecond * RB.mass * Time.fixedDeltaTime, ForceMode.Force);
         }
         else
         {
-            RB.AddForce(_Data.MoveOptions.MovementTypeOptions.PhysicsContinuousForceOptions.Direction.normalized * _Data.MoveOptions.MovementTypeOptions.PhysicsContinuousForceOptions.ForcePerSecond * Time.fixedDeltaTime, ForceMode.Force);
+            RB.AddForce(Info.Direction.normalized * _Data.MoveOptions.MovementTypeOptions.PhysicsContinuousForceOptions.ForcePerSecond * Time.fixedDeltaTime, ForceMode.Force);
         }
     }
 
@@ -502,13 +484,13 @@ public class GenericProjectile : MonoBehaviour
     void InitHomingSimple()
     {
         RB.isKinematic = true;
-        if (_Data.MoveOptions.MovementTypeOptions.HomingSimpleOptions.Target == null)
+        if (Info.Target == null)
         {
             Debug.LogError("No GameObject assigned!");
         }
         else
         {
-            HSM_CurrentDirection = (_Data.MoveOptions.MovementTypeOptions.HomingSimpleOptions.Target.transform.position - transform.position).normalized;
+            HSM_CurrentDirection = (Info.Target.transform.position - transform.position).normalized;
         }
 
     }
@@ -517,7 +499,7 @@ public class GenericProjectile : MonoBehaviour
     {
         HSM_CurrentDirection = Vector3.RotateTowards(
             HSM_CurrentDirection
-            , (_Data.MoveOptions.MovementTypeOptions.HomingSimpleOptions.Target.transform.position - transform.position).normalized
+            , (Info.Target.transform.position - transform.position).normalized
             , Mathf.Deg2Rad * _Data.MoveOptions.MovementTypeOptions.HomingSimpleOptions.TurnRate * Time.deltaTime
             , 0);
 

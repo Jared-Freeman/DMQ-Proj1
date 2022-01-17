@@ -105,7 +105,6 @@ public class ProjectilePreset : ScriptableObject
     [System.Serializable]
     public struct LinearSimpleMovementOptions
     {
-        public Vector3 InitialDirection;
         public float Speed;
     };
     
@@ -115,13 +114,12 @@ public class ProjectilePreset : ScriptableObject
     [System.Serializable]
     public struct ParabolicSimpleMovementOptions
     {
-        public Vector2 InitialHorizontalDirection;
-        public float LaunchDistance;
         [Min(.0001f)]
         public float TravelTime; //Speed == LaunchDistance / TravelTime
 
         [Tooltip("Intervals [0,1] are scaled to 0...MaxHeight and 0...TravelTime")]
         public AnimationCurve HeightOverTime;
+
         [Min(.0001f)]
         public float MaxHeight;
     };
@@ -135,7 +133,6 @@ public class ProjectilePreset : ScriptableObject
         public bool FLAGScaleForceByMass;
         public bool FLAGUseSpeedComputationInsteadOfForce; //Switches the behavior to compute outgoing speed of object instead of a raw force
 
-        public Vector3 Direction;
         public float Force;
         public float Speed;
     };
@@ -148,7 +145,6 @@ public class ProjectilePreset : ScriptableObject
     public struct PhysicsContinuousForceMovementOptions
     {
         public bool FLAGScaleForceByMass;
-        public Vector3 Direction;
         public float ForcePerSecond;
     };
 
@@ -158,7 +154,6 @@ public class ProjectilePreset : ScriptableObject
     [System.Serializable]
     public struct HomingSimpleMovementOptions
     {
-        public GameObject Target;
         public float Speed;
         [Min(0f)]
         [Tooltip("Degrees per second")]
