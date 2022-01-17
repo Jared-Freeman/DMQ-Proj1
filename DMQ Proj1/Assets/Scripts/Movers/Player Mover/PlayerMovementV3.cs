@@ -14,20 +14,66 @@ public struct PlayerMovementEventArgs
     public string test;
 };
 
+[RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(Actor))]
+[RequireComponent(typeof(Inventory))]
+[RequireComponent(typeof(PlayerControls))]
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovementV3 : MonoBehaviour
 {
     #region Members
     //Flags
-    [Header("__FLAGS__")]
     public bool FLAGCollectDebugTelemetry = false;
     public bool FLAGDisplayDebugGizmos = false;
+    public bool FLAG_PlayerMovementEnabled = true;
 
-    private bool FLAG_PlayerMovementEnabled = true;
 
-    public Actor AttachedActor;
-    public PlayerMovementV3Options Options = new PlayerMovementV3Options(); 
-    //helper
+    //Options
+    public PlayerMovementV3Options DashOptions = new PlayerMovementV3Options();
+    public PMV3_RunProperties RunOptions = new PMV3_RunProperties();
+    [Tooltip("Affects how the rigidbody forces are applied")]
+    public MovementModel MovementStyle = MovementModel.ContinuousAdvanced;   
+    
+
+
+    //External objects
+    public PlayerInput Input { get; protected set; }
+    public Actor AttachedActor { get; protected set; }
+    public Inventory inventory { get; protected set; }
+    public PlayerControls controls { get; protected set; }
+    public Rigidbody RB { get; protected set; }
+    
+
+    //State info
+    public State CurrentState { get; protected set; }
+
+    private StateInfo _Info;
+    private PMV3_DebugTelemetry _DebugInfo;
+
+
+    //More Private State vars
+    Vector2 AimDirection = Vector2.zero;
+
+    Vector2 InputMap = Vector2.zero; //Raw input from input events
+
+    Vector3 DesiredVelocity = Vector3.zero;
+    Vector3 AddVelocity = Vector2.zero;
+
+    Vector2 VelocityMap = Vector2.zero; //affects horizontal movement velocity. Controlled via input
+    Vector2 DragVector = Vector2.zero;
+
+
+
+    //obsolete currently
+    [Tooltip("Determines current \"north\" that the InputMap direction is relative to")]
+    private GameObject HorizontalMovementAngleHost;
+
+
+    #region Helpers
+
+    public enum State { Standing, Moving, Sliding, Dashing }
+    public enum MovementModel { DebugMovementModel, ContinuousAdvanced, ContinuousSimple, VelocityChange };
+
     [System.Serializable]
     public class PlayerMovementV3Options
     {
@@ -38,79 +84,45 @@ public class PlayerMovementV3 : MonoBehaviour
         public ImpactFX.ImpactEffect _DashImpactEffect;
     }
 
-    //Behavior properties (TODO: clean up. Not really using diff accelerations rn)
-    [Header("__MOVEMENT PROPERTIES__")]
-    [Range(.1f, 2000f)] [Tooltip("Used in Velocity Change movement style ONLY. m / sec^2")]
-    public float DampAcceleration = 1;
+    [System.Serializable]
+    public class PMV3_RunProperties
+    {
+        //Behavior properties (TODO: clean up. Not really using diff accelerations rn)
+        //[Header("__MOVEMENT PROPERTIES__")]
+        [Range(.1f, 2000f)]
+        [Tooltip("Used in Velocity Change movement style ONLY. m / sec^2")]
+        public float DampAcceleration = 1;
 
-    [Range(.1f, 2000f)] [Tooltip("m / sec^2")]
-    public float Deceleration = 20;
+        [Range(.1f, 2000f)]
+        [Tooltip("m / sec^2")]
+        public float Deceleration = 20;
 
-    [Range(.1f, 2000f)] [Tooltip("m / sec^2")]
-    public float HorizontalAcceleration = 100f;
+        [Range(.1f, 2000f)]
+        [Tooltip("m / sec^2")]
+        public float HorizontalAcceleration = 100f;
 
-    [Tooltip("Meters / sec")]
-    public float MoveSpd = 6;
+        [Tooltip("Meters / sec")]
+        public float MoveSpd = 6;
 
-    public enum MovementModel { DebugMovementModel, ContinuousAdvanced, ContinuousSimple, VelocityChange };
-    [Tooltip("Affects how the rigidbody forces are applied")]
-    public MovementModel MovementStyle = MovementModel.ContinuousAdvanced;
+    }
 
-
-
-    //TODO: impl this stuff
-    [Header("__OBSOLETE__")]
-    [Tooltip("1.5x true value seems to be ideal rn")]
-    public float JumpHeight = 1;
-    [Tooltip("Determines current \"north\" that the InputMap direction is relative to")]
-    public GameObject HorizontalMovementAngleHost;
-    [Tooltip("Scaled by Mass")]
-    public float AddedDownwardForce = 1;
-
-
-
-    //External objects
-    [Space(10)]
-    [Header("__EXTERNAL OBJECT REFS__")]
-    public PlayerInput Input;
-    [SerializeField] private Inventory inventory;
-    private PlayerControls controls;
-    [SerializeField] private Rigidbody RB;
-
-
-    //State vars
-    Vector2 AimDirection = Vector2.zero;
-
-    [Header("__DEBUG TELEMETRY__")]
-    [SerializeField] Vector2 InputMap = Vector2.zero; //Raw input from input events
-
-    [Header("** continuous force model")]
-    [SerializeField] Vector3 DesiredVelocity = Vector3.zero;
-    [SerializeField] Vector3 AddVelocity = Vector2.zero;
-       
-    [Header("** velocity change model")]
-    [SerializeField] Vector2 VelocityMap = Vector2.zero; //affects horizontal movement velocity. Controlled via input
-    [SerializeField] Vector2 DragVector = Vector2.zero;
-
-    public enum State { Standing, Moving, Sliding, Dashing }
-    public State CurrentState { get; private set; }
-
-    private StateInfo _Info;
-    //helper
-    public struct StateInfo
+    private struct StateInfo
     {
         public Utils.CooldownTracker Dash_Cooldown;
         public float Dash_LastStartTime;
         public Vector3 _DashDesiredDirection;
     }
+    private struct PMV3_DebugTelemetry
+    {
+        //Debug members
+        public Vector3 LargestVelocityChange;
+        public float LargestVelocityChangeMagnitude;
+        public Vector3 LargestAddVelocityChange;
+        public float LargestAddVelocityChangeMagnitude;
+    }
 
+    #endregion
 
-    //Debug members
-    [Space(6)]
-    [SerializeField] Vector3 LargestVelocityChange = Vector3.zero;
-    [SerializeField] float LargestVelocityChangeMagnitude = 0;
-    [SerializeField] Vector3 LargestAddVelocityChange = Vector3.zero;
-    [SerializeField] float LargestAddVelocityChangeMagnitude = 0;
 
     #endregion
 
@@ -198,7 +210,7 @@ public class PlayerMovementV3 : MonoBehaviour
         //init state vars
         CurrentState = State.Moving;
 
-        _Info.Dash_Cooldown = new Utils.CooldownTracker(Options._DashCooldown);
+        _Info.Dash_Cooldown = new Utils.CooldownTracker(DashOptions._DashCooldown);
         _Info.Dash_Cooldown.InitializeCooldown();
         _Info.Dash_LastStartTime = Time.time;
     }
@@ -277,7 +289,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
             case State.Dashing:
 
-                _Info._DashDesiredDirection = new Vector3(InputMap.x, 0, InputMap.y).normalized * Options._DashSpeed;
+                _Info._DashDesiredDirection = new Vector3(InputMap.x, 0, InputMap.y).normalized * DashOptions._DashSpeed;
                 _Info.Dash_LastStartTime = Time.time;
                 _Info.Dash_Cooldown.ConsumeCooldown();
 
@@ -508,6 +520,8 @@ public class PlayerMovementV3 : MonoBehaviour
     {
         yield return new WaitForFixedUpdate();
 
+        float JumpHeight = 3f; //TODO: Do we need a jump routine???
+
         float JumpSpeed = Mathf.Sqrt(JumpHeight * -2f * Physics.gravity.y);
         RB.AddForce(JumpSpeed * Vector3.up, ForceMode.VelocityChange);
     }
@@ -571,7 +585,7 @@ public class PlayerMovementV3 : MonoBehaviour
             //TODO: verify angle computation is correct in all cases
             if (
                 FilteredRBVelocity.sqrMagnitude != 0 
-                && (FilteredRBVelocity.sqrMagnitude > MoveSpd * MoveSpd) 
+                && (FilteredRBVelocity.sqrMagnitude > RunOptions.MoveSpd * RunOptions.MoveSpd) 
                 && Mathf.Abs(AngleDiff) > MIN_ANGLE_TOLERANCE 
                 && Mathf.Abs(AngleDiff) < MAX_ANGLE_TOLERANCE
                 ) 
@@ -610,7 +624,7 @@ public class PlayerMovementV3 : MonoBehaviour
             //for comparison to make sure we dont go in the opposite direction
             Vector3 Temp = DesiredVelocity;
 
-            DesiredVelocity = DesiredVelocity - (DesiredVelocity.normalized * HorizontalAcceleration * Time.fixedDeltaTime);
+            DesiredVelocity = DesiredVelocity - (DesiredVelocity.normalized * RunOptions.HorizontalAcceleration * Time.fixedDeltaTime);
 
             //clamp to 0
             if (Vector3.Dot(DesiredVelocity, Temp) < 0) DesiredVelocity = Vector3.zero;
@@ -618,11 +632,11 @@ public class PlayerMovementV3 : MonoBehaviour
         else
         {
             //accel
-            DesiredVelocity = DesiredVelocity + InputDirection.normalized * HorizontalAcceleration * Time.fixedDeltaTime;
+            DesiredVelocity = DesiredVelocity + InputDirection.normalized * RunOptions.HorizontalAcceleration * Time.fixedDeltaTime;
 
             //clamp desired velocity max to move speed max
-            if (DesiredVelocity.sqrMagnitude > MoveSpd * MoveSpd)
-                DesiredVelocity = DesiredVelocity.normalized * MoveSpd;
+            if (DesiredVelocity.sqrMagnitude > RunOptions.MoveSpd * RunOptions.MoveSpd)
+                DesiredVelocity = DesiredVelocity.normalized * RunOptions.MoveSpd;
 
         }
 
@@ -650,7 +664,7 @@ public class PlayerMovementV3 : MonoBehaviour
             Parallel = (Vector3.Dot(DesiredVelocity, FilteredVelocity) / FilteredVelocity.magnitude) * FilteredVelocity.normalized;
             //Perpendicular = DesiredVelocity - Parallel;
 
-            AddVelocity = (Parallel.normalized * Deceleration * Time.fixedDeltaTime) + Perpendicular;
+            AddVelocity = (Parallel.normalized * RunOptions.Deceleration * Time.fixedDeltaTime) + Perpendicular;
             //AddVelocity = ((-Parallel.normalized * Deceleration * Time.fixedDeltaTime) + Perpendicular);
 
 
@@ -665,7 +679,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
 
         //Damp (within standard movement speed control)
-        if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= MoveSpd * MoveSpd) //First check was causing sloppy deceleration within standard MoveSpd
+        if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= RunOptions.MoveSpd * RunOptions.MoveSpd) //First check was causing sloppy deceleration within standard MoveSpd
         {
             RB.AddForce(AddVelocity * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
 
@@ -723,15 +737,15 @@ public class PlayerMovementV3 : MonoBehaviour
         if (FLAGCollectDebugTelemetry)
         {
             //OBSERVATION: We never alter more than MoveSpd's worth of velocity 
-            if ((-(FilteredRBVelocity - DesiredVelocityDiff) + AddVelocity).sqrMagnitude > LargestVelocityChangeMagnitude * LargestVelocityChangeMagnitude)
+            if ((-(FilteredRBVelocity - DesiredVelocityDiff) + AddVelocity).sqrMagnitude > _DebugInfo.LargestVelocityChangeMagnitude * _DebugInfo.LargestVelocityChangeMagnitude)
             {
-                LargestVelocityChange = (-(FilteredRBVelocity - DesiredVelocityDiff) + AddVelocity);
-                LargestVelocityChangeMagnitude = (-(FilteredRBVelocity - DesiredVelocityDiff) + AddVelocity).magnitude;
+                _DebugInfo.LargestVelocityChange = (-(FilteredRBVelocity - DesiredVelocityDiff) + AddVelocity);
+                _DebugInfo.LargestVelocityChangeMagnitude = (-(FilteredRBVelocity - DesiredVelocityDiff) + AddVelocity).magnitude;
             }
-            if ((AddVelocity).sqrMagnitude > LargestAddVelocityChangeMagnitude * LargestAddVelocityChangeMagnitude)
+            if ((AddVelocity).sqrMagnitude > _DebugInfo.LargestAddVelocityChangeMagnitude * _DebugInfo.LargestAddVelocityChangeMagnitude)
             {
-                LargestAddVelocityChange = AddVelocity;
-                LargestAddVelocityChangeMagnitude = (AddVelocity).magnitude;
+                _DebugInfo.LargestAddVelocityChange = AddVelocity;
+                _DebugInfo.LargestAddVelocityChangeMagnitude = (AddVelocity).magnitude;
             }
         }
     }
@@ -751,20 +765,20 @@ public class PlayerMovementV3 : MonoBehaviour
             //apply the brakes
             Vector3 Temp = DesiredVelocity;
 
-            DesiredVelocity = DesiredVelocity - (DesiredVelocity.normalized * HorizontalAcceleration * Time.fixedDeltaTime);
+            DesiredVelocity = DesiredVelocity - (DesiredVelocity.normalized * RunOptions.HorizontalAcceleration * Time.fixedDeltaTime);
             //if (Vector3.Angle(DesiredVelocity, Temp) > 60) DesiredVelocity = Vector3.zero;
             if (Vector3.Dot(DesiredVelocity, Temp) < 0) DesiredVelocity = Vector3.zero;
         }
         else
         {
             //accel
-            DesiredVelocity = DesiredVelocity + new Vector3(InputMap.x, 0, InputMap.y).normalized * HorizontalAcceleration * Time.fixedDeltaTime;
+            DesiredVelocity = DesiredVelocity + new Vector3(InputMap.x, 0, InputMap.y).normalized * RunOptions.HorizontalAcceleration * Time.fixedDeltaTime;
         }
 
 
 
-        if (DesiredVelocity.sqrMagnitude > MoveSpd * MoveSpd)
-            DesiredVelocity = DesiredVelocity.normalized * MoveSpd;
+        if (DesiredVelocity.sqrMagnitude > RunOptions.MoveSpd * RunOptions.MoveSpd)
+            DesiredVelocity = DesiredVelocity.normalized * RunOptions.MoveSpd;
 
 
         Vector3 DesiredVelocityDiff = Vector3.zero;
@@ -871,7 +885,7 @@ public class PlayerMovementV3 : MonoBehaviour
         }
         DragVector.Normalize();
 
-        DragVector *= Vector2.Dot(DragVector, -1 * VelocityMap) * Time.fixedDeltaTime * DampAcceleration;
+        DragVector *= Vector2.Dot(DragVector, -1 * VelocityMap) * Time.fixedDeltaTime * RunOptions.DampAcceleration;
         if (DragVector.sqrMagnitude > VelocityMap.sqrMagnitude)
         {
             DragVector = Vector2.zero;
@@ -880,13 +894,13 @@ public class PlayerMovementV3 : MonoBehaviour
 
         //apply additional velocity
         //ProcessedInputMap *= HorizontalAcceleration * Time.fixedDeltaTime;
-        VelocityMap += ProcessedInputMap * HorizontalAcceleration * Time.fixedDeltaTime;
+        VelocityMap += ProcessedInputMap * RunOptions.HorizontalAcceleration * Time.fixedDeltaTime;
         VelocityMap += DragVector;
 
 
-        if (VelocityMap.sqrMagnitude > MoveSpd * MoveSpd * 4)
+        if (VelocityMap.sqrMagnitude > RunOptions.MoveSpd * RunOptions.MoveSpd * 4)
         {
-            VelocityMap = VelocityMap.normalized * MoveSpd * 2; //max spd clamp
+            VelocityMap = VelocityMap.normalized * RunOptions.MoveSpd * 2; //max spd clamp
         }
 
         if (FLAGDisplayDebugGizmos)
@@ -917,9 +931,9 @@ public class PlayerMovementV3 : MonoBehaviour
         if(collision.rigidbody == null)
         {
             //IFX
-            if (Options._DashImpactEffect != null)
+            if (DashOptions._DashImpactEffect != null)
             {
-                Options._DashImpactEffect.SpawnImpactEffect(null, collision.contacts[0].point, collision.contacts[0].normal);
+                DashOptions._DashImpactEffect.SpawnImpactEffect(null, collision.contacts[0].point, collision.contacts[0].normal);
             }
             ChangeState(State.Moving);
         }
@@ -928,9 +942,9 @@ public class PlayerMovementV3 : MonoBehaviour
         else if (CurrentState == State.Dashing && collision.rigidbody.mass >= RB.mass)
         {
             //IFX
-            if(Options._DashImpactEffect != null)
+            if(DashOptions._DashImpactEffect != null)
             {
-                Options._DashImpactEffect.SpawnImpactEffect(null, collision.contacts[0].point, collision.contacts[0].normal);
+                DashOptions._DashImpactEffect.SpawnImpactEffect(null, collision.contacts[0].point, collision.contacts[0].normal);
             }
 
             //impart physic impulse. Cancel remaining dash
@@ -953,11 +967,11 @@ public class PlayerMovementV3 : MonoBehaviour
         if (FLAGCollectDebugTelemetry) Debug.Log("Dashing");
                        
 
-        if (Mathf.Abs(Time.time - _Info.Dash_LastStartTime) < Mathf.Abs(Options._DashDuration))
+        if (Mathf.Abs(Time.time - _Info.Dash_LastStartTime) < Mathf.Abs(DashOptions._DashDuration))
         {
             Vector3 DesiredVelocityDiff = Vector3.zero;
             Vector3 DashAddVelocity = Vector3.zero;
-            float DashSpeedCoef = Options._DashSpeedScale.Evaluate((Time.time - _Info.Dash_LastStartTime) / Options._DashDuration);
+            float DashSpeedCoef = DashOptions._DashSpeedScale.Evaluate((Time.time - _Info.Dash_LastStartTime) / DashOptions._DashDuration);
             Vector3 DashDesiredVelocity = _Info._DashDesiredDirection * DashSpeedCoef;
             float ForceCoefficient = RB.mass / Time.fixedDeltaTime;
             Vector3 FilteredRBVelocity = new Vector3(RB.velocity.x, 0, RB.velocity.z);
@@ -982,7 +996,7 @@ public class PlayerMovementV3 : MonoBehaviour
                 Parallel = (Vector3.Dot(DashDesiredVelocity, FilteredVelocity) / FilteredVelocity.magnitude) * FilteredVelocity.normalized;
                 //Perpendicular = DashDesiredVelocity - Parallel;
 
-                DashAddVelocity = (Parallel.normalized * Deceleration * Time.fixedDeltaTime) + Perpendicular;
+                DashAddVelocity = (Parallel.normalized * RunOptions.Deceleration * Time.fixedDeltaTime) + Perpendicular;
                 //DashAddVelocity = ((-Parallel.normalized * Deceleration * Time.fixedDeltaTime) + Perpendicular);
 
 
@@ -997,7 +1011,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
             //TODO: Figure out + impl best practice for dash Dampening
             //Damp (within standard movement speed control)
-            if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= MoveSpd * MoveSpd || true) //First check was causing sloppy deceleration within standard MoveSpd
+            if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= RunOptions.MoveSpd * RunOptions.MoveSpd || true) //First check was causing sloppy deceleration within standard MoveSpd
             {
                 RB.AddForce(DashAddVelocity * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
 
@@ -1041,7 +1055,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
         Vector3 FilteredRBVelocity = new Vector3(RB.velocity.x, 0, RB.velocity.z);
 
-        Vector3 DashDesiredVelocityRaw = new Vector3(InputMap.x, 0, InputMap.y).normalized * Options._DashSpeed;
+        Vector3 DashDesiredVelocityRaw = new Vector3(InputMap.x, 0, InputMap.y).normalized * DashOptions._DashSpeed;
         Vector3 DashDesiredVelocity = DashDesiredVelocityRaw;
         Vector3 DashAddVelocity = Vector3.zero;
 
@@ -1052,10 +1066,10 @@ public class PlayerMovementV3 : MonoBehaviour
 
         float TimeStart = Time.time;
         float TimeCurrent = Time.time;
-        while(TimeCurrent - TimeStart < Options._DashDuration)
+        while(TimeCurrent - TimeStart < DashOptions._DashDuration)
         {
             TimeCurrent = Time.time;
-            DashSpeedCoef = Options._DashSpeedScale.Evaluate((TimeCurrent - TimeStart) / Options._DashDuration);
+            DashSpeedCoef = DashOptions._DashSpeedScale.Evaluate((TimeCurrent - TimeStart) / DashOptions._DashDuration);
             DashDesiredVelocity = DashDesiredVelocityRaw * DashSpeedCoef;
 
             ForceCoefficient = RB.mass / Time.fixedDeltaTime;
@@ -1082,7 +1096,7 @@ public class PlayerMovementV3 : MonoBehaviour
                 Parallel = (Vector3.Dot(DashDesiredVelocity, FilteredVelocity) / FilteredVelocity.magnitude) * FilteredVelocity.normalized;
                 //Perpendicular = DashDesiredVelocity - Parallel;
 
-                DashAddVelocity = (Parallel.normalized * Deceleration * Time.fixedDeltaTime) + Perpendicular;
+                DashAddVelocity = (Parallel.normalized * RunOptions.Deceleration * Time.fixedDeltaTime) + Perpendicular;
                 //DashAddVelocity = ((-Parallel.normalized * Deceleration * Time.fixedDeltaTime) + Perpendicular);
 
 
@@ -1097,7 +1111,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
             //TODO: Figure out + impl best practice for dash Dampening
             //Damp (within standard movement speed control)
-            if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= MoveSpd * MoveSpd || true) //First check was causing sloppy deceleration within standard MoveSpd
+            if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= RunOptions.MoveSpd * RunOptions.MoveSpd || true) //First check was causing sloppy deceleration within standard MoveSpd
             {
                 RB.AddForce(DashAddVelocity * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
 
