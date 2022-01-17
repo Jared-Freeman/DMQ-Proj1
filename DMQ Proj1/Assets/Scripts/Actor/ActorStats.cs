@@ -112,7 +112,7 @@ public class ActorStats : MonoBehaviour
     }
 
     //TODO: Make more robust
-    public void ApplyDamage(AP2_DamageMessage AP2Data)
+    public void ApplyDamage(Actor_DamageMessage DamageMessage)
     {
         if(FLAG_Debug) Debug.Log("Damage Taken");
 
@@ -121,7 +121,15 @@ public class ActorStats : MonoBehaviour
             return;
         }
 
-        HpCurrent -= Mathf.Max(AP2Data.DamageAmount, 0);
+        if(DamageMessage._Team == null)
+        {
+            HpCurrent -= Mathf.Max(DamageMessage._DamageInfo.DamageAmount, 0);
+        }
+        //target filtering
+        else if(DamageMessage._DamageInfo.TargetFilters.TargetIsAllowed(DamageMessage._Team, actor))
+        { 
+            HpCurrent -= Mathf.Max(DamageMessage._DamageInfo.DamageAmount, 0);
+        }
 
         if (HpCurrent <= 0)
         {

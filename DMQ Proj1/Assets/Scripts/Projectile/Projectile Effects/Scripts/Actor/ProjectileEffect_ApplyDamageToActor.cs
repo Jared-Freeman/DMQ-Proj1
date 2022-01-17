@@ -10,7 +10,7 @@ public class ProjectileEffect_ApplyDamageToActor : ProjectileEffect
     {
         //public float DamageAmount;
 
-        public AP2_DamageMessage DamageMessage;
+        public AP2_DamageMessagePreset DamageMessage;
 
     };
     public ActorApplyDamageOptions Options;
@@ -36,7 +36,14 @@ public class ProjectileEffect_ApplyDamageToActor : ProjectileEffect
                 //    direction = (Col.gameObject.transform.position - Projectile.transform.position).normalized
                 //};
 
-                Stats.ApplyDamage(Options.DamageMessage);
+                Team team = null;
+
+                if(Projectile.ActorOwner != null)
+                {
+                    team = Projectile.ActorOwner._Team;
+                }
+                
+                Stats.ApplyDamage(Options.DamageMessage.CreateMessage(Projectile.gameObject, team, Vector3.zero, Projectile.gameObject, Vector3.zero));
             }
         }
     }

@@ -9,13 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e415834919d2d043b8f1c194c9d0932, type: 3}
-  m_Name: Player Summons
+  m_Script: {fileID: 11500000, guid: a46acf8d1c8c441418a280b5e2bfcedb, type: 3}
+  m_Name: CF_EnemiesOnly
   m_EditorClassIdentifier: 
-  TeamName: Player Summon
-  AllyList:
-  - {fileID: 11400000, guid: f00c460346fd7f74e9ac902ef5d7010a, type: 2}
-  NeutralList: []
-  Options:
-    NoColliderLayer: 9
-    Layer: 10
+  TargetFilters:
+    Enemy: 1
+    Ally: 0
+    Neutral: 0

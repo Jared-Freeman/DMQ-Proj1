@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7527301283506061063}
   - component: {fileID: 4632313663428654668}
   - component: {fileID: 446865979283112379}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Forward (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 786229929887294252}
   - component: {fileID: 8353171804411320649}
   - component: {fileID: 498571991080891495}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Forward (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 7019957169734612945}
   - component: {fileID: 7019957169734612947}
   - component: {fileID: 7019957169734612944}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Forward
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -248,7 +248,7 @@ GameObject:
   - component: {fileID: 7019957169739241110}
   - component: {fileID: 7019957169739241107}
   - component: {fileID: 7019957169739241104}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -335,7 +335,7 @@ GameObject:
   - component: {fileID: 7019957170249667435}
   - component: {fileID: 7019957170249667432}
   - component: {fileID: 7019957170249667433}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Actor Dummy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -516,6 +516,8 @@ MonoBehaviour:
     LungePause: 0.6
     LungeSpeed: 24
     LungeTimeout: 1.25
+    Lunge_ImpactEffects:
+    - {fileID: 11400000, guid: 8db999520b835834f8c4a75965a00ff2, type: 2}
     TurningRate: 240
     GrowCurve:
       serializedVersion: 2

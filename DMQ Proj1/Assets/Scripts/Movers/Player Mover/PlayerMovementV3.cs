@@ -25,6 +25,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
     private bool FLAG_PlayerMovementEnabled = true;
 
+    public Actor AttachedActor;
     public PlayerMovementV3Options Options = new PlayerMovementV3Options(); 
     //helper
     [System.Serializable]
@@ -169,6 +170,9 @@ public class PlayerMovementV3 : MonoBehaviour
     #region Initialization
     private void Awake()
     {
+        AttachedActor = GetComponent<Actor>();
+        if (AttachedActor == null) Debug.LogError(ToString() + ": No Actor attached!");
+
         //Refs
         if (inventory == null) inventory = GetComponent<Inventory>();
         if (inventory == null) Debug.LogError("PlayerMovement: No inventory found");
@@ -1146,6 +1150,14 @@ public class PlayerMovementV3 : MonoBehaviour
             
             GameObject P = Instantiate(ShootableProjectile);
             GenericProjectile Proj = P.GetComponent<GenericProjectile>();
+
+            if (AttachedActor != null)
+            {
+                Proj.ActorOwner = AttachedActor; //TODO: get better solution...
+                Proj.gameObject.layer = AttachedActor._Team.Options.Layer;
+            }
+            else Debug.LogError(this.ToString() + ": No Actor attached");
+
 
             P.transform.position = transform.position + (AimDir3).normalized * 1.5f + new Vector3(0, ShootableProjectileHeightOffset, 0); //arbitrary spawn loc
             Proj.Mover.MovementTypeOptions.PhysicsImpulseOptions.Direction = AimDir3.normalized;

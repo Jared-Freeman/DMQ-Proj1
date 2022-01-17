@@ -18,9 +18,9 @@ namespace AP2
 
         public MoreOptions SpecialOptions;
 
-        public override void AttackTarget(Actor Owner, GameObject Target)
+        public override void AttackTarget(Actor Owner, GameObject Target, Vector3 DirectionNormal = default)
         {
-            base.AttackTarget(Owner, Target);
+            base.AttackTarget(Owner, Target, DirectionNormal);
 
             //TODO: Consider event dispatch here
             if (Target.GetComponent<ActorStats>() != null)

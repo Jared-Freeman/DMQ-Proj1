@@ -29,12 +29,14 @@ public class Team : ScriptableObject
     public List<Team> AllyList;
     public List<Team> NeutralList;
 
-    [SerializeField] private ScriptOptions Options;
+    public ScriptOptions Options;
 
     #region Helpers
     [System.Serializable]
     public struct ScriptOptions
     {
+        public int NoCollideLayer;
+        public int Layer;
     }
     #endregion
 

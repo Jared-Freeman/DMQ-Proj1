@@ -61,6 +61,8 @@ namespace AP2
             [Min(0f)]
             public float LungeTimeout = 1.25f;
 
+            public List<ImpactFX.ImpactEffect> Lunge_ImpactEffects = new List<ImpactFX.ImpactEffect>();
+
             [Tooltip("Deg/sec")]
             public float TurningRate = 360f;
 
@@ -202,12 +204,21 @@ namespace AP2
                 if (
                     CurrentTarget != null
                     && Info.CurrentAttacksInvoked < 1
-                    && collision.rigidbody.gameObject == CurrentTarget
-                    && (CurrentTarget.transform.position - transform.position).sqrMagnitude < Options.AttackRange * Options.AttackRange) //can probably remove w new syst
+                    && collision.gameObject == CurrentTarget
+                    //&& (CurrentTarget.transform.position - transform.position).sqrMagnitude < Options.AttackRange * Options.AttackRange //can probably remove w new syst
+                    )
                 {
                     if (FLAG_Debug) Debug.Log("ATTACKING " + CurrentTarget.name);
                     AttackAction.AttackTarget(AttachedActor, CurrentTarget);
                     Info.CurrentAttacksInvoked++;
+
+                    if(Options.Lunge_ImpactEffects != null)
+                    {
+                        foreach(var IFX in Options.Lunge_ImpactEffects)
+                        {
+                            IFX.SpawnImpactEffect(null, collision.contacts[0].point, collision.contacts[0].normal);
+                        }
+                    }
                 }
 
             }

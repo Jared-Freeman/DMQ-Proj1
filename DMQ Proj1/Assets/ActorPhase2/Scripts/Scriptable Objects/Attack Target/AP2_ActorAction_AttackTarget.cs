@@ -14,12 +14,12 @@ namespace AP2
         [System.Serializable]
         public struct ScriptOptions
         {
-            public AP2_DamageMessage DamageMessage;
+            public AP2_DamageMessagePreset DamageMessage;
         }
 
         public ScriptOptions Options;
 
-        public virtual void AttackTarget(Actor Owner, GameObject Target)
+        public virtual void AttackTarget(Actor Owner, GameObject Target, Vector3 DirectionNormal = default)
         {
             if (FLAG_Debug) Debug.Log("PerformAction()");
 
@@ -33,16 +33,16 @@ namespace AP2
     [CreateAssetMenu(fileName = "ActorAction", menuName = "ScriptableObjects/Actor Actions/Attack/Attack Target/Generic Attack", order = 1)]
     public class AttackTarget_Generic : AP2_ActorAction_AttackTarget
     {
-        public override void AttackTarget(Actor Owner, GameObject Target)
+        public override void AttackTarget(Actor Owner, GameObject Target, Vector3 DirectionNormal = default)
         {
-            base.AttackTarget(Owner, Target);
+            base.AttackTarget(Owner, Target, DirectionNormal);
 
             //TODO: Consider event dispatch here
 
             //This base behavior simply applies damage immediately
             if (Target.GetComponent<ActorStats>() != null)
             {
-                Target.GetComponent<ActorStats>().ApplyDamage(Options.DamageMessage);
+                Target.GetComponent<ActorStats>().ApplyDamage(Options.DamageMessage.CreateMessage(Owner.gameObject, Owner._Team, Vector3.zero, Owner.gameObject, Vector3.zero));
             }
         }
     }

@@ -196,7 +196,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh16056
+  m_Name: pb_Mesh16060
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -990,6 +990,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Actor Ranged 1 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 6187161416314951917, guid: 47dc46d5787d5f34790938ed79a3e759,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6187161416314951918, guid: 47dc46d5787d5f34790938ed79a3e759,
         type: 3}
       propertyPath: m_RootOrder
@@ -1053,7 +1058,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh15750
+  m_Name: pb_Mesh15746
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1511,6 +1516,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Actor Ranged 1 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6187161416314951917, guid: 47dc46d5787d5f34790938ed79a3e759,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6187161416314951918, guid: 47dc46d5787d5f34790938ed79a3e759,
         type: 3}
@@ -4400,6 +4410,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 819451193061632147, guid: 90a421146e3d0e94aa41ff79354e625d,
+        type: 3}
+      propertyPath: HpMax
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 819451193061632228, guid: 90a421146e3d0e94aa41ff79354e625d,
         type: 3}
       propertyPath: Options._DashCooldown
@@ -5132,7 +5147,7 @@ PrefabInstance:
     - target: {fileID: 7019957170249667424, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667427, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
@@ -5206,7 +5221,7 @@ PrefabInstance:
     - target: {fileID: 7019957170249667424, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667427, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
@@ -5916,6 +5931,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Actor Ranged 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6187161416314951917, guid: 47dc46d5787d5f34790938ed79a3e759,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6187161416314951918, guid: 47dc46d5787d5f34790938ed79a3e759,
         type: 3}
       propertyPath: m_RootOrder
@@ -6044,6 +6064,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019957170249667433, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
+      propertyPath: AttackCooldown.Cooldown
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7001bb643b4d2cf4fb39ea73da06ee05, type: 3}

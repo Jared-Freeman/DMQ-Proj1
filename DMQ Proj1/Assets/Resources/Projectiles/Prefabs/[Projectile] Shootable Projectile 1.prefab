@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4137619294522910773}
   - component: {fileID: 4137619294522910770}
   - component: {fileID: 4137619294522910771}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: '[Projectile] Shootable Projectile 1'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 083729aca9b56a843839ff0eee975386, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Mover: {fileID: 0}
+  _CollisionFilters: {fileID: 11400000, guid: 962d155d42fb3af46bb397098960eefb, type: 2}
   ProjectileFX:
     EndProjectileEffects:
       ProjectileFXList: []
@@ -123,6 +123,7 @@ MonoBehaviour:
       ProjectileFXList: []
     StartProjectileEffects:
       ProjectileFXList: []
+  ActorOwner: {fileID: 0}
   DestroyOptions:
     FLAG_UseDuration: 0
     Duration: 0
@@ -230,7 +231,7 @@ GameObject:
   - component: {fileID: 7862008911978369196}
   - component: {fileID: 5491752731248132525}
   - component: {fileID: 199786464125800511}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}

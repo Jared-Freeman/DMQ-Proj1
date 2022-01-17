@@ -64,6 +64,8 @@ public class GenericProjectile : MonoBehaviour
     public GenericProjectileMover Mover { get; protected set; }
     private Rigidbody RB; //Its a good idea to initially make this Kinematic. Could be done in script idk...
 
+    private CollisionFilter _CollisionFilters;
+
     [System.Serializable]
     public struct GenericProjectileMessagePayload
     {
@@ -88,6 +90,8 @@ public class GenericProjectile : MonoBehaviour
         public GenericProjectileMessagePayload StartProjectileEffects;
     };
     public GenericProjectileEffectOptions ProjectileFX;
+
+    public Actor ActorOwner;
 
     //My best attempt at describing how a projectile is allowed to despawn
     [System.Serializable]
@@ -147,7 +151,11 @@ public class GenericProjectile : MonoBehaviour
         RB = GetComponent<Rigidbody>();
         if (RB == null) RB = new Rigidbody();
 
-
+        //if(_CollisionFilters == null)
+        //{
+        //    Debug.LogError("No collision filter specified! Destroying this projectile");
+        //    Destroy(gameObject);
+        //}
     }
 
     void Start()
@@ -164,6 +172,7 @@ public class GenericProjectile : MonoBehaviour
         {
             DestroyProjectile();
         }
+
     }
 
     void DestroyProjectile()
@@ -173,13 +182,30 @@ public class GenericProjectile : MonoBehaviour
     }
 
     #region Collision FX Invokers
+
+    /// <summary>
+    /// Returns a CollisionFilterContext for this object. Useless currently :(
+    /// </summary>
+    /// <returns></returns>
+    public CollisionFilterContext GetCFContext()
+    {
+        if(ActorOwner != null)
+        {
+            return new CollisionFilterContext(gameObject, ActorOwner, ActorOwner._Team);
+        }
+        else
+        {
+            return new CollisionFilterContext(gameObject, null, null);
+        }
+    }
+
     //Collision FX
     private void OnCollisionEnter(Collision collision)
     {
         ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, collision.collider);
 
         Info.CollisionEnters++;
-        if(DestroyOptions.FLAG_UseCollisionEnters && Info.CollisionEnters >= DestroyOptions.CollisionEnters)
+        if (DestroyOptions.FLAG_UseCollisionEnters && Info.CollisionEnters >= DestroyOptions.CollisionEnters)
         {
             DestroyProjectile();
         }
@@ -189,7 +215,7 @@ public class GenericProjectile : MonoBehaviour
         ProjectileFX.CollisionStayProjectileEffects.PerformProjectileEffects(this, collision.collider);
 
         Info.CollisionStayDuration += Time.fixedDeltaTime;
-        if(DestroyOptions.FLAG_UseCollisionStayDuration && Info.CollisionStayDuration > DestroyOptions.CollisionStayDuration)
+        if (DestroyOptions.FLAG_UseCollisionStayDuration && Info.CollisionStayDuration > DestroyOptions.CollisionStayDuration)
         {
             DestroyProjectile();
         }
@@ -197,6 +223,7 @@ public class GenericProjectile : MonoBehaviour
     private void OnCollisionExit(Collision collision)
     {
         ProjectileFX.CollisionExitProjectileEffects.PerformProjectileEffects(this, collision.collider);
+        
     }
 
     //Currently, we consider Trigger / Collision to proc the same Projectile FX

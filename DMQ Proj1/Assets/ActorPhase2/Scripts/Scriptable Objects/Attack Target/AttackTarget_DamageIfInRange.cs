@@ -19,9 +19,9 @@ namespace AP2
 
         public MoreOptions SpecialOptions;
 
-        public override void AttackTarget(Actor Owner, GameObject Target)
+        public override void AttackTarget(Actor Owner, GameObject Target, Vector3 DirectionNormal = default)
         {
-            base.AttackTarget(Owner, Target);
+            base.AttackTarget(Owner, Target, DirectionNormal);
 
             //TODO: Consider event dispatch here
 
@@ -32,7 +32,7 @@ namespace AP2
                 )
             {
                 if (FLAG_Debug) Debug.Log("In range. Sending Damage Message");
-                Target.GetComponent<ActorStats>().ApplyDamage(Options.DamageMessage);
+                Target.GetComponent<ActorStats>().ApplyDamage(Options.DamageMessage.CreateMessage(Owner.gameObject, Owner._Team, Vector3.zero, Owner.gameObject, Vector3.zero));
             }
             else if (FLAG_Debug) Debug.Log("null stats, or not in range");
         }

@@ -26,11 +26,11 @@ namespace AP2
         [Header("Add the Damage Message to the Projectile as a ProjectileEffect!")]
         public MoreOptions SpecialOptions;
 
-        public override void AttackTarget(Actor Owner, GameObject Target)
+        public override void AttackTarget(Actor Owner, GameObject Target, Vector3 DirectionNormal = default)
         {
-            base.AttackTarget(Owner, Target);
+            base.AttackTarget(Owner, Target, DirectionNormal);
 
-            if (FLAG_Debug) Debug.Log(Owner.name);
+            //if (FLAG_Debug) Debug.Log(Owner.name);
 
             GenericProjectile Projectile_Template = SpecialOptions.Projectile.GetComponent<GenericProjectile>();
             if(Projectile_Template != null)
@@ -44,6 +44,8 @@ namespace AP2
 
                 GenericProjectile Proj = GenericProjectile.SpawnProjectile(Projectile_Template, LaunchPos, LaunchDir, Target);
 
+                Proj.ActorOwner = Owner;
+                Proj.gameObject.layer = Owner._Team.Options.Layer;
 
                 //if (Proj != null)
                 //{
