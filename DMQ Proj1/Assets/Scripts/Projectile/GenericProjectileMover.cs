@@ -25,11 +25,6 @@ public class GenericProjectileMover : MonoBehaviour
 
     public MovementStyleOptions MovementTypeOptions;
 
-    //state variables (you can use these however you want in your mover)
-    //counters
-    float ProjectileTimeAlive = 0;
-    float ProjectileCollisions = 0;
-
     private Rigidbody RB;
 
     #endregion
@@ -93,7 +88,6 @@ public class GenericProjectileMover : MonoBehaviour
     {
         if (FLAG_FaceRigidbodyVelocity) FaceVelocityForward();
         UpdateMovement();
-        ProjectileTimeAlive += Time.deltaTime;
     }
     private void FixedUpdate()
     {
@@ -416,11 +410,4 @@ public class GenericProjectileMover : MonoBehaviour
         }
     }
 
-    //Can probably add event handlers PER movement style by just adding a switch statement into any event handler here
-    #region Event Handlers
-    private void OnCollisionEnter(Collision collision)
-    {
-        ProjectileCollisions++;
-    }
-    #endregion
 }

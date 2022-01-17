@@ -213,7 +213,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8275873581982739598}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a685ff2abfa860845b117ba984577b30, type: 3}
   m_Name: 
@@ -290,27 +290,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 083729aca9b56a843839ff0eee975386, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _CollisionFilters: {fileID: 11400000, guid: 43795df0f8daf5345833302453cf763a, type: 2}
-  ProjectileFX:
-    EndProjectileEffects:
-      ProjectileFXList: []
-    CollisionEnterProjectileEffects:
-      ProjectileFXList:
-      - {fileID: 11400000, guid: 4201ff62f2e58584ba884bd387731a29, type: 2}
-      - {fileID: 11400000, guid: 80bbda12f5c2a9d4c89c87100a81ebc9, type: 2}
-      - {fileID: 11400000, guid: ad19e38287244ad4a8774f7ec4dcdfe3, type: 2}
-    CollisionStayProjectileEffects:
-      ProjectileFXList: []
-    CollisionExitProjectileEffects:
-      ProjectileFXList: []
-    StartProjectileEffects:
-      ProjectileFXList:
-      - {fileID: 11400000, guid: 4201ff62f2e58584ba884bd387731a29, type: 2}
   ActorOwner: {fileID: 0}
-  DestroyOptions:
-    FLAG_UseDuration: 1
-    Duration: 10
-    FLAG_UseCollisionEnters: 1
-    CollisionEnters: 1
-    FLAG_UseCollisionStayDuration: 0
-    CollisionStayDuration: 0
+  _Data: {fileID: 11400000, guid: 8e7853a42af03e74c92d9a684833c84c, type: 2}

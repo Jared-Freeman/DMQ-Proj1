@@ -1161,20 +1161,17 @@ public class PlayerMovementV3 : MonoBehaviour
         if (ShootableProjectile != null && P_Template != null)
         {
             Vector3 AimDir3 = new Vector3(AimDirection.x, 0, AimDirection.y);
-            
-            GameObject P = Instantiate(ShootableProjectile);
-            GenericProjectile Proj = P.GetComponent<GenericProjectile>();
+            Vector3 InitPos = transform.position + (AimDir3).normalized * 1.5f + new Vector3(0, ShootableProjectileHeightOffset, 0); //arbitrary spawn loc
+
+
+            GenericProjectile Proj = GenericProjectile.SpawnProjectile(P_Template, InitPos, AimDir3);
 
             if (AttachedActor != null)
             {
                 Proj.ActorOwner = AttachedActor; //TODO: get better solution...
-                Proj.gameObject.layer = AttachedActor._Team.Options.Layer;
+                Proj.gameObject.layer = AttachedActor._Team.Options.NoCollideLayer; //no friendly fire atm
             }
-            else Debug.LogError(this.ToString() + ": No Actor attached");
-
-
-            P.transform.position = transform.position + (AimDir3).normalized * 1.5f + new Vector3(0, ShootableProjectileHeightOffset, 0); //arbitrary spawn loc
-            Proj.Mover.MovementTypeOptions.PhysicsImpulseOptions.Direction = AimDir3.normalized;
+            else Debug.LogError(ToString() + ": No Actor attached. How did you get around all my checks?");
         }
     }
 }
