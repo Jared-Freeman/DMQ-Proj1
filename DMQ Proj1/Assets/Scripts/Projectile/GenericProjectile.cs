@@ -71,7 +71,7 @@ public class GenericProjectile : MonoBehaviour
     public ProjectilePreset _Data;
 
 
-    public StateInfo Info;
+    public StateInfo Info = new StateInfo();
 
     public struct StateInfo
     {

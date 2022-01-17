@@ -27,8 +27,8 @@ MonoBehaviour:
       ProjectileFXList: []
   DestroyOptions:
     FLAG_UseDuration: 1
-    Duration: 30
-    FLAG_UseCollisionEnters: 1
+    Duration: 3
+    FLAG_UseCollisionEnters: 0
     CollisionEnters: 1
     FLAG_UseCollisionStayDuration: 0
     CollisionStayDuration: 0
@@ -37,11 +37,8 @@ MonoBehaviour:
     MovementType: 1
     MovementTypeOptions:
       LinearSimpleOptions:
-        InitialDirection: {x: 0, y: 0, z: 0}
         Speed: 10
       ParabolicSimpleOptions:
-        InitialHorizontalDirection: {x: 0, y: 0}
-        LaunchDistance: 0
         TravelTime: 0
         HeightOverTime:
           serializedVersion: 2
@@ -52,15 +49,12 @@ MonoBehaviour:
         MaxHeight: 0
       PhysicsContinuousForceOptions:
         FLAGScaleForceByMass: 0
-        Direction: {x: 0, y: 0, z: 0}
         ForcePerSecond: 0
       PhysicsImpulseOptions:
         FLAGScaleForceByMass: 0
         FLAGUseSpeedComputationInsteadOfForce: 0
-        Direction: {x: 0, y: 0, z: 0}
         Force: 0
         Speed: 0
       HomingSimpleOptions:
-        Target: {fileID: 0}
         Speed: 0
         TurnRate: 0
