@@ -89,7 +89,6 @@ namespace ItemSystem
                         _ItemList.Add(item);
                         item.RemoveFromWorldSpace();
                         item.Location_State = ItemLocation.Inventory;
-                        Debug.Log("ITEM PICKED UP!!");
                         return true;
                     }
 
