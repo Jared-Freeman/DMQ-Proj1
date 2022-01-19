@@ -25,12 +25,11 @@ namespace ItemSystem
     public abstract class IS_ItemBase : MonoBehaviour
     {
         #region Events
-
         public static event System.EventHandler<CSEventArgs.ItemEventArgs> OnItemDestroyed;
-
         #endregion
 
         #region Members
+
         //preset base
         public IS_ItemPresetBase BasePresetData;
 
@@ -63,6 +62,20 @@ namespace ItemSystem
         {
             bool successful = false;
             return successful;
+        }
+
+        /// <summary>
+        /// Check if a given position is in the pickup sphere for this item
+        /// </summary>
+        /// <param name="pos">Position to be checked</param>
+        /// <returns></returns>
+        public bool InPickupRadius(Vector3 pos)
+        {
+            if((pos - transform.position).sqrMagnitude <= BasePresetData.BaseOptions.PickupRadius * BasePresetData.BaseOptions.PickupRadius)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

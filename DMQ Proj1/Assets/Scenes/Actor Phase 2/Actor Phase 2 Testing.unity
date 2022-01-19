@@ -121,6 +121,25 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 23800000, guid: 39d0c6fb9d0d7a1448d5b44d0cefe3fc, type: 2}
+--- !u!1 &24042358 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 819451193061632144, guid: 90a421146e3d0e94aa41ff79354e625d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1540071573}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &24042359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 24042358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3c5d8d5ae7b9fa42919c439e68d5d38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _Data: {fileID: 11400000, guid: 771cf4bec0b55604c87f6b4b2aa9d555, type: 2}
 --- !u!1001 &59724531
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5052,8 +5071,7 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 819451193061632153, guid: 90a421146e3d0e94aa41ff79354e625d, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 90a421146e3d0e94aa41ff79354e625d, type: 3}
 --- !u!1 &1545095127
 GameObject:
@@ -5992,6 +6010,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1843543915}
   - component: {fileID: 1843543916}
+  - component: {fileID: 1843543917}
   m_Layer: 0
   m_Name: DevGenericItem
   m_TagString: Untagged
@@ -6030,6 +6049,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1843543917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1843543914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 928679f6a6819d740a6c2f9ec15b2a6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BasePresetData: {fileID: 0}
+  BaseWeaponData: {fileID: 0}
 --- !u!43 &1914484792
 Mesh:
   m_ObjectHideFlags: 0

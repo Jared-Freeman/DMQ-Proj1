@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace ItemSystem
 {
+    [CreateAssetMenu(fileName = "INV_", menuName = "ScriptableObjects/Inventory Preset", order = 1)]
     public class IS_InventoryPresetBase : ScriptableObject
     {
         public IS_InventoryPresetBaseOptions BaseOptions;

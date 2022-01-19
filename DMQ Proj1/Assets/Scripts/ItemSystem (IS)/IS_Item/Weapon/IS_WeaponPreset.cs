@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace ItemSystem
 {
+    [CreateAssetMenu(fileName = "WEP_", menuName = "ScriptableObjects/Items/Weapon Preset", order = 1)]
     public class IS_WeaponPreset : ItemSystem.IS_ItemPresetBase
     {
         [System.Serializable]
@@ -13,7 +14,7 @@ namespace ItemSystem
             public float DequipTime;
         }
 
-        public IS_WeaponOptions Options;
+        public IS_WeaponOptions BaseWeaponOptions;
 
 
     }
