@@ -26,15 +26,18 @@ namespace ItemSystem
     {
         #region Events
         public static event System.EventHandler<CSEventArgs.ItemEventArgs> OnItemDestroyed;
+        public static event System.EventHandler<CSEventArgs.ItemEventArgs> OnItemRemovedFromWorldspace;
+        public static event System.EventHandler<CSEventArgs.ItemEventArgs> OnItemAddedToWorldspace;
         #endregion
 
         #region Members
 
         //preset base
+        [Header("Make sure to MATCH all IS_ItemPresetBase refs!!!")]
         public IS_ItemPresetBase BasePresetData;
 
         //states
-        public ItemLocation Location_State { get; protected set; } = ItemLocation.World;
+        public ItemLocation Location_State { get; set; } = ItemLocation.World;
 
         //state info
         protected IS_BaseInfo _BaseInfo;
@@ -49,6 +52,36 @@ namespace ItemSystem
 
         #endregion
 
+        protected virtual void Awake()
+        {
+            {
+                var sc = gameObject.AddComponent<SphereCollider>();
+                sc.radius = BasePresetData.BaseOptions.PickupRadius;
+                sc.isTrigger = true;
+            }
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            {
+                var inv = other.gameObject.GetComponent<Inventory_Player>();
+                if (inv != null)
+                {
+                    inv.AddToItemsNearby(this);
+                }
+            }
+        }
+        private void OnTriggerExit(Collider other)
+        {
+            {
+                var inv = other.gameObject.GetComponent<Inventory_Player>();
+                if (inv != null)
+                {
+                    inv.RemoveFromItemsNearby(this);
+                }
+            }
+        }
+
         private void OnDestroy()
         {
             OnItemDestroyed?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
@@ -60,7 +93,11 @@ namespace ItemSystem
         /// <returns></returns>
         public virtual bool RemoveFromWorldSpace()
         {
-            bool successful = false;
+            bool successful = true;
+
+            gameObject.SetActive(false);
+            OnItemRemovedFromWorldspace?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
+
             return successful;
         }
 

@@ -7,28 +7,33 @@ namespace ItemSystem
     [CreateAssetMenu(fileName = "INV_", menuName = "ScriptableObjects/Inventory Preset", order = 1)]
     public class IS_InventoryPresetBase : ScriptableObject
     {
-        public IS_InventoryPresetBaseOptions BaseOptions;
+        public static bool FLAG_DEBUG = false;
+
+        public IS_InventoryPresetBaseOptions BaseOptions = new IS_InventoryPresetBaseOptions();
 
 
         [System.Serializable]
-        public struct IS_InventoryPresetBaseOptions
+        public class IS_InventoryPresetBaseOptions
         {
-            public Utils.TypeList<IS_ItemPresetBase> PermittedItemTypes;
+            public Utils.TypeList<IS_ItemPresetBase> PermittedItemTypes = new Utils.TypeList<IS_ItemPresetBase>();
 
             [Min(0)]
-            public int Capacity;
+            public int Capacity = 1;
         }
 
 
         //Item allowed
         public bool ItemAllowed(IS_ItemBase item)
         {
-            if (BaseOptions.PermittedItemTypes.Contains(item.BasePresetData)) return true;
-            return false;
+            return ItemAllowed(item.BasePresetData);
         }
         public bool ItemAllowed(IS_ItemPresetBase item)
         {
-            if (BaseOptions.PermittedItemTypes.Contains(item)) return true;
+            if (BaseOptions.PermittedItemTypes.List.Count < 1 || BaseOptions.PermittedItemTypes.Contains(item))
+            {
+                if(FLAG_DEBUG) Debug.Log("ITEM PERMITTED");
+                return true;
+            }
             return false;
         }
     }

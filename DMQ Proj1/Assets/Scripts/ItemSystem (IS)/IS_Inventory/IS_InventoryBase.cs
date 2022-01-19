@@ -18,7 +18,7 @@ namespace ItemSystem
         protected IS_Inv_StateInfo _Info;
 
         //Internal
-        protected List<IS_ItemBase> _ItemList;
+        protected List<IS_ItemBase> _ItemList = new List<IS_ItemBase>();
 
         //Outer facing (dont modify this)
         public IReadOnlyCollection<IS_ItemBase> Items
@@ -87,6 +87,9 @@ namespace ItemSystem
                     if(item.RemoveFromWorldSpace())
                     {
                         _ItemList.Add(item);
+                        item.RemoveFromWorldSpace();
+                        item.Location_State = ItemLocation.Inventory;
+                        Debug.Log("ITEM PICKED UP!!");
                         return true;
                     }
 
@@ -110,6 +113,12 @@ namespace ItemSystem
         public bool DropItem(IS_ItemBase item)
         {
             throw new System.NotImplementedException();
+
+
+            { 
+                item.Location_State = ItemLocation.World;
+                return true;
+            }
             return false;
         }
 

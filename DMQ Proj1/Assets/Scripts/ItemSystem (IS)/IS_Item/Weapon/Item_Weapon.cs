@@ -13,8 +13,10 @@ public class Item_Weapon : ItemSystem.IS_ItemBase
     public AddedOptions BaseWeaponOptions;
     public ItemSystem.IS_WeaponPreset BaseWeaponData;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         if (BaseWeaponData == null)
         {
             Debug.LogError(ToString() + ": No Data attached! Destroying");
@@ -29,7 +31,9 @@ public class Item_Weapon : ItemSystem.IS_ItemBase
     /// <returns></returns>
     public override bool RemoveFromWorldSpace()
     {
-        enabled = false;
+        //base is sufficient for this class
+        base.RemoveFromWorldSpace();
+
         return true;
     }
 }
