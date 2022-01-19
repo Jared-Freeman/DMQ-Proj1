@@ -106,7 +106,6 @@ GameObject:
   - component: {fileID: 8275873581982739605}
   - component: {fileID: 8275873581982739602}
   - component: {fileID: 8275873581982739603}
-  - component: {fileID: 8275873581982739600}
   - component: {fileID: 8275873581982739601}
   m_Layer: 0
   m_Name: '[Projectile] Debug Cube'
@@ -206,78 +205,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &8275873581982739600
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8275873581982739598}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a685ff2abfa860845b117ba984577b30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  FLAG_FaceRigidbodyVelocity: 1
-  MovementType: 1
-  MovementTypeOptions:
-    LinearSimpleOptions:
-      InitialDirection: {x: 0, y: 0, z: 0}
-      Speed: 10
-      MaxProjectileDuration: 0
-      MaxCollisions: 0
-    ParabolicSimpleOptions:
-      InitialHorizontalDirection: {x: 0, y: 0}
-      LaunchDistance: 3
-      TravelTime: 3
-      HeightOverTime:
-        serializedVersion: 2
-        m_Curve:
-        - serializedVersion: 3
-          time: 0
-          value: 0
-          inSlope: 22.950819
-          outSlope: 22.950819
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0
-          outWeight: 0.023809524
-        - serializedVersion: 3
-          time: 0.1
-          value: 1
-          inSlope: 0
-          outSlope: 0
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.040127613
-        - serializedVersion: 3
-          time: 1
-          value: 0
-          inSlope: -2.4655948
-          outSlope: -2.4655948
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.020258825
-          outWeight: 0
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      MaxHeight: 3
-    PhysicsContinuousForceOptions:
-      FLAGScaleForceByMass: 1
-      Direction: {x: 0, y: 0, z: 0}
-      ForcePerSecond: 6
-    PhysicsImpulseOptions:
-      FLAGScaleForceByMass: 0
-      FLAGUseSpeedComputationInsteadOfForce: 1
-      Direction: {x: 0, y: 0, z: 0}
-      Force: 0
-      Speed: 10
-    HomingSimpleOptions:
-      Target: {fileID: 0}
-      Speed: 0
-      TurnRate: 0
 --- !u!114 &8275873581982739601
 MonoBehaviour:
   m_ObjectHideFlags: 0

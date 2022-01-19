@@ -28,7 +28,7 @@ MonoBehaviour:
   DestroyOptions:
     FLAG_UseDuration: 1
     Duration: 3
-    FLAG_UseCollisionEnters: 0
+    FLAG_UseCollisionEnters: 1
     CollisionEnters: 1
     FLAG_UseCollisionStayDuration: 0
     CollisionStayDuration: 0
@@ -37,7 +37,7 @@ MonoBehaviour:
     MovementType: 1
     MovementTypeOptions:
       LinearSimpleOptions:
-        Speed: 10
+        Speed: 30
       ParabolicSimpleOptions:
         TravelTime: 0
         HeightOverTime:
