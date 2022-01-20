@@ -55,9 +55,15 @@ namespace ItemSystem
         protected virtual void Awake()
         {
             {
-                var sc = gameObject.AddComponent<SphereCollider>();
+                GameObject GO = new GameObject("Item Trigger Holder (Auto-Generated)");
+
+                var sc = GO.AddComponent<SphereCollider>();
                 sc.radius = BasePresetData.BaseOptions.PickupRadius;
                 sc.isTrigger = true;
+                
+                GO.transform.parent = gameObject.transform;
+                GO.transform.localPosition = Vector3.zero;
+                GO.layer = 0; //Default
             }
         }
 
