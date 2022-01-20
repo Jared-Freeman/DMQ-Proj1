@@ -197,9 +197,18 @@ public class GenericProjectile : MonoBehaviour
         }
     }
 
+
+    // Currently, I see no reason to have projectiles proc PFX on Trigger volumes. This check is used to filter out those.
+    protected bool CheckOtherIsTrigger(Collider c)
+    {
+        return c.isTrigger;
+    }
+
     //Collision FX
     private void OnCollisionEnter(Collision collision)
     {
+        if (CheckOtherIsTrigger(collision.collider)) return;
+
         _Data.ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, collision.collider);
 
         Info.CollisionEnters++;
@@ -210,6 +219,8 @@ public class GenericProjectile : MonoBehaviour
     }
     private void OnCollisionStay(Collision collision)
     {
+        if (CheckOtherIsTrigger(collision.collider)) return;
+
         _Data.ProjectileFX.CollisionStayProjectileEffects.PerformProjectileEffects(this, collision.collider);
 
         Info.CollisionStayDuration += Time.fixedDeltaTime;
@@ -220,6 +231,8 @@ public class GenericProjectile : MonoBehaviour
     }
     private void OnCollisionExit(Collision collision)
     {
+        if (CheckOtherIsTrigger(collision.collider)) return;
+
         _Data.ProjectileFX.CollisionExitProjectileEffects.PerformProjectileEffects(this, collision.collider);
         
     }
@@ -227,6 +240,8 @@ public class GenericProjectile : MonoBehaviour
     //Currently, we consider Trigger / Collision to proc the same Projectile FX
     private void OnTriggerEnter(Collider other)
     {
+        if (CheckOtherIsTrigger(other)) return;
+
         _Data.ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, other);
 
         Info.CollisionEnters++;
@@ -237,6 +252,8 @@ public class GenericProjectile : MonoBehaviour
     }
     private void OnTriggerStay(Collider other)
     {
+        if (CheckOtherIsTrigger(other)) return;
+
         _Data.ProjectileFX.CollisionStayProjectileEffects.PerformProjectileEffects(this, other);
 
         Info.CollisionStayDuration += Time.fixedDeltaTime;
@@ -247,6 +264,8 @@ public class GenericProjectile : MonoBehaviour
     }
     private void OnTriggerExit(Collider other)
     {
+        if (CheckOtherIsTrigger(other)) return;
+
         _Data.ProjectileFX.CollisionExitProjectileEffects.PerformProjectileEffects(this, other);
     }
     #endregion
