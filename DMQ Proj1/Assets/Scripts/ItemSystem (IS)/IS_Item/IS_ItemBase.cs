@@ -37,7 +37,7 @@ namespace ItemSystem
         public IS_ItemPresetBase BasePresetData;
 
         //states
-        public ItemLocation Location_State { get; set; } = ItemLocation.World;
+        public ItemLocation Location_State { get; protected set; } = ItemLocation.World;
 
         //state info
         protected IS_BaseInfo _BaseInfo;
@@ -91,11 +91,12 @@ namespace ItemSystem
         /// Virtual impl. Allows designer to implement custom disable routines for item types, should they be needed
         /// </summary>
         /// <returns></returns>
-        public virtual bool RemoveFromWorldSpace()
+        public virtual bool AddItemToInventorySpace()
         {
             bool successful = true;
 
             gameObject.SetActive(false);
+            Location_State = ItemLocation.Inventory;
             OnItemRemovedFromWorldspace?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
 
             return successful;
@@ -106,6 +107,7 @@ namespace ItemSystem
             bool successful = true;
 
             gameObject.SetActive(true);
+            Location_State = ItemLocation.World;
             OnItemAddedToWorldspace?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
 
             return successful;

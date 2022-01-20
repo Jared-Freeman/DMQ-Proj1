@@ -26,13 +26,13 @@ public class Item_Weapon : ItemSystem.IS_ItemBase
 
     //This impl is the fairly standard way of overriding the base method
     /// <summary>
-    /// Disables the gameObject and returns trues
+    /// Disables the gameObject and returns true
     /// </summary>
     /// <returns></returns>
-    public override bool RemoveFromWorldSpace()
+    public override bool AddItemToInventorySpace()
     {
         //base is sufficient for this class
-        base.RemoveFromWorldSpace();
+        base.AddItemToInventorySpace();
 
         return true;
     }

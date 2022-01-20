@@ -84,11 +84,10 @@ namespace ItemSystem
                 //Must have room left, and Item type must be allowed to be in this container
                 if (_ItemList.Count < _Data.BaseOptions.Capacity && _Data.ItemAllowed(item))
                 {
-                    if(item.RemoveFromWorldSpace())
+                    if(item.AddItemToInventorySpace())
                     {
                         _ItemList.Add(item);
-                        item.RemoveFromWorldSpace();
-                        item.Location_State = ItemLocation.Inventory;
+                        item.AddItemToInventorySpace();
                         return true;
                     }
 
@@ -121,8 +120,6 @@ namespace ItemSystem
                 {
                     item.transform.rotation = Rotation;
                 }
-
-                item.Location_State = ItemLocation.World;
 
                 _ItemList.Remove(item);
 
