@@ -22,7 +22,13 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
 
     [SerializeField] protected PlayerInvInfo Info;
 
-    public Transform PickupTransform { get; protected set; }
+    [Tooltip("No reference here will use the Transform of THIS Gameobject")]
+    [SerializeField] protected Transform _PickupTransform;
+
+    /// <summary>
+    /// Transform where Pickup checks are done for this Player Inventory
+    /// </summary>
+    public Transform PickupLocation { get { return _PickupTransform; } }
 
 
     public bool ItemNearby
@@ -36,7 +42,8 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
 
     private void Awake()
     {
-        PickupTransform = gameObject.transform; //can change if needed
+        if(_PickupTransform == null)
+            _PickupTransform = gameObject.transform; //can change if needed
 
         Info.ItemsNearby = new List<ItemSystem.IS_ItemBase>();
 
@@ -45,14 +52,14 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
 
     private void OnEnable()
     {
-        ItemSystem.IS_ItemBase.OnItemRemovedFromWorldspace += DispatchToCheckItemsNearby;
+        ItemSystem.IS_ItemBase.OnItemRemovedFromWorldspace += CheckRemoveFromItemsNearby;
     }
     private void OnDisable()
     {
-        ItemSystem.IS_ItemBase.OnItemRemovedFromWorldspace -= DispatchToCheckItemsNearby;
+        ItemSystem.IS_ItemBase.OnItemRemovedFromWorldspace -= CheckRemoveFromItemsNearby;
     }
 
-    private void DispatchToCheckItemsNearby(object sender, ItemEventArgs e)
+    private void CheckRemoveFromItemsNearby(object sender, ItemEventArgs e)
     {
         RemoveFromItemsNearby(e.Item);
     }
@@ -95,6 +102,10 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
                     {
                         PickUpNearestItem();
                     }
+                    else if (ctx.action.name == controls.MouseAndKeyboard.Jump.name)
+                    {
+                        DropFirstItem();
+                    }
 
                 }
 
@@ -118,6 +129,10 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
                     {
                         PickUpNearestItem();
                     }
+                    else if (ctx.action.name == controls.Gamepad.Jump.name)
+                    {
+                        DropFirstItem();
+                    }
 
 
                 }
@@ -132,6 +147,15 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
 
 
     }//end InitInput()
+
+    //TODO: Make something better than this
+    private void DropFirstItem()
+    {
+        if(_ItemList.Count > 0)
+        {
+            DropItem(_ItemList[0]);
+        }
+    }
 
     /// <summary>
     /// Displays the item in ItemsNearby closest to the gameobject's position
@@ -179,7 +203,7 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
 
             foreach(var i in Info.ItemsNearby)
             {
-                CurMag = (i.gameObject.transform.position - PickupTransform.position).sqrMagnitude;
+                CurMag = (i.gameObject.transform.position - _PickupTransform.position).sqrMagnitude;
                 if (CurMag < ClosestMagnitudeSquared)
                 {
                     ClosestMagnitudeSquared = CurMag;

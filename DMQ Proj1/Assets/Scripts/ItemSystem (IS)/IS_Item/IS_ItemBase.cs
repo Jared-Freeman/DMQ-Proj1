@@ -101,6 +101,16 @@ namespace ItemSystem
             return successful;
         }
 
+        public virtual bool AddItemToWorldSpace()
+        {
+            bool successful = true;
+
+            gameObject.SetActive(true);
+            OnItemAddedToWorldspace?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
+
+            return successful;
+        }
+
         /// <summary>
         /// Check if a given position is in the pickup sphere for this item
         /// </summary>

@@ -109,13 +109,23 @@ namespace ItemSystem
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public bool DropItem(IS_ItemBase item)
+        public bool DropItem(IS_ItemBase item, Vector3 Location = default, Quaternion Rotation = default)
         {
-            throw new System.NotImplementedException();
+            if(_ItemList.Contains(item) && item.AddItemToWorldSpace())
+            {
+                if (Location != default)
+                {
+                    item.transform.position = Location;
+                }
+                if(Rotation != default)
+                {
+                    item.transform.rotation = Rotation;
+                }
 
-
-            { 
                 item.Location_State = ItemLocation.World;
+
+                _ItemList.Remove(item);
+
                 return true;
             }
             return false;
