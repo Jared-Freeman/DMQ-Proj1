@@ -153,7 +153,10 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
     {
         if(_ItemList.Count > 0)
         {
-            DropItem(_ItemList[0]);
+            if (DropItem(_ItemList[0], _PickupTransform.position))
+            {
+                //nothing to do here yet
+            }
         }
     }
 
