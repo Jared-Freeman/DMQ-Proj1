@@ -134,7 +134,7 @@ namespace ItemSystem
         /// <param name="item">Item to transfer</param>
         /// <param name="other_inventory">Other inventory to transfer this item into</param>
         /// <returns></returns>
-        public bool TransferItem(IS_ItemBase item, IS_InventoryBase other_inventory)
+        public virtual bool TransferItem(IS_ItemBase item, IS_InventoryBase other_inventory)
         {
             if (!_ItemList.Contains(item)) return false; //invalid -- item not in this inventory
 
@@ -147,7 +147,7 @@ namespace ItemSystem
             return false;
         }
 
-        public bool ReceiveItemFromInventory(IS_ItemBase item)
+        public virtual bool ReceiveItemFromInventory(IS_ItemBase item)
         {
             if(_ItemList.Count < _Data.BaseOptions.Capacity && _Data.ItemAllowed(item))
             {

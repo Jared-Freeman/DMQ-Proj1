@@ -15,6 +15,7 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
     public struct PlayerInvInfo
     {
         public List<ItemSystem.IS_ItemBase> ItemsNearby;
+        public int EquippedWeaponIndex; // values < 0 imply no weapon is equipped!
     }
 
     PlayerInput Input;
@@ -65,6 +66,8 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
         {
             if (w == null) Debug.LogError("Weaponslot inventory not set! Please Check that all Weaponslots have an inventory reference.");
         }
+
+        Info.EquippedWeaponIndex = -1; //No weapon equipped
 
         InitInput();
     }
@@ -125,6 +128,14 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
                     {
                         DropFirstItem();
                     }
+                    else if (ctx.action.name == controls.MouseAndKeyboard.Wepon1Equip.name)
+                    {
+                        EquipWeaponSlot(0);
+                    }
+                    else if (ctx.action.name == controls.MouseAndKeyboard.Wepon2Equip.name)
+                    {
+                        EquipWeaponSlot(1);
+                    }
 
                 }
 
@@ -152,6 +163,15 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
                     {
                         DropFirstItem();
                     }
+                    else if (ctx.action.name == controls.Gamepad.Wepon1Equip.name)
+                    {
+                        EquipWeaponSlot(0);
+                    }
+                    else if (ctx.action.name == controls.Gamepad.Wepon2Equip.name)
+                    {
+                        EquipWeaponSlot(1);
+                    }
+
 
 
                 }
@@ -167,7 +187,33 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
 
     }//end InitInput()
 
+    /// <summary>
+    /// Equips Weapon in Weaponslot[ index ]
+    /// </summary>
+    /// <param name="index">weapon slot index to equip. Set to -1 to dequip</param>
+    private void EquipWeaponSlot(int index)
+    {
+        if(index < 0)
+        {
+            //dequip
+            Info.EquippedWeaponIndex = -1;
+        }
+        else if(index < _WeaponSlots.Count)
+        {
+            Debug.Log("WEAPON EQUIPPED @index: " + index);
+            Info.EquippedWeaponIndex = index;
+        }
+        else
+        {
+            Debug.LogError(ToString() + ": Weapon Slot index out of range! Aborting Equip");
+        }
+    }
+
+
     //TODO: Make something better than this
+    /// <summary>
+    /// Drops first item in inventory. Searches Weapon Slot's after player inventory items are depleted
+    /// </summary>
     private void DropFirstItem()
     {
         if(_ItemList.Count > 0)
@@ -175,6 +221,17 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
             if (DropItem(_ItemList[0], _PickupTransform.position))
             {
                 //nothing to do here yet
+            }
+        }
+        else
+        {
+            foreach (var w in _WeaponSlots)
+            {
+                if (w.Weapon != null)
+                {
+                    w.DropItem(w.Weapon, _PickupTransform.position);
+                    return;
+                }
             }
         }
     }
