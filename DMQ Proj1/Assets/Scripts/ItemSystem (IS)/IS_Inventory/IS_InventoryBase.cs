@@ -42,7 +42,7 @@ namespace ItemSystem
 
         #region Initialization
 
-        private void Awake()
+        protected virtual void Awake()
         {
             if (_Data == null)
             {
@@ -129,17 +129,33 @@ namespace ItemSystem
         }
 
         /// <summary>
-        /// Transfers an item from this container instance to another container instance
+        /// Transfers an item from this container instance to another container instance. Returns false if the attempt fails (i.e. no capacity, type not allowed)
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">Item to transfer</param>
         /// <param name="other_inventory">Other inventory to transfer this item into</param>
         /// <returns></returns>
         public bool TransferItem(IS_ItemBase item, IS_InventoryBase other_inventory)
         {
-            throw new System.NotImplementedException();
+            if (!_ItemList.Contains(item)) return false; //invalid -- item not in this inventory
+
+            if (other_inventory.ReceiveItemFromInventory(item))
+            {
+                _ItemList.Remove(item);
+                return true;
+            }
+
             return false;
         }
 
+        public bool ReceiveItemFromInventory(IS_ItemBase item)
+        {
+            if(_ItemList.Count < _Data.BaseOptions.Capacity && _Data.ItemAllowed(item))
+            {
+                _ItemList.Add(item);
+                return true;
+            }
+            return false;
+        }
 
         #region Utility Methods
 

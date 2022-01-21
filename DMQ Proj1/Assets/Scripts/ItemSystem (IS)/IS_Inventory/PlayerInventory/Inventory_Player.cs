@@ -20,6 +20,8 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
     PlayerInput Input;
     PlayerControls controls;
 
+    [SerializeField] protected List<Inventory_WeaponSlot> _WeaponSlots = new List<Inventory_WeaponSlot>();
+
     [SerializeField] protected PlayerInvInfo Info;
 
     [Tooltip("No reference here will use the Transform of THIS Gameobject")]
@@ -40,12 +42,29 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
         }
     }
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         if(_PickupTransform == null)
             _PickupTransform = gameObject.transform; //can change if needed
 
         Info.ItemsNearby = new List<ItemSystem.IS_ItemBase>();
+
+        //Game currently set to include 2 weapon slots... Maybe we can make this nicer later or something idk
+        int wepSlotsNeeded = 2;
+
+        var attachedSlots = gameObject.GetComponents<Inventory_WeaponSlot>();
+        foreach(var w in attachedSlots)
+        {
+            _WeaponSlots.Add(w);
+        }
+
+        if (_WeaponSlots.Count != wepSlotsNeeded) Debug.LogError("Weapon Slots not set to " + wepSlotsNeeded + "! Could be errors");
+        foreach(var w in _WeaponSlots)
+        {
+            if (w == null) Debug.LogError("Weaponslot inventory not set! Please Check that all Weaponslots have an inventory reference.");
+        }
 
         InitInput();
     }
