@@ -88,6 +88,12 @@ namespace ItemSystem
             }
         }
 
+        public bool DestroyItem()
+        {
+            Destroy(gameObject);
+            return true;
+        }
+
         private void OnDestroy()
         {
             OnItemDestroyed?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
