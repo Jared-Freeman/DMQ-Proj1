@@ -314,6 +314,25 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
             //We need to remove the newly-disabled ref from all lists
             if (PickUpItem(nearest))
             {
+                Debug.Log("Item picked");
+
+                Debug.Log("Slots: " + _WeaponSlots.Count);
+
+                //if(TransferItem(nearest, _WeaponSlots[0]))
+                //{
+                //    Debug.Log("Item transferred to slot 0!");
+                //}
+
+                //Auto-adds a weapon to an empty slot, if one exists
+                foreach (var w in _WeaponSlots)
+                {
+                    if (TransferItem(nearest, w))
+                    {
+                        //cool it worked
+                        Debug.Log("Item transferred to slot!");
+                        break;
+                    }
+                }
             }
         }
     }

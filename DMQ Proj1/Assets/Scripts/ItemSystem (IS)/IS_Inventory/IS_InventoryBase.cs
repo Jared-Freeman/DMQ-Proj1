@@ -14,6 +14,8 @@ namespace ItemSystem
     {
         #region Members
 
+        protected bool s_FLAG_DEBUG = true;
+
         [SerializeField] protected IS_InventoryPresetBase _Data;
         protected IS_Inv_StateInfo _Info;
 
@@ -136,24 +138,43 @@ namespace ItemSystem
         /// <returns></returns>
         public virtual bool TransferItem(IS_ItemBase item, IS_InventoryBase other_inventory)
         {
-            if (!_ItemList.Contains(item)) return false; //invalid -- item not in this inventory
+            if (!_ItemList.Contains(item))
+            {
+                if (s_FLAG_DEBUG) Debug.Log("item not found in itemlist");
+
+                return false; //invalid -- item not in this inventory
+
+            }
 
             if (other_inventory.ReceiveItemFromInventory(item))
             {
+                if (s_FLAG_DEBUG) Debug.Log("Item Received");
+
                 _ItemList.Remove(item);
                 return true;
+            }
+            else
+            {
+                if (s_FLAG_DEBUG) Debug.Log("Item Not Received");
             }
 
             return false;
         }
 
+        //Please note that this can be extended
         public virtual bool ReceiveItemFromInventory(IS_ItemBase item)
         {
             if(_ItemList.Count < _Data.BaseOptions.Capacity && _Data.ItemAllowed(item))
             {
+                if (s_FLAG_DEBUG) Debug.Log("Base Receive evaluated to true");
+
                 _ItemList.Add(item);
                 return true;
             }
+
+
+            if(s_FLAG_DEBUG) Debug.Log("Capacity error: " + !(_ItemList.Count < _Data.BaseOptions.Capacity));
+            if (s_FLAG_DEBUG) Debug.Log("Item Return error: " + !(_Data.ItemAllowed(item)));
             return false;
         }
 

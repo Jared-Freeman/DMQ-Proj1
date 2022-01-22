@@ -12,6 +12,8 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
 {
     #region Members
 
+    public bool FLAG_Debug = false;
+
     protected Inventory_Player _Inv;
     protected PlayerInput _Input;
     protected PlayerControls _Controls;
@@ -77,7 +79,7 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
                     //MnK
                     if (ctx.action.name == _Controls.MouseAndKeyboard.Attack.name)
                     {
-                        TryInvokeAttack();
+                        if (TryInvokeAttack()) AttackEvent();
                     }
                     else if (ctx.action.name == _Controls.MouseAndKeyboard.Aim.name)
                     {
@@ -139,7 +141,7 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
                     //Gamepad
                     if (ctx.action.name == _Controls.Gamepad.Attack.name)
                     {
-                        TryInvokeAttack();
+                        if (TryInvokeAttack()) AttackEvent();
                     }
                     else if (ctx.action.name == _Controls.Gamepad.Aim.name) AimDirection = ctx.ReadValue<Vector2>().normalized;
 
@@ -180,6 +182,12 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
 
             return _Inv.CurrentWeapon.InvokeAttack(ctx);
         }
+        if (FLAG_Debug) Debug.Log("Attack dispatched, but attempt failed.");
         return false;
+    }
+
+    private void AttackEvent()
+    {
+        if (FLAG_Debug) Debug.Log("AttackEvent!");
     }
 }

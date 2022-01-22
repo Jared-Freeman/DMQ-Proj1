@@ -171,6 +171,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _Data: {fileID: 11400000, guid: 99da408ccf8ab014b8a082ebe2352d65, type: 2}
+--- !u!114 &24042374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 24042358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4446c7f94fbe37145bb024eda589e1fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FLAG_Debug: 0
 --- !u!1001 &59724531
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1510,11 +1523,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2b27adc2e0f2d445af892d1c22bef20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BasePresetData: {fileID: 11400000, guid: a6926244536d2e147b302529cfeb0795, type: 2}
-  BaseWeaponInfo:
-    _Cooldown:
-      _Cooldown: 1
-  BaseWeaponData: {fileID: 11400000, guid: a6926244536d2e147b302529cfeb0795, type: 2}
+  BasePresetData: {fileID: 11400000, guid: c06e56a4bb166a94bbb1a347d4d5a71b, type: 2}
+  BaseWeaponData: {fileID: 11400000, guid: c06e56a4bb166a94bbb1a347d4d5a71b, type: 2}
+  Preset: {fileID: 11400000, guid: c06e56a4bb166a94bbb1a347d4d5a71b, type: 2}
 --- !u!1001 &606688216
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2669,7 +2680,7 @@ PrefabInstance:
     - target: {fileID: 744460600123902260, guid: 88869fd19cc98d243af7dd2d04c14822,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.76
+      value: -14.94
       objectReference: {fileID: 0}
     - target: {fileID: 744460600123902260, guid: 88869fd19cc98d243af7dd2d04c14822,
         type: 3}
@@ -2679,7 +2690,7 @@ PrefabInstance:
     - target: {fileID: 744460600123902260, guid: 88869fd19cc98d243af7dd2d04c14822,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -13.16
+      value: -21.15
       objectReference: {fileID: 0}
     - target: {fileID: 744460600123902260, guid: 88869fd19cc98d243af7dd2d04c14822,
         type: 3}
@@ -2742,11 +2753,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2b27adc2e0f2d445af892d1c22bef20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BasePresetData: {fileID: 11400000, guid: a6926244536d2e147b302529cfeb0795, type: 2}
-  BaseWeaponInfo:
-    _Cooldown:
-      _Cooldown: 1
-  BaseWeaponData: {fileID: 11400000, guid: a6926244536d2e147b302529cfeb0795, type: 2}
+  BasePresetData: {fileID: 11400000, guid: c06e56a4bb166a94bbb1a347d4d5a71b, type: 2}
+  BaseWeaponData: {fileID: 11400000, guid: c06e56a4bb166a94bbb1a347d4d5a71b, type: 2}
+  Preset: {fileID: 11400000, guid: c06e56a4bb166a94bbb1a347d4d5a71b, type: 2}
 --- !u!1 &1010766333
 GameObject:
   m_ObjectHideFlags: 0
@@ -3060,11 +3069,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2b27adc2e0f2d445af892d1c22bef20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BasePresetData: {fileID: 11400000, guid: a6926244536d2e147b302529cfeb0795, type: 2}
-  BaseWeaponInfo:
-    _Cooldown:
-      _Cooldown: 1
-  BaseWeaponData: {fileID: 11400000, guid: a6926244536d2e147b302529cfeb0795, type: 2}
+  BasePresetData: {fileID: 11400000, guid: c06e56a4bb166a94bbb1a347d4d5a71b, type: 2}
+  BaseWeaponData: {fileID: 11400000, guid: c06e56a4bb166a94bbb1a347d4d5a71b, type: 2}
+  Preset: {fileID: 11400000, guid: c06e56a4bb166a94bbb1a347d4d5a71b, type: 2}
 --- !u!1 &1215360469
 GameObject:
   m_ObjectHideFlags: 0

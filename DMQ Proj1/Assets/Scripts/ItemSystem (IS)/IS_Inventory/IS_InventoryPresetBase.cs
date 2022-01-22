@@ -7,7 +7,7 @@ namespace ItemSystem
     [CreateAssetMenu(fileName = "INV_", menuName = "ScriptableObjects/Inventory Preset", order = 1)]
     public class IS_InventoryPresetBase : ScriptableObject
     {
-        public static bool FLAG_DEBUG = false;
+        public static bool s_FLAG_DEBUG = true;
 
         public IS_InventoryPresetBaseOptions BaseOptions = new IS_InventoryPresetBaseOptions();
 
@@ -31,8 +31,22 @@ namespace ItemSystem
         {
             if (BaseOptions.PermittedItemTypes.List.Count < 1 || BaseOptions.PermittedItemTypes.Contains(item))
             {
-                if(FLAG_DEBUG) Debug.Log("ITEM PERMITTED");
+                if(s_FLAG_DEBUG) Debug.Log("ITEM PERMITTED");
                 return true;
+            }
+            else
+            {
+                //Here we must also check subclasses (just the impl i chose...yikes)
+                foreach(var t in BaseOptions.PermittedItemTypes.List)
+                {
+                    if (item.GetType().IsSubclassOf(t))
+                    {
+                        if (s_FLAG_DEBUG) Debug.Log("subclass detect");
+                        return true;
+                    }
+                }
+
+                if (s_FLAG_DEBUG) Debug.Log("Not a subclass");
             }
             return false;
         }

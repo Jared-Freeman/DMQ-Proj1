@@ -16,7 +16,7 @@ namespace ItemSystem.Weapons
             public Utils.CooldownTracker _Cooldown; //may have multiple cooldowns
         }
 
-        public AddedInfo BaseWeaponInfo;
+        protected AddedInfo BaseWeaponInfo;
         public ItemSystem.IS_WeaponPreset BaseWeaponData;
 
         new protected virtual void Awake()

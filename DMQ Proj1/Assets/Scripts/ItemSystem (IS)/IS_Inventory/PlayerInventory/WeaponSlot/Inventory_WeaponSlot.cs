@@ -17,6 +17,7 @@ public class Inventory_WeaponSlot : ItemSystem.IS_InventoryBase
     protected InvWepSlotInfo Info;
 
     public ItemSystem.Weapons.Item_WeaponBase Weapon { get { return Info._CurrentWeapon; } }
+    public bool SlotEmpty { get { return (Items.Count <= _Data.BaseOptions.Capacity); } }
 
     protected override void Awake()
     {
@@ -36,6 +37,7 @@ public class Inventory_WeaponSlot : ItemSystem.IS_InventoryBase
         if( base.ReceiveItemFromInventory(item))
         {
             UpdateCurrentWeapon();
+            return true;
         }
         return false;
     }
