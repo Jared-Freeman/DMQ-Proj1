@@ -50,6 +50,14 @@ namespace ItemSystem.Weapons
 
                         return true;
                     }
+                    else
+                    {
+                        if (s_FLAG_ITEM_DEBUG) Debug.Log("projectile component not found");
+                    }
+                }
+                else
+                {
+                    if (s_FLAG_ITEM_DEBUG) Debug.Log("Cooldown unavailable.");
                 }
             }
             return false;

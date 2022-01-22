@@ -19,7 +19,10 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
     protected PlayerControls _Controls;
     protected Actor _Actor;
 
-    Vector2 AimDirection = Vector2.zero;
+    protected Vector2 AimDirection = Vector2.zero;
+
+    [SerializeField] Transform AttackContextInitialPosition;
+    [SerializeField] float AttackContextInitialPositionForwardOffset = 1.25f;
 
     #endregion
 
@@ -166,15 +169,16 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
     {
         if(_Inv.CurrentWeapon != null)
         {
+            var aimDir3 = new Vector3(AimDirection.x, 0, AimDirection.y);
             var ctx = new ItemSystem.Weapons.Item_WeaponBase.AttackContext
             {
-                _InitialDirection = AimDirection,
-                _InitialPosition = gameObject.transform.position,
+                _InitialDirection = aimDir3,
+                _InitialPosition = AttackContextInitialPosition.position + aimDir3.normalized * AttackContextInitialPositionForwardOffset,
                 _InitialGameObject = gameObject,
 
                 _TargetGameObject = null,
                 _TargetDirection = Vector3.zero,
-                _TargetPosition = gameObject.transform.position,
+                _TargetPosition = AttackContextInitialPosition.position + aimDir3.normalized * AttackContextInitialPositionForwardOffset,
 
                 _Owner = _Actor,
                 _Team = _Actor._Team

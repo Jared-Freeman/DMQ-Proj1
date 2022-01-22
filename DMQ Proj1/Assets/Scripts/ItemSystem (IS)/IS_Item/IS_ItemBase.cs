@@ -32,6 +32,8 @@ namespace ItemSystem
 
         #region Members
 
+        protected static bool s_FLAG_ITEM_DEBUG = true;
+
         //preset base
         [Header("Make sure to MATCH all IS_ItemPresetBase refs!!!")]
         public IS_ItemPresetBase BasePresetData;
