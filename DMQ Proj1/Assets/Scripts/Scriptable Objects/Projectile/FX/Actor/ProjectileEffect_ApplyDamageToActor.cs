@@ -41,6 +41,7 @@ public class ProjectileEffect_ApplyDamageToActor : ProjectileEffect
                 if(Projectile.ActorOwner != null)
                 {
                     team = Projectile.ActorOwner._Team;
+                    Debug.Log("Team added to damage message");
                 }
                 
                 Stats.ApplyDamage(Options.DamageMessage.CreateMessage(Projectile.gameObject, team, Vector3.zero, Projectile.gameObject, Vector3.zero));

@@ -63,6 +63,7 @@ public class TargetFilterOptions
     public bool Enemy = true;
     public bool Ally = false;
     public bool Neutral = false;
+    public bool Self = false;
 
     /// <summary>
     /// Returns true if Target is acceptable according to this team's perspective given the target filters
@@ -72,8 +73,11 @@ public class TargetFilterOptions
     /// <returns></returns>
     public bool TargetIsAllowed(Team InvokingTeam, Actor Target)
     {
-
-        if (Ally && InvokingTeam.IsAlly(Target._Team))
+        if(Self && InvokingTeam.IsSelf(Target._Team))
+        {
+            return true;
+        }
+        else if (Ally && InvokingTeam.IsAlly(Target._Team))
         {
             return true;
         }
@@ -81,7 +85,7 @@ public class TargetFilterOptions
         {
             return true;
         }
-        else if (Enemy)
+        else if (Enemy && InvokingTeam.IsEnemy(Target._Team))
         {
             return true;
         }

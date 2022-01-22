@@ -314,9 +314,9 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
             //We need to remove the newly-disabled ref from all lists
             if (PickUpItem(nearest))
             {
-                Debug.Log("Item picked");
+                //Debug.Log("Item picked");
 
-                Debug.Log("Slots: " + _WeaponSlots.Count);
+                //Debug.Log("Slots: " + _WeaponSlots.Count);
 
                 //if(TransferItem(nearest, _WeaponSlots[0]))
                 //{
@@ -329,7 +329,7 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
                     if (TransferItem(nearest, w))
                     {
                         //cool it worked
-                        Debug.Log("Item transferred to slot!");
+                        //Debug.Log("Item transferred to slot!");
                         break;
                     }
                 }

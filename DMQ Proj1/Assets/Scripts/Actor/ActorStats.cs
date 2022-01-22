@@ -123,22 +123,24 @@ public class ActorStats : MonoBehaviour
 
         if(DamageMessage._Team == null)
         {
+            if (FLAG_Debug) Debug.Log("No team found on message packet");
+
             HpCurrent -= Mathf.Max(DamageMessage._DamageInfo.DamageAmount, 0);
+            OnReceiveDamage.Invoke();
         }
         //target filtering
         else if(DamageMessage._DamageInfo.TargetFilters.TargetIsAllowed(DamageMessage._Team, actor))
-        { 
+        {
+            if (FLAG_Debug) Debug.Log("Target filters validated message packet. Damage taken.");
+
             HpCurrent -= Mathf.Max(DamageMessage._DamageInfo.DamageAmount, 0);
+            OnReceiveDamage.Invoke();
         }
 
         if (HpCurrent <= 0)
         {
             schedule += OnDeath.Invoke; //This avoid race condition when objects kill each other.
             actor.ActorDead();
-        }
-        else
-        {
-            OnReceiveDamage.Invoke();
         }
     }
 }

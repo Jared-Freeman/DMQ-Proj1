@@ -24,12 +24,20 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
     [SerializeField] Transform AttackContextInitialPosition;
     [SerializeField] float AttackContextInitialPositionForwardOffset = 1.25f;
 
+    protected StateInfo _Info;
+
+    public struct StateInfo
+    {
+        public bool AttackButtonHeld;
+    }
     #endregion
 
 
     protected void Awake()
     {
-        _Inv = gameObject.GetComponent<Inventory_Player>();
+        _Info.AttackButtonHeld = false;
+
+           _Inv = gameObject.GetComponent<Inventory_Player>();
         if(_Inv == null)
         {
             Debug.LogError(ToString() + ": No Player Inventory instance found! Destroying.");
@@ -82,6 +90,7 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
                     //MnK
                     if (ctx.action.name == _Controls.MouseAndKeyboard.Attack.name)
                     {
+                        _Info.AttackButtonHeld = true;
                         if (TryInvokeAttack()) AttackEvent();
                     }
                     else if (ctx.action.name == _Controls.MouseAndKeyboard.Aim.name)
@@ -130,7 +139,10 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
                 else if (ctx.canceled)
                 {
                     //MnK
-                    //if (ctx.action.name == _Controls.MouseAndKeyboard.Movement.name) InputMap = Vector2.zero;
+                    if (ctx.action.name == _Controls.MouseAndKeyboard.Attack.name)
+                    {
+                        _Info.AttackButtonHeld = false;
+                    }
                 }
             }
 
@@ -144,6 +156,7 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
                     //Gamepad
                     if (ctx.action.name == _Controls.Gamepad.Attack.name)
                     {
+                        _Info.AttackButtonHeld = true;
                         if (TryInvokeAttack()) AttackEvent();
                     }
                     else if (ctx.action.name == _Controls.Gamepad.Aim.name) AimDirection = ctx.ReadValue<Vector2>().normalized;
@@ -153,7 +166,10 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
                 else if (ctx.canceled)
                 {
                     //Gamepad
-                    //if (ctx.action.name == _Controls.Gamepad.Movement.name) InputMap = Vector2.zero;
+                    if (ctx.action.name == _Controls.Gamepad.Attack.name)
+                    {
+                        _Info.AttackButtonHeld = false;
+                    }
                 }
             }
         };
@@ -169,6 +185,8 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
     {
         if(_Inv.CurrentWeapon != null)
         {
+            if (!_Inv.CurrentWeapon.CanAttack) return false; //potentially avoids expense of creating a new attack context
+
             var aimDir3 = new Vector3(AimDirection.x, 0, AimDirection.y);
             var ctx = new ItemSystem.Weapons.Item_WeaponBase.AttackContext
             {
@@ -193,5 +211,13 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
     private void AttackEvent()
     {
         if (FLAG_Debug) Debug.Log("AttackEvent!");
+    }
+
+    protected void Update()
+    {
+        if(_Info.AttackButtonHeld)
+        {
+            TryInvokeAttack();
+        }
     }
 }

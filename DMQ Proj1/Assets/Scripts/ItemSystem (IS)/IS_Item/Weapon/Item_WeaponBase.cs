@@ -19,6 +19,8 @@ namespace ItemSystem.Weapons
         protected AddedInfo BaseWeaponInfo;
         public ItemSystem.IS_WeaponPreset BaseWeaponData;
 
+        public bool CanAttack { get { return BaseWeaponInfo._Cooldown.CanUseCooldown(); } }
+
         new protected virtual void Awake()
         {
             base.Awake();
