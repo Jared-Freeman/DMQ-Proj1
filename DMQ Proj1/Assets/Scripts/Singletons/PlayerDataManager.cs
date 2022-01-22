@@ -68,7 +68,7 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
 
         VerifyProfileDirectoryIntegrity(); //Guarantees <PlayerProfilePath> exists
 
-        Test_GenerateSave();
+        //Test_GenerateSave();
 
         InitProfileFileList();
     }
