@@ -16,29 +16,74 @@ public static class Freeman_Utilities
 
 namespace Utils
 {
+    /// <summary>
+    /// Maintains a generic _Cooldown based in (scaled) Time.
+    /// </summary>
     [System.Serializable]
     public class CooldownTracker
     {
-        public float Cooldown = 1f;
-        //[Min(1)] public int MaxCharges = 1;
+        #region Members
+
+        //can probably replace with new property completely
+        protected float _Cooldown = 1f;
+        //[Min(1)] public int MaxCharges = 1; //NYI
 
         private float LastUsedTime;
 
+        #endregion
+
+        #region Properties
+
+        //havent tested changing these during runtime
+        public float CooldownRate 
+        { 
+            get { return CooldownRate; }
+            set
+            {
+                CooldownRate = value;
+
+                Cooldown = 1 / value;
+                _Cooldown = 1 / value;
+            }
+        }        
+        public float Cooldown
+        {
+            get { return Cooldown; }
+            set
+            {
+                Cooldown = value;
+                _Cooldown = value;
+
+                CooldownRate = 1 / value;
+            }
+        }
+
+
+        #endregion
+
         public CooldownTracker()
         {
+        }
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="other">Other _Cooldown to retrieve values from.</param>
+        public CooldownTracker(CooldownTracker other) : base()
+        {
+            Cooldown = other.Cooldown;
         }
         public CooldownTracker(float CooldownTime): base()
         {
             Cooldown = CooldownTime;
         }
 
-        //Must be called to start running the cooldown tracker
+        //Must be called to start running the _Cooldown tracker
         public void InitializeCooldown()
         {
             LastUsedTime = Time.time;
         }
 
-        //Returns true if Cooldown was used.
+        //Returns true if _Cooldown was used.
         public bool ConsumeCooldown()
         {
             if(CanUseCooldown())
@@ -49,10 +94,10 @@ namespace Utils
             return false;
         }
 
-        //Return true if Cooldown CAN be used
+        //Return true if _Cooldown CAN be used
         public bool CanUseCooldown()
         {
-            if(Time.time - LastUsedTime >= Cooldown) return true;
+            if(Time.time - LastUsedTime >= _Cooldown) return true;
             return false;
         }
     }
