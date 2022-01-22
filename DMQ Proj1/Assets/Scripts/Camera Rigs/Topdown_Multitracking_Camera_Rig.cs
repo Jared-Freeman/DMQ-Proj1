@@ -76,9 +76,9 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
 
     //state variables
     [SerializeField]
-    private float CamDistanceCurrent;
+    public float CamDistanceCurrent { get; private set; }
     [SerializeField]
-    private float CamAdditionalOffsetCurrent;
+    public float CamAdditionalOffsetCurrent { get; private set; }
 
 
 

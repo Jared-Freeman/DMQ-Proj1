@@ -73,6 +73,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""1b5e7d1d-8795-472e-ab89-f750e2fb86b1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -152,6 +160,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Aim"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e209e6c9-728e-4ad1-a4ee-4e8fe26fea20"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -212,6 +231,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""type"": ""Value"",
                     ""id"": ""9bdd143a-98db-4024-aa26-5013e3a36e5f"",
                     ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""e00d0f1a-26f7-4413-9a4f-4095c6b50243"",
+                    ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
                 }
@@ -335,6 +362,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""processors"": """",
                     ""groups"": ""MouseAndKeyboard"",
                     ""action"": ""Aim"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""37f1aacf-62b9-4a51-ab26-c89443726e96"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""MouseAndKeyboard"",
+                    ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -576,12 +614,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
             ""bindingGroup"": ""MouseAndKeyboard"",
             ""devices"": [
                 {
-                    ""devicePath"": ""<Keyboard>"",
+                    ""devicePath"": ""<Mouse>"",
                     ""isOptional"": false,
                     ""isOR"": false
                 },
                 {
-                    ""devicePath"": ""<Mouse>"",
+                    ""devicePath"": ""<Keyboard>"",
                     ""isOptional"": false,
                     ""isOR"": false
                 }
@@ -609,6 +647,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Gamepad_Wepon1Equip = m_Gamepad.FindAction("Wepon1Equip", throwIfNotFound: true);
         m_Gamepad_Wepon2Equip = m_Gamepad.FindAction("Wepon2Equip", throwIfNotFound: true);
         m_Gamepad_Aim = m_Gamepad.FindAction("Aim", throwIfNotFound: true);
+        m_Gamepad_Interact = m_Gamepad.FindAction("Interact", throwIfNotFound: true);
         // MouseAndKeyboard
         m_MouseAndKeyboard = asset.FindActionMap("MouseAndKeyboard", throwIfNotFound: true);
         m_MouseAndKeyboard_Movement = m_MouseAndKeyboard.FindAction("Movement", throwIfNotFound: true);
@@ -618,6 +657,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_MouseAndKeyboard_Wepon2Equip = m_MouseAndKeyboard.FindAction("Wepon2Equip", throwIfNotFound: true);
         m_MouseAndKeyboard_Wepon1Equip = m_MouseAndKeyboard.FindAction("Wepon1Equip", throwIfNotFound: true);
         m_MouseAndKeyboard_Aim = m_MouseAndKeyboard.FindAction("Aim", throwIfNotFound: true);
+        m_MouseAndKeyboard_Interact = m_MouseAndKeyboard.FindAction("Interact", throwIfNotFound: true);
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
@@ -683,6 +723,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Gamepad_Wepon1Equip;
     private readonly InputAction m_Gamepad_Wepon2Equip;
     private readonly InputAction m_Gamepad_Aim;
+    private readonly InputAction m_Gamepad_Interact;
     public struct GamepadActions
     {
         private @PlayerControls m_Wrapper;
@@ -694,6 +735,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @Wepon1Equip => m_Wrapper.m_Gamepad_Wepon1Equip;
         public InputAction @Wepon2Equip => m_Wrapper.m_Gamepad_Wepon2Equip;
         public InputAction @Aim => m_Wrapper.m_Gamepad_Aim;
+        public InputAction @Interact => m_Wrapper.m_Gamepad_Interact;
         public InputActionMap Get() { return m_Wrapper.m_Gamepad; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -724,6 +766,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Aim.started -= m_Wrapper.m_GamepadActionsCallbackInterface.OnAim;
                 @Aim.performed -= m_Wrapper.m_GamepadActionsCallbackInterface.OnAim;
                 @Aim.canceled -= m_Wrapper.m_GamepadActionsCallbackInterface.OnAim;
+                @Interact.started -= m_Wrapper.m_GamepadActionsCallbackInterface.OnInteract;
+                @Interact.performed -= m_Wrapper.m_GamepadActionsCallbackInterface.OnInteract;
+                @Interact.canceled -= m_Wrapper.m_GamepadActionsCallbackInterface.OnInteract;
             }
             m_Wrapper.m_GamepadActionsCallbackInterface = instance;
             if (instance != null)
@@ -749,6 +794,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Aim.started += instance.OnAim;
                 @Aim.performed += instance.OnAim;
                 @Aim.canceled += instance.OnAim;
+                @Interact.started += instance.OnInteract;
+                @Interact.performed += instance.OnInteract;
+                @Interact.canceled += instance.OnInteract;
             }
         }
     }
@@ -764,6 +812,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_MouseAndKeyboard_Wepon2Equip;
     private readonly InputAction m_MouseAndKeyboard_Wepon1Equip;
     private readonly InputAction m_MouseAndKeyboard_Aim;
+    private readonly InputAction m_MouseAndKeyboard_Interact;
     public struct MouseAndKeyboardActions
     {
         private @PlayerControls m_Wrapper;
@@ -775,6 +824,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @Wepon2Equip => m_Wrapper.m_MouseAndKeyboard_Wepon2Equip;
         public InputAction @Wepon1Equip => m_Wrapper.m_MouseAndKeyboard_Wepon1Equip;
         public InputAction @Aim => m_Wrapper.m_MouseAndKeyboard_Aim;
+        public InputAction @Interact => m_Wrapper.m_MouseAndKeyboard_Interact;
         public InputActionMap Get() { return m_Wrapper.m_MouseAndKeyboard; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -805,6 +855,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Aim.started -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnAim;
                 @Aim.performed -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnAim;
                 @Aim.canceled -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnAim;
+                @Interact.started -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnInteract;
+                @Interact.performed -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnInteract;
+                @Interact.canceled -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnInteract;
             }
             m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface = instance;
             if (instance != null)
@@ -830,6 +883,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Aim.started += instance.OnAim;
                 @Aim.performed += instance.OnAim;
                 @Aim.canceled += instance.OnAim;
+                @Interact.started += instance.OnInteract;
+                @Interact.performed += instance.OnInteract;
+                @Interact.canceled += instance.OnInteract;
             }
         }
     }
@@ -942,6 +998,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnWepon1Equip(InputAction.CallbackContext context);
         void OnWepon2Equip(InputAction.CallbackContext context);
         void OnAim(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
     }
     public interface IMouseAndKeyboardActions
     {
@@ -952,6 +1009,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnWepon2Equip(InputAction.CallbackContext context);
         void OnWepon1Equip(InputAction.CallbackContext context);
         void OnAim(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
     }
     public interface IPlayerActions
     {

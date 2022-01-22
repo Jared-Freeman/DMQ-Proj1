@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df324da48cfa56b4cac7d7e95726add7, type: 3}
+  m_Name: AtkTarg LP 1
+  m_EditorClassIdentifier: 
+  FLAG_Debug: 1
+  Options:
+    DamageMessage: {fileID: 11400000, guid: 7b2d489209c54bc429d20b32294cb31d, type: 2}
+  SpecialOptions:
+    Projectile: {fileID: 8275873581982739598, guid: 3d81a822cfbe18b4aa9d4e07004a157d,
+      type: 3}
+    Offset_Forward: 2
+    Offset_Vertical: 1

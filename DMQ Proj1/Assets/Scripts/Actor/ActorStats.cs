@@ -8,6 +8,8 @@ public class ActorStats : MonoBehaviour
 
     #region members
 
+    public bool FLAG_Debug = false;
+
     //might eventually want to perform a method call to alter these values 
     //(i.e., changing max health reduces current health by (newmax - max))
     [Header("Default Values")]
@@ -72,6 +74,8 @@ public class ActorStats : MonoBehaviour
 
     public void ApplyDamage(DamageMessage data)
     {
+        Debug.Log("false Taken");
+
         if (HpCurrent <= 0)
         {//ignore damage if already dead. TODO : may have to change that if we want to detect hit on death...
             return;
@@ -108,23 +112,35 @@ public class ActorStats : MonoBehaviour
     }
 
     //TODO: Make more robust
-    public void ApplyDamage(AP2_DamageMessage data)
+    public void ApplyDamage(Actor_DamageMessage DamageMessage)
     {
+        if(FLAG_Debug) Debug.Log("Damage Taken");
+
         if (HpCurrent <= 0)
         {//ignore damage if already dead. TODO : may have to change that if we want to detect hit on death...
             return;
         }
 
-        HpCurrent -= Mathf.Max(data.DamageAmount, 0);
+        if(DamageMessage._Team == null)
+        {
+            if (FLAG_Debug) Debug.Log("No team found on message packet");
+
+            HpCurrent -= Mathf.Max(DamageMessage._DamageInfo.DamageAmount, 0);
+            OnReceiveDamage.Invoke();
+        }
+        //target filtering
+        else if(DamageMessage._DamageInfo.TargetFilters.TargetIsAllowed(DamageMessage._Team, actor))
+        {
+            if (FLAG_Debug) Debug.Log("Target filters validated message packet. Damage taken.");
+
+            HpCurrent -= Mathf.Max(DamageMessage._DamageInfo.DamageAmount, 0);
+            OnReceiveDamage.Invoke();
+        }
 
         if (HpCurrent <= 0)
         {
             schedule += OnDeath.Invoke; //This avoid race condition when objects kill each other.
             actor.ActorDead();
-        }
-        else
-        {
-            OnReceiveDamage.Invoke();
         }
     }
 }
