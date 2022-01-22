@@ -23,7 +23,7 @@ public class GenericProjectile : MonoBehaviour
         Vector3 LaunchDirection = default,
         Vector3 LaunchDirection_2D = default,
         GameObject Target = null,
-        Actor ActorOwner = null
+        Actor actorOwner = null
         )
     {
         GameObject GO = Instantiate(Template.gameObject);
@@ -32,6 +32,8 @@ public class GenericProjectile : MonoBehaviour
         if (PR == null) return null;
 
         PR.Info = new StateInfo(LaunchDirection, LaunchDirection_2D, Target);
+
+        if (actorOwner != null) PR.ActorOwner = actorOwner;
             
         /* Old Info setting model
         switch (PR._Data.MoveOptions.MovementType)

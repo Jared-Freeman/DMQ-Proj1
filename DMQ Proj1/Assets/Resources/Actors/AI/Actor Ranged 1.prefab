@@ -454,7 +454,7 @@ CapsuleCollider:
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!54 &6187161416314951907
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -530,12 +530,12 @@ MonoBehaviour:
     MaxFacingAngle: 250
     TurningRate: 360
   AttackCooldown:
-    Cooldown: 1
+    _Cooldown: 1
   AttackAction: {fileID: 11400000, guid: f3a09561fffe9e44299e077e4fa9f063, type: 2}
   Options:
     DrawDebugGizmos: 0
     AttackCooldown:
-      Cooldown: 1
+      _Cooldown: 1
     AttackRange: 30
     AttackRangeMinimum: 3
     AttackChargeTime: 1.25

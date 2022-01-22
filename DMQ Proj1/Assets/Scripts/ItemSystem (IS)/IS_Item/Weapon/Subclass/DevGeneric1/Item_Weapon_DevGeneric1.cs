@@ -10,6 +10,7 @@ namespace ItemSystem.Weapons
     public class Item_Weapon_DevGeneric1 : Item_WeaponBase
     {
         public Item_Weapon_DevGeneric1Preset Preset;
+        public bool UseNoCollideLayer = true;
 
         protected override void Awake()
         {
@@ -45,7 +46,19 @@ namespace ItemSystem.Weapons
                     if(p != null)
                     {
                         var iDir = ctx._InitialDirection;
-                        GenericProjectile.SpawnProjectile(p, ctx._InitialPosition, iDir, new Vector2(iDir.x, iDir.z), ctx._TargetGameObject, ctx._Owner);
+                        var instance = GenericProjectile.SpawnProjectile(p, ctx._InitialPosition, iDir, new Vector2(iDir.x, iDir.z), ctx._TargetGameObject, ctx._Owner);
+
+                        if (ctx._Owner != null)
+                        {
+                            if (UseNoCollideLayer)
+                            {
+                                instance.gameObject.layer = ctx._Owner._Team.Options.NoCollideLayer;
+                            }
+                            else
+                            {
+                                instance.gameObject.layer = ctx._Owner._Team.Options.Layer; 
+                            }
+                        }
 
 
                         return true;
