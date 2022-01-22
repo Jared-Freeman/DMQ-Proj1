@@ -15,6 +15,9 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
     protected Inventory_Player _Inv;
     protected PlayerInput _Input;
     protected PlayerControls _Controls;
+    protected Actor _Actor;
+
+    Vector2 AimDirection = Vector2.zero;
 
     #endregion
 
@@ -25,6 +28,13 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
         if(_Inv == null)
         {
             Debug.LogError(ToString() + ": No Player Inventory instance found! Destroying.");
+            Destroy(this);
+        }
+
+        _Actor = gameObject.GetComponent<Actor>();
+        if(_Actor == null)
+        {
+            Debug.LogError(ToString() + ": No Actor instance found! Destroying.");
             Destroy(this);
         }
 
@@ -69,6 +79,45 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
                     {
                         TryInvokeAttack();
                     }
+                    else if (ctx.action.name == _Controls.MouseAndKeyboard.Aim.name)
+                    {
+                        if (Camera.main == null) return;
+
+                        Vector2 In = ctx.ReadValue<Vector2>();
+
+                        //improved aiming using raycast to plane
+                        //TODO: Consider a "raycast to model" approach; consider modifying the CursorPlane to be inline with the projectile spawn height
+                        if (Camera.main.GetComponent<Topdown_Multitracking_Camera_Rig>() != null)
+                        {
+
+                            //TODO: Consider CamDistanceCurrent improvement. We need a distance from camera to EACH PLAYER, projected onto "2d world plane." 
+                            //For now this should be a fairly strong approximation (but maybe could be broken)
+                            Plane CursorPlane = new Plane(Vector3.up, Camera.main.GetComponent<Topdown_Multitracking_Camera_Rig>().CamDistanceCurrent);
+
+                            Ray RayToCursorPlane = Camera.main.ScreenPointToRay(new Vector3(In.x, In.y, 0));
+
+
+                            Vector3 Hit = Vector3.zero;
+                            if (CursorPlane.Raycast(RayToCursorPlane, out float Point))
+                            {
+                                Hit = RayToCursorPlane.GetPoint(Point);
+                            }
+
+                            //TOOD: Consider this for relaying info to other subsystems
+                            //At this point, Hit == the point on plane where player clicked. Could be useful??
+
+                            Vector3 V = Vector3.ProjectOnPlane((Hit - transform.position), Vector3.up);
+
+                            AimDirection = (new Vector2(V.x, V.z)).normalized;
+                        }
+                        else
+                        {
+                            Vector3 V = Camera.main.WorldToScreenPoint(transform.position);
+                            //Vector3 V = Camera.main.WorldToScreenPoint(transform.position + new Vector3(0, ShootableProjectileHeightOffset, 0)); //hmm 
+
+                            AimDirection = (In - new Vector2(V.x, V.y)).normalized;
+                        }
+                    }
 
                 }
 
@@ -92,6 +141,7 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
                     {
                         TryInvokeAttack();
                     }
+                    else if (ctx.action.name == _Controls.Gamepad.Aim.name) AimDirection = ctx.ReadValue<Vector2>().normalized;
 
                 }
 
@@ -106,12 +156,30 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
 
     }//end InitInput()
 
-    private void TryInvokeAttack()
+    /// <summary>
+    /// Generic attack attempt
+    /// </summary>
+    /// <returns>True, if attack succeeds</returns>
+    private bool TryInvokeAttack()
     {
         if(_Inv.CurrentWeapon != null)
         {
+            var ctx = new ItemSystem.Weapons.Item_WeaponBase.AttackContext
+            {
+                _InitialDirection = AimDirection,
+                _InitialPosition = gameObject.transform.position,
+                _InitialGameObject = gameObject,
 
+                _TargetGameObject = null,
+                _TargetDirection = Vector3.zero,
+                _TargetPosition = gameObject.transform.position,
+
+                _Owner = _Actor,
+                _Team = _Actor._Team
+            };
+
+            return _Inv.CurrentWeapon.InvokeAttack(ctx);
         }
-        throw new NotImplementedException();
+        return false;
     }
 }

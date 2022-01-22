@@ -7,13 +7,23 @@ public class GenericProjectile : MonoBehaviour
 {
     #region Static Methods
 
+    /// <summary>
+    /// Creates a Projectile based on the supplied GenericProjectile component; Context is interpreted from overloaded arguments.
+    /// </summary>
+    /// <param name="Template"></param>
+    /// <param name="InitialPosition"></param>
+    /// <param name="LaunchDirection"></param>
+    /// <param name="LaunchDirection_2D"></param>
+    /// <param name="Target"></param>
+    /// <returns>The newly instantiated GenericProjectile</returns>
     public static GenericProjectile SpawnProjectile
         (
         GenericProjectile Template,
         Vector3 InitialPosition = default,
         Vector3 LaunchDirection = default,
         Vector3 LaunchDirection_2D = default,
-        GameObject Target = null
+        GameObject Target = null,
+        Actor ActorOwner = null
         )
     {
         GameObject GO = Instantiate(Template.gameObject);

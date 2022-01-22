@@ -8,9 +8,9 @@ namespace ItemSystem
     public abstract class IS_ItemPresetBase : ScriptableObject
     {
         [System.Serializable]
-        public struct IS_Options
+        public class IS_Options
         {
-            public float PickupRadius;
+            public float PickupRadius = 2f;
         }
 
         public IS_Options BaseOptions;

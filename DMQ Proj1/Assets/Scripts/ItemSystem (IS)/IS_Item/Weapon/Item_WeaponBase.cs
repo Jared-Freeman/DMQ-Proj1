@@ -19,7 +19,7 @@ namespace ItemSystem.Weapons
         public AddedInfo BaseWeaponInfo;
         public ItemSystem.IS_WeaponPreset BaseWeaponData;
 
-        protected override void Awake()
+        new protected virtual void Awake()
         {
             base.Awake();
 
@@ -39,7 +39,7 @@ namespace ItemSystem.Weapons
         /// Disables the gameObject and returns true
         /// </summary>
         /// <returns></returns>
-        public override bool AddItemToInventorySpace()
+        new public virtual bool AddItemToInventorySpace()
         {
             //base is sufficient for this class
             base.AddItemToInventorySpace();

@@ -66,6 +66,12 @@ namespace Utils
             }
         }
 
+        public bool CooldownAvailable
+        { get
+            {
+                return CanUseCooldown();
+            } 
+        }
 
         #endregion
 
