@@ -145,7 +145,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
     void AttackEvent()
     {
-        ShootProjectile(); //TODO: Remove after testing
+        //ShootProjectile(); //TODO: Remove after testing
         Event_AttackStart?.Invoke(new PlayerMovementEventArgs());
     }
     void ChangeWeaponEvent()
