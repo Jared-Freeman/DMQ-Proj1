@@ -6312,6 +6312,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4893124687429797061, guid: 6a33c1699a8b6a54c8e48dc551da2045,
+        type: 3}
+      propertyPath: Flag_ActorDebug
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4893124687429797064, guid: 6a33c1699a8b6a54c8e48dc551da2045,
         type: 3}
       propertyPath: m_RootOrder
@@ -6371,6 +6376,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player MP Proto V5 (1-22-2022)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4893124687429797066, guid: 6a33c1699a8b6a54c8e48dc551da2045,
+        type: 3}
+      propertyPath: FLAG_Debug
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5240105835801253706, guid: 6a33c1699a8b6a54c8e48dc551da2045,
+        type: 3}
+      propertyPath: AttackContextInitialPositionForwardOffset
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a33c1699a8b6a54c8e48dc551da2045, type: 3}
