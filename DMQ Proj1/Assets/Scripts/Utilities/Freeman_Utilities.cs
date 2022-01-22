@@ -24,8 +24,14 @@ namespace Utils
     {
         #region Members
 
+        private static float s_MIN_COOLDOWN = .0001f;
+        private static float s_MAX_COOLDOWN_RATE = 1 / s_MIN_COOLDOWN;
+
         //can probably replace with new property completely
-        protected float _Cooldown = 1f;
+        [Tooltip("Measured in seconds")]
+        [Min(0.0001f)]
+        [SerializeField] protected float _Cooldown = 1f;
+        protected float _CooldownRate = 1f;
         //[Min(1)] public int MaxCharges = 1; //NYI
 
         private float LastUsedTime;
@@ -37,24 +43,26 @@ namespace Utils
         //havent tested changing these during runtime
         public float CooldownRate 
         { 
-            get { return CooldownRate; }
+            get { return _CooldownRate; }
             set
             {
-                CooldownRate = value;
-
-                Cooldown = 1 / value;
-                _Cooldown = 1 / value;
+                if(_CooldownRate <= s_MAX_COOLDOWN_RATE)
+                {
+                    _Cooldown = 1 / value;
+                    _CooldownRate = value;
+                }
             }
         }        
         public float Cooldown
         {
-            get { return Cooldown; }
+            get { return _Cooldown; }
             set
             {
-                Cooldown = value;
-                _Cooldown = value;
-
-                CooldownRate = 1 / value;
+                if (_CooldownRate >= s_MIN_COOLDOWN)
+                {
+                    _Cooldown = value;
+                    _CooldownRate = 1 / value;
+                }
             }
         }
 
@@ -70,7 +78,8 @@ namespace Utils
         /// <param name="other">Other _Cooldown to retrieve values from.</param>
         public CooldownTracker(CooldownTracker other) : base()
         {
-            Cooldown = other.Cooldown;
+            if(other != null)
+                Cooldown = other.Cooldown;
         }
         public CooldownTracker(float CooldownTime): base()
         {

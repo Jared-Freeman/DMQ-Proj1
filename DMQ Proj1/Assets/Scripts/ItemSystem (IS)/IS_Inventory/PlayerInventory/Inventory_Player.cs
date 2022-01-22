@@ -14,7 +14,7 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
 {
     #region Members
 
-    public Item_Weapon CurrentWeapon 
+    public ItemSystem.Weapons.Item_WeaponBase CurrentWeapon 
     { get
         {
             if (Info.EquippedWeaponIndex < 0 || Info.EquippedWeaponIndex + 1 >= _WeaponSlots.Count) //bounds

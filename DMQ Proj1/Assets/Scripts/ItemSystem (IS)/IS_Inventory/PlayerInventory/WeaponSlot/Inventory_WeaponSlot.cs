@@ -11,12 +11,12 @@ public class Inventory_WeaponSlot : ItemSystem.IS_InventoryBase
     [System.Serializable]
     public struct InvWepSlotInfo
     {
-        public Item_Weapon _CurrentWeapon;
+        public ItemSystem.Weapons.Item_WeaponBase _CurrentWeapon;
     }
 
     protected InvWepSlotInfo Info;
 
-    public Item_Weapon Weapon { get { return Info._CurrentWeapon; } }
+    public ItemSystem.Weapons.Item_WeaponBase Weapon { get { return Info._CurrentWeapon; } }
 
     protected override void Awake()
     {
@@ -43,6 +43,6 @@ public class Inventory_WeaponSlot : ItemSystem.IS_InventoryBase
     //Contains a somewhat annoying cast here. Dunno how else to do this tho.
     private void UpdateCurrentWeapon()
     {
-        Info._CurrentWeapon = (Item_Weapon)_ItemList[0]; //explicit cast. Items in this list are guaranteed to be Weapon's due to Awake()
+        Info._CurrentWeapon = (ItemSystem.Weapons.Item_WeaponBase)_ItemList[0]; //explicit cast. Items in this list are guaranteed to be Weapon's due to Awake()
     }
 }
