@@ -12,6 +12,8 @@ namespace ItemSystem
         {
             public float EquipTime;
             public float DequipTime;
+
+            public Utils.CooldownTracker CooldownPreset; //This is a preset. Dont call this cooldown directly -- just reference its options
         }
 
         public IS_WeaponOptions BaseWeaponOptions;

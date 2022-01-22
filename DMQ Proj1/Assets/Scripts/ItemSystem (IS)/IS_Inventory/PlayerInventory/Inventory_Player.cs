@@ -7,15 +7,25 @@ using UnityEngine.InputSystem;
 
 //TODO: Interact may need to be buffered/queued somehow (to prevent Interact from doing multiple things)
 /// <summary>
-/// Player inventory instance. Grants players agency over picking up items using player input
+/// Player inventory instance. Grants players agency over picking up items using player input. 
+/// Maintains WeaponSlot subinventories and acces to Current Weapon reference.
 /// </summary>
 public class Inventory_Player : ItemSystem.IS_InventoryBase
 {
-    [System.Serializable]
-    public struct PlayerInvInfo
-    {
-        public List<ItemSystem.IS_ItemBase> ItemsNearby;
-        public int EquippedWeaponIndex; // values < 0 imply no weapon is equipped!
+    #region Members
+
+    public Item_Weapon CurrentWeapon 
+    { get
+        {
+            if (Info.EquippedWeaponIndex < 0 || Info.EquippedWeaponIndex + 1 >= _WeaponSlots.Count) //bounds
+            {
+                return null;
+            }
+            else
+            {
+                return _WeaponSlots[Info.EquippedWeaponIndex].Weapon;
+            }
+        } 
     }
 
     PlayerInput Input;
@@ -27,6 +37,17 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
 
     [Tooltip("No reference here will use the Transform of THIS Gameobject")]
     [SerializeField] protected Transform _PickupTransform;
+
+    #region Helpers
+    [System.Serializable]
+    public struct PlayerInvInfo
+    {
+        public List<ItemSystem.IS_ItemBase> ItemsNearby;
+        public int EquippedWeaponIndex; // values < 0 imply no weapon is equipped!
+    }
+    #endregion
+    #endregion
+
 
     /// <summary>
     /// Transform where Pickup checks are done for this Player Inventory
