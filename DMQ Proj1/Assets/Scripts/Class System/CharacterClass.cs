@@ -2,21 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Preset for a Character Class
-/// </summary>
-public class CharacterClass : ScriptableObject
+namespace ClassSystem
 {
     /// <summary>
-    /// Container for the rules this class follows, such as their set of useable stuff (perhaps), base stats, etc.
+    /// Preset for a Character Class
     /// </summary>
-    [System.Serializable]
-    public struct ClassInfo
+    [CreateAssetMenu(fileName = "Class_", menuName = "ScriptableObjects/Character Class", order = 1)]
+    public class CharacterClass : ScriptableObject
     {
+        /// <summary>
+        /// Container for the rules this class follows, such as their set of useable stuff (perhaps), base stats, etc.
+        /// </summary>
+        [System.Serializable]
+        public struct CharClassOptions
+        {
+
+        }
+
+        public string ClassName;
+        [Multiline]
+        public string DisplayInfo;
+
+        public CharClassOptions Options;
+
 
     }
 
-    public string ClassName;
-    [Multiline]
-    public string DisplayInfo;
 }
