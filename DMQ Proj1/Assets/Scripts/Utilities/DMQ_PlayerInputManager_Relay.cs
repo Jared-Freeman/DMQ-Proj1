@@ -32,7 +32,6 @@ namespace Input_DMQ
 
             if (mgr != null)
             {
-                Debug.Log("Dispathccchchch");
                 onPlayerInputManagerCreate?.Invoke(this, new CSEventArgs.PlayerInputManager_Args(mgr));
             }
         }

@@ -38,6 +38,8 @@ public class PlayerMovementV3 : MonoBehaviour
 
     //External objects
     public PlayerInput Input { get; protected set; }
+    public Input_DMQ.PlayerInputContext PlayerInputContext { get; protected set; }
+
     public Actor AttachedActor { get; protected set; }
     public Inventory inventory { get; protected set; }
     public PlayerControls controls { get; protected set; }
@@ -236,115 +238,7 @@ public class PlayerMovementV3 : MonoBehaviour
         Input.enabled = false;
         controls.Disable();
     }
-    #endregion
 
-    void Update()
-    {
-        Debug.DrawRay(transform.position, new Vector3(AimDirection.x, transform.position.y, AimDirection.y) * 5f, Color.yellow);
-    }
-
-    private void FixedUpdate()
-    {
-        if(FLAG_PlayerMovementEnabled) 
-        {
-            switch(CurrentState)
-            {
-                case State.Moving:
-                    HorizontalMovementInput();
-                    break;
-
-
-                case State.Dashing:
-                    DoDashV3();
-                    break;
-
-
-                case State.Sliding: //NYI
-                    break;
-
-
-                case State.Standing: //NYI
-                    break;
-
-
-            }
-        }
-    }
-
-    #region State Transitions
-
-    // Place State start stuff here
-    private void ChangeState(State S)
-    {        
-        StateEnd(S);
-
-        CurrentState = S;
-
-        switch(S)
-        {
-            case State.Moving:
-
-                break;
-
-
-            case State.Dashing:
-
-                _Info._DashDesiredDirection = new Vector3(InputMap.x, 0, InputMap.y).normalized * DashOptions._DashSpeed;
-                _Info.Dash_LastStartTime = Time.time;
-                _Info.Dash_Cooldown.ConsumeCooldown();
-
-                break;
-
-
-            case State.Sliding:
-
-                break;
-
-
-            case State.Standing:
-
-                break;
-
-
-            default:
-                Debug.LogError("ChangeState(): unrecognized state: " + S.ToString() + ". Does an implementation exist?");
-                break;
-        }
-    }
-
-    // Place State End stuff here
-    private void StateEnd(State S)
-    {
-
-        switch (S)
-        {
-            case State.Moving:
-
-                break;
-
-
-            case State.Dashing:
-
-                break;
-
-
-            case State.Sliding:
-
-                break;
-
-
-            case State.Standing:
-
-                break;
-
-
-            default:
-                Debug.LogError("StateEnd(): unrecognized state: " + S.ToString() + ". Does an implementation exist?");
-                break;
-        }
-    }
-
-    #endregion
 
     #region Input Event Dispatcher
     // This function is called in Awake(), and creates controls 
@@ -353,9 +247,11 @@ public class PlayerMovementV3 : MonoBehaviour
     {
 
         controls = new PlayerControls();
+        PlayerInputContext = Singleton<Input_DMQ.PlayerInputInterface>.Instance.GetContext(Input);
+
 
         //set up action map
-        if(Input.currentControlScheme == controls.MouseAndKeyboardScheme.name)
+        if (Input.currentControlScheme == controls.MouseAndKeyboardScheme.name)
         {
             Input.SwitchCurrentActionMap(controls.MouseAndKeyboardScheme.name);
         }
@@ -364,8 +260,9 @@ public class PlayerMovementV3 : MonoBehaviour
             Input.SwitchCurrentActionMap(controls.GamepadScheme.name);
         }
 
-        //please someone find a better way to do this (and retain multiplayer functionality)
-        Input.onActionTriggered += ctx =>
+        // subscribe to input channel and create event handler
+        var channel = PlayerInputContext.SubscribeToChannel("player", this);
+        channel.onActionTriggered += (sender, ctx) =>
         {
             ////MOUSE AND KEYBOARD EVENTS REGISTER //////////////////////////////////////
             if (ctx.action.actionMap.name == controls.MouseAndKeyboardScheme.name)
@@ -493,6 +390,120 @@ public class PlayerMovementV3 : MonoBehaviour
         ////controls.MouseAndKeyboard.Aim.canceled += ctx => AimDirection = Vector2.zero;
 
     }
+    #endregion
+
+    #endregion
+
+    #region Update Methods
+
+    void Update()
+    {
+        Debug.DrawRay(transform.position, new Vector3(AimDirection.x, transform.position.y, AimDirection.y) * 5f, Color.yellow);
+    }
+
+    private void FixedUpdate()
+    {
+        if (FLAG_PlayerMovementEnabled)
+        {
+            switch (CurrentState)
+            {
+                case State.Moving:
+                    HorizontalMovementInput();
+                    break;
+
+
+                case State.Dashing:
+                    DoDashV3();
+                    break;
+
+
+                case State.Sliding: //NYI
+                    break;
+
+
+                case State.Standing: //NYI
+                    break;
+
+
+            }
+        }
+    }
+
+    #endregion
+
+    #region State Transitions
+
+    // Place State start stuff here
+    private void ChangeState(State S)
+    {        
+        StateEnd(S);
+
+        CurrentState = S;
+
+        switch(S)
+        {
+            case State.Moving:
+
+                break;
+
+
+            case State.Dashing:
+
+                _Info._DashDesiredDirection = new Vector3(InputMap.x, 0, InputMap.y).normalized * DashOptions._DashSpeed;
+                _Info.Dash_LastStartTime = Time.time;
+                _Info.Dash_Cooldown.ConsumeCooldown();
+
+                break;
+
+
+            case State.Sliding:
+
+                break;
+
+
+            case State.Standing:
+
+                break;
+
+
+            default:
+                Debug.LogError("ChangeState(): unrecognized state: " + S.ToString() + ". Does an implementation exist?");
+                break;
+        }
+    }
+
+    // Place State End stuff here
+    private void StateEnd(State S)
+    {
+
+        switch (S)
+        {
+            case State.Moving:
+
+                break;
+
+
+            case State.Dashing:
+
+                break;
+
+
+            case State.Sliding:
+
+                break;
+
+
+            case State.Standing:
+
+                break;
+
+
+            default:
+                Debug.LogError("StateEnd(): unrecognized state: " + S.ToString() + ". Does an implementation exist?");
+                break;
+        }
+    }
+
     #endregion
 
     #region Jump Movement Models
@@ -925,6 +936,8 @@ public class PlayerMovementV3 : MonoBehaviour
     }
     #endregion
 
+    #region UnityMessage Event Handlers
+
     private void OnCollisionEnter(Collision collision)
     {
         //No rigidbody means we should just slap the wall or whatever
@@ -957,6 +970,7 @@ public class PlayerMovementV3 : MonoBehaviour
             ChangeState(State.Moving);
         }
     }
+    #endregion
 
     #region Dash Movement Models
 
@@ -1152,6 +1166,8 @@ public class PlayerMovementV3 : MonoBehaviour
 
     #endregion
 
+    #region Deprecated
+
     //TODO: Move this to another script
     public GameObject ShootableProjectile;
     public float ShootableProjectileHeightOffset = 1f;
@@ -1174,4 +1190,6 @@ public class PlayerMovementV3 : MonoBehaviour
             else Debug.LogError(ToString() + ": No Actor attached. How did you get around all my checks?");
         }
     }
+
+    #endregion
 }

@@ -76,6 +76,7 @@ namespace Input_DMQ
 
             }
         }
+
         #endregion
 
         #region Event Handlers
@@ -116,101 +117,132 @@ namespace Input_DMQ
         #endregion
     }
 
-}
 
-/// <summary>
-/// Container for PlayerInput, InputChannel(s), etc.
-/// </summary>
-public class PlayerInputContext
-{
-    public PlayerInputContext(PlayerInput input): base()
+    /// <summary>
+    /// Container for PlayerInput, InputChannel(s), etc.
+    /// </summary>
+    public class PlayerInputContext
     {
-        Player = input;
-        _InputChannels.Add(new InputChannel("default"));
+        public PlayerInputContext(PlayerInput input) : base()
+        {
+            Player = input;
+            _InputChannels.Add(new InputChannel("default", Player));
+        }
+
+        public PlayerInput Player { get; private set; }
+
+        public List<InputChannel> _InputChannels = new List<InputChannel>();
+
+        public InputChannel SubscribeToChannel(string name, MonoBehaviour subscriber)
+        {
+            foreach (var c in _InputChannels)
+            {
+                if (c.ChannelName == name)
+                {
+                    c.AddSubscriber(subscriber);
+                    return c;
+                }
+            }
+
+
+            InputChannel newChannel = new InputChannel(name, Player);
+            newChannel.AddSubscriber(subscriber);
+            return newChannel;
+        }
     }
 
-    public PlayerInput Player { get; private set; }
-
-    public List<InputChannel> _InputChannels = new List<InputChannel>();
-
-    public InputChannel SubscribeToChannel(string name, MonoBehaviour subscriber)
+    /// <summary>
+    /// Controls when input events are relayed to subscribers. Subscribers may be accessed here. Note that subscribers must still subscribe to the appropriate methods to gain any functionality from them.
+    /// </summary>
+    public class InputChannel
     {
-        foreach (var c in _InputChannels)
+        #region Events
+
+        public event System.EventHandler<InputAction.CallbackContext> onActionTriggered;
+        public event System.EventHandler<PlayerInput> onControlsChanged;
+        public event System.EventHandler<PlayerInput> onDeviceLost;
+        public event System.EventHandler<PlayerInput> onDeviceRegained;
+
+        #region Helpers
+        private void Invoke_onActionTriggered(InputAction.CallbackContext ctx)
         {
-            if (c.ChannelName == name)
+            if (ChannelEnabled)
+                onActionTriggered?.Invoke(this, ctx);
+        }
+        private void Invoke_onControlsChanged(PlayerInput inp)
+        {
+            if (ChannelEnabled)
+                onControlsChanged?.Invoke(this, inp);
+        }
+        private void Invoke_onDeviceLost(PlayerInput inp)
+        {
+            if (ChannelEnabled)
+                onDeviceLost?.Invoke(this, inp);
+        }
+        private void Invoke_onDeviceRegained(PlayerInput inp)
+        {
+            if (ChannelEnabled)
+                onDeviceRegained?.Invoke(this, inp);
+        }
+        #endregion
+
+        #endregion
+
+        public List<MonoBehaviour> Subscribers { get; private set; } = new List<MonoBehaviour>();
+        public PlayerInput LinkedInput { get; private set;}
+
+        //enabled by default
+        public bool ChannelEnabled { get; set; } = true;
+
+        public string ChannelName
+        {
+            get
             {
-                c.AddSubscriber(subscriber);
-                return c;
+                return ChannelName;
+            }
+            private set
+            {
+                //filter out white space and uppercase
+                string filteredString = string.Concat(value.Where(c => !char.IsWhiteSpace(c)));
+                ChannelName = filteredString.ToLower();
             }
         }
 
+        #region Construction/Destruction
 
-        InputChannel newChannel = new InputChannel(name);
-        newChannel.AddSubscriber(subscriber);
-        return newChannel;
-    }
-}
-
-/// <summary>
-/// Controls when input events are relayed to subscribers. Subscribers may be accessed here. Note that subscribers must still subscribe to the appropriate methods to gain any functionality from them.
-/// </summary>
-public class InputChannel
-{
-    #region Events
-
-    public event System.EventHandler<InputAction.CallbackContext> onActionTriggered;
-    public event System.EventHandler<PlayerInput> onControlsChanged;
-    public event System.EventHandler<PlayerInput> onDeviceLost;
-    public event System.EventHandler<PlayerInput> onDeviceRegained;
-
-    #region Helpers
-    public void Invoke_onActionTriggered(InputAction.CallbackContext ctx)
-    {
-        onActionTriggered?.Invoke(this, ctx);
-    }
-    public void Invoke_onControlsChanged(PlayerInput inp)
-    {
-        onControlsChanged?.Invoke(this, inp);
-    }
-    public void Invoke_onDeviceLost(PlayerInput inp)
-    {
-        onDeviceLost?.Invoke(this, inp);
-    }
-    public void Invoke_onDeviceRegained(PlayerInput inp)
-    {
-        onDeviceRegained?.Invoke(this, inp);
-    }
-    #endregion
-
-    #endregion
-
-    public List<MonoBehaviour> Subscribers { get; private set; } = new List<MonoBehaviour>();
-
-    public InputChannel(string name)
-    {
-        ChannelName = name;
-    }
-
-    public string ChannelName
-    {
-        get
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="name">name of channel</param>
+        /// <param name="linked_input">PlayerInput reference to listen to input events from</param>
+        public InputChannel(string name, PlayerInput linked_input)
         {
-            return ChannelName;
+            ChannelName = name;
+            LinkedInput = linked_input;
         }
-        private set
+
+        /// <summary>
+        /// Dtor
+        /// </summary>
+        ~InputChannel()
         {
-            //filter out white space and uppercase
-            string filteredString = string.Concat(value.Where(c => !char.IsWhiteSpace(c)));
-            ChannelName = filteredString.ToLower();
+            LinkedInput.onActionTriggered -= Invoke_onActionTriggered;
+            LinkedInput.onControlsChanged -= Invoke_onControlsChanged;
+            LinkedInput.onDeviceLost -= Invoke_onDeviceLost;
+            LinkedInput.onDeviceRegained -= Invoke_onDeviceRegained;
+        }
+
+        #endregion
+
+        public void AddSubscriber(MonoBehaviour script)
+        {
+            Subscribers.Add(script);
+        }
+        public void RemoveSubscriber(MonoBehaviour script)
+        {
+            Subscribers.Remove(script);
         }
     }
 
-    public void AddSubscriber(MonoBehaviour script)
-    {
-        Subscribers.Add(script);
-    }
-    public void RemoveSubscriber(MonoBehaviour script)
-    {
-        Subscribers.Remove(script);
-    }
 }
+
