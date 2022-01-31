@@ -8,7 +8,7 @@ namespace ClassSystem
     /// <summary>
     /// Preset for a Character Class
     /// </summary>
-    [CreateAssetMenu(fileName = "Class_", menuName = "ScriptableObjects/Character Class", order = 1)]
+    [CreateAssetMenu(fileName = "Class_", menuName = "Player Data/Character Class", order = 1)]
     public class CharacterClass : ScriptableObject
     {
         /// <summary>

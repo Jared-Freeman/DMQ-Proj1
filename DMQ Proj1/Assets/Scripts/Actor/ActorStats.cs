@@ -10,32 +10,30 @@ public class ActorStats : MonoBehaviour
 
     public bool FLAG_Debug = false;
 
+    public ActorSystem.ActorStatsPreset Preset;
 
-    //might eventually want to perform a method call to alter these values 
-    //(i.e., changing max health reduces current health by (newmax - max))
-    [Header("Default Values")]
-    public float HpMax = 0;
-    public float EnergyMax = 0;
 
     //probably want to increase protection on current (state) variables
     [Header("Current Values")]
     public float HpCurrent;
     public float EnergyCurrent;
 
-    //how do we impl this to not mess with stuff like damage over time (DoT)?
-    //Should we make invuln into a comm channel sort of thing? 
-    //(?) enum InvulnerabilityHandling { Normal, IgnoreInvulnerabilityFrames, WaitUntilInvulnerabilityFramesOver }
-    [Tooltip("Time that this gameObject is invulnerable for, after receiving damage.")]
-    public float invulnerabiltyTime;
+    // DEPRECATED
 
-    public int atk = 0;
-    public int def = 0;
+    ////how do we impl this to not mess with stuff like damage over time (DoT)?
+    ////Should we make invuln into a comm channel sort of thing? 
+    ////(?) enum InvulnerabilityHandling { Normal, IgnoreInvulnerabilityFrames, WaitUntilInvulnerabilityFramesOver }
+    //[Tooltip("Time that this gameObject is invulnerable for, after receiving damage.")]
+    //public float invulnerabiltyTime;
 
-    //later stuff
-    int buffAtk = 0;
-    int buffDef = 0;
-    public int totalAtk = 0;
-    public int totalDef = 0;
+    //public int atk = 0;
+    //public int def = 0;
+
+    ////later stuff
+    //int buffAtk = 0;
+    //int buffDef = 0;
+    //public int totalAtk = 0;
+    //public int totalDef = 0;
 
     public float m_timeSinceLastHit = 0.0f;
     protected Collider m_Collider;
@@ -56,22 +54,23 @@ public class ActorStats : MonoBehaviour
     {
         ResetDamage();
         m_Collider = GetComponent<Collider>();
-        CalculateStats();
         actor = GetComponent<Actor>();
     }
     public void ResetDamage()
     {
-        HpCurrent = HpMax;
-        EnergyCurrent = EnergyMax;
+        HpCurrent = Preset.Options.HpMax;
+        EnergyCurrent = Preset.Options.EnergyMax;
         isInvulnerable = false;
         m_timeSinceLastHit = 0.0f;
         OnResetDamage.Invoke();
     }
-    public void CalculateStats()
-    {
-        totalAtk = atk + buffAtk;
-        totalDef = def + buffDef;
-    }
+
+    //DEPRECATED
+    //public void CalculateStats()
+    //{
+    //    totalAtk = atk + buffAtk;
+    //    totalDef = def + buffDef;
+    //}
 
     public void ApplyDamage(DamageMessage data)
     {
@@ -97,7 +96,7 @@ public class ActorStats : MonoBehaviour
         isInvulnerable = true;
         m_timeSinceLastHit = 1.0f;
 
-        HpCurrent -= Mathf.Max(data.amount - totalDef, 0);
+        HpCurrent -= Mathf.Max(data.amount, 0);
 
         if (HpCurrent <= 0)
         {

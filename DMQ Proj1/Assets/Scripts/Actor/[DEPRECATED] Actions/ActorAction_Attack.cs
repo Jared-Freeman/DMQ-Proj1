@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//NO LONGER USABLE. This script references damage based on ActorStats, which is not where that info is stored anymore.
 public class ActorAction_Attack : MonoBehaviour
 {
     public int DamageAmount = 1;
@@ -43,7 +44,7 @@ public class ActorAction_Attack : MonoBehaviour
     {
         if (m_Owner)
         {
-            DamageAmount = m_Owner.GetComponent<ActorStats>().totalAtk;
+            //DamageAmount = m_Owner.GetComponent<ActorStats>().totalAtk;
         }
 
         if (attackAudio != null)
@@ -69,7 +70,7 @@ public class ActorAction_Attack : MonoBehaviour
     {
         if (m_Owner)
         {
-            DamageAmount -= m_Owner.GetComponent<ActorStats>().totalAtk;
+            //DamageAmount -= m_Owner.GetComponent<ActorStats>().totalAtk;
         }
         m_InAttack = false;
 
