@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using ActorSystem;
 
 /// <summary>
 /// Sends the ActorAction Attack that has been loaded in the AttackAction param to the Target param

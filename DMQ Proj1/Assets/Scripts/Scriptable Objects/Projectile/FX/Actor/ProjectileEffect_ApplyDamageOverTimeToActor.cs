@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ActorSystem;
 
 //TODO: Consider a less expensive way to compute this (a Coroutine with OnDOTEnter() OnDOTExit() and lower frequency???)
 [CreateAssetMenu(fileName = "ProjectileEffect", menuName = "ScriptableObjects/ProjectileEffect/Actor/Apply Damage Over Time to Actor (Fixed DT)", order = 1)]

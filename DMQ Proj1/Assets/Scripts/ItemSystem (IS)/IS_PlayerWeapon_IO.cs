@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using ActorSystem;
 
 /// <summary>
 /// Allows players to transmit IO to CurrentWeapon from a PlayerInventory instance.

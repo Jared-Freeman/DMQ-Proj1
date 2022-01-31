@@ -4,22 +4,27 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-public class ActorAI : Actor
+namespace ActorSystem
 {
-    #region members
-    ActorAI_Logic Logic;
-    #endregion
-
-    new protected void Start()
+    public class ActorAI : Actor
     {
-        base.Start();
-        Logic = GetComponent<ActorAI_Logic>();
+        #region members
+        ActorAI_Logic Logic;
+        #endregion
+
+        new protected void Start()
+        {
+            base.Start();
+            Logic = GetComponent<ActorAI_Logic>();
+        }
+
+        new protected void Update()
+        {
+            base.Update();
+            Logic.UpdateLogic();
+
+        }
     }
 
-    new protected void Update()
-    {
-        base.Update();
-        Logic.UpdateLogic();
 
-    }
 }

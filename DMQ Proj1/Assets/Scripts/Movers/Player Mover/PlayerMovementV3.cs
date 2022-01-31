@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
+using ActorSystem;
 
 //TODO: Figure out what data to store in this event args message
 public struct PlayerMovementEventArgs

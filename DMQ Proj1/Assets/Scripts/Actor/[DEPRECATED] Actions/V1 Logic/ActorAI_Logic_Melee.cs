@@ -2,71 +2,76 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActorAI_Logic_Melee : ActorAI_Logic
+namespace ActorSystem
 {
-    #region members
-    public Actor TargetActor;
-    public float CurrentAttackCooldown;
-    public float AttackCooldown = 1.0f;
-    public float AggroDistance = 20;
-    public bool isAggro;
-    ActorAction_Attack MeleeAttack;
-    ActorAction_MoveToTarget MoveTo;
-    #endregion
-
-    #region methods
-    // Start is called before the first frame update
-    new protected void Start()
+    public class ActorAI_Logic_Melee : ActorAI_Logic
     {
-        base.Start();
-        Animator = GetComponent<Animator>();
-        MeleeAttack = GetComponent<ActorAction_Attack>();
-        MoveTo = GetComponent<ActorAction_MoveToTarget>();
-        CurrentAttackCooldown = 0f;
-        isAggro = false;
-        //MoveTo.OnActionStart();
-    }
+        #region members
+        public Actor TargetActor;
+        public float CurrentAttackCooldown;
+        public float AttackCooldown = 1.0f;
+        public float AggroDistance = 20;
+        public bool isAggro;
+        ActorAction_Attack MeleeAttack;
+        ActorAction_MoveToTarget MoveTo;
+        #endregion
 
-    // Update is called once per frame
-    void Update()
-    {
-        //Replace with event based interrupt later
-        if((TargetActor.transform.position - gameObject.transform.position).sqrMagnitude < (AggroDistance * AggroDistance) && !isAggro)
+        #region methods
+        // Start is called before the first frame update
+        new protected void Start()
         {
-            MoveTo.OnActionStart();
-            isAggro =true;
+            base.Start();
+            Animator = GetComponent<Animator>();
+            MeleeAttack = GetComponent<ActorAction_Attack>();
+            MoveTo = GetComponent<ActorAction_MoveToTarget>();
+            CurrentAttackCooldown = 0f;
+            isAggro = false;
+            //MoveTo.OnActionStart();
         }
-        float hVelocity = NavAgent.velocity.x;
-        float vVelocity = NavAgent.velocity.y;
-        var speed = Mathf.Max(Mathf.Abs(hVelocity), Mathf.Abs(vVelocity));
-        Animator.SetFloat("speedv", speed);
-        UpdateLogic();
-    }
 
-    new void UpdateLogic()
-    {
-        if(isAggro)
+        // Update is called once per frame
+        void Update()
         {
-            if (NavAgent.remainingDistance <= NavAgent.stoppingDistance)
+            //Replace with event based interrupt later
+            if ((TargetActor.transform.position - gameObject.transform.position).sqrMagnitude < (AggroDistance * AggroDistance) && !isAggro)
             {
-                if (!NavAgent.hasPath || NavAgent.velocity.sqrMagnitude == 0f)
+                MoveTo.OnActionStart();
+                isAggro = true;
+            }
+            float hVelocity = NavAgent.velocity.x;
+            float vVelocity = NavAgent.velocity.y;
+            var speed = Mathf.Max(Mathf.Abs(hVelocity), Mathf.Abs(vVelocity));
+            Animator.SetFloat("speedv", speed);
+            UpdateLogic();
+        }
+
+        new void UpdateLogic()
+        {
+            if (isAggro)
+            {
+                if (NavAgent.remainingDistance <= NavAgent.stoppingDistance)
                 {
-                    //Destination reached
-                    if (CurrentAttackCooldown >= AttackCooldown)
+                    if (!NavAgent.hasPath || NavAgent.velocity.sqrMagnitude == 0f)
                     {
-                        //Attack
-                        Debug.Log("Attacking");
-                        Animator.SetTrigger("Attack1h1");
-                        MeleeAttack.BeginAttack(true);
-                        CurrentAttackCooldown = 0f;
+                        //Destination reached
+                        if (CurrentAttackCooldown >= AttackCooldown)
+                        {
+                            //Attack
+                            Debug.Log("Attacking");
+                            Animator.SetTrigger("Attack1h1");
+                            MeleeAttack.BeginAttack(true);
+                            CurrentAttackCooldown = 0f;
+                        }
                     }
                 }
+                MoveTo.ActionUpdate();
+                if (CurrentAttackCooldown < AttackCooldown)
+                    CurrentAttackCooldown += Time.deltaTime;
             }
-            MoveTo.ActionUpdate();
-            if (CurrentAttackCooldown < AttackCooldown)
-                CurrentAttackCooldown += Time.deltaTime;
         }
+        #endregion
+
     }
-    #endregion
+
 
 }

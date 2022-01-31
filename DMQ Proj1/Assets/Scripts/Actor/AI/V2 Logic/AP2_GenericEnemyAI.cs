@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using AP2;
 
-namespace AP2
+namespace ActorSystem.AP2
 {
     //This class is intended to simply walk to a point near the player, lunge, and perform an attack at the end of the lunge
     public class AP2_GenericEnemyAI : ActorAI_Logic
     {
         public Utils.CooldownTracker AttackCooldown;
-        public AP2.AP2_ActorAction_AttackTarget AttackAction;
+        public AP2_ActorAction_AttackTarget AttackAction;
         
         public AIOptions Options;
 

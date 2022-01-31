@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ActorSystem;
 
 [RequireComponent(typeof(ActorStats))]
 public class ActorStats_Display : MonoBehaviour

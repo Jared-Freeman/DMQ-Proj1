@@ -6,84 +6,89 @@ namespace CSEventArgs
 {
     public class ActorEventArgs : System.EventArgs
     {
-        public Actor _Actor;
+        public ActorSystem.Actor _Actor;
         
-        public ActorEventArgs(Actor a)
+        public ActorEventArgs(ActorSystem.Actor a)
         {
             _Actor = a;
         }
     }
 }
 
-[RequireComponent(typeof(ActorStats))]
-public class Actor : MonoBehaviour
+namespace ActorSystem
 {
-    #region EVENTS
-
-    public static event System.EventHandler<CSEventArgs.ActorEventArgs> OnActorCreated;
-    public static event System.EventHandler<CSEventArgs.ActorEventArgs> OnActorDestroyed;
-
-    #endregion
-
-    #region members
-
-    private static int IdGenerator = 0;
-    
-    readonly public int ActorID = IdGenerator++;
-
-    public bool Flag_ActorDebug = false;
-
-    public Team _Team;
-    public ActorStats Stats;
-    public List<ActorAction> Actions;
-    public List<ActorStatusEffect> StatusEffects;
-
-    #endregion
-
-    protected void Start()
+    [RequireComponent(typeof(ActorStats))]
+    public class Actor : MonoBehaviour
     {
-        if (Flag_ActorDebug) Debug.Log("Base Actor Start()");
-        if (Flag_ActorDebug) Debug.Log("Base Actor ID: " + ActorID);
+        #region EVENTS
 
-        Stats = GetComponent<ActorStats>();
-        if (Stats == null) Debug.LogError("No ActorStats found!");
+        public static event System.EventHandler<CSEventArgs.ActorEventArgs> OnActorCreated;
+        public static event System.EventHandler<CSEventArgs.ActorEventArgs> OnActorDestroyed;
 
-        OnActorCreated?.Invoke(this, new CSEventArgs.ActorEventArgs(this));
-    }
+        #endregion
 
+        #region members
 
-    private void OnDestroy()
-    {
-        OnActorDestroyed?.Invoke(this, new CSEventArgs.ActorEventArgs(this));
-    }
+        private static int IdGenerator = 0;
 
-    protected void Update()
-    {
-        if (Stats.m_timeSinceLastHit > 0)
-            Stats.m_timeSinceLastHit -= Time.deltaTime;
-        else
+        readonly public int ActorID = IdGenerator++;
+
+        public bool Flag_ActorDebug = false;
+
+        public Team _Team;
+        public ActorStats Stats;
+        public List<ActorAction> Actions;
+        public List<ActorStatusEffect> StatusEffects;
+
+        #endregion
+
+        protected void Start()
         {
-            Stats.isInvulnerable = false;
+            if (Flag_ActorDebug) Debug.Log("Base Actor Start()");
+            if (Flag_ActorDebug) Debug.Log("Base Actor ID: " + ActorID);
+
+            Stats = GetComponent<ActorStats>();
+            if (Stats == null) Debug.LogError("No ActorStats found!");
+
+            OnActorCreated?.Invoke(this, new CSEventArgs.ActorEventArgs(this));
+        }
+
+
+        private void OnDestroy()
+        {
+            OnActorDestroyed?.Invoke(this, new CSEventArgs.ActorEventArgs(this));
+        }
+
+        protected void Update()
+        {
+            if (Stats.m_timeSinceLastHit > 0)
+                Stats.m_timeSinceLastHit -= Time.deltaTime;
+            else
+            {
+                Stats.isInvulnerable = false;
+            }
+        }
+        public void ActorDead()
+        {
+            // Actor has run out of HP. Probably want to have an action for handling this later.
+            if (Flag_ActorDebug) Debug.Log(gameObject.name + " is dead");
+            gameObject.SetActive(false);
+        }
+        //Wasn't sure where else to put this but I figure every actor will need this function. 
+        public void TakeDamage(ActorDamage DamageTaken)
+        {
+            //Take damage
+            Stats.HpCurrent -= DamageTaken.DamageAmount;
+            //Check for status effects depending on type of damage
+
+            //Check if HP has run out
+            if (Stats.HpCurrent <= 0f)
+            {
+                ActorDead();
+            }
+
         }
     }
-    public void ActorDead()
-    {
-        // Actor has run out of HP. Probably want to have an action for handling this later.
-        if(Flag_ActorDebug) Debug.Log(gameObject.name + " is dead");
-        gameObject.SetActive(false);
-    }
-    //Wasn't sure where else to put this but I figure every actor will need this function. 
-    public void TakeDamage(ActorDamage DamageTaken)
-    {
-        //Take damage
-        Stats.HpCurrent -= DamageTaken.DamageAmount;
-        //Check for status effects depending on type of damage
 
-        //Check if HP has run out
-        if(Stats.HpCurrent <= 0f)
-        {
-            ActorDead();
-        }
-            
-    }
+
 }
