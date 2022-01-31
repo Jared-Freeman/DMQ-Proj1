@@ -53,10 +53,18 @@ namespace ItemSystem.Weapons
                             if (UseNoCollideLayer)
                             {
                                 instance.gameObject.layer = ctx._Owner._Team.Options.NoCollideLayer;
+                                foreach (Transform child in instance.transform)  //make sure to modify all objects in hierarchy!
+                                {
+                                    child.gameObject.layer = ctx._Owner._Team.Options.NoCollideLayer;
+                                }
                             }
                             else
                             {
-                                instance.gameObject.layer = ctx._Owner._Team.Options.Layer; 
+                                instance.gameObject.layer = ctx._Owner._Team.Options.Layer;
+                                foreach (Transform child in instance.transform)
+                                {
+                                    child.gameObject.layer = ctx._Owner._Team.Options.Layer;
+                                }
                             }
                         }
 
