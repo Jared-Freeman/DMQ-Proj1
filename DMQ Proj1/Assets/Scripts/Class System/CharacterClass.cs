@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ActorSystem;
 
 namespace ClassSystem
 {
@@ -16,7 +17,7 @@ namespace ClassSystem
         [System.Serializable]
         public struct CharClassOptions
         {
-
+            public ActorStatsPreset BaseStats;
         }
 
         public string ClassName;

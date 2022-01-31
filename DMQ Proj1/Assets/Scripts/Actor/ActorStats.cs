@@ -10,6 +10,7 @@ public class ActorStats : MonoBehaviour
 
     public bool FLAG_Debug = false;
 
+
     //might eventually want to perform a method call to alter these values 
     //(i.e., changing max health reduces current health by (newmax - max))
     [Header("Default Values")]
