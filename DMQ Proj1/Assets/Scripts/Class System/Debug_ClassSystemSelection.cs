@@ -32,9 +32,24 @@ public class Debug_ClassSystemSelection : MonoBehaviour
     {
         _PlayerInputMGR.onPlayerJoined += _PlayerInputMGR_onPlayerJoined;
 
+        //yes this is dumb
         for(int i=0; i<Options.PlayersToSpawn; i++)
         {
-            SpawnClassPrefab();
+            switch(i)
+            {
+                case 0:
+                    SpawnClassPrefab(ClassContainer.Arcanist);
+                    break;
+                case 1:
+                    SpawnClassPrefab(ClassContainer.Enchanter);
+                    break;
+                case 2:
+                    SpawnClassPrefab(ClassContainer.Interdictor);
+                    break;
+                case 3:
+                    SpawnClassPrefab(ClassContainer.Bulwark);
+                    break;
+            }
         }
     }
     private void OnDisable()
@@ -43,9 +58,9 @@ public class Debug_ClassSystemSelection : MonoBehaviour
     }
 
 
-    private void SpawnClassPrefab()
+    private void SpawnClassPrefab(ClassContainer c)
     {
-        switch(ClassToSpawn)
+        switch(c)
         {
             case ClassContainer.Interdictor:
                 DoInstantiation(Options.Prefab_Interdictor);
