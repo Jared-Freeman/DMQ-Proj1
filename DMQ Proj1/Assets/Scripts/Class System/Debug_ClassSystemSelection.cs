@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using ClassSystem;
 
 public class Debug_ClassSystemSelection : MonoBehaviour
 {
@@ -21,10 +22,11 @@ public class Debug_ClassSystemSelection : MonoBehaviour
         [Range(0, 4)]
         public int PlayersToSpawn;
 
-        public GameObject Prefab_Interdictor;
-        public GameObject Prefab_Bulwark;
-        public GameObject Prefab_Arcanist;
-        public GameObject Prefab_Enchanter;
+        //misnomers now...
+        public CharacterClass Prefab_Interdictor;
+        public CharacterClass Prefab_Bulwark;
+        public CharacterClass Prefab_Arcanist;
+        public CharacterClass Prefab_Enchanter;
     }
 
 
@@ -79,9 +81,9 @@ public class Debug_ClassSystemSelection : MonoBehaviour
                 break;
         }
     }
-    private void DoInstantiation(GameObject GO)
+    private void DoInstantiation(CharacterClass c)
     {
-        GameObject g = Instantiate(GO);
+        GameObject g = c.InstantiatePlayerActor();
         g.transform.position = transform.position;
         g.transform.position += new Vector3(UnityEngine.Random.Range(-3, 3), 0, 0);
     }
