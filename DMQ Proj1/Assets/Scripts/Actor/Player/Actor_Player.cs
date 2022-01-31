@@ -6,6 +6,7 @@ public class Actor_Player : Actor
 {
     //Inventory system??
     public ActorAction_Attack attack;
+    public ClassSystem.CharacterClass Class;
 
 
     // Start is called before the first frame update
