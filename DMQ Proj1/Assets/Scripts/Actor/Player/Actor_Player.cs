@@ -5,7 +5,7 @@ using UnityEngine;
 public class Actor_Player : Actor
 {
     //Inventory system??
-    public ActorAction_Attack attack;
+    public ActorAction_Attack attack; //This functionality is being moved to weapon items! ~Jared
     public ClassSystem.CharacterClass Class;
 
 
