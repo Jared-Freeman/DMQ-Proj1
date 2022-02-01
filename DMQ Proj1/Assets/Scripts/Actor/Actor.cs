@@ -72,7 +72,14 @@ public class Actor : MonoBehaviour
         if(Flag_ActorDebug) Debug.Log(gameObject.name + " is dead");
         gameObject.SetActive(false);
     }
+
+
     //Wasn't sure where else to put this but I figure every actor will need this function. 
+    // This functionality is added in ActorStats.cs ! ~Jared
+    /// <summary>
+    /// Deprecated. Please dont use!
+    /// </summary>
+    /// <param name="DamageTaken"></param>
     public void TakeDamage(ActorDamage DamageTaken)
     {
         //Take damage
