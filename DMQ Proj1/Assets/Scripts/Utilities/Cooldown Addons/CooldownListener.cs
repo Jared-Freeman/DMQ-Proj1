@@ -7,9 +7,10 @@ namespace Utils
     /// <summary>
     /// Updates a display based on an attached Cooldown
     /// </summary>
+    [System.Serializable]
     public class CooldownListener
     {
-        public CooldownTracker Cooldown { get; set; }
+        public CooldownTracker Cooldown;
 
         /// <summary>
         /// Time remaining before cooldown is available. 0 -> cooldown is ready to use
