@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Utils;
 
 namespace ItemSystem.Weapons
 {
@@ -62,6 +63,10 @@ namespace ItemSystem.Weapons
 
     }
 
+}
+
+namespace Utils
+{
     /// <summary>
     /// Container for any and all context needed to generate any attack. 
     /// Not every member of this struct will be utilized for every attack.

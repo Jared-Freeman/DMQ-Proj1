@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ItemSystem.Weapons
+namespace Utils
 {
-    public class Utils_IS_Weapon
+    public class Projectile
     {
         /// <summary>
         /// Creates a projectile based on the given AttackContext, projectile prefab; optionally respects a supplied cooldown

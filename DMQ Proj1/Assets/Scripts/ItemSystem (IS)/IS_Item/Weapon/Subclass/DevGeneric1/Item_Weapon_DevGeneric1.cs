@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Utils;
 
 namespace ItemSystem.Weapons
 {
@@ -96,7 +97,7 @@ namespace ItemSystem.Weapons
         public bool DefaultAttack(AttackContext ctx)
         {
 
-            GenericProjectile instance = Utils_IS_Weapon.CreateProjectileFromAttackContext(
+            GenericProjectile instance = Utils.Projectile.CreateProjectileFromAttackContext(
                 DefaultWeaponPreset.ProjectilePrefab.GetComponent<GenericProjectile>()
                 , ctx);
 
@@ -141,7 +142,7 @@ namespace ItemSystem.Weapons
         //TODO: Cooldowns PER class weapon
         public bool ArcanistAttack(AttackContext ctx)
         {
-            GenericProjectile instance = Utils_IS_Weapon.CreateProjectileFromAttackContext(
+            GenericProjectile instance = Utils.Projectile.CreateProjectileFromAttackContext(
                 _W_Arcanist.ProjectilePrefab.GetComponent<GenericProjectile>()
                 , ctx);
 
