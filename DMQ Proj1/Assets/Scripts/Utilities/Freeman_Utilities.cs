@@ -95,6 +95,14 @@ namespace Utils
         #endregion
 
         #region Properties
+        public float TimeRemaining
+        {
+            get
+            {
+                float val = Cooldown - (Time.time - LastUsedTime);
+                return Mathf.Clamp(val, 0, Cooldown);
+            }
+        }
 
         //havent tested changing these during runtime
         public float CooldownRate 
@@ -109,6 +117,9 @@ namespace Utils
                 }
             }
         }        
+        /// <summary>
+        /// The cooldown, in seconds
+        /// </summary>
         public float Cooldown
         {
             get { return _Cooldown; }
@@ -151,7 +162,7 @@ namespace Utils
         //Must be called to start running the _Cooldown tracker
         public void InitializeCooldown()
         {
-            LastUsedTime = Time.time;
+            LastUsedTime = Time.time - Cooldown; //makes cooldown immediately avaiable
         }
 
         /// <summary>
