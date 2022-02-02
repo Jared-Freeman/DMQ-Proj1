@@ -58,8 +58,8 @@ public class ActorStats : MonoBehaviour
     }
     public void ResetDamage()
     {
-        HpCurrent = Preset.Options.HpMax;
-        EnergyCurrent = Preset.Options.EnergyMax;
+        HpCurrent = Preset.Data.HP.Default.Max;
+        EnergyCurrent = Preset.Data.Energy.Default.Max;
         isInvulnerable = false;
         m_timeSinceLastHit = 0.0f;
         OnResetDamage.Invoke();

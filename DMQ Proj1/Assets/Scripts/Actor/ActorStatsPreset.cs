@@ -8,18 +8,20 @@ namespace ActorSystem
     [CreateAssetMenu(fileName = "Stats_", menuName = "Actor/Actor Stats Preset", order = 1)]
     public class ActorStatsPreset : ScriptableObject
     {
-        /// <summary>
-        /// Container for the Actor Stats Preset
-        /// </summary>
-        [System.Serializable]
-        public struct ActorStatsPresetOptions
-        {
-            //might eventually want to perform a method call to alter these values (i.e. turning them into properties)
-            //(i.e., changing max health reduces current health by (newmax - max))
-            public float HpMax;
-            public float EnergyMax;
-        }
-        public ActorStatsPresetOptions Options;
-
+        [Header("Ignore modifier fields")]
+        public ActorStatsData Data;
     }
+
+    /// <summary>
+    /// Container for the Actor Stats Preset
+    /// </summary>
+    [System.Serializable]
+    public class ActorStatsData
+    {
+        //might eventually want to perform a method call to alter these values (i.e. turning them into properties)
+        //(i.e., changing max health reduces current health by (newmax - max))
+        public Utils.Stats.StatRecord HP;
+        public Utils.Stats.StatRecord Energy;
+    }
+
 }

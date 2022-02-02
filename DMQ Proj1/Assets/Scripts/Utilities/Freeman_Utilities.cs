@@ -16,6 +16,63 @@ public static class Freeman_Utilities
 
 namespace Utils
 {
+    namespace Stats
+    {
+        /// <summary>
+        /// A Stat Record composed of a Default, an optional Modifier, and the current stat
+        /// </summary>
+        [System.Serializable]
+        public struct StatRecord
+        {
+            /// <summary>
+            /// The defaults for this stat
+            /// </summary>
+            public StatDefaultRecord Default;
+            /// <summary>
+            /// The modifiers for this stat
+            /// </summary>
+            public StatModifierRecord Modifier;
+
+            //public float Current
+            //{
+            //    get { return Current; }
+            //    set
+            //    {
+            //        Current = Mathf.Clamp(value, Default.Min, Default.Max);
+            //    }
+            //}
+        }
+
+
+        /// <summary>
+        /// A record for a stat, its multipliers, and 
+        /// </summary>
+        [System.Serializable]
+        public struct StatDefaultRecord
+        {
+            public StatDefaultRecord(float max, float min = Mathf.NegativeInfinity)
+            {
+                Max = max;
+                Min = min;
+            }
+
+            public float Max;
+            public float Min;
+
+        }
+
+        /// <summary>
+        /// A struct representing a temporary MUTATION to a StatRecord
+        /// </summary>
+        [System.Serializable]
+        public struct StatModifierRecord
+        {
+            public float Multiply;
+            public float Add;
+        }
+    }
+
+
     /// <summary>
     /// Maintains a generic _Cooldown based in (scaled) Time.
     /// </summary>
