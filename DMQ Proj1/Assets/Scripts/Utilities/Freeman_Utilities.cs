@@ -98,7 +98,10 @@ namespace Utils
             LastUsedTime = Time.time;
         }
 
-        //Returns true if _Cooldown was used.
+        /// <summary>
+        /// Places this tracker on cooldown, if it's available
+        /// </summary>
+        /// <returns>True if cooldown was consumed</returns>
         public bool ConsumeCooldown()
         {
             if(CanUseCooldown())
