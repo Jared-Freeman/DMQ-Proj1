@@ -10,14 +10,17 @@ namespace EffectTree
     [CreateAssetMenu(fileName = "LP_", menuName = "Effect Tree/Launch Projectile", order = 1)]
     public class Effect_LaunchProjectile : Effect_Base
     {
-        public GenericProjectile Projectile;
+        public GameObject ProjectilePrefab;
 
         public override bool Invoke(ref EffectContext ctx)
         {
             if(base.Invoke(ref ctx))
             {
-                Utils.Projectile.CreateProjectileFromAttackContext(Projectile, ctx.AttackData);
-                return true;
+                var Projectile = ProjectilePrefab.GetComponent<GenericProjectile>();
+                if (Projectile == null) return false;
+
+                var instance = Utils.Projectile.CreateProjectileFromAttackContext(Projectile, ctx.AttackData);
+                if(instance != null) return true;
             }
             return false;
         }
