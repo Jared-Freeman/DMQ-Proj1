@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace EffectTree.Condition
 {
+    [System.Serializable]
     public class ConditionList
     {
         public List<E_Condition_Base> _Conditions = new List<E_Condition_Base>();
