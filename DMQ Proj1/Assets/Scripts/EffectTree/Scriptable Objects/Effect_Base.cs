@@ -28,7 +28,7 @@ namespace EffectTree
     /// Any and all info needed for effect tree logic. Append more stuff here as needed. Context may be modified during effect tree invocation
     /// </summary>
     [System.Serializable]
-    public struct EffectContext
+    public class EffectContext
     {
         public Utils.AttackContext AttackData;
     }

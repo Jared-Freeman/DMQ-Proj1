@@ -22,15 +22,10 @@ namespace AbilitySystem.Weapons.HeavyFlintlock
             }
         }
 
-        public override void Awake()
-        {
-            base.Awake();
-        }
-
-        public override bool ExecuteAbility()
+        public override bool ExecuteAbility(ref EffectTree.EffectContext ctx)
         {
             Debug.Log(ToString());
-            return base.ExecuteAbility();
+            return base.ExecuteAbility(ref ctx);
         }
     }
 

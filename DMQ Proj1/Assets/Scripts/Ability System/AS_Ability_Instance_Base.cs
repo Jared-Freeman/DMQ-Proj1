@@ -9,15 +9,14 @@ namespace AbilitySystem
     /// The component part of an ability.
     /// Abilities are constructed using a preset for the settings data, and a component instance that holds the state data and a reference to the preset
     /// </summary>
-    public abstract class AS_Ability_Instance_Base : MonoBehaviour
+    public class AS_Ability_Instance_Base : MonoBehaviour
     {
+        #region Members
         /// <summary>
         /// Override this to enforce proper subclassing. I make an accessible member in subclass presets and edit the get/set to link to that.
         /// See my implementations if you have questions.
         /// </summary>
         public virtual AS_Ability_Base Settings { get; set; }
-
-        #region Members
 
         //refs
         public Actor Owner;
@@ -39,7 +38,7 @@ namespace AbilitySystem
 
         #region Virtual Methods
 
-        public virtual void Awake()
+        public virtual void Start()
         {
             if (Settings == null)
             {
@@ -56,7 +55,7 @@ namespace AbilitySystem
         /// <returns>true if ability executed successfully</returns>
         public virtual bool ExecuteAbility(ref EffectTree.EffectContext ctx)
         {
-            if(Cooldown.ConsumeCooldown())
+            if(Settings.Conditions.Evaluate(ref ctx) && Cooldown.ConsumeCooldown())
             {
                 Settings.Effect.Invoke(ref ctx);
                 return true;

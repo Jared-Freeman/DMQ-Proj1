@@ -6,10 +6,10 @@ namespace AbilitySystem.Weapons.HeavyFlintlock
 {
     public class AS_HeavyFlintlock_Bulwark_Atk3 : AS_Ability_Instance_Base
     {
-        public override bool ExecuteAbility()
+        public override bool ExecuteAbility(ref EffectTree.EffectContext ctx)
         {
             Debug.Log(ToString());
-            return base.ExecuteAbility();
+            return base.ExecuteAbility(ref ctx);
         }
     }
 

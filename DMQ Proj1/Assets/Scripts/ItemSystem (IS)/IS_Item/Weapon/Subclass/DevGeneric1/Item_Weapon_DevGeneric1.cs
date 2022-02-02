@@ -52,7 +52,7 @@ namespace ItemSystem.Weapons
                 //Class branches
                 Actor_Player A = ctx._Owner as Actor_Player;
 
-                if(A == null)
+                if(A == null || true)
                 {
                     if (s_FLAG_ITEM_DEBUG) Debug.Log("no player invoke!");
                     return DefaultAttack(ctx);
@@ -98,8 +98,10 @@ namespace ItemSystem.Weapons
         {
             if(Ability_BasicAttack.Cooldown.CooldownAvailable == true)
             {
-                EffectTree.EffectContext ec;
+                EffectTree.EffectContext ec = new EffectTree.EffectContext();
                 ec.AttackData = ctx;
+
+                if (ec == null) Debug.LogError("null'd effect context");
 
                 if(Ability_BasicAttack.ExecuteAbility(ref ec)) return true;
             }

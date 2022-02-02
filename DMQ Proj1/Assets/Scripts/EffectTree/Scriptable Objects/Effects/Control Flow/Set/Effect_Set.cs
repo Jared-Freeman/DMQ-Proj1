@@ -14,6 +14,8 @@ namespace EffectTree
 
         public override bool Invoke(ref EffectContext ctx)
         {
+            if (Globals.s_LogEffectTree) Debug.Log("SET: " + ToString());
+
             if(base.Invoke(ref ctx))
             {
                 foreach (var e in Effects)
