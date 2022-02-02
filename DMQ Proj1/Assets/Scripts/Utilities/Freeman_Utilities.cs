@@ -72,7 +72,6 @@ namespace Utils
         }
     }
 
-
     /// <summary>
     /// Maintains a generic _Cooldown based in (scaled) Time.
     /// </summary>
