@@ -19,7 +19,6 @@ namespace AbilitySystem
 
         #region Members
 
-
         //refs
         public Actor Owner;
         public Utils.CooldownTracker Cooldown { get; protected set; }
@@ -55,10 +54,13 @@ namespace AbilitySystem
         /// Virtual function handles cooldown consumption. Can listen to this in child impls to evade duplicate logic
         /// </summary>
         /// <returns>true if ability executed successfully</returns>
-        public virtual bool ExecuteAbility()
+        public virtual bool ExecuteAbility(ref EffectTree.EffectContext ctx)
         {
             if(Cooldown.ConsumeCooldown())
+            {
+                Settings.Effect.Invoke(ref ctx);
                 return true;
+            }
             return false;
         }
 

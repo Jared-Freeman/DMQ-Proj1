@@ -14,6 +14,11 @@ namespace AbilitySystem
         public Utils.CooldownTracker Cooldown;
         public AS_AbilCastSettings CastSettings;
 
+        /// <summary>
+        /// The effect to invoke when this ability is cast.
+        /// </summary>
+        public EffectTree.Effect_Base Effect; 
+
         [System.Serializable]
         public struct AS_AbilCastSettings
         {

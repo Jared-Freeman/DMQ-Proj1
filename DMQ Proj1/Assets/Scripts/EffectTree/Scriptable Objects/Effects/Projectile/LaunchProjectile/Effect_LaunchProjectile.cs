@@ -5,9 +5,9 @@ using UnityEngine;
 namespace EffectTree
 {
     /// <summary>
-    /// Dispatches a list of effects
+    /// 
     /// </summary>
-    [CreateAssetMenu(fileName = "E_", menuName = "Effect Tree/Set", order = 1)]
+    [CreateAssetMenu(fileName = "LP_", menuName = "Effect Tree/Launch Projectile", order = 1)]
     public class Effect_LaunchProjectile : Effect_Base
     {
         public GenericProjectile Projectile;
@@ -16,7 +16,7 @@ namespace EffectTree
         {
             if(base.Invoke(ref ctx))
             {
-
+                Utils.Projectile.CreateProjectileFromAttackContext(Projectile, ctx.AttackData);
                 return true;
             }
             return false;

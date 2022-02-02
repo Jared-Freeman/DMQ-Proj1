@@ -13,7 +13,7 @@ namespace ItemSystem.Weapons
     [CreateAssetMenu(fileName = "WEP_", menuName = "ScriptableObjects/Items/Weapon Presets/Dev Generic 1/Default", order = 2)]
     public class Item_Weapon_DevGeneric1Preset : IS_WeaponPreset
     {
-        public GameObject ProjectilePrefab;
+        public AbilitySystem.AS_Ability_Base Ability_BasicAttack;
     }
 
     [CreateAssetMenu(fileName = "WEP_", menuName = "ScriptableObjects/Items/Weapon Presets/Dev Generic 1/Interdictor", order = 2)]

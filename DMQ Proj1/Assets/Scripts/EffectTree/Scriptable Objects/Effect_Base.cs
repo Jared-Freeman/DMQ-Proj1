@@ -30,6 +30,6 @@ namespace EffectTree
     [System.Serializable]
     public struct EffectContext
     {
-
+        public Utils.AttackContext AttackData;
     }
 }
