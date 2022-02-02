@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ItemSystem;
 
+
 //We now use a convention to offer multiple variations per class. I feel this may be the best re-tooling of our current system for that.
 namespace ItemSystem.Weapons
 {
@@ -27,7 +28,7 @@ namespace ItemSystem.Weapons
         public GameObject ProjectilePrefab;
     }
 
-    [CreateAssetMenu(fileName = "WEP_", menuName = "ScriptableObjects/Items/Weapson Presets/Dev Generic 1/Arcanist", order = 2)]
+    [CreateAssetMenu(fileName = "WEP_", menuName = "ScriptableObjects/Items/Weapon Presets/Dev Generic 1/Arcanist", order = 2)]
     public class Item_Weapon_DevGeneric1_Arcanist : IS_WeaponPreset
     {
         public GameObject ProjectilePrefab;

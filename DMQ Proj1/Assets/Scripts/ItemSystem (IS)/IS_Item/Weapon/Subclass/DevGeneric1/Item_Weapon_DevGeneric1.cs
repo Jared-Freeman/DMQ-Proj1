@@ -95,50 +95,34 @@ namespace ItemSystem.Weapons
 
         public bool DefaultAttack(AttackContext ctx)
         {
-            if (BaseWeaponInfo._Cooldown.CooldownAvailable)
+
+            GenericProjectile instance = Utils_IS_Weapon.CreateProjectileFromAttackContext(
+                DefaultWeaponPreset.ProjectilePrefab.GetComponent<GenericProjectile>()
+                , ctx);
+
+            if (instance == null) return false;
+
+            if (ctx._Owner != null)
             {
-                BaseWeaponInfo._Cooldown.ConsumeCooldown();
-
-                var p = DefaultWeaponPreset.ProjectilePrefab.GetComponent<GenericProjectile>();
-                if (p != null)
+                if (UseNoCollideLayer)
                 {
-                    var iDir = ctx._InitialDirection;
-                    var instance = GenericProjectile.SpawnProjectile(p, ctx._InitialPosition, iDir, new Vector2(iDir.x, iDir.z), ctx._TargetGameObject, ctx._Owner);
-
-                    if (ctx._Owner != null)
+                    instance.gameObject.layer = ctx._Owner._Team.Options.NoCollideLayer;
+                    foreach (Transform child in instance.transform)  //make sure to modify all objects in hierarchy!
                     {
-                        if (UseNoCollideLayer)
-                        {
-                            instance.gameObject.layer = ctx._Owner._Team.Options.NoCollideLayer;
-                            foreach (Transform child in instance.transform)  //make sure to modify all objects in hierarchy!
-                            {
-                                child.gameObject.layer = ctx._Owner._Team.Options.NoCollideLayer;
-                            }
-                        }
-                        else
-                        {
-                            instance.gameObject.layer = ctx._Owner._Team.Options.Layer;
-                            foreach (Transform child in instance.transform)
-                            {
-                                child.gameObject.layer = ctx._Owner._Team.Options.Layer;
-                            }
-                        }
+                        child.gameObject.layer = ctx._Owner._Team.Options.NoCollideLayer;
                     }
-
-
-                    return true;
                 }
                 else
                 {
-                    if (s_FLAG_ITEM_DEBUG) Debug.Log("projectile component not found");
+                    instance.gameObject.layer = ctx._Owner._Team.Options.Layer;
+                    foreach (Transform child in instance.transform)
+                    {
+                        child.gameObject.layer = ctx._Owner._Team.Options.Layer;
+                    }
                 }
             }
-            else
-            {
-                if (s_FLAG_ITEM_DEBUG) Debug.Log("Cooldown unavailable.");
-            }
 
-            return false;
+            return true;
         }
 
 
@@ -157,48 +141,33 @@ namespace ItemSystem.Weapons
         //TODO: Cooldowns PER class weapon
         public bool ArcanistAttack(AttackContext ctx)
         {
-            if (BaseWeaponInfo._Cooldown.CooldownAvailable)
+            GenericProjectile instance = Utils_IS_Weapon.CreateProjectileFromAttackContext(
+                _W_Arcanist.ProjectilePrefab.GetComponent<GenericProjectile>()
+                , ctx);
+
+            if (instance == null) return false;
+
+            if (ctx._Owner != null)
             {
-                BaseWeaponInfo._Cooldown.ConsumeCooldown();
-
-                var p = _W_Arcanist.ProjectilePrefab.GetComponent<GenericProjectile>();
-                if (p != null)
+                if (UseNoCollideLayer)
                 {
-                    var iDir = ctx._InitialDirection;
-                    var instance = GenericProjectile.SpawnProjectile(p, ctx._InitialPosition, iDir, new Vector2(iDir.x, iDir.z), ctx._TargetGameObject, ctx._Owner);
-
-                    if (ctx._Owner != null)
+                    instance.gameObject.layer = ctx._Owner._Team.Options.NoCollideLayer;
+                    foreach (Transform child in instance.transform)  //make sure to modify all objects in hierarchy!
                     {
-                        if (UseNoCollideLayer)
-                        {
-                            instance.gameObject.layer = ctx._Owner._Team.Options.NoCollideLayer;
-                            foreach (Transform child in instance.transform)  //make sure to modify all objects in hierarchy!
-                            {
-                                child.gameObject.layer = ctx._Owner._Team.Options.NoCollideLayer;
-                            }
-                        }
-                        else
-                        {
-                            instance.gameObject.layer = ctx._Owner._Team.Options.Layer;
-                            foreach (Transform child in instance.transform)
-                            {
-                                child.gameObject.layer = ctx._Owner._Team.Options.Layer;
-                            }
-                        }
+                        child.gameObject.layer = ctx._Owner._Team.Options.NoCollideLayer;
                     }
-
-
-                    return true;
                 }
                 else
                 {
-                    if (s_FLAG_ITEM_DEBUG) Debug.Log("projectile component not found");
+                    instance.gameObject.layer = ctx._Owner._Team.Options.Layer;
+                    foreach (Transform child in instance.transform)
+                    {
+                        child.gameObject.layer = ctx._Owner._Team.Options.Layer;
+                    }
                 }
             }
-            else
-            {
-                if (s_FLAG_ITEM_DEBUG) Debug.Log("Cooldown unavailable.");
-            }
+
+
             return false;
         }
     }

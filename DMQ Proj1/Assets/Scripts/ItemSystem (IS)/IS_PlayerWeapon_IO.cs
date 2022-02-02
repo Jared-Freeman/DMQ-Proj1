@@ -188,7 +188,7 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
             if (!_Inv.CurrentWeapon.CanAttack) return false; //potentially avoids expense of creating a new attack context
 
             var aimDir3 = new Vector3(AimDirection.x, 0, AimDirection.y);
-            var ctx = new ItemSystem.Weapons.Item_WeaponBase.AttackContext
+            var ctx = new ItemSystem.Weapons.AttackContext
             {
                 _InitialDirection = aimDir3,
                 _InitialPosition = AttackContextInitialPosition.position + aimDir3.normalized * AttackContextInitialPositionForwardOffset,
