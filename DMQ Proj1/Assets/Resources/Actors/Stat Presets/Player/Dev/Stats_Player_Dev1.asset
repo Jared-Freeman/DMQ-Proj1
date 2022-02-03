@@ -12,6 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d2449e388894b499ca221bb586e2a7, type: 3}
   m_Name: Stats_Player_Dev1
   m_EditorClassIdentifier: 
-  Options:
-    HpMax: 5
-    EnergyMax: 5
+  Data:
+    HP:
+      Default:
+        Max: 5
+        Min: 0
+      Modifier:
+        Multiply: 1
+        Add: 0
+    Energy:
+      Default:
+        Max: 5
+        Min: 0
+      Modifier:
+        Multiply: 1
+        Add: 0
+    MoveSpeed:
+      Default:
+        Max: 7.5
+        Min: 0
+      Modifier:
+        Multiply: 1
+        Add: 0

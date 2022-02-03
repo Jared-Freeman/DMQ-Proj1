@@ -36,7 +36,7 @@ public class Actor : MonoBehaviour
     public Team _Team;
     public ActorStats Stats;
     public List<ActorAction> Actions;
-    public List<ActorStatusEffect> StatusEffects;
+    //public List<ActorStatusEffect> StatusEffects; //deprecated
 
     #endregion
 
@@ -77,20 +77,20 @@ public class Actor : MonoBehaviour
     //Wasn't sure where else to put this but I figure every actor will need this function. 
     // This functionality is added in ActorStats.cs ! ~Jared
     /// <summary>
-    /// Deprecated. Please dont use!
+    /// DEPRECATED!!!!! Please dont use!
     /// </summary>
     /// <param name="DamageTaken"></param>
     public void TakeDamage(ActorDamage DamageTaken)
     {
-        //Take damage
-        Stats.HpCurrent -= DamageTaken.DamageAmount;
-        //Check for status effects depending on type of damage
+        ////Take damage
+        //Stats.HpCurrent -= DamageTaken.DamageAmount;
+        ////Check for status effects depending on type of damage
 
-        //Check if HP has run out
-        if(Stats.HpCurrent <= 0f)
-        {
-            ActorDead();
-        }
+        ////Check if HP has run out
+        //if(Stats.HpCurrent <= 0f)
+        //{
+        //    ActorDead();
+        //}
             
     }
 }

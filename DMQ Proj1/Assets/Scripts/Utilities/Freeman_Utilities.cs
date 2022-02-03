@@ -16,6 +16,73 @@ public static class Freeman_Utilities
 
 namespace Utils
 {
+    namespace Stats
+    {
+
+        /// <summary>
+        /// State info on a current statistic. Includes modifier state data
+        /// </summary>
+        [System.Serializable]
+        public struct StatInstance
+        {
+            public float Value;
+            public StatModifierRecord Modifier;
+        }
+
+        /// <summary>
+        /// A Stat Record composed of a Default record and an optional Modifier record
+        /// </summary>
+        [System.Serializable]
+        public struct StatRecord
+        {
+            /// <summary>
+            /// The defaults for this stat
+            /// </summary>
+            public StatDefaultRecord Default;
+            /// <summary>
+            /// The modifiers for this stat
+            /// </summary>
+            public StatModifierRecord Modifier;
+
+            //public float Current
+            //{
+            //    get { return Current; }
+            //    set
+            //    {
+            //        Current = Mathf.Clamp(value, Default.Min, Default.Max);
+            //    }
+            //}
+        }
+
+
+        /// <summary>
+        /// A record for a stat, its multipliers, and 
+        /// </summary>
+        [System.Serializable]
+        public struct StatDefaultRecord
+        {
+            public StatDefaultRecord(float max, float min = Mathf.NegativeInfinity)
+            {
+                Max = max;
+                Min = min;
+            }
+
+            public float Max;
+            public float Min;
+
+        }
+
+        /// <summary>
+        /// A struct representing a MUTATION to a StatRecord
+        /// </summary>
+        [System.Serializable]
+        public struct StatModifierRecord
+        {
+            public float Multiply;
+            public float Add;
+        }
+    }
+
     /// <summary>
     /// Maintains a generic _Cooldown based in (scaled) Time.
     /// </summary>
@@ -39,6 +106,14 @@ namespace Utils
         #endregion
 
         #region Properties
+        public float TimeRemaining
+        {
+            get
+            {
+                float val = Cooldown - (Time.time - LastUsedTime);
+                return Mathf.Clamp(val, 0, Cooldown);
+            }
+        }
 
         //havent tested changing these during runtime
         public float CooldownRate 
@@ -53,6 +128,9 @@ namespace Utils
                 }
             }
         }        
+        /// <summary>
+        /// The cooldown, in seconds
+        /// </summary>
         public float Cooldown
         {
             get { return _Cooldown; }
@@ -95,10 +173,13 @@ namespace Utils
         //Must be called to start running the _Cooldown tracker
         public void InitializeCooldown()
         {
-            LastUsedTime = Time.time;
+            LastUsedTime = Time.time - Cooldown; //makes cooldown immediately avaiable
         }
 
-        //Returns true if _Cooldown was used.
+        /// <summary>
+        /// Places this tracker on cooldown, if it's available
+        /// </summary>
+        /// <returns>True if cooldown was consumed</returns>
         public bool ConsumeCooldown()
         {
             if(CanUseCooldown())
@@ -161,6 +242,29 @@ namespace Utils
 
             result = Vector3.zero;
             return false;
+        }
+    }
+
+    public static class TransformUtils
+    {
+        /// <summary>
+        /// Changes the layer of all gameobjects in <paramref name="go"/>'s hierarchy, including <paramref name="go"/>
+        /// </summary>
+        /// <param name="go"></param>
+        /// <param name="layer">layer. Unity layer range is [0,31] inclusive</param>
+        /// <returns>true if successful</returns>
+        public static bool ChangeLayerOfGameObjectAndChildren(GameObject go, int layer)
+        {
+            //bounds check
+            if (layer < 0 || layer >= 32) return false;
+
+            go.layer = layer;
+            foreach (Transform t in go.transform)
+            {
+                t.gameObject.layer = layer;
+            }
+
+            return true;
         }
     }
 }

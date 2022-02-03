@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Utils;
 
 namespace ItemSystem.Weapons
 {
@@ -19,6 +20,9 @@ namespace ItemSystem.Weapons
         public Item_Weapon_DevGeneric1_Enchanter _W_Enchanter;
         public Item_Weapon_DevGeneric1_Interdictor _W_Interdictor;
 
+        //This is the new idea...
+        public AbilitySystem.AS_Ability_Instance_Base Ability_BasicAttack;
+
         protected override void Awake()
         {
             base.Awake();
@@ -28,10 +32,45 @@ namespace ItemSystem.Weapons
                 Debug.LogError(ToString() + ": No DefaultWeaponPreset SO specified! Destroying this");
                 Destroy(this);
             }
-            else if(DefaultWeaponPreset.ProjectilePrefab == null)
+
+            //TODO: How is ability instance lifetime going to be managed?
+            Ability_BasicAttack = DefaultWeaponPreset.Ability_BasicAttack.GetInstance(gameObject);
+
+            //OnItemTransferred_Local += Item_Weapon_DevGeneric1_OnItemTransferred_Local;
+        }
+
+        //private void Item_Weapon_DevGeneric1_OnItemTransferred_Local(object sender, CSEventArgs.ItemEventArgs e)
+        //{
+        //    //TODO: Consider checking for what ability to activate upon inventory transfer. gonna need to refactor a bit here.
+        //}
+
+        protected virtual void Start()
+        {
+            IS_InventoryBase.Event_ItemEntersInventory += IS_InventoryBase_Event_ItemEntersInventory;
+            IS_InventoryBase.Event_ItemLeavesInventory += IS_InventoryBase_Event_ItemLeavesInventory;
+        }
+        protected virtual void OnDestroy()
+        {
+            IS_InventoryBase.Event_ItemEntersInventory -= IS_InventoryBase_Event_ItemEntersInventory;
+            IS_InventoryBase.Event_ItemLeavesInventory -= IS_InventoryBase_Event_ItemLeavesInventory;
+        }
+
+        private void IS_InventoryBase_Event_ItemLeavesInventory(object sender, CSEventArgs.ItemAndInventoryEventArgs e)
+        {
+            if(e.Item == this)
             {
-                Debug.LogError(ToString() + ": No DefaultWeaponPreset Projectile Prefab specified! Destroying this");
-                Destroy(this);
+                if (s_FLAG_ITEM_DEBUG) Debug.Log("DESTROYING ABILITY INSTANCE");
+                Destroy(Ability_BasicAttack);
+            }
+        }
+        private void IS_InventoryBase_Event_ItemEntersInventory(object sender, CSEventArgs.ItemAndInventoryEventArgs e)
+        {
+            if (s_FLAG_ITEM_DEBUG) Debug.Log("babbo");
+
+            if (e.Item == this)
+            {
+                if (s_FLAG_ITEM_DEBUG) Debug.Log("CREATING ABILITY INSTANCE");
+                Ability_BasicAttack = DefaultWeaponPreset.Ability_BasicAttack.GetInstance(e.Inventory.gameObject);
             }
         }
 
@@ -62,29 +101,31 @@ namespace ItemSystem.Weapons
                     ClassSystem.CharacterClass invokingClass;
                     invokingClass = A.Class;
 
-                    //probably dont want to hardcode this w these string literals...
-                    if (invokingClass.ClassName.ToLower() == "interdictor")
-                    {
-                        if (s_FLAG_ITEM_DEBUG) Debug.Log("interdictor invoke!");
-                    }
-                    else if (invokingClass.ClassName.ToLower() == "bulwark")
-                    {
-                        if (s_FLAG_ITEM_DEBUG) Debug.Log("bulwark invoke!");
-                    }
-                    else if (invokingClass.ClassName.ToLower() == "arcanist")
-                    {
-                        if(s_FLAG_ITEM_DEBUG) Debug.Log("Arcanist invoke!");
-                        ArcanistAttack(ctx);
-                    }
-                    else if (invokingClass.ClassName.ToLower() == "enchanter")
-                    {
-                        if (s_FLAG_ITEM_DEBUG) Debug.Log("enchanter invoke!");
-                    }
-                    else
-                    {
-                        if (s_FLAG_ITEM_DEBUG) Debug.Log("default invoke!");
-                        return DefaultAttack(ctx);
-                    }
+                    return DefaultAttack(ctx);
+
+                    ////probably dont want to hardcode this w these string literals...
+                    //if (invokingClass.ClassName.ToLower() == "interdictor")
+                    //{
+                    //    if (s_FLAG_ITEM_DEBUG) Debug.Log("interdictor invoke!");
+                    //}
+                    //else if (invokingClass.ClassName.ToLower() == "bulwark")
+                    //{
+                    //    if (s_FLAG_ITEM_DEBUG) Debug.Log("bulwark invoke!");
+                    //}
+                    //else if (invokingClass.ClassName.ToLower() == "arcanist")
+                    //{
+                    //    if(s_FLAG_ITEM_DEBUG) Debug.Log("Arcanist invoke!");
+                    //    ArcanistAttack(ctx);
+                    //}
+                    //else if (invokingClass.ClassName.ToLower() == "enchanter")
+                    //{
+                    //    if (s_FLAG_ITEM_DEBUG) Debug.Log("enchanter invoke!");
+                    //}
+                    //else
+                    //{
+                    //    if (s_FLAG_ITEM_DEBUG) Debug.Log("default invoke!");
+                    //    return DefaultAttack(ctx);
+                    //}
                 }
                 
             }
@@ -95,34 +136,16 @@ namespace ItemSystem.Weapons
 
         public bool DefaultAttack(AttackContext ctx)
         {
-
-            GenericProjectile instance = Utils_IS_Weapon.CreateProjectileFromAttackContext(
-                DefaultWeaponPreset.ProjectilePrefab.GetComponent<GenericProjectile>()
-                , ctx);
-
-            if (instance == null) return false;
-
-            if (ctx._Owner != null)
+            if(Ability_BasicAttack.Cooldown.CooldownAvailable == true)
             {
-                if (UseNoCollideLayer)
-                {
-                    instance.gameObject.layer = ctx._Owner._Team.Options.NoCollideLayer;
-                    foreach (Transform child in instance.transform)  //make sure to modify all objects in hierarchy!
-                    {
-                        child.gameObject.layer = ctx._Owner._Team.Options.NoCollideLayer;
-                    }
-                }
-                else
-                {
-                    instance.gameObject.layer = ctx._Owner._Team.Options.Layer;
-                    foreach (Transform child in instance.transform)
-                    {
-                        child.gameObject.layer = ctx._Owner._Team.Options.Layer;
-                    }
-                }
-            }
+                EffectTree.EffectContext ec = new EffectTree.EffectContext();
+                ec.AttackData = ctx;
 
-            return true;
+                if (ec == null) Debug.LogError("null'd effect context");
+
+                if(Ability_BasicAttack.ExecuteAbility(ref ec)) return true;
+            }
+            return false;
         }
 
 
@@ -141,7 +164,7 @@ namespace ItemSystem.Weapons
         //TODO: Cooldowns PER class weapon
         public bool ArcanistAttack(AttackContext ctx)
         {
-            GenericProjectile instance = Utils_IS_Weapon.CreateProjectileFromAttackContext(
+            GenericProjectile instance = Utils.Projectile.CreateProjectileFromAttackContext(
                 _W_Arcanist.ProjectilePrefab.GetComponent<GenericProjectile>()
                 , ctx);
 

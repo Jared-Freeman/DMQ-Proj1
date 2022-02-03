@@ -12,6 +12,16 @@ namespace CSEventArgs
             Item = item;
         }
     }
+    public class ItemAndInventoryEventArgs : System.EventArgs
+    {
+        public ItemSystem.IS_ItemBase Item;
+        public ItemSystem.IS_InventoryBase Inventory;
+        public ItemAndInventoryEventArgs(ItemSystem.IS_ItemBase item, ItemSystem.IS_InventoryBase inv)
+        {
+            Item = item;
+            Inventory = inv;
+        }
+    }
 }
 
 namespace ItemSystem
@@ -28,6 +38,9 @@ namespace ItemSystem
         public static event System.EventHandler<CSEventArgs.ItemEventArgs> OnItemDestroyed;
         public static event System.EventHandler<CSEventArgs.ItemEventArgs> OnItemRemovedFromWorldspace;
         public static event System.EventHandler<CSEventArgs.ItemEventArgs> OnItemAddedToWorldspace;
+
+        //Local events to this instance
+        public event System.EventHandler<CSEventArgs.ItemEventArgs> OnItemTransferred_Local;
         #endregion
 
         #region Members
@@ -112,6 +125,7 @@ namespace ItemSystem
             gameObject.SetActive(false);
             Location_State = ItemLocation.Inventory;
             OnItemRemovedFromWorldspace?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
+            OnItemTransferred_Local?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
 
             return successful;
         }
@@ -123,6 +137,7 @@ namespace ItemSystem
             gameObject.SetActive(true);
             Location_State = ItemLocation.World;
             OnItemAddedToWorldspace?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
+            OnItemTransferred_Local?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
 
             return successful;
         }

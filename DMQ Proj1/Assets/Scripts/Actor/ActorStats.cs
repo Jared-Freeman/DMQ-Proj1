@@ -2,21 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Utils.Stats;
 
 public class ActorStats : MonoBehaviour
 {
 
-    #region members
+    #region Members
 
     public bool FLAG_Debug = false;
 
+    /// <summary>
+    /// Reference to the asset containing this Actor's stat defaults.
+    /// </summary>
     public ActorSystem.ActorStatsPreset Preset;
 
+    protected List<ActorSystem.ActorStatsData> _List_StatusModifiers;
+    public IReadOnlyCollection<ActorSystem.ActorStatsData> StatusEffects
+    {
+        get
+        {
+            return _List_StatusModifiers.AsReadOnly();
+        }
+    }
 
-    //probably want to increase protection on current (state) variables
-    [Header("Current Values")]
-    public float HpCurrent;
-    public float EnergyCurrent;
+    Actor actor;
+    System.Action schedule;
 
     // DEPRECATED
 
@@ -35,35 +45,168 @@ public class ActorStats : MonoBehaviour
     //public int totalAtk = 0;
     //public int totalDef = 0;
 
-    public float m_timeSinceLastHit = 0.0f;
-    protected Collider m_Collider;
+    public float m_timeSinceLastHit = 0.0f; //Can we deprecate this or discuss this functionality? The current implementation was blocking features like damage over time -Jared
 
-    System.Action schedule;
-    #endregion
+    //protected Collider m_Collider; //why was this here??
+
+    protected StatInstance HP;
+    protected StatInstance Energy;
+    protected StatInstance MoveSpeed;
+
+    #region Properties
+
+    //public float HpCurrent
+    //{
+    //    get { return (HP.Value + HP.Modifier.Add) * HP.Modifier.Multiply; }
+    //    protected set 
+    //    { 
+    //        HP.Value = value;         
+    //    }
+    //}
+    //public float EnergyCurrent
+    //{
+    //    get { return (Energy.Value + Energy.Modifier.Add) * Energy.Modifier.Multiply; }
+    //    protected set { Energy.Value = value; }
+    //}
+    //public float MoveSpeedCurrent
+    //{
+    //    get { return (MoveSpeed.Value + MoveSpeed.Modifier.Add) * MoveSpeed.Modifier.Multiply; }
+    //    protected set { MoveSpeed.Value = value; }
+    //}
+
+    public float HpCurrent
+    {
+        get { return HP.Value; }
+        protected set { HP.Value = value; }
+    }
+    public float EnergyCurrent
+    {
+        get { return Energy.Value; }
+        protected set { Energy.Value = value; }
+    }
+    public float MoveSpeedCurrent
+    {
+        get { return MoveSpeed.Value; }
+        protected set { MoveSpeed.Value = value; }
+    }
 
     public bool isInvulnerable { get; set; }
 
+    #endregion
+
+    #endregion
+
+    #region Events
+
     public UnityEvent OnDeath, OnReceiveDamage, OnHitWhileInvulnerable, OnBecomeVulnerable, OnResetDamage;
 
+    #endregion
 
-
-    //refs
-    Actor actor;
+    #region Initialization
+    void Awake()
+    {
+        actor = GetComponent<Actor>();
+        //m_Collider = GetComponent<Collider>();
+    }
 
     void Start()
     {
         ResetDamage();
-        m_Collider = GetComponent<Collider>();
-        actor = GetComponent<Actor>();
     }
     public void ResetDamage()
     {
-        HpCurrent = Preset.Options.HpMax;
-        EnergyCurrent = Preset.Options.EnergyMax;
+        HpCurrent = Preset.Data.HP.Default.Max;
+        EnergyCurrent = Preset.Data.Energy.Default.Max;
         isInvulnerable = false;
         m_timeSinceLastHit = 0.0f;
         OnResetDamage.Invoke();
     }
+
+    #endregion
+
+    /// <summary>
+    /// Recalculates ActorStat current values based on ALL current status effects
+    /// </summary>
+    protected void RecalculateStatusMutations()
+    {
+        ResetStatusMutation();
+
+        //recalculate per-status
+        foreach (var m in _List_StatusModifiers)
+        {
+            AppendStatusMutation(m);
+        }
+    }
+
+    /// <summary>
+    /// Appends a stat data modifier into this ActorStat's modifier buffer
+    /// </summary>
+    /// <param name="append_data"></param>
+    public void AppendStatusMutation(ActorSystem.ActorStatsData append_data)
+    {
+
+        HP.Modifier.Add += append_data.HP.Modifier.Add;
+        Energy.Modifier.Add += append_data.Energy.Modifier.Add;
+        MoveSpeed.Modifier.Add += append_data.MoveSpeed.Modifier.Add;
+
+
+        HP.Modifier.Multiply *= append_data.HP.Modifier.Multiply;
+        Energy.Modifier.Multiply *= append_data.Energy.Modifier.Multiply;
+        MoveSpeed.Modifier.Multiply *= append_data.MoveSpeed.Modifier.Multiply;
+    }
+
+    /// <summary>
+    /// Reset Status mutation to default values
+    /// </summary>
+    protected void ResetStatusMutation()
+    {
+        HP.Modifier.Add = Preset.Data.HP.Modifier.Add;
+        HP.Modifier.Multiply = Preset.Data.HP.Modifier.Multiply;
+
+        Energy.Modifier.Add = Preset.Data.Energy.Modifier.Add;
+        Energy.Modifier.Multiply = Preset.Data.Energy.Modifier.Multiply;
+
+        MoveSpeed.Modifier.Add = Preset.Data.MoveSpeed.Modifier.Add;
+        MoveSpeed.Modifier.Multiply = Preset.Data.MoveSpeed.Modifier.Multiply;
+    }
+
+    //TODO: Make more robust
+    public void ApplyDamage(Actor_DamageMessage DamageMessage)
+    {
+        if(FLAG_Debug) Debug.Log("Damage Taken");
+
+        if (HpCurrent <= 0)
+        {//ignore damage if already dead. TODO : may have to change that if we want to detect hit on death...
+            return;
+        }
+
+
+        //if no team was sent with this message, just take the damage.
+        if(DamageMessage._Team == null)
+        {
+            if (FLAG_Debug) Debug.Log("No team found on message packet");
+
+            HpCurrent -= Mathf.Max(DamageMessage._DamageInfo.DamageAmount, 0);
+            OnReceiveDamage.Invoke();
+        }
+        //target filtering
+        else if(DamageMessage._DamageInfo.TargetFilters.TargetIsAllowed(DamageMessage._Team, actor))
+        {
+            if (FLAG_Debug) Debug.Log("Target filters validated message packet. Damage taken.");
+
+            HpCurrent -= Mathf.Max(DamageMessage._DamageInfo.DamageAmount, 0);
+            OnReceiveDamage.Invoke();
+        }
+
+
+        if (HpCurrent <= 0)
+        {
+            schedule += OnDeath.Invoke; //This avoid race condition when objects kill each other.
+            actor.ActorDead();
+        }
+    }
+
+    #region Deprecated
 
     //DEPRECATED
     //public void CalculateStats()
@@ -72,15 +215,19 @@ public class ActorStats : MonoBehaviour
     //    totalDef = def + buffDef;
     //}
 
+    /// <summary>
+    /// DEPRECATED. Please use new Actor_DamageMessage arg impl!
+    /// </summary>
+    /// <param name="data"></param>
     public void ApplyDamage(DamageMessage data)
     {
-        Debug.Log("false Taken");
+        if (FLAG_Debug) Debug.Log("Damge Taken in deprecated function!");
 
         if (HpCurrent <= 0)
         {//ignore damage if already dead. TODO : may have to change that if we want to detect hit on death...
             return;
         }
-        
+
         if (isInvulnerable && !data.FLAG_IgnoreInvulnerability)
         {
             OnHitWhileInvulnerable.Invoke();
@@ -111,38 +258,8 @@ public class ActorStats : MonoBehaviour
 
     }
 
-    //TODO: Make more robust
-    public void ApplyDamage(Actor_DamageMessage DamageMessage)
-    {
-        if(FLAG_Debug) Debug.Log("Damage Taken");
+    #endregion
 
-        if (HpCurrent <= 0)
-        {//ignore damage if already dead. TODO : may have to change that if we want to detect hit on death...
-            return;
-        }
-
-        if(DamageMessage._Team == null)
-        {
-            if (FLAG_Debug) Debug.Log("No team found on message packet");
-
-            HpCurrent -= Mathf.Max(DamageMessage._DamageInfo.DamageAmount, 0);
-            OnReceiveDamage.Invoke();
-        }
-        //target filtering
-        else if(DamageMessage._DamageInfo.TargetFilters.TargetIsAllowed(DamageMessage._Team, actor))
-        {
-            if (FLAG_Debug) Debug.Log("Target filters validated message packet. Damage taken.");
-
-            HpCurrent -= Mathf.Max(DamageMessage._DamageInfo.DamageAmount, 0);
-            OnReceiveDamage.Invoke();
-        }
-
-        if (HpCurrent <= 0)
-        {
-            schedule += OnDeath.Invoke; //This avoid race condition when objects kill each other.
-            actor.ActorDead();
-        }
-    }
 }
 [System.Serializable]
 public struct DamageMessage
