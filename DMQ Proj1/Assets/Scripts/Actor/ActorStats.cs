@@ -10,13 +10,16 @@ public class ActorStats : MonoBehaviour
 
     public bool FLAG_Debug = false;
 
+    //refs
     public ActorSystem.ActorStatsPreset Preset;
+    Actor actor;
 
 
     //probably want to increase protection on current (state) variables
     [Header("Current Values")]
     public float HpCurrent;
     public float EnergyCurrent;
+    public float _MoveSpeedCurrent;
 
     // DEPRECATED
 
@@ -36,24 +39,28 @@ public class ActorStats : MonoBehaviour
     //public int totalDef = 0;
 
     public float m_timeSinceLastHit = 0.0f;
-    protected Collider m_Collider;
+    //protected Collider m_Collider; //why was this here??
 
     System.Action schedule;
     #endregion
 
+    #region Properties
+
     public bool isInvulnerable { get; set; }
+
+    #endregion
+
+    #region Events
 
     public UnityEvent OnDeath, OnReceiveDamage, OnHitWhileInvulnerable, OnBecomeVulnerable, OnResetDamage;
 
+    #endregion
 
-
-    //refs
-    Actor actor;
 
     void Start()
     {
         ResetDamage();
-        m_Collider = GetComponent<Collider>();
+        //m_Collider = GetComponent<Collider>();
         actor = GetComponent<Actor>();
     }
     public void ResetDamage()
@@ -65,6 +72,45 @@ public class ActorStats : MonoBehaviour
         OnResetDamage.Invoke();
     }
 
+
+    //TODO: Make more robust
+    public void ApplyDamage(Actor_DamageMessage DamageMessage)
+    {
+        if(FLAG_Debug) Debug.Log("Damage Taken");
+
+        if (HpCurrent <= 0)
+        {//ignore damage if already dead. TODO : may have to change that if we want to detect hit on death...
+            return;
+        }
+
+
+        //if no team was sent with this message, just take the damage.
+        if(DamageMessage._Team == null)
+        {
+            if (FLAG_Debug) Debug.Log("No team found on message packet");
+
+            HpCurrent -= Mathf.Max(DamageMessage._DamageInfo.DamageAmount, 0);
+            OnReceiveDamage.Invoke();
+        }
+        //target filtering
+        else if(DamageMessage._DamageInfo.TargetFilters.TargetIsAllowed(DamageMessage._Team, actor))
+        {
+            if (FLAG_Debug) Debug.Log("Target filters validated message packet. Damage taken.");
+
+            HpCurrent -= Mathf.Max(DamageMessage._DamageInfo.DamageAmount, 0);
+            OnReceiveDamage.Invoke();
+        }
+
+
+        if (HpCurrent <= 0)
+        {
+            schedule += OnDeath.Invoke; //This avoid race condition when objects kill each other.
+            actor.ActorDead();
+        }
+    }
+
+    #region Deprecated
+
     //DEPRECATED
     //public void CalculateStats()
     //{
@@ -72,15 +118,19 @@ public class ActorStats : MonoBehaviour
     //    totalDef = def + buffDef;
     //}
 
+    /// <summary>
+    /// DEPRECATED. Please use new Actor_DamageMessage arg impl!
+    /// </summary>
+    /// <param name="data"></param>
     public void ApplyDamage(DamageMessage data)
     {
-        Debug.Log("false Taken");
+        if (FLAG_Debug) Debug.Log("Damge Taken in deprecated function!");
 
         if (HpCurrent <= 0)
         {//ignore damage if already dead. TODO : may have to change that if we want to detect hit on death...
             return;
         }
-        
+
         if (isInvulnerable && !data.FLAG_IgnoreInvulnerability)
         {
             OnHitWhileInvulnerable.Invoke();
@@ -111,38 +161,8 @@ public class ActorStats : MonoBehaviour
 
     }
 
-    //TODO: Make more robust
-    public void ApplyDamage(Actor_DamageMessage DamageMessage)
-    {
-        if(FLAG_Debug) Debug.Log("Damage Taken");
+    #endregion
 
-        if (HpCurrent <= 0)
-        {//ignore damage if already dead. TODO : may have to change that if we want to detect hit on death...
-            return;
-        }
-
-        if(DamageMessage._Team == null)
-        {
-            if (FLAG_Debug) Debug.Log("No team found on message packet");
-
-            HpCurrent -= Mathf.Max(DamageMessage._DamageInfo.DamageAmount, 0);
-            OnReceiveDamage.Invoke();
-        }
-        //target filtering
-        else if(DamageMessage._DamageInfo.TargetFilters.TargetIsAllowed(DamageMessage._Team, actor))
-        {
-            if (FLAG_Debug) Debug.Log("Target filters validated message packet. Damage taken.");
-
-            HpCurrent -= Mathf.Max(DamageMessage._DamageInfo.DamageAmount, 0);
-            OnReceiveDamage.Invoke();
-        }
-
-        if (HpCurrent <= 0)
-        {
-            schedule += OnDeath.Invoke; //This avoid race condition when objects kill each other.
-            actor.ActorDead();
-        }
-    }
 }
 [System.Serializable]
 public struct DamageMessage
