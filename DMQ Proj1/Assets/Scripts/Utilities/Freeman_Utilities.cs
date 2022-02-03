@@ -19,7 +19,7 @@ namespace Utils
     namespace Stats
     {
         /// <summary>
-        /// A Stat Record composed of a Default, an optional Modifier, and the current stat
+        /// A Stat Record composed of a Default record and an optional Modifier record
         /// </summary>
         [System.Serializable]
         public struct StatRecord
