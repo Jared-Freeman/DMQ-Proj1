@@ -11,6 +11,7 @@ namespace EffectTree
     public class Effect_LaunchProjectile : Effect_Base
     {
         public GameObject ProjectilePrefab;
+        public bool UseTeamNoCollideLayer = false;
 
         public override bool Invoke(ref EffectContext ctx)
         {
@@ -20,7 +21,27 @@ namespace EffectTree
                 if (Projectile == null) return false;
 
                 var instance = Utils.Projectile.CreateProjectileFromAttackContext(Projectile, ctx.AttackData);
-                if(instance != null) return true;
+                if(instance == null) return false;
+
+                if(ctx.AttackData._Team != null)
+                {
+                    if (UseTeamNoCollideLayer)
+                    {
+                        if (!Utils.TransformUtils.ChangeLayerOfGameObjectAndChildren(instance.gameObject, ctx.AttackData._Team.Options.NoCollideLayer))
+                        {
+                            Debug.LogError("Error converting projectile to team layer! Is layer set within proper bounds?");
+                        }
+                    }
+                    else
+                    {
+                        if(!Utils.TransformUtils.ChangeLayerOfGameObjectAndChildren(instance.gameObject, ctx.AttackData._Team.Options.Layer))
+                        {
+                            Debug.LogError("Error converting projectile to team layer! Is layer set within proper bounds?");
+                        }
+                    }
+                }
+
+                return true;
             }
             return false;
         }

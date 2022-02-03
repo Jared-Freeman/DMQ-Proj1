@@ -36,15 +36,43 @@ namespace ItemSystem.Weapons
             //TODO: How is ability instance lifetime going to be managed?
             Ability_BasicAttack = DefaultWeaponPreset.Ability_BasicAttack.GetInstance(gameObject);
 
-            OnItemTransferred_Local += Item_Weapon_DevGeneric1_OnItemTransferred_Local;
+            //OnItemTransferred_Local += Item_Weapon_DevGeneric1_OnItemTransferred_Local;
         }
 
-        private void Item_Weapon_DevGeneric1_OnItemTransferred_Local(object sender, CSEventArgs.ItemEventArgs e)
+        //private void Item_Weapon_DevGeneric1_OnItemTransferred_Local(object sender, CSEventArgs.ItemEventArgs e)
+        //{
+        //    //TODO: Consider checking for what ability to activate upon inventory transfer. gonna need to refactor a bit here.
+        //}
+
+        protected virtual void Start()
         {
-            //TODO: Consider checking for what ability to activate upon inventory transfer. gonna need to refactor a bit here.
+            IS_InventoryBase.Event_ItemEntersInventory += IS_InventoryBase_Event_ItemEntersInventory;
+            IS_InventoryBase.Event_ItemLeavesInventory += IS_InventoryBase_Event_ItemLeavesInventory;
+        }
+        protected virtual void OnDestroy()
+        {
+            IS_InventoryBase.Event_ItemEntersInventory -= IS_InventoryBase_Event_ItemEntersInventory;
+            IS_InventoryBase.Event_ItemLeavesInventory -= IS_InventoryBase_Event_ItemLeavesInventory;
         }
 
+        private void IS_InventoryBase_Event_ItemLeavesInventory(object sender, CSEventArgs.ItemAndInventoryEventArgs e)
+        {
+            if(e.Item == this)
+            {
+                if (s_FLAG_ITEM_DEBUG) Debug.Log("DESTROYING ABILITY INSTANCE");
+                Destroy(Ability_BasicAttack);
+            }
+        }
+        private void IS_InventoryBase_Event_ItemEntersInventory(object sender, CSEventArgs.ItemAndInventoryEventArgs e)
+        {
+            if (s_FLAG_ITEM_DEBUG) Debug.Log("babbo");
 
+            if (e.Item == this)
+            {
+                if (s_FLAG_ITEM_DEBUG) Debug.Log("CREATING ABILITY INSTANCE");
+                Ability_BasicAttack = DefaultWeaponPreset.Ability_BasicAttack.GetInstance(e.Inventory.gameObject);
+            }
+        }
 
 
         /// <summary>
@@ -62,7 +90,7 @@ namespace ItemSystem.Weapons
                 //Class branches
                 Actor_Player A = ctx._Owner as Actor_Player;
 
-                if(A == null || true)
+                if(A == null)
                 {
                     if (s_FLAG_ITEM_DEBUG) Debug.Log("no player invoke!");
                     return DefaultAttack(ctx);
@@ -73,29 +101,31 @@ namespace ItemSystem.Weapons
                     ClassSystem.CharacterClass invokingClass;
                     invokingClass = A.Class;
 
-                    //probably dont want to hardcode this w these string literals...
-                    if (invokingClass.ClassName.ToLower() == "interdictor")
-                    {
-                        if (s_FLAG_ITEM_DEBUG) Debug.Log("interdictor invoke!");
-                    }
-                    else if (invokingClass.ClassName.ToLower() == "bulwark")
-                    {
-                        if (s_FLAG_ITEM_DEBUG) Debug.Log("bulwark invoke!");
-                    }
-                    else if (invokingClass.ClassName.ToLower() == "arcanist")
-                    {
-                        if(s_FLAG_ITEM_DEBUG) Debug.Log("Arcanist invoke!");
-                        ArcanistAttack(ctx);
-                    }
-                    else if (invokingClass.ClassName.ToLower() == "enchanter")
-                    {
-                        if (s_FLAG_ITEM_DEBUG) Debug.Log("enchanter invoke!");
-                    }
-                    else
-                    {
-                        if (s_FLAG_ITEM_DEBUG) Debug.Log("default invoke!");
-                        return DefaultAttack(ctx);
-                    }
+                    return DefaultAttack(ctx);
+
+                    ////probably dont want to hardcode this w these string literals...
+                    //if (invokingClass.ClassName.ToLower() == "interdictor")
+                    //{
+                    //    if (s_FLAG_ITEM_DEBUG) Debug.Log("interdictor invoke!");
+                    //}
+                    //else if (invokingClass.ClassName.ToLower() == "bulwark")
+                    //{
+                    //    if (s_FLAG_ITEM_DEBUG) Debug.Log("bulwark invoke!");
+                    //}
+                    //else if (invokingClass.ClassName.ToLower() == "arcanist")
+                    //{
+                    //    if(s_FLAG_ITEM_DEBUG) Debug.Log("Arcanist invoke!");
+                    //    ArcanistAttack(ctx);
+                    //}
+                    //else if (invokingClass.ClassName.ToLower() == "enchanter")
+                    //{
+                    //    if (s_FLAG_ITEM_DEBUG) Debug.Log("enchanter invoke!");
+                    //}
+                    //else
+                    //{
+                    //    if (s_FLAG_ITEM_DEBUG) Debug.Log("default invoke!");
+                    //    return DefaultAttack(ctx);
+                    //}
                 }
                 
             }

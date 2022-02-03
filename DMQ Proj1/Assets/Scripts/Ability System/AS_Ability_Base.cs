@@ -44,8 +44,13 @@ namespace AbilitySystem
         public virtual AS_Ability_Instance_Base GetInstance(GameObject ability_owner)
         {
             var instance = ability_owner.AddComponent<AS_Ability_Instance_Base>();
+            Actor actorOwner = ability_owner.GetComponent<Actor>();
 
             if (instance == null) Debug.LogError(ToString() + ": instance is null!");
+            else if(actorOwner != null)
+            {
+                instance.Owner = actorOwner;
+            }
 
             instance.Settings = this;
 

@@ -18,12 +18,19 @@ MonoBehaviour:
         Max: 5
         Min: 0
       Modifier:
-        Bonus_Multiplier: 0
-        Bonus_Adder: 0
+        Multiply: 1
+        Add: 0
     Energy:
       Default:
         Max: 5
         Min: 0
       Modifier:
-        Bonus_Multiplier: 0
-        Bonus_Adder: 0
+        Multiply: 1
+        Add: 0
+    MoveSpeed:
+      Default:
+        Max: 7.5
+        Min: 0
+      Modifier:
+        Multiply: 1
+        Add: 0

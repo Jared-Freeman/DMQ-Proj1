@@ -41,6 +41,12 @@ namespace ItemSystem
 
         #endregion
 
+        #region Events
+
+        public static event System.EventHandler<CSEventArgs.ItemAndInventoryEventArgs> Event_ItemEntersInventory;
+        public static event System.EventHandler<CSEventArgs.ItemAndInventoryEventArgs> Event_ItemLeavesInventory;
+
+        #endregion
 
         #region Initialization
 
@@ -90,6 +96,7 @@ namespace ItemSystem
                     {
                         _ItemList.Add(item);
                         item.AddItemToInventorySpace();
+                        Event_ItemEntersInventory?.Invoke(this, new ItemAndInventoryEventArgs(item, this));
                         return true;
                     }
 
@@ -124,6 +131,7 @@ namespace ItemSystem
                 }
 
                 _ItemList.Remove(item);
+                Event_ItemLeavesInventory?.Invoke(this, new ItemAndInventoryEventArgs(item, this));
 
                 return true;
             }
@@ -151,6 +159,8 @@ namespace ItemSystem
                 if (s_FLAG_DEBUG) Debug.Log("Item Received");
 
                 _ItemList.Remove(item);
+                Event_ItemLeavesInventory?.Invoke(this, new ItemAndInventoryEventArgs(item, this));
+                Event_ItemEntersInventory?.Invoke(this, new ItemAndInventoryEventArgs(item, other_inventory)); //im sorry but this has to go here for intuitive use of the event...
                 return true;
             }
             else

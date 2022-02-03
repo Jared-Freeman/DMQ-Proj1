@@ -2,20 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Utils.Stats;
 
 public class ActorStats : MonoBehaviour
 {
 
-    #region members
+    #region Members
 
     public bool FLAG_Debug = false;
 
-    //refs
     /// <summary>
     /// Reference to the asset containing this Actor's stat defaults.
     /// </summary>
     public ActorSystem.ActorStatsPreset Preset;
+
+    protected List<ActorSystem.ActorStatsData> _List_StatusModifiers;
+    public IReadOnlyCollection<ActorSystem.ActorStatsData> StatusEffects
+    {
+        get
+        {
+            return _List_StatusModifiers.AsReadOnly();
+        }
+    }
+
     Actor actor;
+    System.Action schedule;
 
     // DEPRECATED
 
@@ -34,19 +45,54 @@ public class ActorStats : MonoBehaviour
     //public int totalAtk = 0;
     //public int totalDef = 0;
 
-    public float m_timeSinceLastHit = 0.0f;
+    public float m_timeSinceLastHit = 0.0f; //Can we deprecate this or discuss this functionality? The current implementation was blocking features like damage over time -Jared
+
     //protected Collider m_Collider; //why was this here??
 
-    System.Action schedule;
-    #endregion
+    protected StatInstance HP;
+    protected StatInstance Energy;
+    protected StatInstance MoveSpeed;
 
     #region Properties
 
-    public float HpCurrent { get; protected set; }
-    public float EnergyCurrent { get; protected set; }
-    public float _MoveSpeedCurrent { get; protected set; }
+    //public float HpCurrent
+    //{
+    //    get { return (HP.Value + HP.Modifier.Add) * HP.Modifier.Multiply; }
+    //    protected set 
+    //    { 
+    //        HP.Value = value;         
+    //    }
+    //}
+    //public float EnergyCurrent
+    //{
+    //    get { return (Energy.Value + Energy.Modifier.Add) * Energy.Modifier.Multiply; }
+    //    protected set { Energy.Value = value; }
+    //}
+    //public float MoveSpeedCurrent
+    //{
+    //    get { return (MoveSpeed.Value + MoveSpeed.Modifier.Add) * MoveSpeed.Modifier.Multiply; }
+    //    protected set { MoveSpeed.Value = value; }
+    //}
+
+    public float HpCurrent
+    {
+        get { return HP.Value; }
+        protected set { HP.Value = value; }
+    }
+    public float EnergyCurrent
+    {
+        get { return Energy.Value; }
+        protected set { Energy.Value = value; }
+    }
+    public float MoveSpeedCurrent
+    {
+        get { return MoveSpeed.Value; }
+        protected set { MoveSpeed.Value = value; }
+    }
 
     public bool isInvulnerable { get; set; }
+
+    #endregion
 
     #endregion
 
@@ -56,12 +102,16 @@ public class ActorStats : MonoBehaviour
 
     #endregion
 
+    #region Initialization
+    void Awake()
+    {
+        actor = GetComponent<Actor>();
+        //m_Collider = GetComponent<Collider>();
+    }
 
     void Start()
     {
         ResetDamage();
-        //m_Collider = GetComponent<Collider>();
-        actor = GetComponent<Actor>();
     }
     public void ResetDamage()
     {
@@ -72,6 +122,53 @@ public class ActorStats : MonoBehaviour
         OnResetDamage.Invoke();
     }
 
+    #endregion
+
+    /// <summary>
+    /// Recalculates ActorStat current values based on ALL current status effects
+    /// </summary>
+    protected void RecalculateStatusMutations()
+    {
+        ResetStatusMutation();
+
+        //recalculate per-status
+        foreach (var m in _List_StatusModifiers)
+        {
+            AppendStatusMutation(m);
+        }
+    }
+
+    /// <summary>
+    /// Appends a stat data modifier into this ActorStat's modifier buffer
+    /// </summary>
+    /// <param name="append_data"></param>
+    public void AppendStatusMutation(ActorSystem.ActorStatsData append_data)
+    {
+
+        HP.Modifier.Add += append_data.HP.Modifier.Add;
+        Energy.Modifier.Add += append_data.Energy.Modifier.Add;
+        MoveSpeed.Modifier.Add += append_data.MoveSpeed.Modifier.Add;
+
+
+        HP.Modifier.Multiply *= append_data.HP.Modifier.Multiply;
+        Energy.Modifier.Multiply *= append_data.Energy.Modifier.Multiply;
+        MoveSpeed.Modifier.Multiply *= append_data.MoveSpeed.Modifier.Multiply;
+    }
+
+    /// <summary>
+    /// Reset Status mutation to default values
+    /// </summary>
+    protected void ResetStatusMutation()
+    {
+        HP.Modifier.Add = Preset.Data.HP.Modifier.Add;
+        HP.Modifier.Multiply = Preset.Data.HP.Modifier.Multiply;
+
+        Energy.Modifier.Add = Preset.Data.Energy.Modifier.Add;
+        Energy.Modifier.Multiply = Preset.Data.Energy.Modifier.Multiply;
+
+        MoveSpeed.Modifier.Add = Preset.Data.MoveSpeed.Modifier.Add;
+        MoveSpeed.Modifier.Multiply = Preset.Data.MoveSpeed.Modifier.Multiply;
+    }
 
     //TODO: Make more robust
     public void ApplyDamage(Actor_DamageMessage DamageMessage)
