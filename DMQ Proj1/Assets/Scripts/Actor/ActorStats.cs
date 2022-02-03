@@ -11,15 +11,11 @@ public class ActorStats : MonoBehaviour
     public bool FLAG_Debug = false;
 
     //refs
+    /// <summary>
+    /// Reference to the asset containing this Actor's stat defaults.
+    /// </summary>
     public ActorSystem.ActorStatsPreset Preset;
     Actor actor;
-
-
-    //probably want to increase protection on current (state) variables
-    [Header("Current Values")]
-    public float HpCurrent;
-    public float EnergyCurrent;
-    public float _MoveSpeedCurrent;
 
     // DEPRECATED
 
@@ -45,6 +41,10 @@ public class ActorStats : MonoBehaviour
     #endregion
 
     #region Properties
+
+    public float HpCurrent { get; protected set; }
+    public float EnergyCurrent { get; protected set; }
+    public float _MoveSpeedCurrent { get; protected set; }
 
     public bool isInvulnerable { get; set; }
 
