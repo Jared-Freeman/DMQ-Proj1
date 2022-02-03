@@ -18,6 +18,17 @@ namespace Utils
 {
     namespace Stats
     {
+
+        /// <summary>
+        /// State info on a current statistic. Includes modifier state data
+        /// </summary>
+        [System.Serializable]
+        public struct StatInstance
+        {
+            public float Value;
+            public StatModifierRecord Modifier;
+        }
+
         /// <summary>
         /// A Stat Record composed of a Default record and an optional Modifier record
         /// </summary>
@@ -62,7 +73,7 @@ namespace Utils
         }
 
         /// <summary>
-        /// A struct representing a temporary MUTATION to a StatRecord
+        /// A struct representing a MUTATION to a StatRecord
         /// </summary>
         [System.Serializable]
         public struct StatModifierRecord
@@ -231,6 +242,29 @@ namespace Utils
 
             result = Vector3.zero;
             return false;
+        }
+    }
+
+    public static class TransformUtils
+    {
+        /// <summary>
+        /// Changes the layer of all gameobjects in <paramref name="go"/>'s hierarchy, including <paramref name="go"/>
+        /// </summary>
+        /// <param name="go"></param>
+        /// <param name="layer">layer. Unity layer range is [0,31] inclusive</param>
+        /// <returns>true if successful</returns>
+        public static bool ChangeLayerOfGameObjectAndChildren(GameObject go, int layer)
+        {
+            //bounds check
+            if (layer < 0 || layer >= 32) return false;
+
+            go.layer = layer;
+            foreach (Transform t in go.transform)
+            {
+                t.gameObject.layer = layer;
+            }
+
+            return true;
         }
     }
 }
