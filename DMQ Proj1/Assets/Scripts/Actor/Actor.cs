@@ -36,7 +36,7 @@ public class Actor : MonoBehaviour
     public Team _Team;
     public ActorStats Stats;
     public List<ActorAction> Actions;
-    public List<ActorStatusEffect> StatusEffects;
+    //public List<ActorStatusEffect> StatusEffects; //deprecated
 
     #endregion
 
