@@ -33,8 +33,18 @@ namespace ItemSystem.Weapons
                 Destroy(this);
             }
 
+            //TODO: How is ability instance lifetime going to be managed?
             Ability_BasicAttack = DefaultWeaponPreset.Ability_BasicAttack.GetInstance(gameObject);
+
+            OnItemTransferred_Local += Item_Weapon_DevGeneric1_OnItemTransferred_Local;
         }
+
+        private void Item_Weapon_DevGeneric1_OnItemTransferred_Local(object sender, CSEventArgs.ItemEventArgs e)
+        {
+            //TODO: Consider checking for what ability to activate upon inventory transfer. gonna need to refactor a bit here.
+        }
+
+
 
 
         /// <summary>
