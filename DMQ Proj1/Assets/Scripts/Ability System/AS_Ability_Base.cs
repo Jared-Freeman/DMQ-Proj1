@@ -17,6 +17,7 @@ namespace AbilitySystem
         public Utils.CooldownTracker Cooldown;
         public AS_AbilCastSettings CastSettings;
         public EffectTree.Condition.ConditionList Conditions = new EffectTree.Condition.ConditionList();
+        public Texture2D IconImage; //TODO: Convert this into a UI element or something
 
         /// <summary>
         /// The effect to invoke when this ability is cast.
