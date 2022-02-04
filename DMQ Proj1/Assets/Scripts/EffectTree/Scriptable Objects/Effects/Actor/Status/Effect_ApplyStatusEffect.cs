@@ -9,7 +9,7 @@ namespace EffectTree
     /// <summary>
     /// Applies status effect(s) to target actor, if one exists
     /// </summary>
-    [CreateAssetMenu(fileName = "ASE_", menuName = "Effect Tree/Apply Status Effect", order = 2)]
+    [CreateAssetMenu(fileName = "ASE_", menuName = "Effect Tree/Actor/Apply Status Effect", order = 2)]
     public class Effect_ApplyStatusEffect : Effect_Base
     {
         public TargetFilterOptions TargetFilters = new TargetFilterOptions();

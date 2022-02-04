@@ -7,7 +7,7 @@ namespace EffectTree
     /// <summary>
     /// Applies damage to target actor, if one exists
     /// </summary>
-    [CreateAssetMenu(fileName = "AD_", menuName = "Effect Tree/Apply Damage", order = 2)]
+    [CreateAssetMenu(fileName = "AD_", menuName = "Effect Tree/Actor/Apply Damage", order = 2)]
     public class Effect_ApplyDamage : Effect_Base
     {
         AP2_DamageMessagePreset DamageMessage;

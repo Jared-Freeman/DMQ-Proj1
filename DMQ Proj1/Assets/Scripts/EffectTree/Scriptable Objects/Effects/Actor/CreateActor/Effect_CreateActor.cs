@@ -7,7 +7,7 @@ namespace EffectTree
     /// <summary>
     /// Creates Actor(s) at the context location
     /// </summary>
-    [CreateAssetMenu(fileName = "CA_", menuName = "Effect Tree/Create Actor", order = 2)]
+    [CreateAssetMenu(fileName = "CA_", menuName = "Effect Tree/Actor/Create Actor", order = 2)]
     public class Effect_CreateActor : Effect_Base
     {
         public GameObject ActorPrefab;

@@ -8,7 +8,7 @@ namespace EffectTree
     /// <summary>
     /// Removes Status Effect(s) from target actor by type, if an actor exists.
     /// </summary>
-    [CreateAssetMenu(fileName = "RSE_", menuName = "Effect Tree/Remove Status Effect", order = 2)]
+    [CreateAssetMenu(fileName = "RSE_", menuName = "Effect Tree/Actor/Remove Status Effect", order = 2)]
     public class Effect_RemoveStatusEffect : Effect_Base
     {
         public TargetFilterOptions TargetFilters = new TargetFilterOptions();
