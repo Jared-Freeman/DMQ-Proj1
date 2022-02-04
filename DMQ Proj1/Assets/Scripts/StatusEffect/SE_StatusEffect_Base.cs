@@ -54,11 +54,11 @@ namespace ActorSystem.StatusEffect
             [Header("Effect Begin occurs when status is added to the target Actor.")]
             public Effect_Base Effect_Begin;
 
+            [Header("Effect Periodic every PeriodicEffectInterval seconds.")]
+            public Effect_Base Effect_Periodic;
             //surely there isn't a reason to perform an effect more than this right???
             [Min(.025f)]
             public float PeriodicEffectInterval;
-            [Header("Effect Periodic every PeriodicEffectInterval seconds.")]
-            public Effect_Base Effect_Periodic;
 
             [Header("Effect End occurs when the effect completes its FULL DURATION.")]
             public Effect_Base Effect_End;

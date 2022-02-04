@@ -24,9 +24,9 @@ namespace EffectTree
                 msg._DamageInfo = DamageMessage;
 
                 //supply state info
-                msg._Caster = ctx.AttackData._Owner.gameObject;
-                msg._DamageSource = ctx.AttackData._InitialGameObject;
-                msg._Team = ctx.AttackData._Team;
+                if(ctx.AttackData._Owner != null) msg._Caster = ctx.AttackData._Owner.gameObject;
+                if (ctx.AttackData._InitialGameObject != null) msg._DamageSource = ctx.AttackData._InitialGameObject;
+                if (ctx.AttackData._Team != null) msg._Team = ctx.AttackData._Team;
 
                 actor.Stats.ApplyDamage(msg);
 
