@@ -12,7 +12,7 @@ namespace ActorSystem.StatusEffect.UI
         public GameObject _Canvas;
         public Camera _Camera;
 
-        List<Status_UI_Record> _List_StatusUIElements = new List<Status_UI_Record>();
+        List<Status_UI_Proxy_Record> _List_ProxyRecords = new List<Status_UI_Proxy_Record>();
 
         void Awake()
         {
@@ -36,12 +36,41 @@ namespace ActorSystem.StatusEffect.UI
         {
             SE_StatusEffect_Instance.OnStatusEffectCreate += SE_StatusEffect_Instance_OnStatusEffectCreate;
             SE_StatusEffect_Instance.OnStatusEffectDestroy += SE_StatusEffect_Instance_OnStatusEffectDestroy;
+
+            SE_UI_Proxy.OnProxyDestroy += SE_UI_Proxy_OnProxyDestroy;
+        }
+
+        private void SE_UI_Proxy_OnProxyDestroy(object sender, EventArgs.UIProxyEventArgs e)
+        {
+            Status_UI_Proxy_Record removal = null;
+
+            foreach(var r in _List_ProxyRecords)
+            {
+                if(e.Proxy == r.Proxy)
+                {
+                    removal = r;
+                    break;
+                }
+            }
+
+            if(removal != null)
+            {
+                //clean up gameobjects on canvas
+                foreach(var r in removal.Records)
+                {
+                    Destroy(r.Renderer);
+                }
+
+                _List_ProxyRecords.Remove(removal);
+            }
         }
 
         void OnDestroy()
         {
             SE_StatusEffect_Instance.OnStatusEffectCreate -= SE_StatusEffect_Instance_OnStatusEffectCreate;
             SE_StatusEffect_Instance.OnStatusEffectDestroy -= SE_StatusEffect_Instance_OnStatusEffectDestroy;
+
+            SE_UI_Proxy.OnProxyDestroy -= SE_UI_Proxy_OnProxyDestroy;
         }
 
         void Update()
@@ -51,15 +80,18 @@ namespace ActorSystem.StatusEffect.UI
 
         void UpdateScreenSpaceElements()
         {
-            foreach(var r in _List_StatusUIElements)
+            foreach(var prox in _List_ProxyRecords)
             {
-                Vector3 pos = r.Proxy.GetCameraSpacePosition(_Camera);
-                pos.z = 0f;
-                r._RectTransform.anchoredPosition = pos;
-                var p = r._RectTransform.localPosition;
+                foreach(var r in prox.Records)
+                {
+                    Vector3 pos = r.Proxy.GetCameraSpacePosition(_Camera);
+                    pos.z = 0f;
+                    r._RectTransform.anchoredPosition = pos;
+                    var p = r._RectTransform.localPosition;
 
-                //this is dumb...
-                r._RectTransform.localPosition = new Vector3(p.x, p.y, 0);
+                    //this is dumb...
+                    r._RectTransform.localPosition = new Vector3(p.x, p.y, 0);
+                }
             }
         }
 
@@ -95,22 +127,54 @@ namespace ActorSystem.StatusEffect.UI
                 record.Proxy = Proxy;
                 record._RectTransform = RTransform;
 
-                _List_StatusUIElements.Add(record);
+                var listRecords = GetRecords(Proxy);
+
+                listRecords.Add(record);
             }
         }
+
         private void SE_StatusEffect_Instance_OnStatusEffectDestroy(object sender, CSEventArgs.StatusEffect_Actor_EventArgs e)
         {
             Status_UI_Record removeRecord = null;
 
-            foreach(var r in _List_StatusUIElements)
+            foreach (var prox in _List_ProxyRecords)
             {
-                if(r.Ref = e._StatusEffect)
+                foreach (var r in prox.Records)
                 {
-                    removeRecord = r;
-                }    
+                    if (r.Ref = e._StatusEffect)
+                    {
+                        removeRecord = r;
+                        break;
+                    }
+                }
+
+                if (removeRecord != null)
+                {
+                    prox.Records.Remove(removeRecord);
+                    break;
+                }
+            }
+        }
+
+        protected List<Status_UI_Record> GetRecords(SE_UI_Proxy proxy)
+        {
+            foreach(var pr in _List_ProxyRecords)
+            {
+                if (proxy = pr.Proxy) return pr.Records;
             }
 
-            if(removeRecord != null) _List_StatusUIElements.Remove(removeRecord);
+            var r = new Status_UI_Proxy_Record();
+            r.Proxy = proxy;
+            r.Records = new List<Status_UI_Record>();
+            _List_ProxyRecords.Add(r);
+
+            return r.Records;
+        }
+
+        protected class Status_UI_Proxy_Record
+        {
+            public SE_UI_Proxy Proxy;
+            public List<Status_UI_Record> Records;
         }
 
         protected class Status_UI_Record
