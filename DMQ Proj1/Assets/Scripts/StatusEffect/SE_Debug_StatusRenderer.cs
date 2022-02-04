@@ -248,6 +248,8 @@ namespace ActorSystem.StatusEffect.UI
 
                 if (removeRecord != null)
                 {
+                    //cleanup canvas gameobject
+                    Destroy(removeRecord.Renderer);
                     prox.Records.Remove(removeRecord);
                     break;
                 }
