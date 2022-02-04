@@ -10,7 +10,7 @@ namespace EffectTree
     [CreateAssetMenu(fileName = "AD_", menuName = "Effect Tree/Actor/Apply Damage", order = 2)]
     public class Effect_ApplyDamage : Effect_Base
     {
-        AP2_DamageMessagePreset DamageMessage;
+        public AP2_DamageMessagePreset DamageMessage;
 
         public override bool Invoke(ref EffectContext ctx)
         {

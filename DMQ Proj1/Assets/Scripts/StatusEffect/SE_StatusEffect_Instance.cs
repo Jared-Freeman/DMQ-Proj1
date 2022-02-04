@@ -99,6 +99,15 @@ namespace ActorSystem.StatusEffect
 
         #endregion
 
+        void FixedUpdate()
+        {
+            Info.RemainingDuration -= Time.fixedDeltaTime;
+            if(Info.RemainingDuration <= 0)
+            {
+                Destroy(this);
+            }
+        }
+
         protected void UpdateEffectContext()
         {
             _InstanceContext.AttackData._InitialDirection = gameObject.transform.forward;
