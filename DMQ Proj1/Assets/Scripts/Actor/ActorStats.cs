@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using Utils.Stats;
 
+using ActorSystem.StatusEffect;
+
 public class ActorStats : MonoBehaviour
 {
 
@@ -16,12 +18,12 @@ public class ActorStats : MonoBehaviour
     /// </summary>
     public ActorSystem.ActorStatsPreset Preset;
 
-    protected List<ActorSystem.ActorStatsData> _List_StatusModifiers;
-    public IReadOnlyCollection<ActorSystem.ActorStatsData> StatusEffects
+    protected List<SE_StatusEffect_Instance> _ListStatusEffects;
+    public IReadOnlyCollection<SE_StatusEffect_Instance> StatusEffects
     {
         get
         {
-            return _List_StatusModifiers.AsReadOnly();
+            return _ListStatusEffects.AsReadOnly();
         }
     }
 
@@ -132,9 +134,9 @@ public class ActorStats : MonoBehaviour
         ResetStatusMutation();
 
         //recalculate per-status
-        foreach (var m in _List_StatusModifiers)
+        foreach (var m in _ListStatusEffects)
         {
-            AppendStatusMutation(m);
+            AddStatusEffect(m);
         }
     }
 
@@ -142,18 +144,53 @@ public class ActorStats : MonoBehaviour
     /// Appends a stat data modifier into this ActorStat's modifier buffer
     /// </summary>
     /// <param name="append_data"></param>
-    public void AppendStatusMutation(ActorSystem.ActorStatsData append_data)
+    public void AddStatusEffect(SE_StatusEffect_Instance Effect)
     {
+        _ListStatusEffects.Add(Effect);
+
+        Effect.OnStatusEffectDestroy_Local += Effect_OnStatusEffectDestroy_Local;
+
+        var append_data = Effect.Preset.Settings.StatsModifiers;
 
         HP.Modifier.Add += append_data.HP.Modifier.Add;
         Energy.Modifier.Add += append_data.Energy.Modifier.Add;
         MoveSpeed.Modifier.Add += append_data.MoveSpeed.Modifier.Add;
 
-
         HP.Modifier.Multiply *= append_data.HP.Modifier.Multiply;
         Energy.Modifier.Multiply *= append_data.Energy.Modifier.Multiply;
         MoveSpeed.Modifier.Multiply *= append_data.MoveSpeed.Modifier.Multiply;
     }
+
+    private void Effect_OnStatusEffectDestroy_Local(object sender, CSEventArgs.StatusEffect_Actor_EventArgs e)
+    {
+        if(e._Actor == this)
+        {
+            RemoveStatusMutation(e._StatusEffect);
+        }
+
+        //not sure if this unsubscription is needed but does FEEL safer.
+        e._StatusEffect.OnStatusEffectDestroy_Local -= Effect_OnStatusEffectDestroy_Local;
+    }
+
+    /// <summary>
+    /// Removes a stat data modifier into this ActorStat's modifier buffer
+    /// </summary>
+    /// <param name="append_data"></param>
+    protected void RemoveStatusMutation(SE_StatusEffect_Instance Effect)
+    {
+        _ListStatusEffects.Remove(Effect);
+
+        var append_data = Effect.Preset.Settings.StatsModifiers;
+
+        HP.Modifier.Add -= append_data.HP.Modifier.Add;
+        Energy.Modifier.Add -= append_data.Energy.Modifier.Add;
+        MoveSpeed.Modifier.Add -= append_data.MoveSpeed.Modifier.Add;
+
+        HP.Modifier.Multiply /= append_data.HP.Modifier.Multiply;
+        Energy.Modifier.Multiply /= append_data.Energy.Modifier.Multiply;
+        MoveSpeed.Modifier.Multiply /= append_data.MoveSpeed.Modifier.Multiply;
+    }
+
 
     /// <summary>
     /// Reset Status mutation to default values
