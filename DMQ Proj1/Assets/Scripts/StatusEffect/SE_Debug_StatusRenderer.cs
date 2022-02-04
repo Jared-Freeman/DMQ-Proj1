@@ -8,6 +8,26 @@ namespace ActorSystem.StatusEffect.UI
 {    
     public class SE_Debug_StatusRenderer : MonoBehaviour
     {
+        #region Static Members
+
+        /// <summary>
+        /// Screen-space offset 
+        /// </summary>
+        protected static float s_IconOffset = 20f;
+        /// <summary>
+        /// Max icons to render before moving to a new row, per proxy
+        /// </summary>
+        protected static int s_MaxIconsPerProxyRow = 5;
+        /// <summary>
+        /// Max number of icons to render at once, per proxy
+        /// </summary>
+        protected static int s_MaxIconsPerProxy = 10;
+
+
+        protected static bool s_CenterIcons = true;
+
+        #endregion
+
         public GameObject _CanvasImagePrefab;
         public GameObject _Canvas;
         public Camera _Camera;
@@ -80,17 +100,95 @@ namespace ActorSystem.StatusEffect.UI
 
         void UpdateScreenSpaceElements()
         {
-            foreach(var prox in _List_ProxyRecords)
+            if (s_CenterIcons) RenderIconsCentered();
+            else RenderIconsLeftAligned();
+        }
+
+        void RenderIconsCentered()
+        {
+            //trackers to compute offset
+            int totalIconsRemaining = 0; //per proxy
+            int curIconIndex = 0;
+            int curRow = 0;
+
+            float startPosOffset = 0;
+
+            foreach (var prox in _List_ProxyRecords)
             {
-                foreach(var r in prox.Records)
+                totalIconsRemaining = 0;
+                curIconIndex = 0;
+                curRow = 0;
+                startPosOffset = 0f;
+
+                foreach (var r in prox.Records)
+                {
+                    totalIconsRemaining++;
+                }
+
+                //Debug.LogWarning(totalIconsRemaining);
+
+                startPosOffset = Mathf.Clamp(totalIconsRemaining, 0, s_MaxIconsPerProxyRow-1) * -.5f * s_IconOffset;
+
+                //there is definitely a better-readable version but uh, i want to do this quickly -J
+                foreach (var r in prox.Records)
                 {
                     Vector3 pos = r.Proxy.GetCameraSpacePosition(_Camera);
                     pos.z = 0f;
                     r._RectTransform.anchoredPosition = pos;
                     var p = r._RectTransform.localPosition;
 
+
+                    r._RectTransform.localPosition = new Vector3(
+                        p.x + startPosOffset + curIconIndex * s_IconOffset,
+                        p.y - curRow * s_IconOffset,
+                        0);
+
+                    curIconIndex++;
+                    totalIconsRemaining--;
+
+                    if (curIconIndex + 1 > s_MaxIconsPerProxyRow) //careful of off-by-1
+                    {
+                        curIconIndex = 0;
+                        curRow++;
+                        startPosOffset = Mathf.Clamp(totalIconsRemaining, 0, s_MaxIconsPerProxyRow) * -.5f;
+                    }
+                }
+            }
+        }
+
+        //older version. kept in just in case.
+        void RenderIconsLeftAligned()
+        {
+
+            //trackers to compute offset
+            int curIcons = 0;
+            int curRow = 0;
+
+            foreach (var prox in _List_ProxyRecords)
+            {
+                curIcons = 0;
+                curRow = 0;
+
+                foreach (var r in prox.Records)
+                {
+
+                    Vector3 pos = r.Proxy.GetCameraSpacePosition(_Camera);
+                    pos.z = 0f;
+                    r._RectTransform.anchoredPosition = pos;
+                    var p = r._RectTransform.localPosition;
+
                     //this is dumb...
-                    r._RectTransform.localPosition = new Vector3(p.x, p.y, 0);
+                    r._RectTransform.localPosition = new Vector3(
+                        p.x + curIcons * s_IconOffset,
+                        p.y - curRow * s_IconOffset,
+                        0);
+
+                    curIcons++;
+                    if (curIcons + 1 > s_MaxIconsPerProxyRow) //careful of off-by-1
+                    {
+                        curIcons = 0;
+                        curRow++;
+                    }
                 }
             }
         }
