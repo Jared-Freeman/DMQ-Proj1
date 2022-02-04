@@ -79,8 +79,9 @@ namespace ActorSystem.StatusEffect
         {
             Info.RemainingDuration = Preset.Settings.Defaults.Duration;
 
-
-            _InstanceContext = new EffectContext();
+            //guard in case context was generated prior to class Start() invocation. (like if we created this component and assigned some context to it elsewhere)
+            if(_InstanceContext == null)
+                _InstanceContext = new EffectContext();
 
             _InstanceContext.AttackData._InitialGameObject = gameObject;
             _InstanceContext.AttackData._Owner = Info.AttachedActor;

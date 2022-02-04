@@ -76,6 +76,7 @@ namespace ActorSystem.StatusEffect
         /// </summary>
         /// <param name="instance_holder">Gameobject to attach the new component to</param>
         /// <returns>The newly created status effect component</returns>
+        // TODO: Create a method to pass in context!
         public SE_StatusEffect_Instance CreateInstance(GameObject instance_holder)
         {
             var inst = instance_holder.AddComponent<SE_StatusEffect_Instance>();
