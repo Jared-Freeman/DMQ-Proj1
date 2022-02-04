@@ -18,12 +18,14 @@ public class ActorStats : MonoBehaviour
     /// </summary>
     public ActorSystem.ActorStatsPreset Preset;
 
-    protected List<SE_StatusEffect_Instance> _ListStatusEffects;
+    public List<SE_StatusEffect_Base> InitialStatusEffects = new List<SE_StatusEffect_Base>();
+
+    protected List<SE_StatusEffect_Instance> _ListStatusEffects = new List<SE_StatusEffect_Instance>();
     public IReadOnlyCollection<SE_StatusEffect_Instance> StatusEffects
     {
         get
         {
-            return _ListStatusEffects.AsReadOnly();
+            return _ListStatusEffects?.AsReadOnly();
         }
     }
 
@@ -114,6 +116,11 @@ public class ActorStats : MonoBehaviour
     void Start()
     {
         ResetDamage();
+
+        foreach(var e in InitialStatusEffects)
+        {
+            AddStatusEffect(e.CreateInstance(gameObject));
+        }
     }
     public void ResetDamage()
     {

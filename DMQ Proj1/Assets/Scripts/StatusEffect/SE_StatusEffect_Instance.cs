@@ -73,11 +73,13 @@ namespace ActorSystem.StatusEffect
         protected void Awake()
         {
             Info.AttachedActor = gameObject.GetComponent<Actor>();
-            Info.RemainingDuration = Preset.Settings.Defaults.Duration;
         }
 
         protected void Start()
         {
+            Info.RemainingDuration = Preset.Settings.Defaults.Duration;
+
+
             _InstanceContext = new EffectContext();
 
             _InstanceContext.AttackData._InitialGameObject = gameObject;
@@ -105,7 +107,7 @@ namespace ActorSystem.StatusEffect
         {
             yield return new WaitForSeconds(Preset.Settings.Effects.PeriodicEffectInterval);
 
-            while(RemainingDuration > 0)
+            while(Preset.Settings.Flags.InfiniteDuration || RemainingDuration > 0)
             {
                 UpdateEffectContext();
                 FX.Effect_Periodic?.Invoke(ref _InstanceContext);

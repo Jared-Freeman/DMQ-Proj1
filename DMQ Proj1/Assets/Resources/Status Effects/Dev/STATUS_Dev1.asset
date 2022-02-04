@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5513a0c55cde5074692dc7f10846dd38, type: 3}
+  m_Name: STATUS_Dev1
+  m_EditorClassIdentifier: 
+  Name: Dev1
+  Description: BLARG
+  Icon: {fileID: 21300000, guid: 4b5675791064fa7419d567f743291fa7, type: 3}
+  Settings:
+    Defaults:
+      Duration: 0
+    Flags:
+      InfiniteDuration: 1
+    Effects:
+      Effect_Begin: {fileID: 11400000, guid: ec13563a3ea743d4fb08127642853f23, type: 2}
+      PeriodicEffectInterval: 0.125
+      Effect_Periodic: {fileID: 11400000, guid: ec13563a3ea743d4fb08127642853f23,
+        type: 2}
+      Effect_End: {fileID: 0}
+      Effect_Destroyed: {fileID: 0}
+    StatsModifiers:
+      HP:
+        Default:
+          Max: 5
+          Min: 0
+        Modifier:
+          Multiply: 1
+          Add: 0
+      Energy:
+        Default:
+          Max: 5
+          Min: 0
+        Modifier:
+          Multiply: 1
+          Add: 0
+      MoveSpeed:
+        Default:
+          Max: 7.5
+          Min: 0
+        Modifier:
+          Multiply: 1
+          Add: 0

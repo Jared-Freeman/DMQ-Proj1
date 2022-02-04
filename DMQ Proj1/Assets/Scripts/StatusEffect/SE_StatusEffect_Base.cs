@@ -11,12 +11,13 @@ namespace ActorSystem.StatusEffect
     /// <summary>
     /// A preset containing the info to impl any status effect
     /// </summary>
+    [CreateAssetMenu(fileName = "STATUS_", menuName = "Actor/Status Effect", order = 1)]
     public class SE_StatusEffect_Base : ScriptableObject
     {
         #region Members
 
         public string Name;
-        [Multiline] public string Descrption;
+        [Multiline] public string Description;
         public Sprite Icon;
 
         public SE_Preset_Settings Settings;
@@ -53,8 +54,8 @@ namespace ActorSystem.StatusEffect
             [Header("Effect Begin occurs when status is added to the target Actor.")]
             public Effect_Base Effect_Begin;
 
-            //surely there isn't a reason to perform an effect more than 8 times a second...
-            [Min(.125f)]
+            //surely there isn't a reason to perform an effect more than this right???
+            [Min(.025f)]
             public float PeriodicEffectInterval;
             [Header("Effect Periodic every PeriodicEffectInterval seconds.")]
             public Effect_Base Effect_Periodic;
@@ -78,6 +79,7 @@ namespace ActorSystem.StatusEffect
         public SE_StatusEffect_Instance CreateInstance(GameObject instance_holder)
         {
             var inst = instance_holder.AddComponent<SE_StatusEffect_Instance>();
+            inst.Preset = this;
 
             return inst;
         }
