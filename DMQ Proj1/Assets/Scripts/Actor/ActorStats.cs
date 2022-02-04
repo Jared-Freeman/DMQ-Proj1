@@ -2,113 +2,172 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Utils.Stats;
 
 public class ActorStats : MonoBehaviour
 {
 
-    #region members
+    #region Members
 
     public bool FLAG_Debug = false;
 
-    //might eventually want to perform a method call to alter these values 
-    //(i.e., changing max health reduces current health by (newmax - max))
-    [Header("Default Values")]
-    public float HpMax = 0;
-    public float EnergyMax = 0;
+    /// <summary>
+    /// Reference to the asset containing this Actor's stat defaults.
+    /// </summary>
+    public ActorSystem.ActorStatsPreset Preset;
 
-    //probably want to increase protection on current (state) variables
-    [Header("Current Values")]
-    public float HpCurrent;
-    public float EnergyCurrent;
+    protected List<ActorSystem.ActorStatsData> _List_StatusModifiers;
+    public IReadOnlyCollection<ActorSystem.ActorStatsData> StatusEffects
+    {
+        get
+        {
+            return _List_StatusModifiers.AsReadOnly();
+        }
+    }
 
-    //how do we impl this to not mess with stuff like damage over time (DoT)?
-    //Should we make invuln into a comm channel sort of thing? 
-    //(?) enum InvulnerabilityHandling { Normal, IgnoreInvulnerabilityFrames, WaitUntilInvulnerabilityFramesOver }
-    [Tooltip("Time that this gameObject is invulnerable for, after receiving damage.")]
-    public float invulnerabiltyTime;
-
-    public int atk = 0;
-    public int def = 0;
-
-    //later stuff
-    int buffAtk = 0;
-    int buffDef = 0;
-    public int totalAtk = 0;
-    public int totalDef = 0;
-
-    public float m_timeSinceLastHit = 0.0f;
-    protected Collider m_Collider;
-
+    Actor actor;
     System.Action schedule;
-    #endregion
+
+    // DEPRECATED
+
+    ////how do we impl this to not mess with stuff like damage over time (DoT)?
+    ////Should we make invuln into a comm channel sort of thing? 
+    ////(?) enum InvulnerabilityHandling { Normal, IgnoreInvulnerabilityFrames, WaitUntilInvulnerabilityFramesOver }
+    //[Tooltip("Time that this gameObject is invulnerable for, after receiving damage.")]
+    //public float invulnerabiltyTime;
+
+    //public int atk = 0;
+    //public int def = 0;
+
+    ////later stuff
+    //int buffAtk = 0;
+    //int buffDef = 0;
+    //public int totalAtk = 0;
+    //public int totalDef = 0;
+
+    public float m_timeSinceLastHit = 0.0f; //Can we deprecate this or discuss this functionality? The current implementation was blocking features like damage over time -Jared
+
+    //protected Collider m_Collider; //why was this here??
+
+    protected StatInstance HP;
+    protected StatInstance Energy;
+    protected StatInstance MoveSpeed;
+
+    #region Properties
+
+    //public float HpCurrent
+    //{
+    //    get { return (HP.Value + HP.Modifier.Add) * HP.Modifier.Multiply; }
+    //    protected set 
+    //    { 
+    //        HP.Value = value;         
+    //    }
+    //}
+    //public float EnergyCurrent
+    //{
+    //    get { return (Energy.Value + Energy.Modifier.Add) * Energy.Modifier.Multiply; }
+    //    protected set { Energy.Value = value; }
+    //}
+    //public float MoveSpeedCurrent
+    //{
+    //    get { return (MoveSpeed.Value + MoveSpeed.Modifier.Add) * MoveSpeed.Modifier.Multiply; }
+    //    protected set { MoveSpeed.Value = value; }
+    //}
+
+    public float HpCurrent
+    {
+        get { return HP.Value; }
+        protected set { HP.Value = value; }
+    }
+    public float EnergyCurrent
+    {
+        get { return Energy.Value; }
+        protected set { Energy.Value = value; }
+    }
+    public float MoveSpeedCurrent
+    {
+        get { return MoveSpeed.Value; }
+        protected set { MoveSpeed.Value = value; }
+    }
 
     public bool isInvulnerable { get; set; }
 
+    #endregion
+
+    #endregion
+
+    #region Events
+
     public UnityEvent OnDeath, OnReceiveDamage, OnHitWhileInvulnerable, OnBecomeVulnerable, OnResetDamage;
 
+    #endregion
 
-
-    //refs
-    Actor actor;
+    #region Initialization
+    void Awake()
+    {
+        actor = GetComponent<Actor>();
+        //m_Collider = GetComponent<Collider>();
+    }
 
     void Start()
     {
         ResetDamage();
-        m_Collider = GetComponent<Collider>();
-        CalculateStats();
-        actor = GetComponent<Actor>();
     }
     public void ResetDamage()
     {
-        HpCurrent = HpMax;
-        EnergyCurrent = EnergyMax;
+        HpCurrent = Preset.Data.HP.Default.Max;
+        EnergyCurrent = Preset.Data.Energy.Default.Max;
         isInvulnerable = false;
         m_timeSinceLastHit = 0.0f;
         OnResetDamage.Invoke();
     }
-    public void CalculateStats()
+
+    #endregion
+
+    /// <summary>
+    /// Recalculates ActorStat current values based on ALL current status effects
+    /// </summary>
+    protected void RecalculateStatusMutations()
     {
-        totalAtk = atk + buffAtk;
-        totalDef = def + buffDef;
+        ResetStatusMutation();
+
+        //recalculate per-status
+        foreach (var m in _List_StatusModifiers)
+        {
+            AppendStatusMutation(m);
+        }
     }
 
-    public void ApplyDamage(DamageMessage data)
+    /// <summary>
+    /// Appends a stat data modifier into this ActorStat's modifier buffer
+    /// </summary>
+    /// <param name="append_data"></param>
+    public void AppendStatusMutation(ActorSystem.ActorStatsData append_data)
     {
-        Debug.Log("false Taken");
 
-        if (HpCurrent <= 0)
-        {//ignore damage if already dead. TODO : may have to change that if we want to detect hit on death...
-            return;
-        }
-        
-        if (isInvulnerable && !data.FLAG_IgnoreInvulnerability)
-        {
-            OnHitWhileInvulnerable.Invoke();
-            return;
-        }
-
-        Vector3 forward = transform.forward;
-
-        //we project the direction to damager to the plane formed by the direction of damage
-        Vector3 positionToDamager = data.damageSource - transform.position;
-        positionToDamager -= transform.up * Vector3.Dot(transform.up, positionToDamager);
-
-        isInvulnerable = true;
-        m_timeSinceLastHit = 1.0f;
-
-        HpCurrent -= Mathf.Max(data.amount - totalDef, 0);
-
-        if (HpCurrent <= 0)
-        {
-            schedule += OnDeath.Invoke; //This avoid race condition when objects kill each other.
-            actor.ActorDead();
-        }
-        else
-        {
-            OnReceiveDamage.Invoke();
-        }
+        HP.Modifier.Add += append_data.HP.Modifier.Add;
+        Energy.Modifier.Add += append_data.Energy.Modifier.Add;
+        MoveSpeed.Modifier.Add += append_data.MoveSpeed.Modifier.Add;
 
 
+        HP.Modifier.Multiply *= append_data.HP.Modifier.Multiply;
+        Energy.Modifier.Multiply *= append_data.Energy.Modifier.Multiply;
+        MoveSpeed.Modifier.Multiply *= append_data.MoveSpeed.Modifier.Multiply;
+    }
+
+    /// <summary>
+    /// Reset Status mutation to default values
+    /// </summary>
+    protected void ResetStatusMutation()
+    {
+        HP.Modifier.Add = Preset.Data.HP.Modifier.Add;
+        HP.Modifier.Multiply = Preset.Data.HP.Modifier.Multiply;
+
+        Energy.Modifier.Add = Preset.Data.Energy.Modifier.Add;
+        Energy.Modifier.Multiply = Preset.Data.Energy.Modifier.Multiply;
+
+        MoveSpeed.Modifier.Add = Preset.Data.MoveSpeed.Modifier.Add;
+        MoveSpeed.Modifier.Multiply = Preset.Data.MoveSpeed.Modifier.Multiply;
     }
 
     //TODO: Make more robust
@@ -121,6 +180,8 @@ public class ActorStats : MonoBehaviour
             return;
         }
 
+
+        //if no team was sent with this message, just take the damage.
         if(DamageMessage._Team == null)
         {
             if (FLAG_Debug) Debug.Log("No team found on message packet");
@@ -137,12 +198,68 @@ public class ActorStats : MonoBehaviour
             OnReceiveDamage.Invoke();
         }
 
+
         if (HpCurrent <= 0)
         {
             schedule += OnDeath.Invoke; //This avoid race condition when objects kill each other.
             actor.ActorDead();
         }
     }
+
+    #region Deprecated
+
+    //DEPRECATED
+    //public void CalculateStats()
+    //{
+    //    totalAtk = atk + buffAtk;
+    //    totalDef = def + buffDef;
+    //}
+
+    /// <summary>
+    /// DEPRECATED. Please use new Actor_DamageMessage arg impl!
+    /// </summary>
+    /// <param name="data"></param>
+    public void ApplyDamage(DamageMessage data)
+    {
+        if (FLAG_Debug) Debug.Log("Damge Taken in deprecated function!");
+
+        if (HpCurrent <= 0)
+        {//ignore damage if already dead. TODO : may have to change that if we want to detect hit on death...
+            return;
+        }
+
+        if (isInvulnerable && !data.FLAG_IgnoreInvulnerability)
+        {
+            OnHitWhileInvulnerable.Invoke();
+            return;
+        }
+
+        Vector3 forward = transform.forward;
+
+        //we project the direction to damager to the plane formed by the direction of damage
+        Vector3 positionToDamager = data.damageSource - transform.position;
+        positionToDamager -= transform.up * Vector3.Dot(transform.up, positionToDamager);
+
+        isInvulnerable = true;
+        m_timeSinceLastHit = 1.0f;
+
+        HpCurrent -= Mathf.Max(data.amount, 0);
+
+        if (HpCurrent <= 0)
+        {
+            schedule += OnDeath.Invoke; //This avoid race condition when objects kill each other.
+            actor.ActorDead();
+        }
+        else
+        {
+            OnReceiveDamage.Invoke();
+        }
+
+
+    }
+
+    #endregion
+
 }
 [System.Serializable]
 public struct DamageMessage

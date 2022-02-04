@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActorStatusEffect : MonoBehaviour
+
+//Template for AbilitySystem stuff. You can just copy-paste this
+public class AS_TEMPLATE : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()

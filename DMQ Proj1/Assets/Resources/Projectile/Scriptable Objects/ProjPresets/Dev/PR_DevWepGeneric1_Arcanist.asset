@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 442cd49177849294ab449c577b42b28f, type: 3}
+  m_Name: PR_DevWepGeneric1_Arcanist
+  m_EditorClassIdentifier: 
+  ProjectileFX:
+    EndProjectileEffects:
+      ProjectileFXList: []
+    CollisionEnterProjectileEffects:
+      ProjectileFXList:
+      - {fileID: 11400000, guid: ad19e38287244ad4a8774f7ec4dcdfe3, type: 2}
+      - {fileID: 11400000, guid: 4201ff62f2e58584ba884bd387731a29, type: 2}
+    CollisionStayProjectileEffects:
+      ProjectileFXList: []
+    CollisionExitProjectileEffects:
+      ProjectileFXList: []
+    StartProjectileEffects:
+      ProjectileFXList: []
+  DestroyOptions:
+    FLAG_UseDuration: 1
+    Duration: 8
+    FLAG_UseCollisionEnters: 1
+    CollisionEnters: 1
+    FLAG_UseCollisionStayDuration: 0
+    CollisionStayDuration: 0
+  MoveOptions:
+    FLAG_FaceRigidbodyVelocity: 0
+    MovementType: 1
+    MovementTypeOptions:
+      LinearSimpleOptions:
+        Speed: 3
+      ParabolicSimpleOptions:
+        TravelTime: 0
+        HeightOverTime:
+          serializedVersion: 2
+          m_Curve: []
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+        MaxHeight: 0
+      PhysicsContinuousForceOptions:
+        FLAGScaleForceByMass: 0
+        ForcePerSecond: 0
+      PhysicsImpulseOptions:
+        FLAGScaleForceByMass: 0
+        FLAGUseSpeedComputationInsteadOfForce: 0
+        Force: 0
+        Speed: 0
+      HomingSimpleOptions:
+        Speed: 0
+        TurnRate: 0

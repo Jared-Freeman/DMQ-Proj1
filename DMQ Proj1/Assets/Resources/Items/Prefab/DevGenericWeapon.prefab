@@ -197,7 +197,7 @@ GameObject:
   m_Component:
   - component: {fileID: 744460600123902260}
   - component: {fileID: 744460600123902259}
-  - component: {fileID: 744460600123902258}
+  - component: {fileID: 6668792726040136867}
   m_Layer: 31
   m_Name: DevGenericWeapon
   m_TagString: Untagged
@@ -239,7 +239,7 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &744460600123902258
+--- !u!114 &6668792726040136867
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -248,11 +248,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 744460600123902261}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 928679f6a6819d740a6c2f9ec15b2a6e, type: 3}
+  m_Script: {fileID: 11500000, guid: e2b27adc2e0f2d445af892d1c22bef20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BasePresetData: {fileID: 11400000, guid: a6926244536d2e147b302529cfeb0795, type: 2}
-  BaseWeaponData: {fileID: 11400000, guid: a6926244536d2e147b302529cfeb0795, type: 2}
+  BasePresetData: {fileID: 11400000, guid: c06e56a4bb166a94bbb1a347d4d5a71b, type: 2}
+  BaseWeaponData: {fileID: 11400000, guid: c06e56a4bb166a94bbb1a347d4d5a71b, type: 2}
+  DefaultWeaponPreset: {fileID: 11400000, guid: c06e56a4bb166a94bbb1a347d4d5a71b,
+    type: 2}
+  UseNoCollideLayer: 1
+  _W_Arcanist: {fileID: 0}
+  _W_Bulwark: {fileID: 0}
+  _W_Enchanter: {fileID: 0}
+  _W_Interdictor: {fileID: 0}
 --- !u!1 &744460601028258719
 GameObject:
   m_ObjectHideFlags: 0

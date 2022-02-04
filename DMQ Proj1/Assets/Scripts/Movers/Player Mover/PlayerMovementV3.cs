@@ -927,35 +927,38 @@ public class PlayerMovementV3 : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        //No rigidbody means we should just slap the wall or whatever
-        if(collision.rigidbody == null)
-        {
-            //IFX
-            if (DashOptions._DashImpactEffect != null)
-            {
-                DashOptions._DashImpactEffect.SpawnImpactEffect(null, collision.contacts[0].point, collision.contacts[0].normal);
-            }
-            ChangeState(State.Moving);
-        }
+        //DISABLED THIS STUFF FOR NOW UNTIL BUGS GET FIXED! --Jared
 
-        //TODO: Consider multiple styles of collision handling
-        else if (CurrentState == State.Dashing && collision.rigidbody.mass >= RB.mass)
-        {
-            //IFX
-            if(DashOptions._DashImpactEffect != null)
-            {
-                DashOptions._DashImpactEffect.SpawnImpactEffect(null, collision.contacts[0].point, collision.contacts[0].normal);
-            }
+        ////No rigidbody means we should just slap the wall or whatever
+        //if(collision.rigidbody == null)
+        //{
+        //    //IFX
+        //    if (DashOptions._DashImpactEffect != null)
+        //    {
+        //        DashOptions._DashImpactEffect.SpawnImpactEffect(null, collision.contacts[0].point, collision.contacts[0].normal);
+        //    }
+        //    ChangeState(State.Moving);
+        //}
 
-            //impart physic impulse. Cancel remaining dash
-            if(collision.rigidbody != null)
-            {
-                RB.AddForce(-RB.velocity * RB.mass, ForceMode.Impulse);
-                collision.rigidbody.AddForce(RB.velocity * RB.mass, ForceMode.Impulse);
-            }
+        ////TODO: Consider multiple styles of collision handling
+        //else if (CurrentState == State.Dashing && collision.rigidbody.mass >= RB.mass)
+        //{
+        //    //IFX
+        //    if(DashOptions._DashImpactEffect != null)
+        //    {
+        //        DashOptions._DashImpactEffect.SpawnImpactEffect(null, collision.contacts[0].point, collision.contacts[0].normal);
+        //    }
 
-            ChangeState(State.Moving);
-        }
+        //    //impart physic impulse. Cancel remaining dash
+        //    if(collision.rigidbody != null)
+        //    {
+        //        RB.AddForce(-RB.velocity * RB.mass, ForceMode.Impulse);
+        //        collision.rigidbody.AddForce(RB.velocity * RB.mass, ForceMode.Impulse);
+        //    }
+
+        //    ChangeState(State.Moving);
+        //}
+
     }
 
     #region Dash Movement Models
