@@ -1,7 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+
+using System.Linq;
+
 using UnityEngine;
 using UnityEngine.Events;
+
 using Utils.Stats;
 
 using ActorSystem.StatusEffect;
@@ -117,7 +121,7 @@ public class ActorStats : MonoBehaviour
     {
         ResetDamage();
 
-        foreach(var e in InitialStatusEffects)
+        foreach (var e in InitialStatusEffects)
         {
             AddStatusEffect(e.CreateInstance(gameObject));
         }
@@ -166,6 +170,48 @@ public class ActorStats : MonoBehaviour
         HP.Modifier.Multiply *= append_data.HP.Modifier.Multiply;
         Energy.Modifier.Multiply *= append_data.Energy.Modifier.Multiply;
         MoveSpeed.Modifier.Multiply *= append_data.MoveSpeed.Modifier.Multiply;
+    }
+
+    /// <summary>
+    /// Removes up to <paramref name="maxCount"/> Status Effect Instances from this Stats record
+    /// </summary>
+    /// <param name="Effect">The effect reference to look for</param>
+    /// <param name="maxCount">Maximum instances to remove. Set to -1 to remove ALL found instances</param>
+    /// <param name="removeHighestRemainingDuration">Set to true, status effects will be removed in order of greatest remaining duration</param>
+    public void RemoveStatusEffect(SE_StatusEffect_Base Effect, int maxCount = 1, bool removeHighestRemainingDuration = true)
+    {
+        List<SE_StatusEffect_Instance> RemovalFX = new List<SE_StatusEffect_Instance>();
+
+        //obtain staging list for removal
+        foreach(SE_StatusEffect_Instance s in _ListStatusEffects)
+        {
+            if(s.Preset == Effect)
+            {
+                RemovalFX.Add(s);
+            }
+        }
+
+        //reorder if needed
+        if (removeHighestRemainingDuration)
+        {
+            RemovalFX.OrderBy(x => x.RemainingDuration);
+        }
+
+        //Remove FX. Note we don't have to do list mgmnt here since it's handled by event listener
+        if(maxCount > -1)
+        {
+            for (int i = 0; i < maxCount; i++)
+            {
+                Destroy(RemovalFX[i]);
+            }
+        }
+        else
+        {
+            foreach(SE_StatusEffect_Instance s in RemovalFX)
+            {
+                Destroy(s);
+            }
+        }
     }
 
     private void Effect_OnStatusEffectDestroy_Local(object sender, CSEventArgs.StatusEffect_Actor_EventArgs e)

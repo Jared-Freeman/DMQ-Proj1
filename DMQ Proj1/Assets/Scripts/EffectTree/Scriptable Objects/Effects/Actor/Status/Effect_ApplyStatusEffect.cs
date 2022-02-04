@@ -12,7 +12,7 @@ namespace EffectTree
     [CreateAssetMenu(fileName = "ASE_", menuName = "Effect Tree/Apply Status Effect", order = 2)]
     public class Effect_ApplyStatusEffect : Effect_Base
     {
-        public TargetFilterOptions TargetFilters;
+        public TargetFilterOptions TargetFilters = new TargetFilterOptions();
         /// <summary>
         /// List of statuses to apply to target
         /// </summary>
