@@ -305,6 +305,10 @@ public class ActorStats : MonoBehaviour
     #endregion
 
 }
+
+/// <summary>
+/// DEPRECATED!
+/// </summary>
 [System.Serializable]
 public struct DamageMessage
 {
