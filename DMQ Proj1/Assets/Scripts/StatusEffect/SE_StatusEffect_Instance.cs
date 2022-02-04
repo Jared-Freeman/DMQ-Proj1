@@ -91,7 +91,8 @@ namespace ActorSystem.StatusEffect
 
             FX.Effect_Begin?.Invoke(ref _InstanceContext);
 
-            StartCoroutine(I_PeriodicUpdate());
+            //Avoid periodic coroutine invocation if no periodic effect exists!
+            if(FX.Effect_Periodic != null) StartCoroutine(I_PeriodicUpdate());
 
             OnStatusEffectCreate?.Invoke(this, new CSEventArgs.StatusEffect_Actor_EventArgs(this, AttachedActor));
         }
