@@ -12,7 +12,18 @@ namespace ItemSystem.Weapons
     {
         public Item_Weapon_DevGeneric1Preset DefaultWeaponPreset;
         public bool UseNoCollideLayer = true;
-        
+
+
+        //List<SomeStruct> Class_Specific_Abilities;
+        //[SerializeField]
+        //public struct SomeStruct
+        //{
+        //    ClassSystem.CharacterClass ClassRef;
+        //    AbilitySystem.AS_Ability_Base Attached_BasicAttack;
+        //    AbilitySystem.AS_Ability_Base Attached_Ability1;
+        //    AbilitySystem.AS_Ability_Base Attached_Ability2;
+        //}
+
         // To extend functionality for multiple classes
         // If the user has one of the classes with different functionality it will play that attack. Else it will play the default attack
         public Item_Weapon_DevGeneric1_Arcanist _W_Arcanist;
