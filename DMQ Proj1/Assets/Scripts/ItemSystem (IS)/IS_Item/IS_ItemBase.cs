@@ -48,8 +48,23 @@ namespace ItemSystem
         protected static bool s_FLAG_ITEM_DEBUG = true;
 
         //preset base
-        [Header("Make sure to MATCH all IS_ItemPresetBase refs!!!")]
-        public IS_ItemPresetBase BasePresetData;
+        [Header("WARNING: Preset must match item subclass!")]
+        [SerializeField] private IS_ItemPresetBase _PresetData;
+
+        /// <summary>
+        /// Can override this property to cast to a more specific item preset
+        /// </summary>
+        public virtual IS_ItemPresetBase Preset
+        {
+            get
+            {
+                return _PresetData;
+            }
+            set
+            {
+                _PresetData = value;
+            }
+        }
 
         //states
         public ItemLocation Location_State { get; protected set; } = ItemLocation.World;
@@ -69,11 +84,17 @@ namespace ItemSystem
 
         protected virtual void Awake()
         {
+            if(Preset == null)
+            {
+                Debug.LogError(ToString() + ": INVALID PRESET: Please check that you are using the proper preset subclass for this item!");
+                Destroy(gameObject);
+            }
+
             {
                 GameObject GO = new GameObject("Item Trigger Holder (Auto-Generated)");
 
                 var sc = GO.AddComponent<SphereCollider>();
-                sc.radius = BasePresetData.BaseOptions.PickupRadius;
+                sc.radius = Preset.BaseOptions.PickupRadius;
                 sc.isTrigger = true;
                 
                 GO.transform.parent = gameObject.transform;
@@ -149,7 +170,7 @@ namespace ItemSystem
         /// <returns></returns>
         public bool InPickupRadius(Vector3 pos)
         {
-            if((pos - transform.position).sqrMagnitude <= BasePresetData.BaseOptions.PickupRadius * BasePresetData.BaseOptions.PickupRadius)
+            if((pos - transform.position).sqrMagnitude <= Preset.BaseOptions.PickupRadius * Preset.BaseOptions.PickupRadius)
             {
                 return true;
             }

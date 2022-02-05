@@ -18,7 +18,27 @@ namespace ItemSystem.Weapons
         }
 
         protected AddedInfo BaseWeaponInfo;
-        public ItemSystem.IS_WeaponPreset BaseWeaponData;
+
+        public override IS_ItemPresetBase Preset
+        {
+            get
+            {
+                var p = base.Preset as IS_WeaponPreset;
+                if (p != null)
+                {
+                    return p;
+                }
+                return null;
+            }
+            set
+            {
+                var p = value as IS_WeaponPreset;
+                if (p != null)
+                {
+                    base.Preset = p;
+                }
+            }
+        }
 
         public bool CanAttack { get { return BaseWeaponInfo._Cooldown.CanUseCooldown(); } }
 
@@ -26,14 +46,14 @@ namespace ItemSystem.Weapons
         {
             base.Awake();
 
-            if (BaseWeaponData == null)
+            if (Preset == null)
             {
-                Debug.LogError(ToString() + ": No Data attached! Destroying");
+                Debug.LogError(ToString() + ": Invalid Preset attached! Destroying");
                 Destroy(gameObject);
             }
 
             //Instantiate a Cooldown Tracker via copy ctor for this weapon instance
-            BaseWeaponInfo._Cooldown = new Utils.CooldownTracker(BaseWeaponData.BaseWeaponOptions.CooldownPreset);
+            BaseWeaponInfo._Cooldown = new Utils.CooldownTracker((Preset as IS_WeaponPreset)?.BaseWeaponOptions.CooldownPreset);
         }
 
         //This impl is the fairly standard way of overriding the base method.

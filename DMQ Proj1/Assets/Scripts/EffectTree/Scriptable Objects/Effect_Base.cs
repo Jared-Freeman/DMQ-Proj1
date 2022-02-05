@@ -30,6 +30,15 @@ namespace EffectTree
     [System.Serializable]
     public class EffectContext
     {
+        public EffectContext(Utils.AttackContext ctx)
+        {
+            AttackData = ctx;
+        }
+        public EffectContext()
+        {
+            AttackData = new Utils.AttackContext();
+        }
+
         public Utils.AttackContext AttackData = new Utils.AttackContext();
     }
 }

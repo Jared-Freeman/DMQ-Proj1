@@ -25,7 +25,7 @@ namespace ItemSystem
         //Item allowed
         public bool ItemAllowed(IS_ItemBase item)
         {
-            return ItemAllowed(item.BasePresetData);
+            return ItemAllowed(item.Preset);
         }
         public bool ItemAllowed(IS_ItemPresetBase item)
         {
