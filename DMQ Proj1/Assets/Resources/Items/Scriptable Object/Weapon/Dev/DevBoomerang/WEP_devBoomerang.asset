@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b87e658bdc357714aa4cfcf8c5d5b476, type: 3}
+  m_Name: WEP_devBoomerang
+  m_EditorClassIdentifier: 
+  BaseOptions:
+    PickupRadius: 2
+  BaseWeaponOptions:
+    EquipTime: 0
+    DequipTime: 0
+    CooldownPreset:
+      _Cooldown: 1
+  Ability: {fileID: 11400000, guid: 57c1505b7a57dbc4e9a82c338240ee44, type: 2}
