@@ -17,6 +17,9 @@ namespace ItemSystem.Weapons
         public AS_Ability_Base DefaultAbility_1;
         public AS_Ability_Base DefaultAbility_2;
 
+        /// <summary>
+        /// A record of abilities, per class
+        /// </summary>
         [System.Serializable]
         public class ClassAbilityRecord
         {
