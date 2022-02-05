@@ -14,16 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ProjectileFX:
     EndProjectileEffects:
+      EffectList: []
       ProjectileFXList: []
     CollisionEnterProjectileEffects:
+      EffectList:
+      - {fileID: 11400000, guid: a03316b7314fd304e844b05667e6578a, type: 2}
       ProjectileFXList:
       - {fileID: 11400000, guid: 4201ff62f2e58584ba884bd387731a29, type: 2}
-      - {fileID: 11400000, guid: ad19e38287244ad4a8774f7ec4dcdfe3, type: 2}
     CollisionStayProjectileEffects:
+      EffectList: []
       ProjectileFXList: []
     CollisionExitProjectileEffects:
+      EffectList: []
       ProjectileFXList: []
     StartProjectileEffects:
+      EffectList: []
       ProjectileFXList: []
   DestroyOptions:
     FLAG_UseDuration: 1

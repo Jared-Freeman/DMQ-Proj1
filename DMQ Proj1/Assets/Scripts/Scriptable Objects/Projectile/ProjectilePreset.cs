@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using EffectTree;
+
 
 public enum ProjectileMoveStyle { None, LinearSimple, ParabolicSimple, PhysicsImpulse, PhysicsContinuousForce, HomingSimple, /*NYI*/DirectionGuided };
 
@@ -18,10 +20,32 @@ public class ProjectilePreset : ScriptableObject
     [System.Serializable]
     public struct GenericProjectileMessagePayload
     {
+        public List<Effect_Base> EffectList;
+        [Header("Deprecated. Use EffectList instead")]
         public List<ProjectileEffect> ProjectileFXList;
 
         public void PerformProjectileEffects(GenericProjectile Projectile, Collider Col = null)
         {
+            EffectContext c = new EffectContext();
+
+            c.AttackData._InitialDirection = Projectile.transform.forward;
+            c.AttackData._InitialGameObject = Projectile.gameObject;
+            c.AttackData._InitialPosition = Projectile.gameObject.transform.position;
+
+            c.AttackData._Owner = Projectile.ActorOwner;
+            if (Projectile.ActorOwner != null)
+                c.AttackData._Team = Projectile.ActorOwner._Team;
+
+            if(Col != null)
+                c.AttackData._TargetGameObject = Col.gameObject;
+
+            //TODO: Grab collision data and throw it into the remaining c.AttackData fields for Target
+
+            foreach (var e in EffectList)
+            {
+                e.Invoke(ref c);
+            }
+
             foreach (ProjectileEffect PE in ProjectileFXList)
             {
                 PE.PerformPayloadEffect(Projectile, Col);

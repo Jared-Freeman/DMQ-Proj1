@@ -1,8 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+
+using System.Linq;
+
 using UnityEngine;
 using UnityEngine.Events;
+
 using Utils.Stats;
+
+using ActorSystem.StatusEffect;
 
 public class ActorStats : MonoBehaviour
 {
@@ -16,12 +22,14 @@ public class ActorStats : MonoBehaviour
     /// </summary>
     public ActorSystem.ActorStatsPreset Preset;
 
-    protected List<ActorSystem.ActorStatsData> _List_StatusModifiers;
-    public IReadOnlyCollection<ActorSystem.ActorStatsData> StatusEffects
+    public List<SE_StatusEffect_Base> InitialStatusEffects = new List<SE_StatusEffect_Base>();
+
+    protected List<SE_StatusEffect_Instance> _ListStatusEffects = new List<SE_StatusEffect_Instance>();
+    public IReadOnlyCollection<SE_StatusEffect_Instance> StatusEffects
     {
         get
         {
-            return _List_StatusModifiers.AsReadOnly();
+            return _ListStatusEffects?.AsReadOnly();
         }
     }
 
@@ -112,6 +120,11 @@ public class ActorStats : MonoBehaviour
     void Start()
     {
         ResetDamage();
+
+        foreach (var e in InitialStatusEffects)
+        {
+            AddStatusEffect(e.CreateInstance(gameObject));
+        }
     }
     public void ResetDamage()
     {
@@ -132,9 +145,9 @@ public class ActorStats : MonoBehaviour
         ResetStatusMutation();
 
         //recalculate per-status
-        foreach (var m in _List_StatusModifiers)
+        foreach (var m in _ListStatusEffects)
         {
-            AppendStatusMutation(m);
+            AddStatusEffect(m);
         }
     }
 
@@ -142,18 +155,95 @@ public class ActorStats : MonoBehaviour
     /// Appends a stat data modifier into this ActorStat's modifier buffer
     /// </summary>
     /// <param name="append_data"></param>
-    public void AppendStatusMutation(ActorSystem.ActorStatsData append_data)
+    public void AddStatusEffect(SE_StatusEffect_Instance Effect)
     {
+        _ListStatusEffects.Add(Effect);
+
+        Effect.OnStatusEffectDestroy_Local += Effect_OnStatusEffectDestroy_Local;
+
+        var append_data = Effect.Preset.Settings.StatsModifiers;
 
         HP.Modifier.Add += append_data.HP.Modifier.Add;
         Energy.Modifier.Add += append_data.Energy.Modifier.Add;
         MoveSpeed.Modifier.Add += append_data.MoveSpeed.Modifier.Add;
 
-
         HP.Modifier.Multiply *= append_data.HP.Modifier.Multiply;
         Energy.Modifier.Multiply *= append_data.Energy.Modifier.Multiply;
         MoveSpeed.Modifier.Multiply *= append_data.MoveSpeed.Modifier.Multiply;
     }
+
+    /// <summary>
+    /// Removes up to <paramref name="maxCount"/> Status Effect Instances from this Stats record
+    /// </summary>
+    /// <param name="Effect">The effect reference to look for</param>
+    /// <param name="maxCount">Maximum instances to remove. Set to -1 to remove ALL found instances</param>
+    /// <param name="removeHighestRemainingDuration">Set to true, status effects will be removed in order of greatest remaining duration</param>
+    public void RemoveStatusEffect(SE_StatusEffect_Base Effect, int maxCount = 1, bool removeHighestRemainingDuration = true)
+    {
+        List<SE_StatusEffect_Instance> RemovalFX = new List<SE_StatusEffect_Instance>();
+
+        //obtain staging list for removal
+        foreach(SE_StatusEffect_Instance s in _ListStatusEffects)
+        {
+            if(s.Preset == Effect)
+            {
+                RemovalFX.Add(s);
+            }
+        }
+
+        //reorder if needed
+        if (removeHighestRemainingDuration)
+        {
+            RemovalFX.OrderBy(x => x.RemainingDuration);
+        }
+
+        //Remove FX. Note we don't have to do list mgmnt here since it's handled by event listener
+        if(maxCount > -1)
+        {
+            for (int i = 0; i < maxCount; i++)
+            {
+                Destroy(RemovalFX[i]);
+            }
+        }
+        else
+        {
+            foreach(SE_StatusEffect_Instance s in RemovalFX)
+            {
+                Destroy(s);
+            }
+        }
+    }
+
+    private void Effect_OnStatusEffectDestroy_Local(object sender, CSEventArgs.StatusEffect_Actor_EventArgs e)
+    {
+        if(e._Actor == this)
+        {
+            RemoveStatusMutation(e._StatusEffect);
+        }
+
+        //not sure if this unsubscription is needed but does FEEL safer.
+        e._StatusEffect.OnStatusEffectDestroy_Local -= Effect_OnStatusEffectDestroy_Local;
+    }
+
+    /// <summary>
+    /// Removes a stat data modifier into this ActorStat's modifier buffer
+    /// </summary>
+    /// <param name="append_data"></param>
+    protected void RemoveStatusMutation(SE_StatusEffect_Instance Effect)
+    {
+        _ListStatusEffects.Remove(Effect);
+
+        var append_data = Effect.Preset.Settings.StatsModifiers;
+
+        HP.Modifier.Add -= append_data.HP.Modifier.Add;
+        Energy.Modifier.Add -= append_data.Energy.Modifier.Add;
+        MoveSpeed.Modifier.Add -= append_data.MoveSpeed.Modifier.Add;
+
+        HP.Modifier.Multiply /= append_data.HP.Modifier.Multiply;
+        Energy.Modifier.Multiply /= append_data.Energy.Modifier.Multiply;
+        MoveSpeed.Modifier.Multiply /= append_data.MoveSpeed.Modifier.Multiply;
+    }
+
 
     /// <summary>
     /// Reset Status mutation to default values
@@ -261,6 +351,10 @@ public class ActorStats : MonoBehaviour
     #endregion
 
 }
+
+/// <summary>
+/// DEPRECATED!
+/// </summary>
 [System.Serializable]
 public struct DamageMessage
 {

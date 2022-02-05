@@ -73,6 +73,9 @@ public class TargetFilterOptions
     /// <returns></returns>
     public bool TargetIsAllowed(Team InvokingTeam, Actor Target)
     {
+        //No team, no method of determining filter
+        if (InvokingTeam == null) return true;
+
         if(Self && InvokingTeam.IsSelf(Target._Team))
         {
             return true;
