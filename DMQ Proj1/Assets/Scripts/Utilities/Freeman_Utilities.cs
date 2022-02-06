@@ -281,8 +281,37 @@ namespace Utils
             public float Acceleration;
         }
 
-        public static void PerformFixedContinuousMovement(ref Rigidbody RB, Vector3 DesiredVelocity, ref CFC_MoveOptions RunOptions)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="RB"></param>
+        /// <param name="DesiredVelocity"></param>
+        /// <param name="RunOptions"></param>
+        /// <returns>The resultant velocity inferred from <paramref name="DesiredVelocity"/> and <paramref name="RB"/>'s velocity</returns>
+        public static Vector3 PerformFixedContinuousMovement(ref Rigidbody RB, Vector3 DesiredVelocity, ref CFC_MoveOptions RunOptions)
         {
+            {
+                float MaxSpeed = 5f;
+                Vector3 v = DesiredVelocity.normalized * MaxSpeed;
+                v = DesiredVelocity; //hehehe
+
+                //if ((v - RB.velocity).sqrMagnitude < v.sqrMagnitude) v = (v - RB.velocity);
+
+                //F = ma = mv/t
+                //Cache m/t (we compute v later)
+                float c = RB.mass / Time.fixedDeltaTime;
+
+                Vector3 result = v - RB.velocity;
+
+                RB.AddForce(result * c, ForceMode.Force);
+                Debug.LogWarning(v);
+                Debug.DrawRay(RB.transform.position + Vector3.up * 2f, v * 2f, Color.cyan);
+                Debug.DrawRay(RB.transform.position + Vector3.up * 2f, RB.velocity * 2f, Color.red);
+
+                return result;
+            }
+
+
             //F = ma = mv/t
             //Cache m/t (we compute v later)
             float ForceCoefficient = RB.mass / Time.fixedDeltaTime;
@@ -331,18 +360,18 @@ namespace Utils
             //DesiredVelocity = Vector3.zero; if (InputDirection.sqrMagnitude > 0) DesiredVelocity = InputDirection * MoveSpd;
 
             //If a direction exists, accelerate towards it. otherwise decelerate towards 0
-            if (/*InputDirection.sqrMagnitude == 0*/ false)
-            {
-                //apply the brakes
+            //if (/*InputDirection.sqrMagnitude == 0*/ false)
+            //{
+            //    //apply the brakes
 
-                //for comparison to make sure we dont go in the opposite direction
-                Vector3 Temp = DesiredVelocity;
+            //    //for comparison to make sure we dont go in the opposite direction
+            //    Vector3 Temp = DesiredVelocity;
 
-                DesiredVelocity = DesiredVelocity - (DesiredVelocity.normalized * RunOptions.Acceleration * Time.fixedDeltaTime);
+            //    DesiredVelocity = DesiredVelocity - (DesiredVelocity.normalized * RunOptions.Acceleration * Time.fixedDeltaTime);
 
-                //clamp to 0
-                if (Vector3.Dot(DesiredVelocity, Temp) < 0) DesiredVelocity = Vector3.zero;
-            }
+            //    //clamp to 0
+            //    if (Vector3.Dot(DesiredVelocity, Temp) < 0) DesiredVelocity = Vector3.zero;
+            //}
             //else
             //{
             //    //accel
@@ -393,6 +422,7 @@ namespace Utils
             {
                 //sustaining velocity
                 AddVelocity = (DesiredVelocity - DesiredVelocityDiff);
+
             }
 
 
@@ -402,16 +432,20 @@ namespace Utils
             {
                 RB.AddForce(AddVelocity * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
 
+                RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff) * ForceCoefficient, ForceMode.Force);
 
-                if ((AddVelocity).sqrMagnitude < (FilteredRBVelocity - DesiredVelocityDiff).sqrMagnitude)
-                {
-                    //RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff).normalized * AddVelocity.magnitude * ForceCoefficient, ForceMode.Force);
-                    RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff) * ForceCoefficient, ForceMode.Force);
-                }
-                else
-                {
-                    RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff) * ForceCoefficient, ForceMode.Force);
-                }
+
+
+                //old idea
+                //if ((AddVelocity).sqrMagnitude < (FilteredRBVelocity - DesiredVelocityDiff).sqrMagnitude)
+                //{
+                //    //RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff).normalized * AddVelocity.magnitude * ForceCoefficient, ForceMode.Force);
+                //    RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff) * ForceCoefficient, ForceMode.Force);
+                //}
+                //else
+                //{
+                //    RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff) * ForceCoefficient, ForceMode.Force);
+                //}
 
             }
             //Damp (exceeding movement speed max)
@@ -429,6 +463,8 @@ namespace Utils
 
             }
 
+            //uhh...
+            return Vector3.zero;
         }
     }
 }

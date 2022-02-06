@@ -16,6 +16,9 @@ public class AIMover : MonoBehaviour
 
     public Utils.Physics.CFC_MoveOptions Options;
 
+    protected Vector3 _DesiredVelocityLastFixedUpdate_Normalized { get; private set; }
+    protected Vector3 _CurDesiredVelocity { get; private set; }
+
     protected virtual void Awake()
     {
         Agent = GetComponent<NavMeshAgent>();
@@ -28,6 +31,8 @@ public class AIMover : MonoBehaviour
         {
             Debug.LogError("Ref missing! Destroying this.");
         }
+
+        _DesiredVelocityLastFixedUpdate_Normalized = Vector3.zero;
     }
 
     protected virtual void Start()
@@ -39,9 +44,25 @@ public class AIMover : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
+        VelocityDecay();
+
         //Debug.LogWarning(Agent.desiredVelocity);
 
-        Utils.Physics.PerformFixedContinuousMovement(ref RB, Agent.desiredVelocity, ref Options);
-        Agent.nextPosition = RB.position;
+        //currently the desired velocity polling rate is lower than fixed update... Could be causing issues at lower values
+        Utils.Physics.PerformFixedContinuousMovement(ref RB, _CurDesiredVelocity, ref Options);
+
+        //IDEA: Introduce the concept of decay into navmeshagent's thought pattern.
+        //Utils.Physics.PerformFixedContinuousMovement(ref RB, Agent.desiredVelocity, ref Options);
+
+
+        Agent.nextPosition = RB.position; //Update the NavmeshAgent's internal simulation
+        _DesiredVelocityLastFixedUpdate_Normalized = _CurDesiredVelocity / Time.fixedDeltaTime;
+    }
+
+    void VelocityDecay()
+    {
+        float t = .4f;
+
+        _CurDesiredVelocity = t * Agent.desiredVelocity + (1 - t) * _DesiredVelocityLastFixedUpdate_Normalized * Time.fixedDeltaTime;
     }
 }
