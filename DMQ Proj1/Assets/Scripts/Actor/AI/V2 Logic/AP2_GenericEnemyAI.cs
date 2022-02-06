@@ -8,7 +8,7 @@ namespace AP2
     //This class is intended to simply walk to a point near the player, lunge, and perform an attack at the end of the lunge
     public class AP2_GenericEnemyAI : ActorAI_Logic
     {
-        public static float s_remainingDistanceTolerance = .002f;
+        public static float s_remainingDistanceTolerance = .2f;
 
         public Utils.CooldownTracker AttackCooldown;
         public AP2.AP2_ActorAction_AttackTarget AttackAction;
@@ -96,9 +96,34 @@ namespace AP2
 
             ChangeState(State.Idle);
             StartCoroutine(UpdateAI());
-            StartCoroutine(I_TurnInterpolate());
+
+            //only do per-frame interp if we DONT have a rigidbody active, or it's kinematic
+            if(gameObject.GetComponent<Rigidbody>() == null) StartCoroutine(I_TurnInterpolate());
+            else if(gameObject.GetComponent<Rigidbody>()?.isKinematic == true) StartCoroutine(I_TurnInterpolate());
         }
         #endregion
+
+        /// <summary>
+        /// framerate dependent interpolation was not working since we moved over to RB controller... This solves stutter issue
+        /// </summary>
+        void FixedUpdate()
+        {
+            var RB = gameObject.GetComponent<Rigidbody>();
+
+            if (RB != null && RB.isKinematic == false && Info.CanTurn && CurrentTarget != null)
+            {
+                float Angle = Vector3.SignedAngle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized, Vector3.up);
+
+                float ScaledTurnRate = Options.TurningRate * Time.fixedDeltaTime;
+
+                var Rot = Vector3.ProjectOnPlane((CurrentTarget.transform.position - transform.position), Vector3.up);
+                var QResult = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(Rot, Vector3.up), ScaledTurnRate);
+
+                //transform.rotation = QResult;
+
+                RB.MoveRotation(QResult);
+            }
+        }
 
 
         private void OnDrawGizmos()
@@ -155,7 +180,7 @@ namespace AP2
                 if (FLAG_Debug)
                 {
                     Debug.DrawRay(NavAgent.destination, Vector3.up * 7f, Color.red, _RoutineSleepDuration);
-                    Debug.DrawRay(transform.position + new Vector3(0,1.5f,0), NavAgent.desiredVelocity * 2f, Color.white, _RoutineSleepDuration);
+                    Debug.DrawRay(transform.position + new Vector3(0,1.5f,0), NavAgent.desiredVelocity * 2f, Color.black, _RoutineSleepDuration);
                 }
 
                 yield return new WaitForSeconds(_RoutineSleepDuration);

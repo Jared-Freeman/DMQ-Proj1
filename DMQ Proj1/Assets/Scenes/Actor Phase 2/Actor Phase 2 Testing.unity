@@ -6113,6 +6113,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4893124687429797053, guid: 6a33c1699a8b6a54c8e48dc551da2045,
+        type: 3}
+      propertyPath: FLAGDisplayDebugGizmos
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4893124687429797053, guid: 6a33c1699a8b6a54c8e48dc551da2045,
+        type: 3}
+      propertyPath: FLAG_PlayerMovementEnabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4893124687429797058, guid: 6a33c1699a8b6a54c8e48dc551da2045,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4893124687429797061, guid: 6a33c1699a8b6a54c8e48dc551da2045,
         type: 3}
       propertyPath: Flag_ActorDebug
@@ -6304,8 +6319,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667438, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
+      propertyPath: m_AngularDrag
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019957170249667438, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
+        type: 3}
       propertyPath: m_Constraints
-      value: 112
+      value: 116
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667438, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
@@ -6320,7 +6340,7 @@ PrefabInstance:
     - target: {fileID: 7019957170249667438, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}
       propertyPath: m_CollisionDetection
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7019957170249667439, guid: 7001bb643b4d2cf4fb39ea73da06ee05,
         type: 3}

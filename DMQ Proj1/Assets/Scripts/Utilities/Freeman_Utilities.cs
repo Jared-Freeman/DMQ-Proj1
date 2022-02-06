@@ -304,9 +304,9 @@ namespace Utils
                 Vector3 result = v - RB.velocity;
 
                 RB.AddForce(result * c, ForceMode.Force);
-                Debug.LogWarning(v);
-                Debug.DrawRay(RB.transform.position + Vector3.up * 2f, v * 2f, Color.cyan);
-                Debug.DrawRay(RB.transform.position + Vector3.up * 2f, RB.velocity * 2f, Color.red);
+                //Debug.LogWarning(v);
+                Debug.DrawRay(RB.transform.position + Vector3.up * 2f, result * 2f, Color.cyan);
+                //Debug.DrawRay(RB.transform.position + Vector3.up * 2f, RB.velocity * 2f, Color.red);
 
                 return result;
             }
