@@ -8,6 +8,8 @@ namespace AP2
     //This class is intended to simply walk to a point near the player, lunge, and perform an attack at the end of the lunge
     public class AP2_GenericEnemyAI : ActorAI_Logic
     {
+        public static float s_remainingDistanceTolerance = .002f;
+
         public Utils.CooldownTracker AttackCooldown;
         public AP2.AP2_ActorAction_AttackTarget AttackAction;
         
@@ -148,6 +150,12 @@ namespace AP2
                     default:
                         Debug.LogError("AP2_GenericEnemyAI: Unrecognized AI State!");
                         break;
+                }
+
+                if (FLAG_Debug)
+                {
+                    Debug.DrawRay(NavAgent.destination, Vector3.up * 7f, Color.red, _RoutineSleepDuration);
+                    Debug.DrawRay(transform.position + new Vector3(0,1.5f,0), NavAgent.desiredVelocity * 2f, Color.white, _RoutineSleepDuration);
                 }
 
                 yield return new WaitForSeconds(_RoutineSleepDuration);
@@ -347,6 +355,8 @@ namespace AP2
 
         private void ChaseCurrentTarget()
         {
+            //NavAgent.SetDestination(CurrentTarget.transform.position);
+
             if(CurrentTarget == null)
             {
                 ChangeState(State.Idle);
@@ -366,6 +376,7 @@ namespace AP2
             {
                 NavAgent.SetDestination(transform.position);
             }
+
         }
 
         private void WaitToLunge()
@@ -384,7 +395,7 @@ namespace AP2
             {
                 ChangeState(State.Chasing);
             }
-            else if(NavAgent.CalculatePath(CurrentTarget.transform.position, NavPath) && NavPath.corners.Length > 2)
+            else if(NavAgent.CalculatePath(CurrentTarget.transform.position, NavPath) && !(NavAgent.path.corners.Length < 3))
             {
                 ChangeState(State.Chasing);
             }
@@ -397,7 +408,7 @@ namespace AP2
         private void Lunge()
         {
 
-            if (NavAgent.remainingDistance < .002f || (Time.time - Info.LungeStartTime) > Options.LungeTimeout) //magic number :(
+            if (NavAgent.remainingDistance < s_remainingDistanceTolerance || (Time.time - Info.LungeStartTime) > Options.LungeTimeout) //magic number :(
             {
                 NavAgent.SetDestination(transform.position);
                 NavAgent.speed = Options.MovementSpeed;
