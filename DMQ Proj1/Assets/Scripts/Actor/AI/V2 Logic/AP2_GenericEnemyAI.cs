@@ -82,12 +82,6 @@ namespace ActorSystem.AI
 
         private IEnumerator UpdateAI()
         {
-            foreach (Coroutine C in Info.ActiveRoutines)
-            {
-                if (C == null && FLAG_Debug) Debug.Log("Routine not found!!!");
-                else StopCoroutine(C);
-            }
-
             while (true)
             {
                 switch (CurrentState)
@@ -295,62 +289,62 @@ namespace ActorSystem.AI
         //I'm still a bit mad that this solution concept doesnt work and I (naively) blame Unity
         #region Dumpstered Methods
 
-        private void OldChangeState(State CurState)
-        {
-            //apparently you can ONLY stop coroutines when a string is supplied to make them?? Thanks unity...
-            foreach (Coroutine C in Info.ActiveRoutines)
-            {
-                if (C == null) Debug.LogError("Routine not found!!!");
-                else StopCoroutine(C.ToString());
-            }
-            StopAllCoroutines();
+        //private void OldChangeState(State CurState)
+        //{
+        //    //apparently you can ONLY stop coroutines when a string is supplied to make them?? Thanks unity...
+        //    foreach (Coroutine C in Info.ActiveRoutines)
+        //    {
+        //        if (C == null) Debug.LogError("Routine not found!!!");
+        //        else StopCoroutine(C.ToString());
+        //    }
+        //    StopAllCoroutines();
 
 
-            Info.ActiveRoutines.Clear();
+        //    Info.ActiveRoutines.Clear();
 
-            CurrentState = CurState;
+        //    CurrentState = CurState;
 
-            if (FLAG_Debug) Debug.Log("STATE CHANGE: " + CurState.ToString());
+        //    if (FLAG_Debug) Debug.Log("STATE CHANGE: " + CurState.ToString());
 
-            switch (CurState)
-            {
-                case State.Idle:
-                    //Look for a bad guy to chase
-                    Info.ActiveRoutines.Add(StartCoroutine("I_SearchForTargets"));
-                    break;
+        //    switch (CurState)
+        //    {
+        //        case State.Idle:
+        //            //Look for a bad guy to chase
+        //            Info.ActiveRoutines.Add(StartCoroutine("I_SearchForTargets"));
+        //            break;
 
-                case State.Chasing:
-                    //Consider checking for a better target here at some point
-                    //Check for target death (subscribe to an event?)
-                    //Get in attacking range of current Target
+        //        case State.Chasing:
+        //            //Consider checking for a better target here at some point
+        //            //Check for target death (subscribe to an event?)
+        //            //Get in attacking range of current Target
 
-                    //turning needs to be interpolated per-frame. Added it to current routines stack
-                    Info.ActiveRoutines.Add(StartCoroutine("I_TurnInterpolate"));
-                    Info.ActiveRoutines.Add(StartCoroutine("I_ChaseCurrentTarget"));
-                    break;
+        //            //turning needs to be interpolated per-frame. Added it to current routines stack
+        //            Info.ActiveRoutines.Add(StartCoroutine("I_TurnInterpolate"));
+        //            Info.ActiveRoutines.Add(StartCoroutine("I_ChaseCurrentTarget"));
+        //            break;
 
-                case State.PrepToLunge:
-                    //Brief pause before Lunging. Target may exit lunge range in this time. Gives target the chance to dodge or disengage
+        //        case State.PrepToLunge:
+        //            //Brief pause before Lunging. Target may exit lunge range in this time. Gives target the chance to dodge or disengage
 
-                    //turning needs to be interpolated per-frame. Added it to current routines stack
-                    Info.ActiveRoutines.Add(StartCoroutine("I_TurnInterpolate"));
-                    Info.ActiveRoutines.Add(StartCoroutine("I_WaitToLunge"));
-                    break;
+        //            //turning needs to be interpolated per-frame. Added it to current routines stack
+        //            Info.ActiveRoutines.Add(StartCoroutine("I_TurnInterpolate"));
+        //            Info.ActiveRoutines.Add(StartCoroutine("I_WaitToLunge"));
+        //            break;
 
-                case State.Lunging:
-                    //Sprint the last little distance
-                    Info.ActiveRoutines.Add(StartCoroutine("I_Lunge"));
-                    break;
+        //        case State.Lunging:
+        //            //Sprint the last little distance
+        //            Info.ActiveRoutines.Add(StartCoroutine("I_Lunge"));
+        //            break;
 
-                case State.Attacking:
-                    //Attack the target
-                    break;
+        //        case State.Attacking:
+        //            //Attack the target
+        //            break;
 
-                default:
-                    Debug.LogError("AP2_GenericEnemyAI: Unrecognized AI State!");
-                    break;
-            }
-        }
+        //        default:
+        //            Debug.LogError("AP2_GenericEnemyAI: Unrecognized AI State!");
+        //            break;
+        //    }
+        //}
 
         private IEnumerator I_SearchForTargets()
         {

@@ -12,10 +12,11 @@ using ActorSystem.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class ActorAI_Logic : MonoBehaviour
 {
-
     public enum TargetPriority { None, Proximity }
 
-    //For Logic subroutines (minimize cost-per-frame)
+    /// <summary>
+    /// For Logic subroutines (minimize cost-per-frame)
+    /// </summary>
     protected readonly static float _RoutineSleepDuration = .125f; //8 times / sec
 
     #region Members
@@ -23,18 +24,20 @@ public class ActorAI_Logic : MonoBehaviour
     //flags
     public bool FLAG_Debug = false;
 
+    //refs and state info
     protected StateInfo Info = new StateInfo();
-
     [SerializeField]
     private ActorAI_Logic_PresetBase _Preset;
 
     #region Properties
 
-    public virtual ActorAI_Logic_PresetBase Preset
-    {
-        get { return _Preset; }
-        set { _Preset = value; }
-    }
+    /// <summary>
+    /// Virtual Property that can be overwritten to enforce subclassing
+    /// </summary>
+    public virtual ActorAI_Logic_PresetBase Preset { get { return _Preset; } set { _Preset = value; } }
+    /// <summary>
+    /// Current Aggro target
+    /// </summary>
     public GameObject CurrentTarget { get { return Info.CurrentTarget; } protected set { Info.CurrentTarget = value; } }
     public ActorAI AttachedActor { get; protected set; }
     public NavMeshAgent NavAgent { get; protected set; }
@@ -44,31 +47,9 @@ public class ActorAI_Logic : MonoBehaviour
 
     #region Helper data
 
-    //inspector helper
-    [System.Serializable]
-    public class AILogicOptions
-    {
-        [Header("Aggro")]
-        public float AggroRadius = 20;
-
-
-        [Header("Moving")]
-        public float MovementSpeed = 2f; //TODO: Currently not hooked up to navmesh agent
-        public float StopSlideDistance = .5f;
-        
-
-        [Header("Turning")]
-        [Tooltip("Max angle the agent can move toward without needing to stop and turn")]
-        public float MaxFacingAngle = 250f;
-        [Tooltip("Deg/sec")]
-        public float TurningRate = 360f;
-    }
-
     //internal helper
     protected class StateInfo
     {
-        public List<Coroutine> ActiveRoutines = new List<Coroutine>();
-
         public float LungeStartTime = 0f;
         public bool CanTurn = false;
         public int CurrentAttacksInvoked = 0;
