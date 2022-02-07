@@ -335,6 +335,7 @@ GameObject:
   - component: {fileID: 7019957170249667435}
   - component: {fileID: 7019957170249667432}
   - component: {fileID: 7019957170249667433}
+  - component: {fileID: 810221869}
   m_Layer: 12
   m_Name: Actor Dummy
   m_TagString: Untagged
@@ -371,8 +372,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FLAG_Debug: 0
   Preset: {fileID: 11400000, guid: 714096e6b0a1ff5438bb50f0cf5b10df, type: 2}
-  HpCurrent: 0
-  EnergyCurrent: 0
+  InitialStatusEffects: []
   m_timeSinceLastHit: 0
   OnDeath:
     m_PersistentCalls:
@@ -413,7 +413,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7019957170249667424}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 9547e215c74d46142ae64d00ab825310, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
@@ -428,13 +428,13 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7019957170249667424}
   serializedVersion: 2
-  m_Mass: 4
+  m_Mass: 10
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 126
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 116
   m_CollisionDetection: 0
 --- !u!114 &7019957170249667435
 MonoBehaviour:
@@ -452,7 +452,6 @@ MonoBehaviour:
   _Team: {fileID: 11400000, guid: 01f82bdc72b2c5c4aa8ec5c7ec4188ba, type: 2}
   Stats: {fileID: 0}
   Actions: []
-  StatusEffects: []
 --- !u!195 &7019957170249667432
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -463,11 +462,11 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 22222
-  m_Acceleration: 200
+  m_Speed: 5
+  m_Acceleration: 2
   avoidancePriority: 50
-  m_AngularSpeed: 22222
-  m_StoppingDistance: 0
+  m_AngularSpeed: 2
+  m_StoppingDistance: 0.5
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -487,73 +486,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e780c2ce1ce36d47ae7be90a119b4ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FLAG_Debug: 0
-  BaseOptions:
-    AggroRadius: 20
-    MovementSpeed: 2
-    StopSlideDistance: 0.5
-    MaxFacingAngle: 250
-    TurningRate: 360
+  FLAG_Debug: 1
+  _Preset: {fileID: 11400000, guid: a7470cf81c16338499d7f2dfb6176499, type: 2}
   AttackCooldown:
     _Cooldown: 1
   AttackAction: {fileID: 11400000, guid: 1001be58deac178479d8e92dc250f61d, type: 2}
-  Options:
-    DrawDebugGizmos: 0
-    AttackRange: 2
-    MovementSpeed: 4.5
-    StopSlideDistance: 0.5
-    AggroRadius: 15
-    MaxFacingAngle: 120
-    LungePrepareDistance: 7.5
-    LungeLosePrepareDistance: 11
-    LungeDistance: 10
-    LungePause: 0.6
-    LungeSpeed: 24
-    LungeTimeout: 1.25
-    Lunge_ImpactEffects:
-    - {fileID: 11400000, guid: 8db999520b835834f8c4a75965a00ff2, type: 2}
-    TurningRate: 240
-    GrowCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.08603379
-      - serializedVersion: 3
-        time: 0.34166086
-        value: 1.0182407
-        inSlope: 0.17841806
-        outSlope: 0.17841806
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.11882478
-      - serializedVersion: 3
-        time: 0.77040577
-        value: 1.2399746
-        inSlope: 0.09294379
-        outSlope: 0.09294379
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.25997233
-      - serializedVersion: 3
-        time: 1
-        value: 1.25
-        inSlope: 0.00054179603
-        outSlope: 0.00054179603
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.13266711
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    GrowDuration: 0.6
-    _TargetPriority: 1
+--- !u!114 &810221869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7019957170249667424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b02aca0fc6ddd48a0578f35027ce12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RB: {fileID: 0}
