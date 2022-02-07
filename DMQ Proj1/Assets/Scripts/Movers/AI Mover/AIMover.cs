@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+using ActorSystem.AI;
+
 /// <summary>
 /// Intercepts NavmeshAgent's desiredVelocity and implements movement model
 /// </summary>
 /// 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(ActorAI_Logic))]
 public class AIMover : MonoBehaviour
 {
     public NavMeshAgent Agent { get; protected set; }
     public Rigidbody RB;
-
-    public Utils.Physics.CFC_MoveOptions Options;
+    public ActorAI_Logic Logic { get; protected set; }
 
     protected Vector3 _DesiredVelocityLastFixedUpdate_Normalized { get; private set; }
     protected Vector3 _CurDesiredVelocity { get; private set; }
@@ -27,11 +29,19 @@ public class AIMover : MonoBehaviour
         if(Agent == null)
         {
             Debug.LogError("Ref missing! Destroying this.");
+            Destroy(gameObject);
         }
         RB = GetComponent<Rigidbody>();
         if (RB == null)
         {
             Debug.LogError("Ref missing! Destroying this.");
+            Destroy(gameObject);
+        }
+        Logic = GetComponent<ActorAI_Logic>();
+        if(Logic == null)
+        {
+            Debug.LogError("Ref missing! Destroying this.");
+            Destroy(gameObject);
         }
 
         _DesiredVelocityLastFixedUpdate_Normalized = Vector3.zero;
@@ -47,10 +57,12 @@ public class AIMover : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
+        if (!Logic.CanMove) return;
+
         //ignore friction contribution to external
         _ExternalContribution = new Vector3(RB.velocity.x, 0, RB.velocity.z) - _DesiredVelocityLastFixedUpdate_Normalized * Time.fixedDeltaTime;
 
-        Debug.LogWarning(_ExternalContribution);
+        //Debug.LogWarning(_ExternalContribution);
 
         if(_ExternalContribution.sqrMagnitude > 5.5f)
         {

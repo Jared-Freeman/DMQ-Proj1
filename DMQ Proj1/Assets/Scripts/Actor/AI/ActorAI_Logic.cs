@@ -39,9 +39,12 @@ public class ActorAI_Logic : MonoBehaviour
     /// Current Aggro target
     /// </summary>
     public GameObject CurrentTarget { get { return Info.CurrentTarget; } protected set { Info.CurrentTarget = value; } }
+    public Transform TurnTarget { get { return Info.TurnTarget; } protected set { Info.TurnTarget = value; } }
     public ActorAI AttachedActor { get; protected set; }
     public NavMeshAgent NavAgent { get; protected set; }
     public Animator Animator { get; protected set; }
+    public bool CanMove { get { return Info.CanMove; } }
+    public bool CanTurn { get { return Info.CanTurn; } }
 
     #endregion
 
@@ -50,11 +53,19 @@ public class ActorAI_Logic : MonoBehaviour
     //internal helper
     protected class StateInfo
     {
-        public float LungeStartTime = 0f;
+        public float LungeStartTime = 0f; //TODO: move
         public bool CanTurn = false;
-        public int CurrentAttacksInvoked = 0;
+        public bool CanMove = true;
+        public int CurrentAttacksInvoked = 0; //TODO: move
 
+        /// <summary>
+        /// Aggro target. Usually an Actor but not necessarily
+        /// </summary>
         public GameObject CurrentTarget;
+        /// <summary>
+        /// Transform this Actor AI wants to turn toward
+        /// </summary>
+        public Transform TurnTarget;
     }
 
     #endregion
@@ -92,13 +103,13 @@ public class ActorAI_Logic : MonoBehaviour
     {
         var RB = gameObject.GetComponent<Rigidbody>();
 
-        if (RB != null && RB.isKinematic == false && Info.CanTurn && CurrentTarget != null)
+        if (RB != null && RB.isKinematic == false && Info.CanTurn && TurnTarget != null)
         {
-            float Angle = Vector3.SignedAngle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized, Vector3.up);
+            float Angle = Vector3.SignedAngle(gameObject.transform.forward, (TurnTarget.transform.position - gameObject.transform.position).normalized, Vector3.up);
 
             float ScaledTurnRate = Preset.Base.TurningRate * Time.fixedDeltaTime;
 
-            var Rot = Vector3.ProjectOnPlane((CurrentTarget.transform.position - transform.position), Vector3.up);
+            var Rot = Vector3.ProjectOnPlane((TurnTarget.transform.position - transform.position), Vector3.up);
             var QResult = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(Rot, Vector3.up), ScaledTurnRate);
 
             //transform.rotation = QResult;
@@ -126,7 +137,11 @@ public class ActorAI_Logic : MonoBehaviour
         return false;
     }
 
-    protected void ChooseNewTarget()
+    /// <summary>
+    /// Chooses a new target based on TargetPriority setting
+    /// </summary>
+    /// <exception cref="System.NotImplementedException">Exception thrown when no implementation exists for the supplied TargetPriority</exception>
+    protected virtual void ChooseNewTarget()
     {
         //TODO: consider some more robust logic here. Could have the AI decide based on some criteria like hp remaining or threat.
         //For now proximity will do
@@ -190,6 +205,8 @@ public class ActorAI_Logic : MonoBehaviour
         bool FLAG_Done = false;
         while (!FLAG_Done)
         {
+            if (FLAG_Debug) Debug.LogWarning("Obsolete Turn interp is turned on. Is this intended???");
+
             if (Info.CanTurn && CurrentTarget != null)
             {
                 float Angle = Vector3.SignedAngle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized, Vector3.up);

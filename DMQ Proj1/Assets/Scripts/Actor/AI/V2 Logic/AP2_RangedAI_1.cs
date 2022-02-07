@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 using System.Linq;
 using ActorSystem.AI;
+using AbilitySystem;
 
 namespace ActorSystem.AI
 {
@@ -14,54 +15,44 @@ namespace ActorSystem.AI
         public Utils.CooldownTracker AttackCooldown;
         public AP2_ActorAction_AttackTarget AttackAction;
 
-        public AIOptions Options;
 
 
         //state vars
         public State CurrentState { get; protected set; }
-        public GameObject CurrentTarget { get; protected set; }
 
-        StateInfo Info = new StateInfo();
+        protected AP2RAIStateInfo AP2RAI_Info = new AP2RAIStateInfo();
 
-
+        public override ActorAI_Logic_PresetBase Preset 
+        { 
+            get => base.Preset as AP2_RangedAI_1_LogicPreset; 
+            set => base.Preset = value as AP2_RangedAI_1_LogicPreset; 
+        }
+        protected AP2_RangedAI_1_LogicPreset RAI_Preset
+        {
+            get { return Preset as AP2_RangedAI_1_LogicPreset; }
+            set { Preset = value as AP2_RangedAI_1_LogicPreset; }
+        }
 
         #region Helpers
         //internal helper
-        private class StateInfo
+        protected class AP2RAIStateInfo
         {
-            public List<Coroutine> ActiveRoutines = new List<Coroutine>();
+            /// <summary>
+            /// Allows us to mark a location using Transform for the base turn interpolator
+            /// </summary>
+            public GameObject CustomTurnTargetCookie;
 
-            public bool CanTurn = true;
-
-            public Vector3 Reposition_DesiredPosition = Vector3.zero;
+            public Vector3 Reposition_DesiredPosition 
+            { 
+                get { return CustomTurnTargetCookie.transform.position; } 
+                set { CustomTurnTargetCookie.transform.position = value; } 
+            }
 
             public int Attack_AttacksInvoked = 0;
 
             public float ChargeAttack_StartTime = 0;
-        }
 
-        //inspector helper
-        [System.Serializable]
-        public class AIOptions
-        {
-            public bool DrawDebugGizmos = false;
-
-            public Utils.CooldownTracker AttackCooldown = new Utils.CooldownTracker();
-
-            [Min(0f)]
-            public float AttackRange = 1.25f; //max distance AI can be from target
-            [Min(0f)]
-            public float AttackRangeMinimum = 0f; //min dist AI must be from target to decide to attack
-
-            [Min(0f)]
-            public float AttackChargeTime = 1.25f; //max distance AI can be from target
-
-            public float AggroRadius = 20;
-
-
-            public AnimationCurve GrowCurve;
-
-            public TargetPriority _TargetPriority = TargetPriority.Proximity;
+            public AS_Ability_Instance_Base _AttackAbility;
         }
 
         public enum State { Idle, Repositioning, TurningToFaceTarget, ChargingAttack, Attacking }
@@ -73,7 +64,9 @@ namespace ActorSystem.AI
         {
             base.Awake();
 
-            Options.AttackCooldown.InitializeCooldown();
+            AP2RAI_Info._AttackAbility = RAI_Preset.RAI_Options.AttackAbility.GetInstance(gameObject);
+            AP2RAI_Info.CustomTurnTargetCookie = new GameObject("[AI] Turning Cookie");
+            AP2RAI_Info.CustomTurnTargetCookie.transform.position = transform.position;
 
             //Overrides of NavAgent properties
             NavAgent.updateRotation = false;
@@ -86,18 +79,23 @@ namespace ActorSystem.AI
 
             ChangeState(State.Idle);
             StartCoroutine(UpdateAI());
-            StartCoroutine(I_AdjustFacing());
+            Info.CanTurn = true;
+            //StartCoroutine(I_AdjustFacing());
         }
         #endregion
 
+        protected virtual void OnDestroy()
+        {
+            Destroy(AP2RAI_Info.CustomTurnTargetCookie);
+        }
 
         private void OnDrawGizmos()
         {
-            if (Options.DrawDebugGizmos)
+            if (Preset.Base.DrawDebugGizmos)
             {
-                Gizmos.DrawWireSphere(transform.position, Options.AggroRadius);
+                Gizmos.DrawWireSphere(transform.position, Preset.Base.AggroRadius);
 
-                Gizmos.DrawWireSphere(transform.position, Options.AttackRange);
+                Gizmos.DrawWireSphere(transform.position, Preset.Base.AttackRange);
 
                 if (CurrentTarget != null) Gizmos.DrawRay(CurrentTarget.transform.position, Vector3.up * 4f);
             }
@@ -115,25 +113,31 @@ namespace ActorSystem.AI
             switch (CurrentState)
             {
                 case State.Idle:
+                    TurnTarget = AP2RAI_Info.CustomTurnTargetCookie.transform;
+                    AP2RAI_Info.CustomTurnTargetCookie.transform.position = transform.position + transform.forward;
                     break;
 
 
                 case State.Repositioning:
+                    TurnTarget = AP2RAI_Info.CustomTurnTargetCookie.transform;
                     Reposition_ChooseDesiredPosition();
                     break;
 
                 case State.TurningToFaceTarget:
+                    TurnTarget = Info.CurrentTarget.transform;
                     break;
 
                 case State.ChargingAttack:
-                    Info.ChargeAttack_StartTime = Time.time;
+                    TurnTarget = Info.CurrentTarget.transform; //TODO: Add handler to do trajectory projection. Maybe base difficulty on this??
+                    AP2RAI_Info.ChargeAttack_StartTime = Time.time;
                     StartCoroutine(I_IncreaseScale());
                     break;
 
-
-
                 case State.Attacking:
-                    Info.Attack_AttacksInvoked = 0;
+                    TurnTarget = AP2RAI_Info.CustomTurnTargetCookie.transform;
+                    AP2RAI_Info.CustomTurnTargetCookie.transform.position = transform.position + transform.forward;
+
+                    AP2RAI_Info.Attack_AttacksInvoked = 0;
                     break;
 
                 default:
@@ -172,6 +176,12 @@ namespace ActorSystem.AI
         {
             while (true)
             {
+                Info.CanMove = 
+                    (
+                    Vector3.Angle(gameObject.transform.forward, (TurnTarget.transform.position - gameObject.transform.position).normalized)
+                    < Preset.Base.MaxFacingAngle / 2
+                    );
+
                 switch (CurrentState)
                 {
                     case State.Idle:
@@ -226,12 +236,28 @@ namespace ActorSystem.AI
         private void ContinueAttack()
         {
             if (CurrentTarget == null) ChangeState(State.Idle);
+            if (!AP2RAI_Info._AttackAbility.CanCastAbility) return; //TODO: Make this ability decision tree more intelligent. For now we just wait until ability works
 
-            if (Info.Attack_AttacksInvoked < 1)
+            if (AP2RAI_Info.Attack_AttacksInvoked < 1)
             {
                 if (FLAG_Debug) Debug.Log("ATTACKING " + CurrentTarget.name);
-                AttackAction.AttackTarget(AttachedActor, CurrentTarget);
-                Info.Attack_AttacksInvoked++;
+
+                EffectTree.EffectContext effectContext = new EffectTree.EffectContext();
+                effectContext.AttackData = new Utils.AttackContext();
+                {
+                    var c = effectContext.AttackData;
+                    c._InitialDirection = transform.forward;
+                    c._InitialGameObject = gameObject;
+                    c._InitialPosition = transform.position;
+                    c._Owner = AttachedActor;
+                    c._TargetDirection = transform.forward;
+                    c._TargetGameObject = CurrentTarget;
+                    c._TargetPosition = CurrentTarget.transform.position;
+                    c._Team = AttachedActor._Team;
+                }
+                AP2RAI_Info._AttackAbility.ExecuteAbility(ref effectContext);
+                //AttackAction.AttackTarget(AttachedActor, CurrentTarget);
+                AP2RAI_Info.Attack_AttacksInvoked++;
             }
             else
             {
@@ -243,7 +269,7 @@ namespace ActorSystem.AI
         {
             if (CurrentTarget == null) ChangeState(State.Idle);
 
-            if (Mathf.Abs(Info.ChargeAttack_StartTime - Time.time) > Options.AttackChargeTime)
+            if (Mathf.Abs(AP2RAI_Info.ChargeAttack_StartTime - Time.time) > RAI_Preset.RAI_Options.AttackChargeTime)
             {
                 ChangeState(State.Attacking);
             }
@@ -253,11 +279,11 @@ namespace ActorSystem.AI
         {
             if (CurrentTarget == null) ChangeState(State.Idle);
 
-            if (FLAG_Debug) Debug.DrawRay(Info.Reposition_DesiredPosition, Vector3.up * 4f, Color.red, _RoutineSleepDuration);
+            if (FLAG_Debug) Debug.DrawRay(AP2RAI_Info.Reposition_DesiredPosition, Vector3.up * 4f, Color.red, _RoutineSleepDuration);
 
             //Evaluate current desired movement point. Is it still in attack range?
-            float DistSquared = (CurrentTarget.transform.position - Info.Reposition_DesiredPosition).sqrMagnitude;
-            if (DistSquared > Options.AttackRange * Options.AttackRange || DistSquared < Options.AttackRangeMinimum * Options.AttackRangeMinimum)
+            float DistSquared = (CurrentTarget.transform.position - AP2RAI_Info.Reposition_DesiredPosition).sqrMagnitude;
+            if (DistSquared > Mathf.Pow(Preset.Base.AttackRange, 2) || DistSquared < Mathf.Pow(RAI_Preset.RAI_Options.AttackRangeMin, 2))
             {
                 Reposition_ChooseDesiredPosition();
             }
@@ -271,92 +297,20 @@ namespace ActorSystem.AI
         {
             //Random point between minrange and maxrange
             Vector3 Pos;
-            if (Utils.AI.RandomPointInCircle(CurrentTarget.transform.position, Options.AttackRangeMinimum, Options.AttackRange, out Pos))
+            if (Utils.AI.RandomPointInCircle(CurrentTarget.transform.position, RAI_Preset.RAI_Options.AttackRangeMin, Preset.Base.AttackRange, out Pos))
             {
-                Info.Reposition_DesiredPosition = Pos;
-                NavAgent.SetDestination(Info.Reposition_DesiredPosition);
+                AP2RAI_Info.Reposition_DesiredPosition = Pos;
+                NavAgent.SetDestination(AP2RAI_Info.Reposition_DesiredPosition);
 
             }
             else
             {
-                Info.Reposition_DesiredPosition = transform.position;
+                AP2RAI_Info.Reposition_DesiredPosition = transform.position;
                 if (FLAG_Debug) Debug.Log("No good reposition found.");
             }
         }
 
         #region Utility Methods
-        //TODO: Consider optimizing
-        public bool EnemyExistsInAggroRadius()
-        {
-            foreach (Actor A in Singleton<ActorManager>.Instance.ActorList)
-            {
-                if (
-                    (A.gameObject.transform.position - gameObject.transform.position).sqrMagnitude <= (Options.AggroRadius * Options.AggroRadius)
-                    && A._Team.IsEnemy(AttachedActor._Team)
-                    )
-                {
-                    if (FLAG_Debug) Debug.Log("Enemy in Aggro Range");
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private void ChooseNewTarget()
-        {
-            //TODO: consider some more robust logic here. Could have the AI decide based on some criteria like hp remaining or threat.
-            //For now proximity will do
-
-            switch (Options._TargetPriority)
-            {
-                case TargetPriority.None:
-                    //get random from selection
-                    foreach (Actor A in Singleton<ActorManager>.Instance.ActorList)
-                    {
-                        if (
-                            (A.gameObject.transform.position - gameObject.transform.position).sqrMagnitude <= (Options.AggroRadius * Options.AggroRadius)
-                            && A._Team.IsEnemy(AttachedActor._Team)
-                            )
-                        {
-                            CurrentTarget = A.gameObject; //possible multiple reassignment... but it doesnt matter here
-                        }
-                    }
-                    break;
-
-
-                case TargetPriority.Proximity:
-
-                    List<Actor> ProximalActors = new List<Actor>();
-                    if (Singleton<ActorManager>.Instance.ActorList == null)
-                    {
-                        Debug.LogError("WAT");
-                        return;
-                    }
-
-                    foreach (Actor A in Singleton<ActorManager>.Instance.ActorList)
-                    {
-                        if (
-                            (A.gameObject.transform.position - gameObject.transform.position).sqrMagnitude <= (Options.AggroRadius * Options.AggroRadius)
-                            && A._Team.IsEnemy(AttachedActor._Team)
-                            )
-                        {
-                            ProximalActors.Add(A);
-                        }
-                    }
-                    if (ProximalActors.Count > 0)
-                    {
-                        ProximalActors.OrderBy(t => (t.gameObject.transform.position - gameObject.transform.position).sqrMagnitude);
-                        CurrentTarget = ProximalActors[0].gameObject;
-                    }
-
-                    break;
-
-
-                default:
-                    throw new System.NotImplementedException("No impl exits for TargetPriority: " + Options._TargetPriority.ToString());
-            }
-        }
-
 
         protected IEnumerator I_AdjustFacing()
         {
@@ -418,9 +372,9 @@ namespace ActorSystem.AI
             var DefaultScale = transform.localScale;
 
             float StartTime = Time.time;
-            while (CurrentState == State.ChargingAttack && Time.time - StartTime < Options.AttackChargeTime)
+            while (CurrentState == State.ChargingAttack && Time.time - StartTime < RAI_Preset.RAI_Options.AttackChargeTime)
             {
-                transform.localScale = DefaultScale * Options.GrowCurve.Evaluate((Time.time - StartTime) / Options.AttackChargeTime);
+                transform.localScale = DefaultScale * Preset.Base.GrowCurve.Evaluate((Time.time - StartTime) / RAI_Preset.RAI_Options.AttackChargeTime);
                 yield return null;
             }
 

@@ -12,7 +12,14 @@ namespace ActorSystem.AI
 
         public Utils.CooldownTracker AttackCooldown;
         public AP2_ActorAction_AttackTarget AttackAction; //TODO: Change to ability
-        
+
+
+        protected override void ChooseNewTarget()
+        {
+            base.ChooseNewTarget();
+
+            TurnTarget = CurrentTarget.transform;
+        }
 
         /// <summary>
         /// override of Preset property that enforces correct subclassing
