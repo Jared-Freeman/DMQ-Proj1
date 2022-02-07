@@ -19,9 +19,7 @@ public class AIMover : MonoBehaviour
     protected Vector3 _DesiredVelocityLastFixedUpdate_Normalized { get; private set; }
     protected Vector3 _CurDesiredVelocity { get; private set; }
 
-    protected float _ExternalWeight { get; private set; } = .8f;
     protected Vector3 _ExternalContribution { get; private set; }
-    protected Vector3 _AgentContribution { get; private set; }
 
     protected virtual void Awake()
     {
@@ -91,9 +89,9 @@ public class AIMover : MonoBehaviour
         _CurDesiredVelocity = t * vector + (1 - t) * _DesiredVelocityLastFixedUpdate_Normalized * Time.fixedDeltaTime;
     }
 
-    void OnCollisionEnter(Collision c)
-    {
-        Debug.DrawRay(transform.position, -c.impulse * 2f, Color.black, 2);
-    }
+    //void OnCollisionEnter(Collision c)
+    //{
+    //    Debug.DrawRay(transform.position, -c.impulse * 2f, Color.black, 2);
+    //}
 
 }
