@@ -136,7 +136,7 @@ namespace Utils
             /// <summary>
             /// Should there be a cooldown that controls recharging charges?
             /// </summary>
-            public bool FLAG_UseChargeRecharging = false;
+            public bool FLAG_UseChargeRecharging = false; //NYI [2/7/2022]
             /// <summary>
             /// Should the recharge grant all charges at once?
             /// </summary>
