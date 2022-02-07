@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-namespace AP2
+namespace ActorSystem.AI
 {
     //This class is intended to simply walk to a point near the player, lunge, and perform an attack at the end of the lunge
     public class AP2_GenericEnemyAI : ActorAI_Logic
@@ -11,68 +11,37 @@ namespace AP2
         public static float s_remainingDistanceTolerance = .2f;
 
         public Utils.CooldownTracker AttackCooldown;
-        public AP2.AP2_ActorAction_AttackTarget AttackAction;
+        public AP2_ActorAction_AttackTarget AttackAction; //TODO: Change to ability
         
-        public AIOptions Options;
 
+        /// <summary>
+        /// override of Preset property that enforces correct subclassing
+        /// </summary>
+        public override ActorAI_Logic_PresetBase Preset 
+        { 
+            get
+            {
+                return base.Preset as AP2_GenericEnemyAI_LogicPreset;
+            }
+            set
+            {
+                base.Preset = value as AP2_GenericEnemyAI_LogicPreset;
+            }
+        }
+        /// <summary>
+        /// convenience property that wraps Preset
+        /// </summary>
+        public AP2_GenericEnemyAI_LogicPreset GEAI_Preset 
+        { 
+            get { return Preset as AP2_GenericEnemyAI_LogicPreset; } 
+            protected set { Preset = value; } 
+        }
 
         //state vars
         public State CurrentState { get; protected set; }
-        private GameObject CurrentTarget;
-
-        StateInfo Info = new StateInfo();
-        
-
 
         #region Helpers
-        //internal helper
-        private class StateInfo
-        {
-            public List<Coroutine> ActiveRoutines = new List<Coroutine>();
 
-            public float LungeStartTime = 0f;
-            public bool CanTurn = false;
-            public int CurrentAttacksInvoked = 0;
-        }
-
-        //inspector helper
-        [System.Serializable]
-        public class AIOptions
-        {
-            public bool DrawDebugGizmos = false;
-
-            [Min(0f)]
-            public float AttackRange = 1.25f;
-
-            public float MovementSpeed = 2f; //TODO: Currently not hooked up to navmesh agent
-            public float StopSlideDistance = .5f;
-                       
-            public float AggroRadius = 20;
-
-            [Tooltip("Max angle the agent can move toward without needing to stop and turn")]
-            public float MaxFacingAngle = 250f;
-
-            [Min(0f)]
-            public float LungePrepareDistance = 2f;
-            public float LungeLosePrepareDistance = 3f;
-            public float LungeDistance = 3f;
-            [Min(0f)]
-            public float LungePause = 2f;
-            [Min(0f)]
-            public float LungeSpeed = 8f;
-            [Min(0f)]
-            public float LungeTimeout = 1.25f;
-
-            public List<ImpactFX.ImpactEffect> Lunge_ImpactEffects = new List<ImpactFX.ImpactEffect>();
-
-            [Tooltip("Deg/sec")]
-            public float TurningRate = 360f;
-
-            public AnimationCurve GrowCurve;
-            public float GrowDuration = .5f;
-
-            public TargetPriority _TargetPriority = TargetPriority.Proximity;
-        }
 
         public enum State { Idle, Chasing, PrepToLunge, Lunging, Attacking }
         #endregion
@@ -84,10 +53,7 @@ namespace AP2
             base.Awake();
 
             AttackCooldown.InitializeCooldown();
-
-            //Overrides of NavAgent properties
-            NavAgent.updateRotation = false;
-            NavAgent.speed = Options.MovementSpeed;
+            NavAgent.speed = GEAI_Preset.Base.MovementSpeed;
         }
 
         protected override void Start()
@@ -97,42 +63,17 @@ namespace AP2
             ChangeState(State.Idle);
             StartCoroutine(UpdateAI());
 
-            //only do per-frame interp if we DONT have a rigidbody active, or it's kinematic
-            if(gameObject.GetComponent<Rigidbody>() == null) StartCoroutine(I_TurnInterpolate());
-            else if(gameObject.GetComponent<Rigidbody>()?.isKinematic == true) StartCoroutine(I_TurnInterpolate());
         }
         #endregion
-
-        /// <summary>
-        /// framerate dependent interpolation was not working since we moved over to RB controller... This solves stutter issue
-        /// </summary>
-        void FixedUpdate()
-        {
-            var RB = gameObject.GetComponent<Rigidbody>();
-
-            if (RB != null && RB.isKinematic == false && Info.CanTurn && CurrentTarget != null)
-            {
-                float Angle = Vector3.SignedAngle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized, Vector3.up);
-
-                float ScaledTurnRate = Options.TurningRate * Time.fixedDeltaTime;
-
-                var Rot = Vector3.ProjectOnPlane((CurrentTarget.transform.position - transform.position), Vector3.up);
-                var QResult = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(Rot, Vector3.up), ScaledTurnRate);
-
-                //transform.rotation = QResult;
-
-                RB.MoveRotation(QResult);
-            }
-        }
 
 
         private void OnDrawGizmos()
         {
-            if(Options.DrawDebugGizmos)
+            if(GEAI_Preset.Base.DrawDebugGizmos)
             {
-                Gizmos.DrawWireSphere(transform.position, Options.AggroRadius);
+                Gizmos.DrawWireSphere(transform.position, GEAI_Preset.Base.AggroRadius);
 
-                Gizmos.DrawWireSphere(transform.position, Options.LungePrepareDistance);
+                Gizmos.DrawWireSphere(transform.position, GEAI_Preset.Base.LungePrepareDistance);
 
                 if (CurrentTarget != null) Gizmos.DrawRay(CurrentTarget.transform.position, Vector3.up * 4f);
             }
@@ -204,7 +145,7 @@ namespace AP2
 
                 case State.PrepToLunge:
                     Info.CanTurn = true;
-                    NavAgent.SetDestination(transform.position + (transform.forward * Options.StopSlideDistance));
+                    NavAgent.SetDestination(transform.position + (transform.forward * GEAI_Preset.Base.StopSlideDistance));
                     Info.LungeStartTime = Time.time;
                     StartCoroutine(I_IncreaseScale());
                     break;
@@ -214,8 +155,8 @@ namespace AP2
                     Info.CurrentAttacksInvoked = 0;
                     //disable turning
                     Info.CanTurn = false;
-                    NavAgent.speed = Options.LungeSpeed;
-                    NavAgent.SetDestination(transform.position + (transform.forward * (Options.LungeDistance + Options.StopSlideDistance)));
+                    NavAgent.speed = GEAI_Preset.Base.LungeSpeed;
+                    NavAgent.SetDestination(transform.position + (transform.forward * (GEAI_Preset.Base.LungeDistance + GEAI_Preset.Base.StopSlideDistance)));
                     break;
 
                 case State.Attacking:
@@ -238,16 +179,16 @@ namespace AP2
                     CurrentTarget != null
                     && Info.CurrentAttacksInvoked < 1
                     && collision.gameObject == CurrentTarget
-                    //&& (CurrentTarget.transform.position - transform.position).sqrMagnitude < Options.AttackRange * Options.AttackRange //can probably remove w new syst
+                    //&& (CurrentTarget.transform.position - transform.position).sqrMagnitude < GEAI_Preset.Base.AttackRange * GEAI_Preset.Base.AttackRange //can probably remove w new syst
                     )
                 {
                     if (FLAG_Debug) Debug.Log("ATTACKING " + CurrentTarget.name);
                     AttackAction.AttackTarget(AttachedActor, CurrentTarget);
                     Info.CurrentAttacksInvoked++;
 
-                    if(Options.Lunge_ImpactEffects != null)
+                    if(GEAI_Preset.Base.Lunge_ImpactEffects != null)
                     {
-                        foreach(var IFX in Options.Lunge_ImpactEffects)
+                        foreach(var IFX in GEAI_Preset.Base.Lunge_ImpactEffects)
                         {
                             IFX.SpawnImpactEffect(null, collision.contacts[0].point, collision.contacts[0].normal);
                         }
@@ -264,34 +205,15 @@ namespace AP2
             var DefaultScale = transform.localScale;
 
             float StartTime = Time.time;
-            while (CurrentState == State.PrepToLunge && Time.time - StartTime < Options.GrowDuration )
+            while (CurrentState == State.PrepToLunge && Time.time - StartTime < GEAI_Preset.Base.GrowDuration )
             {
-                transform.localScale = DefaultScale * Options.GrowCurve.Evaluate((Time.time - StartTime) / Options.GrowDuration);
+                transform.localScale = DefaultScale * GEAI_Preset.Base.GrowCurve.Evaluate((Time.time - StartTime) / GEAI_Preset.Base.GrowDuration);
                 yield return null;
             }
 
             transform.localScale = DefaultScale;
         }
 
-        protected IEnumerator I_TurnInterpolate()
-        {
-            bool FLAG_Done = false;
-            while (!FLAG_Done)
-            {
-                if (Info.CanTurn && CurrentTarget != null)
-                {
-                    float Angle = Vector3.SignedAngle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized, Vector3.up);
-
-                    float ScaledTurnRate = Options.TurningRate * Time.deltaTime;
-
-                    var Rot = Vector3.ProjectOnPlane((CurrentTarget.transform.position - transform.position), Vector3.up);
-
-                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(Rot, Vector3.up), ScaledTurnRate);
-                }
-
-                yield return null;
-            }
-        }
         #endregion
 
         #region Utility Methods
@@ -301,7 +223,7 @@ namespace AP2
             foreach(Actor A in Singleton<ActorManager>.Instance.ActorList)
             {
                 if (
-                    (A.gameObject.transform.position - gameObject.transform.position).sqrMagnitude <= (Options.AggroRadius * Options.AggroRadius) 
+                    (A.gameObject.transform.position - gameObject.transform.position).sqrMagnitude <= (GEAI_Preset.Base.AggroRadius * GEAI_Preset.Base.AggroRadius) 
                     && A._Team.IsEnemy(AttachedActor._Team)
                     )
                 {
@@ -317,14 +239,14 @@ namespace AP2
             //TODO: consider some more robust logic here. Could have the AI decide based on some criteria like hp remaining or threat.
             //For now proximity will do
 
-            switch(Options._TargetPriority)
+            switch(GEAI_Preset.Base._TargetPriority)
             {
                 case TargetPriority.None:
                     //get random from selection
                     foreach (Actor A in Singleton<ActorManager>.Instance.ActorList)
                     {
                         if (
-                            (A.gameObject.transform.position - gameObject.transform.position).sqrMagnitude <= (Options.AggroRadius * Options.AggroRadius)
+                            (A.gameObject.transform.position - gameObject.transform.position).sqrMagnitude <= (GEAI_Preset.Base.AggroRadius * GEAI_Preset.Base.AggroRadius)
                             && A._Team.IsEnemy(AttachedActor._Team)
                             )
                         {
@@ -346,7 +268,7 @@ namespace AP2
                     foreach (Actor A in Singleton<ActorManager>.Instance.ActorList)
                     {
                         if (
-                            (A.gameObject.transform.position - gameObject.transform.position).sqrMagnitude <= (Options.AggroRadius * Options.AggroRadius)
+                            (A.gameObject.transform.position - gameObject.transform.position).sqrMagnitude <= (GEAI_Preset.Base.AggroRadius * GEAI_Preset.Base.AggroRadius)
                             && A._Team.IsEnemy(AttachedActor._Team)
                             )
                         {
@@ -363,7 +285,7 @@ namespace AP2
 
 
                 default:
-                    throw new System.NotImplementedException("No impl exits for TargetPriority: " + Options._TargetPriority.ToString());
+                    throw new System.NotImplementedException("No impl exits for TargetPriority: " + GEAI_Preset.Base._TargetPriority.ToString());
             }
         }
         #endregion
@@ -387,13 +309,13 @@ namespace AP2
                 ChangeState(State.Idle);
             }
             else if (
-                (CurrentTarget.transform.position - transform.position).sqrMagnitude <= Options.LungePrepareDistance * Options.LungePrepareDistance
+                (CurrentTarget.transform.position - transform.position).sqrMagnitude <= GEAI_Preset.Base.LungePrepareDistance * GEAI_Preset.Base.LungePrepareDistance
                 && (NavAgent.path.corners.Length < 3) //straight shot
                 )
             {
                 ChangeState(State.PrepToLunge);
             }
-            else if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= Options.MaxFacingAngle / 2)
+            else if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= GEAI_Preset.Base.MaxFacingAngle / 2)
             {
                 NavAgent.SetDestination(CurrentTarget.transform.position);
             }
@@ -412,11 +334,11 @@ namespace AP2
             {
                 ChangeState(State.Idle);
             }
-            else if ((CurrentTarget.transform.position - transform.position).sqrMagnitude >= Options.LungeLosePrepareDistance * Options.LungeLosePrepareDistance)
+            else if ((CurrentTarget.transform.position - transform.position).sqrMagnitude >= GEAI_Preset.Base.LungeLosePrepareDistance * GEAI_Preset.Base.LungeLosePrepareDistance)
             {
                 ChangeState(State.Chasing);
             }
-            else if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) > Options.MaxFacingAngle / 2)
+            else if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) > GEAI_Preset.Base.MaxFacingAngle / 2)
             {
                 ChangeState(State.Chasing);
             }
@@ -424,7 +346,7 @@ namespace AP2
             {
                 ChangeState(State.Chasing);
             }
-            else if(Time.time - Info.LungeStartTime > Options.LungePause)
+            else if(Time.time - Info.LungeStartTime > GEAI_Preset.Base.LungePause)
             {
                 ChangeState(State.Lunging);
             }
@@ -433,10 +355,10 @@ namespace AP2
         private void Lunge()
         {
 
-            if (NavAgent.remainingDistance < s_remainingDistanceTolerance || (Time.time - Info.LungeStartTime) > Options.LungeTimeout) //magic number :(
+            if (NavAgent.remainingDistance < s_remainingDistanceTolerance || (Time.time - Info.LungeStartTime) > GEAI_Preset.Base.LungeTimeout) //magic number :(
             {
                 NavAgent.SetDestination(transform.position);
-                NavAgent.speed = Options.MovementSpeed;
+                NavAgent.speed = GEAI_Preset.Base.MovementSpeed;
                 ChangeState(State.Chasing);
             }
         }
@@ -521,11 +443,11 @@ namespace AP2
         {
             bool CanLunge = false;
 
-            if ((CurrentTarget.transform.position - transform.position).sqrMagnitude <= Options.LungePrepareDistance * Options.LungePrepareDistance) CanLunge = true;
+            if ((CurrentTarget.transform.position - transform.position).sqrMagnitude <= GEAI_Preset.Base.LungePrepareDistance * GEAI_Preset.Base.LungePrepareDistance) CanLunge = true;
 
             while (CurrentTarget != null && !CanLunge)
             {
-                if ((CurrentTarget.transform.position - transform.position).sqrMagnitude <= Options.LungePrepareDistance * Options.LungePrepareDistance)
+                if ((CurrentTarget.transform.position - transform.position).sqrMagnitude <= GEAI_Preset.Base.LungePrepareDistance * GEAI_Preset.Base.LungePrepareDistance)
                 {
                     if (FLAG_Debug) Debug.DrawRay(gameObject.transform.position, gameObject.transform.up * 6f, Color.yellow, _RoutineSleepDuration);
 
@@ -538,7 +460,7 @@ namespace AP2
                     //NavAgent.updatePosition = false;
                     //NavAgent.SetDestination((CurrentTarget.transform.position - gameObject.transform.position).normalized);
                 }
-                else if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= Options.MaxFacingAngle / 2)
+                else if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= GEAI_Preset.Base.MaxFacingAngle / 2)
                 {
                     NavAgent.SetDestination(CurrentTarget.transform.position);
                 }
@@ -569,19 +491,19 @@ namespace AP2
 
             while (
                 CurrentTarget != null
-                && Mathf.Abs(CurTime - StartTime) < Options.LungePause
-                && (CurrentTarget.transform.position - transform.position).sqrMagnitude <= Options.LungeLosePrepareDistance * Options.LungeLosePrepareDistance
-                && (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= Options.MaxFacingAngle / 2)
+                && Mathf.Abs(CurTime - StartTime) < GEAI_Preset.Base.LungePause
+                && (CurrentTarget.transform.position - transform.position).sqrMagnitude <= GEAI_Preset.Base.LungeLosePrepareDistance * GEAI_Preset.Base.LungeLosePrepareDistance
+                && (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= GEAI_Preset.Base.MaxFacingAngle / 2)
                 )
             {
                 CurTime = Time.time;
 
                 //if (FLAG_Debug)
                 //{
-                //    Debug.Log("Duration Complete: " + (Mathf.Abs(CurTime - StartTime) < Options.LungePause).ToString());
-                //    Debug.Log("Angle Complete: " + ((Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= Options.MaxFacingAngle / 2)).ToString());
+                //    Debug.Log("Duration Complete: " + (Mathf.Abs(CurTime - StartTime) < GEAI_Preset.Base.LungePause).ToString());
+                //    Debug.Log("Angle Complete: " + ((Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= GEAI_Preset.Base.MaxFacingAngle / 2)).ToString());
 
-                //    Debug.Log("Distance Complete: " + ((CurrentTarget.transform.position - transform.position).sqrMagnitude <= Options.LungeLosePrepareDistance * Options.LungeLosePrepareDistance).ToString());
+                //    Debug.Log("Distance Complete: " + ((CurrentTarget.transform.position - transform.position).sqrMagnitude <= GEAI_Preset.Base.LungeLosePrepareDistance * GEAI_Preset.Base.LungeLosePrepareDistance).ToString());
                 //}
 
                 yield return new WaitForSeconds(_RoutineSleepDuration);
@@ -590,7 +512,7 @@ namespace AP2
             if (CurrentTarget == null)
                 ChangeState(State.Idle);
 
-            else if ((CurrentTarget.transform.position - transform.position).sqrMagnitude > Options.LungeLosePrepareDistance * Options.LungeLosePrepareDistance)
+            else if ((CurrentTarget.transform.position - transform.position).sqrMagnitude > GEAI_Preset.Base.LungeLosePrepareDistance * GEAI_Preset.Base.LungeLosePrepareDistance)
                 ChangeState(State.Chasing);
 
             else
@@ -599,8 +521,8 @@ namespace AP2
         }
         private IEnumerator I_Lunge()
         {
-            NavAgent.speed = Options.LungeSpeed;
-            NavAgent.SetDestination(transform.position + (transform.forward * Options.LungeDistance));
+            NavAgent.speed = GEAI_Preset.Base.LungeSpeed;
+            NavAgent.SetDestination(transform.position + (transform.forward * GEAI_Preset.Base.LungeDistance));
 
             while (NavAgent.remainingDistance > .002f) //magic number :(
             {
@@ -608,7 +530,7 @@ namespace AP2
             }
 
             NavAgent.SetDestination(transform.position);
-            NavAgent.speed = Options.MovementSpeed;
+            NavAgent.speed = GEAI_Preset.Base.MovementSpeed;
 
             ChangeState(State.Idle);
         }

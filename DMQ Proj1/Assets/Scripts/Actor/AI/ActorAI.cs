@@ -19,7 +19,5 @@ public class ActorAI : Actor
     new protected void Update()
     {
         base.Update();
-        Logic.UpdateLogic();
-
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AP2
+namespace ActorSystem.AI
 {
     /// <summary>
     /// Allows for multiple ActorActions to be invoked from a single dispatcher. (i.e., dealing damage and applying a physics impulse)

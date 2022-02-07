@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AP2
+namespace ActorSystem.AI
 {
     /// <summary>
     /// Abstract impl of AttackTarget
