@@ -296,6 +296,15 @@ public class ActorStats : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Consume energy on this Stats instance
+    /// </summary>
+    /// <param name="amount"></param>
+    public void ConsumeEnergy(float amount)
+    {
+        EnergyCurrent -= amount;
+    }
+
     #region Deprecated
 
     //DEPRECATED

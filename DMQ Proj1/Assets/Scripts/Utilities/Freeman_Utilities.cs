@@ -84,6 +84,120 @@ namespace Utils
     }
 
     /// <summary>
+    /// Wraps CooldownTracker. A Cooldown with an additional Charge component 
+    /// </summary>
+    [System.Serializable]
+    public class ChargeTracker
+    {
+        #region Ctor
+
+        /// <summary>
+        /// Parameterized constructor
+        /// </summary>
+        /// <param name="baseCooldown">Cooldown between charge uses</param>
+        /// <param name="options"></param>
+        /// <param name="rechargeCooldown"></param>
+        public ChargeTracker(CooldownTracker baseCooldown, CT_Options options = null, CooldownTracker rechargeCooldown = null)
+        {
+            Info.Cooldown_BetweenUses = new CooldownTracker(baseCooldown);
+
+            if (rechargeCooldown != null) Info.Cooldown_ChargeRecharging = new CooldownTracker(rechargeCooldown);
+            if(options != null) Settings = options;
+        }
+
+        #endregion
+
+        #region Members
+
+        public CT_Options Settings = new CT_Options();
+        protected CT_Info Info = new CT_Info(); //access this stuff through properties
+
+        #region Properties
+
+        /// <summary>
+        /// Can a charge be used right now?
+        /// </summary>
+        public bool ChargeAvailable 
+        {
+            get { return (Info.Cooldown_BetweenUses.CooldownAvailable && Info.ChargesRemaining > 0); }
+        }
+
+        #endregion
+
+        #region Helpers
+
+        /// <summary>
+        /// Preset options
+        /// </summary>
+        [System.Serializable]
+        public class CT_Options
+        {
+            //flags
+            /// <summary>
+            /// Should there be a cooldown that controls recharging charges?
+            /// </summary>
+            public bool FLAG_UseChargeRecharging = false;
+            /// <summary>
+            /// Should the recharge grant all charges at once?
+            /// </summary>
+            public bool FLAG_RegainAllCharges_ChargeRecharging = false;
+
+            [Min(0)]
+            public int MaxCharges;
+        }
+
+        /// <summary>
+        /// State info
+        /// </summary>
+        [System.Serializable]
+        public class CT_Info
+        {
+            /// <summary>
+            /// The Cooldown specifies cooldown in between charges.
+            /// </summary>
+            public CooldownTracker Cooldown_BetweenUses;
+            /// <summary>
+            /// Cooldown to regain charges, if the FLAG is enabled
+            /// </summary>
+            public CooldownTracker Cooldown_ChargeRecharging;
+
+            public int ChargesRemaining;
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Consumes the number of charges specified by <paramref name="amount"/>
+        /// </summary>
+        /// <param name="amount">How many charges to consume. Usually just leave this set to 1.</param>
+        /// <returns></returns>
+        public bool ConsumeCharge(int amount = 1)
+        {
+            if(ChargeAvailable && Info.ChargesRemaining >= amount)
+            {
+                Info.ChargesRemaining -= amount;
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// This Charge Tracker gains <paramref name="amount"/> charges
+        /// </summary>
+        /// <param name="amount">number of charges to regain</param>
+        public void RegainCharges(int amount = 1)
+        {
+            Info.ChargesRemaining = Mathf.Clamp(Info.ChargesRemaining + amount, 0, Settings.MaxCharges);
+        }
+
+        #endregion
+    }
+
+    /// <summary>
     /// Maintains a generic _Cooldown based in (scaled) Time.
     /// </summary>
     [System.Serializable]
