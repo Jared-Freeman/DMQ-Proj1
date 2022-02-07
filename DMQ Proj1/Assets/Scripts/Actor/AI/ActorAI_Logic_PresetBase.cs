@@ -24,14 +24,16 @@ namespace ActorSystem.AI
             public float AggroRadius = 20;
 
             [Tooltip("Max angle the agent can move toward without needing to stop and turn")]
-            public float MaxFacingAngle = 250f;
+            public float MaxFacingAngle = 60;
+            [Tooltip("Deg/sec")]
+            public float TurningRate = 240;
 
             [Min(0f)]
             public float LungePrepareDistance = 2f;
             public float LungeLosePrepareDistance = 3f;
             public float LungeDistance = 3f;
             [Min(0f)]
-            public float LungePause = 2f;
+            public float LungePause = 1;
             [Min(0f)]
             public float LungeSpeed = 8f;
             [Min(0f)]
@@ -39,11 +41,9 @@ namespace ActorSystem.AI
 
             public List<ImpactFX.ImpactEffect> Lunge_ImpactEffects = new List<ImpactFX.ImpactEffect>();
 
-            [Tooltip("Deg/sec")]
-            public float TurningRate = 360f;
 
             public AnimationCurve GrowCurve;
-            public float GrowDuration = .5f;
+            public float GrowDuration = 1;
 
             public ActorAI_Logic.TargetPriority _TargetPriority = ActorAI_Logic.TargetPriority.Proximity;
         }
@@ -53,7 +53,8 @@ namespace ActorSystem.AI
     [CreateAssetMenu(fileName = "AI_", menuName = "Actor/AI Logic/Generic Charging Enemy", order = 2)]
     public class AP2_GenericEnemyAI_LogicPreset : ActorAI_Logic_PresetBase
     {
-        AIOptions_AP2_GenericEnemyAI GEAI_Options;
+        //TODO: What goes here versus the base preset?
+        public AIOptions_AP2_GenericEnemyAI GEAI_Options;
 
         //inspector helper
         [System.Serializable]

@@ -77,7 +77,7 @@ namespace ActorSystem.AI
 
             //Overrides of NavAgent properties
             NavAgent.updateRotation = false;
-            NavAgent.speed = BaseOptions.MovementSpeed;
+            NavAgent.speed = Preset.Base.MovementSpeed;
         }
 
         protected override void Start()
@@ -207,7 +207,7 @@ namespace ActorSystem.AI
 
         private void ContinueTurnToFaceTarget()
         {
-            if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) < BaseOptions.MaxFacingAngle / 2)
+            if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) < Preset.Base.MaxFacingAngle / 2)
             {
                 ChangeState(State.ChargingAttack);
             }
@@ -375,7 +375,7 @@ namespace ActorSystem.AI
                         {
                             float Angle = Vector3.SignedAngle(gameObject.transform.forward, (NavAgent.destination - gameObject.transform.position).normalized, Vector3.up);
 
-                            float ScaledTurnRate = BaseOptions.TurningRate * Time.deltaTime;
+                            float ScaledTurnRate = Preset.Base.TurningRate * Time.deltaTime;
 
                             var Rot = Vector3.ProjectOnPlane((NavAgent.destination - transform.position), Vector3.up);
 
@@ -391,7 +391,7 @@ namespace ActorSystem.AI
                         {
                             float Angle = Vector3.SignedAngle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized, Vector3.up);
 
-                            float ScaledTurnRate = BaseOptions.TurningRate * Time.deltaTime;
+                            float ScaledTurnRate = Preset.Base.TurningRate * Time.deltaTime;
 
                             var Rot = Vector3.ProjectOnPlane((CurrentTarget.transform.position - transform.position), Vector3.up);
 

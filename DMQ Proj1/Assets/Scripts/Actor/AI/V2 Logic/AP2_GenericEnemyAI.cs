@@ -200,7 +200,7 @@ namespace ActorSystem.AI
 
 
         #region Utility Routines
-        private IEnumerator I_IncreaseScale()
+        protected IEnumerator I_IncreaseScale()
         {
             var DefaultScale = transform.localScale;
 
@@ -214,80 +214,6 @@ namespace ActorSystem.AI
             transform.localScale = DefaultScale;
         }
 
-        #endregion
-
-        #region Utility Methods
-        //TODO: Consider optimizing
-        public bool EnemyExistsInAggroRadius()
-        {
-            foreach(Actor A in Singleton<ActorManager>.Instance.ActorList)
-            {
-                if (
-                    (A.gameObject.transform.position - gameObject.transform.position).sqrMagnitude <= (GEAI_Preset.Base.AggroRadius * GEAI_Preset.Base.AggroRadius) 
-                    && A._Team.IsEnemy(AttachedActor._Team)
-                    )
-                {
-                    if (FLAG_Debug) Debug.Log("Enemy in Aggro Range");
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private void ChooseNewTarget()
-        {
-            //TODO: consider some more robust logic here. Could have the AI decide based on some criteria like hp remaining or threat.
-            //For now proximity will do
-
-            switch(GEAI_Preset.Base._TargetPriority)
-            {
-                case TargetPriority.None:
-                    //get random from selection
-                    foreach (Actor A in Singleton<ActorManager>.Instance.ActorList)
-                    {
-                        if (
-                            (A.gameObject.transform.position - gameObject.transform.position).sqrMagnitude <= (GEAI_Preset.Base.AggroRadius * GEAI_Preset.Base.AggroRadius)
-                            && A._Team.IsEnemy(AttachedActor._Team)
-                            )
-                        {
-                            CurrentTarget = A.gameObject; //possible multiple reassignment... but it doesnt matter here
-                        }
-                    }
-                    break;
-
-
-                case TargetPriority.Proximity:
-
-                    List<Actor> ProximalActors = new List<Actor>();
-                    if(Singleton<ActorManager>.Instance.ActorList == null)
-                    {
-                        Debug.LogError("WAT");
-                        return;
-                    }
-
-                    foreach (Actor A in Singleton<ActorManager>.Instance.ActorList)
-                    {
-                        if (
-                            (A.gameObject.transform.position - gameObject.transform.position).sqrMagnitude <= (GEAI_Preset.Base.AggroRadius * GEAI_Preset.Base.AggroRadius)
-                            && A._Team.IsEnemy(AttachedActor._Team)
-                            )
-                        {
-                            ProximalActors.Add(A);
-                        }
-                    }
-                    if(ProximalActors.Count > 0)
-                    {
-                        ProximalActors.OrderBy(t => (t.gameObject.transform.position - gameObject.transform.position).sqrMagnitude);
-                        CurrentTarget = ProximalActors[0].gameObject;
-                    }
-
-                    break;
-
-
-                default:
-                    throw new System.NotImplementedException("No impl exits for TargetPriority: " + GEAI_Preset.Base._TargetPriority.ToString());
-            }
-        }
         #endregion
 
         #region State Update Methods

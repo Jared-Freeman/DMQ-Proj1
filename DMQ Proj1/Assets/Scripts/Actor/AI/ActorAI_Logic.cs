@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,34 +12,34 @@ using ActorSystem.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class ActorAI_Logic : MonoBehaviour
 {
-    #region members
 
     public enum TargetPriority { None, Proximity }
 
     //For Logic subroutines (minimize cost-per-frame)
     protected readonly static float _RoutineSleepDuration = .125f; //8 times / sec
 
+    #region Members
+
     //flags
     public bool FLAG_Debug = false;
-
-    public AILogicOptions BaseOptions = new AILogicOptions();
-
 
     protected StateInfo Info = new StateInfo();
 
     [SerializeField]
     private ActorAI_Logic_PresetBase _Preset;
+
+    #region Properties
+
     public virtual ActorAI_Logic_PresetBase Preset
     {
         get { return _Preset; }
         set { _Preset = value; }
     }
-
-
     public GameObject CurrentTarget { get { return Info.CurrentTarget; } protected set { Info.CurrentTarget = value; } }
     public ActorAI AttachedActor { get; protected set; }
     public NavMeshAgent NavAgent { get; protected set; }
     public Animator Animator { get; protected set; }
+
     #endregion
 
     #region Helper data
@@ -76,6 +78,10 @@ public class ActorAI_Logic : MonoBehaviour
 
     #endregion
 
+    #endregion
+
+    #region Initialization
+
     protected virtual void Awake()
     {
         AttachedActor = GetComponent<ActorAI>();
@@ -96,6 +102,8 @@ public class ActorAI_Logic : MonoBehaviour
         else if (gameObject.GetComponent<Rigidbody>()?.isKinematic == true) StartCoroutine(I_TurnInterpolate());
     }
 
+    #endregion
+
     /// <summary>
     /// Rigidbody compliant turn interpolation... This solves stutter issue from the coroutine method
     /// </summary>
@@ -115,6 +123,80 @@ public class ActorAI_Logic : MonoBehaviour
             //transform.rotation = QResult;
 
             RB.MoveRotation(QResult);
+        }
+    }
+
+    #region Utility Methods
+
+    //TODO: Consider optimizing
+    public bool EnemyExistsInAggroRadius()
+    {
+        foreach (Actor A in Singleton<ActorManager>.Instance.ActorList)
+        {
+            if (
+                (A.gameObject.transform.position - gameObject.transform.position).sqrMagnitude <= (Preset.Base.AggroRadius * Preset.Base.AggroRadius)
+                && A._Team.IsEnemy(AttachedActor._Team)
+                )
+            {
+                if (FLAG_Debug) Debug.Log("Enemy in Aggro Range");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected void ChooseNewTarget()
+    {
+        //TODO: consider some more robust logic here. Could have the AI decide based on some criteria like hp remaining or threat.
+        //For now proximity will do
+
+        switch (Preset.Base._TargetPriority)
+        {
+            case TargetPriority.None:
+                //get random from selection
+                foreach (Actor A in Singleton<ActorManager>.Instance.ActorList)
+                {
+                    if (
+                        (A.gameObject.transform.position - gameObject.transform.position).sqrMagnitude <= (Preset.Base.AggroRadius * Preset.Base.AggroRadius)
+                        && A._Team.IsEnemy(AttachedActor._Team)
+                        )
+                    {
+                        CurrentTarget = A.gameObject; //possible multiple reassignment... but it doesnt matter here
+                    }
+                }
+                break;
+
+
+            case TargetPriority.Proximity:
+
+                List<Actor> ProximalActors = new List<Actor>();
+                if (Singleton<ActorManager>.Instance.ActorList == null)
+                {
+                    Debug.LogError("WAT");
+                    return;
+                }
+
+                foreach (Actor A in Singleton<ActorManager>.Instance.ActorList)
+                {
+                    if (
+                        (A.gameObject.transform.position - gameObject.transform.position).sqrMagnitude <= (Preset.Base.AggroRadius * Preset.Base.AggroRadius)
+                        && A._Team.IsEnemy(AttachedActor._Team)
+                        )
+                    {
+                        ProximalActors.Add(A);
+                    }
+                }
+                if (ProximalActors.Count > 0)
+                {
+                    ProximalActors.OrderBy(t => (t.gameObject.transform.position - gameObject.transform.position).sqrMagnitude);
+                    CurrentTarget = ProximalActors[0].gameObject;
+                }
+
+                break;
+
+
+            default:
+                throw new System.NotImplementedException("No impl exits for TargetPriority: " + Preset.Base._TargetPriority.ToString());
         }
     }
 
@@ -141,4 +223,7 @@ public class ActorAI_Logic : MonoBehaviour
             yield return null;
         }
     }
+
+    #endregion
+
 }

@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: AI_DevGeneric1
   m_EditorClassIdentifier: Assembly-CSharp:ActorSystem.AI:AP2_GenericEnemyAI_LogicPreset
   Base:
-    DrawDebugGizmos: 1
+    DrawDebugGizmos: 0
     AttackRange: 1.25
     MovementSpeed: 5.5
     StopSlideDistance: 0.5
     AggroRadius: 20
     MaxFacingAngle: 50
+    TurningRate: 240
     LungePrepareDistance: 8.5
     LungeLosePrepareDistance: 12
     LungeDistance: 13
@@ -27,7 +28,6 @@ MonoBehaviour:
     LungeTimeout: 1.65
     Lunge_ImpactEffects:
     - {fileID: 11400000, guid: 8db999520b835834f8c4a75965a00ff2, type: 2}
-    TurningRate: 240
     GrowCurve:
       serializedVersion: 2
       m_Curve:
@@ -54,3 +54,42 @@ MonoBehaviour:
       m_RotationOrder: 4
     GrowDuration: 1
     _TargetPriority: 1
+  GEAI_Options:
+    DrawDebugGizmos: 0
+    AttackRange: 1.25
+    MovementSpeed: 2
+    StopSlideDistance: 0.5
+    AggroRadius: 20
+    MaxFacingAngle: 250
+    LungePrepareDistance: 2
+    LungeLosePrepareDistance: 3
+    LungeDistance: 3
+    LungePause: 2
+    LungeSpeed: 8
+    LungeTimeout: 1.25
+    Lunge_ImpactEffects: []
+    GrowCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1.4
+        inSlope: 1.1175467
+        outSlope: 1.1175467
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.053744555
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    GrowDuration: 0.5
