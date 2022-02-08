@@ -90,7 +90,7 @@ namespace ItemSystem
                 //TODO: If we implement a more complex cost (i.e. weight) this needs to be altered
 
                 //Must have room left, and Item type must be allowed to be in this container
-                if (_ItemList.Count < _Data.BaseOptions.Capacity && _Data.ItemAllowed(item))
+                if (_ItemList.Count < _Data.BaseOptions.Capacity && ItemAllowed(item))
                 {
                     if(item.AddItemToInventorySpace(this))
                     {
@@ -174,7 +174,7 @@ namespace ItemSystem
         //Please note that this can be extended
         public virtual bool ReceiveItemFromInventory(IS_ItemBase item)
         {
-            if(_ItemList.Count < _Data.BaseOptions.Capacity && _Data.ItemAllowed(item))
+            if(_ItemList.Count < _Data.BaseOptions.Capacity && ItemAllowed(item))
             {
                 if (s_FLAG_DEBUG) Debug.Log("Base Receive evaluated to true");
 
@@ -184,7 +184,7 @@ namespace ItemSystem
 
 
             if(s_FLAG_DEBUG) Debug.Log("Capacity error: " + !(_ItemList.Count < _Data.BaseOptions.Capacity));
-            if (s_FLAG_DEBUG) Debug.Log("Item Return error: " + !(_Data.ItemAllowed(item)));
+            if (s_FLAG_DEBUG) Debug.Log("Item Return error: " + !(ItemAllowed(item)));
             return false;
         }
 
@@ -212,6 +212,17 @@ namespace ItemSystem
 
             _ItemList = ValidatedList;
         }
+
+        /// <summary>
+        /// Checks if item is allowed -- uses item's check and preset's check
+        /// </summary>
+        /// <param name="item">item to check</param>
+        /// <returns></returns>
+        public virtual bool ItemAllowed(IS_ItemBase item)
+        {
+            return (item.InventoryAllowed(this) && _Data.ItemAllowed(item.Preset));
+        }
+
         #endregion
     }
 }

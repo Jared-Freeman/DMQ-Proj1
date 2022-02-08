@@ -39,7 +39,10 @@ namespace ItemSystem
 
         #endregion
 
-
+        protected override void OnItemAddedToInventory(IS_InventoryBase inv)
+        {
+            base.OnItemAddedToInventory(inv);
+        }
     }
 
 }

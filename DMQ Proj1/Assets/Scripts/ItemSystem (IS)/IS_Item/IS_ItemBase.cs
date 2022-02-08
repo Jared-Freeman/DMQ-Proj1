@@ -146,9 +146,10 @@ namespace ItemSystem
             gameObject.SetActive(false);
             Location_State = ItemLocation.Inventory;
 
-            OnItemAddedToInventory(inv);
+            //This ordering is PROBABLY important
             OnItemRemovedFromWorldspace?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
             OnItemTransferred_Local?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
+            OnItemAddedToInventory(inv);
 
             return successful;
         }
@@ -166,9 +167,10 @@ namespace ItemSystem
             gameObject.SetActive(true);
             Location_State = ItemLocation.World;
 
-            OnItemAddedToWorld();
+            //This ordering is PROBABLY important
             OnItemAddedToWorldspace?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
             OnItemTransferred_Local?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
+            OnItemAddedToWorld();
 
             return successful;
         }
@@ -189,6 +191,17 @@ namespace ItemSystem
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Whether this item allows the inventory to accept it. 
+        /// Virtual method can be overwritten.
+        /// </summary>
+        /// <param name="inv"></param>
+        /// <returns></returns>
+        public virtual bool InventoryAllowed(IS_InventoryBase inv)
+        {
+            return true;
         }
     }
 }

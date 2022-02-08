@@ -22,12 +22,12 @@ namespace ItemSystem
         }
 
 
-        //Item allowed
-        public bool ItemAllowed(IS_ItemBase item)
-        {
-            return ItemAllowed(item.Preset);
-        }
-        public bool ItemAllowed(IS_ItemPresetBase item)
+        /// <summary>
+        /// Determines whether supplied item preset is allowed with this inventory preset
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public virtual bool ItemAllowed(IS_ItemPresetBase item)
         {
             if (BaseOptions.PermittedItemTypes.List.Count < 1 || BaseOptions.PermittedItemTypes.Contains(item))
             {
