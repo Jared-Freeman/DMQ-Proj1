@@ -62,10 +62,10 @@ namespace ItemSystem.Weapons
         /// Disables the gameObject and returns true
         /// </summary>
         /// <returns></returns>
-        new public virtual bool AddItemToInventorySpace()
+        new public virtual bool AddItemToInventorySpace(IS_InventoryBase inv)
         {
             //base is sufficient for this class
-            base.AddItemToInventorySpace();
+            base.AddItemToInventorySpace(inv);
 
             return true;
         }

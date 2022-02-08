@@ -92,10 +92,10 @@ namespace ItemSystem
                 //Must have room left, and Item type must be allowed to be in this container
                 if (_ItemList.Count < _Data.BaseOptions.Capacity && _Data.ItemAllowed(item))
                 {
-                    if(item.AddItemToInventorySpace())
+                    if(item.AddItemToInventorySpace(this))
                     {
                         _ItemList.Add(item);
-                        item.AddItemToInventorySpace();
+                        item.AddItemToInventorySpace(this);
                         Event_ItemEntersInventory?.Invoke(this, new ItemAndInventoryEventArgs(item, this));
                         return true;
                     }

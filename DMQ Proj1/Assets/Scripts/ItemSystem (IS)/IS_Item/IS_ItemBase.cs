@@ -139,17 +139,25 @@ namespace ItemSystem
         /// Virtual impl. Allows designer to implement custom disable routines for item types, should they be needed
         /// </summary>
         /// <returns></returns>
-        public virtual bool AddItemToInventorySpace()
+        public virtual bool AddItemToInventorySpace(IS_InventoryBase inv)
         {
             bool successful = true;
 
             gameObject.SetActive(false);
             Location_State = ItemLocation.Inventory;
+
+            OnItemAddedToInventory(inv);
             OnItemRemovedFromWorldspace?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
             OnItemTransferred_Local?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
 
             return successful;
         }
+        /// <summary>
+        /// Internal event handler. Can be overwritten
+        /// </summary>
+        /// <param name="inv"></param>
+        protected virtual void OnItemAddedToInventory(IS_InventoryBase inv) { }
+
 
         public virtual bool AddItemToWorldSpace()
         {
@@ -157,11 +165,17 @@ namespace ItemSystem
 
             gameObject.SetActive(true);
             Location_State = ItemLocation.World;
+
+            OnItemAddedToWorld();
             OnItemAddedToWorldspace?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
             OnItemTransferred_Local?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
 
             return successful;
         }
+        /// <summary>
+        /// Internal event handler. Can be overwritten
+        /// </summary>
+        protected virtual void OnItemAddedToWorld() { }
 
         /// <summary>
         /// Check if a given position is in the pickup sphere for this item
