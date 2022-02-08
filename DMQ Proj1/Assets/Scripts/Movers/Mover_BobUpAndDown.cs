@@ -30,7 +30,7 @@ public class Mover_BobUpAndDown : MonoBehaviour
 
     private void Awake()
     {
-        if (RandomStart) CurAnimationT = Random.Range(0, 1000f); //magic number sorry
+        if (RandomStart) CurAnimationT = Random.Range(0, 1f); //magic number sorry
 
         DefaultLocalPosition = transform.localPosition;
     }
@@ -51,7 +51,7 @@ public class Mover_BobUpAndDown : MonoBehaviour
         Vector3 OffsetVector = Vector3.zero;
         while (true)
         {
-            CurAnimationT += Time.deltaTime * TimeScale % 1000f; //magic number sorry
+            CurAnimationT += Time.deltaTime * TimeScale % 1f; //magic number sorry
 
             CurrentHeight = HeightMultiplier * HeightCurve.Evaluate(CurAnimationT);
 
