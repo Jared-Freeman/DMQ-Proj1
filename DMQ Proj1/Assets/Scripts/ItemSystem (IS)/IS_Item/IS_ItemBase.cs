@@ -145,7 +145,7 @@ namespace ItemSystem
             return true;
         }
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
             OnItemDestroyed?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
         }
@@ -176,7 +176,10 @@ namespace ItemSystem
         /// Internal event handler. Can be overwritten
         /// </summary>
         /// <param name="inv"></param>
-        protected virtual void OnItemAddedToInventory(IS_InventoryBase inv) { }
+        protected virtual void OnItemAddedToInventory(IS_InventoryBase inv) 
+        {
+            if (s_FLAG_ITEM_DEBUG) Debug.Log(ToString() + " added to inventory: " + inv.ToString());
+        }
 
 
         public virtual bool AddItemToWorldSpace()

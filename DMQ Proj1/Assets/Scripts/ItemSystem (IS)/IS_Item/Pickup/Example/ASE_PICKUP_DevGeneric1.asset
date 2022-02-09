@@ -9,11 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81d7b677faabee7499a79d5ce98caf21, type: 3}
-  m_Name: PICKUP_DevGeneric1
+  m_Script: {fileID: 11500000, guid: d5744dd78d11e5c4c9682a24760a1f39, type: 3}
+  m_Name: ASE_PICKUP_DevGeneric1
   m_EditorClassIdentifier: 
-  BaseOptions:
-    PickupRadius: 2
-  List_WhoCanPickUp:
-  - {fileID: 11400000, guid: 414bc1b9b54c2a143a4a2a46d2db0034, type: 2}
-  PickupEffect: {fileID: 0}
+  Conditions:
+    _Conditions: []
+  TargetFilters:
+    Enemy: 0
+    Ally: 1
+    Neutral: 1
+    Self: 1
+  List_StatusEffects:
+  - {fileID: 0}
