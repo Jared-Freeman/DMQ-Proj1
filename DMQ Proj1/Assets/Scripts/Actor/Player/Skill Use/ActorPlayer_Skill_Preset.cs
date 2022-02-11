@@ -15,7 +15,8 @@ namespace ActorSystem.Player
         public float EnergyCost = 0f;
 
         /// <summary>
-        /// Instantiates a skill instance and attaches it to <paramref name="componentOwner"/>
+        /// Instantiates a skill instance and attaches it to <paramref name="componentOwner"/>.
+        /// Please note that skill instances can be reused by pointing their property to a new Preset SO
         /// </summary>
         /// <param name="componentOwner"></param>
         /// <returns></returns>
