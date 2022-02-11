@@ -5,7 +5,9 @@ using System.Linq;
 
 namespace ActorSystem.AI
 {
-    //This class is intended to simply walk to a point near the player, lunge, and perform an attack at the end of the lunge
+    /// <summary>
+    /// This AI Logic is intended to simply walk to a point near the player, lunge, and perform an attack upon a collision DURING the lunge
+    /// </summary>
     public class AP2_GenericEnemyAI : ActorAI_Logic
     {
         public static float s_remainingDistanceTolerance = .2f;

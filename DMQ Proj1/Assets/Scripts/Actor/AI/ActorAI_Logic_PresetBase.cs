@@ -49,20 +49,21 @@ namespace ActorSystem.AI
         public class AIOptions_AP2_GenericEnemyAI
         {
             [Min(0f)]
-            public float LungePrepareDistance = 2f;
-            public float LungeLosePrepareDistance = 3f;
-            public float LungeDistance = 3f;
+            public float LungePrepareDistance = 4;
+            public float LungeLosePrepareDistance = 5.5f;
+            public float LungeDistance = 4.5f;
             [Min(0f)]
-            public float LungePause = 2f;
-            [Min(0f)]
-            public float LungeSpeed = 8f;
+            public float LungeSpeed = 22f;
             [Min(0f)]
             public float LungeTimeout = 1.25f;
 
             public List<ImpactFX.ImpactEffect> Lunge_ImpactEffects = new List<ImpactFX.ImpactEffect>();
 
-            public AnimationCurve GrowCurve;
+
+            [Min(0f)]
+            public float LungePause = .5f;
             public float GrowDuration = .5f;
+            public AnimationCurve GrowCurve;
         }
     }
 
