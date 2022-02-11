@@ -30,20 +30,6 @@ namespace ActorSystem.AI
             [Tooltip("Deg/sec")]
             public float TurningRate = 240;
 
-            [Min(0f)]
-            public float LungePrepareDistance = 2f;
-            public float LungeLosePrepareDistance = 3f;
-            public float LungeDistance = 3f;
-            [Min(0f)]
-            public float LungePause = 1;
-            [Min(0f)]
-            public float LungeSpeed = 8f;
-            [Min(0f)]
-            public float LungeTimeout = 1.25f;
-
-            public List<ImpactFX.ImpactEffect> Lunge_ImpactEffects = new List<ImpactFX.ImpactEffect>();
-
-
             public AnimationCurve GrowCurve;
             public float GrowDuration = 1;
 
@@ -62,19 +48,6 @@ namespace ActorSystem.AI
         [System.Serializable]
         public class AIOptions_AP2_GenericEnemyAI
         {
-            public bool DrawDebugGizmos = false;
-
-            [Min(0f)]
-            public float AttackRange = 1.25f;
-
-            public float MovementSpeed = 2f; //TODO: Currently not hooked up to navmesh agent
-            public float StopSlideDistance = .5f;
-
-            public float AggroRadius = 20;
-
-            [Tooltip("Max angle the agent can move toward without needing to stop and turn")]
-            public float MaxFacingAngle = 250f;
-
             [Min(0f)]
             public float LungePrepareDistance = 2f;
             public float LungeLosePrepareDistance = 3f;

@@ -80,7 +80,7 @@ namespace ActorSystem.AI
             {
                 Gizmos.DrawWireSphere(transform.position, GEAI_Preset.Base.AggroRadius);
 
-                Gizmos.DrawWireSphere(transform.position, GEAI_Preset.Base.LungePrepareDistance);
+                Gizmos.DrawWireSphere(transform.position, GEAI_Preset.GEAI_Options.LungePrepareDistance);
 
                 if (CurrentTarget != null) Gizmos.DrawRay(CurrentTarget.transform.position, Vector3.up * 4f);
             }
@@ -156,8 +156,8 @@ namespace ActorSystem.AI
                     Info.CurrentAttacksInvoked = 0;
                     //disable turning
                     Info.CanTurn = false;
-                    NavAgent.speed = GEAI_Preset.Base.LungeSpeed;
-                    NavAgent.SetDestination(transform.position + (transform.forward * (GEAI_Preset.Base.LungeDistance + GEAI_Preset.Base.StopSlideDistance)));
+                    NavAgent.speed = GEAI_Preset.GEAI_Options.LungeSpeed;
+                    NavAgent.SetDestination(transform.position + (transform.forward * (GEAI_Preset.GEAI_Options.LungeDistance + GEAI_Preset.Base.StopSlideDistance)));
                     break;
 
                 case State.Attacking:
@@ -187,9 +187,9 @@ namespace ActorSystem.AI
                     AttackAction.AttackTarget(AttachedActor, CurrentTarget);
                     Info.CurrentAttacksInvoked++;
 
-                    if(GEAI_Preset.Base.Lunge_ImpactEffects != null)
+                    if(GEAI_Preset.GEAI_Options.Lunge_ImpactEffects != null)
                     {
-                        foreach(var IFX in GEAI_Preset.Base.Lunge_ImpactEffects)
+                        foreach(var IFX in GEAI_Preset.GEAI_Options.Lunge_ImpactEffects)
                         {
                             IFX.SpawnImpactEffect(null, collision.contacts[0].point, collision.contacts[0].normal);
                         }
@@ -236,7 +236,7 @@ namespace ActorSystem.AI
                 ChangeState(State.Idle);
             }
             else if (
-                (CurrentTarget.transform.position - transform.position).sqrMagnitude <= GEAI_Preset.Base.LungePrepareDistance * GEAI_Preset.Base.LungePrepareDistance
+                (CurrentTarget.transform.position - transform.position).sqrMagnitude <= GEAI_Preset.GEAI_Options.LungePrepareDistance * GEAI_Preset.GEAI_Options.LungePrepareDistance
                 && (NavAgent.path.corners.Length < 3) //straight shot
                 )
             {
@@ -261,7 +261,7 @@ namespace ActorSystem.AI
             {
                 ChangeState(State.Idle);
             }
-            else if ((CurrentTarget.transform.position - transform.position).sqrMagnitude >= GEAI_Preset.Base.LungeLosePrepareDistance * GEAI_Preset.Base.LungeLosePrepareDistance)
+            else if ((CurrentTarget.transform.position - transform.position).sqrMagnitude >= GEAI_Preset.GEAI_Options.LungeLosePrepareDistance * GEAI_Preset.GEAI_Options.LungeLosePrepareDistance)
             {
                 ChangeState(State.Chasing);
             }
@@ -273,7 +273,7 @@ namespace ActorSystem.AI
             {
                 ChangeState(State.Chasing);
             }
-            else if(Time.time - Info.LungeStartTime > GEAI_Preset.Base.LungePause)
+            else if(Time.time - Info.LungeStartTime > GEAI_Preset.GEAI_Options.LungePause)
             {
                 ChangeState(State.Lunging);
             }
@@ -282,7 +282,7 @@ namespace ActorSystem.AI
         private void Lunge()
         {
 
-            if (NavAgent.remainingDistance < s_remainingDistanceTolerance || (Time.time - Info.LungeStartTime) > GEAI_Preset.Base.LungeTimeout) //magic number :(
+            if (NavAgent.remainingDistance < s_remainingDistanceTolerance || (Time.time - Info.LungeStartTime) > GEAI_Preset.GEAI_Options.LungeTimeout) //magic number :(
             {
                 NavAgent.SetDestination(transform.position);
                 NavAgent.speed = GEAI_Preset.Base.MovementSpeed;
@@ -370,11 +370,11 @@ namespace ActorSystem.AI
         {
             bool CanLunge = false;
 
-            if ((CurrentTarget.transform.position - transform.position).sqrMagnitude <= GEAI_Preset.Base.LungePrepareDistance * GEAI_Preset.Base.LungePrepareDistance) CanLunge = true;
+            if ((CurrentTarget.transform.position - transform.position).sqrMagnitude <= GEAI_Preset.GEAI_Options.LungePrepareDistance * GEAI_Preset.GEAI_Options.LungePrepareDistance) CanLunge = true;
 
             while (CurrentTarget != null && !CanLunge)
             {
-                if ((CurrentTarget.transform.position - transform.position).sqrMagnitude <= GEAI_Preset.Base.LungePrepareDistance * GEAI_Preset.Base.LungePrepareDistance)
+                if ((CurrentTarget.transform.position - transform.position).sqrMagnitude <= GEAI_Preset.GEAI_Options.LungePrepareDistance * GEAI_Preset.GEAI_Options.LungePrepareDistance)
                 {
                     if (FLAG_Debug) Debug.DrawRay(gameObject.transform.position, gameObject.transform.up * 6f, Color.yellow, _RoutineSleepDuration);
 
@@ -418,8 +418,8 @@ namespace ActorSystem.AI
 
             while (
                 CurrentTarget != null
-                && Mathf.Abs(CurTime - StartTime) < GEAI_Preset.Base.LungePause
-                && (CurrentTarget.transform.position - transform.position).sqrMagnitude <= GEAI_Preset.Base.LungeLosePrepareDistance * GEAI_Preset.Base.LungeLosePrepareDistance
+                && Mathf.Abs(CurTime - StartTime) < GEAI_Preset.GEAI_Options.LungePause
+                && (CurrentTarget.transform.position - transform.position).sqrMagnitude <= GEAI_Preset.GEAI_Options.LungeLosePrepareDistance * GEAI_Preset.GEAI_Options.LungeLosePrepareDistance
                 && (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= GEAI_Preset.Base.MaxFacingAngle / 2)
                 )
             {
@@ -439,7 +439,7 @@ namespace ActorSystem.AI
             if (CurrentTarget == null)
                 ChangeState(State.Idle);
 
-            else if ((CurrentTarget.transform.position - transform.position).sqrMagnitude > GEAI_Preset.Base.LungeLosePrepareDistance * GEAI_Preset.Base.LungeLosePrepareDistance)
+            else if ((CurrentTarget.transform.position - transform.position).sqrMagnitude > GEAI_Preset.GEAI_Options.LungeLosePrepareDistance * GEAI_Preset.GEAI_Options.LungeLosePrepareDistance)
                 ChangeState(State.Chasing);
 
             else
@@ -448,8 +448,8 @@ namespace ActorSystem.AI
         }
         private IEnumerator I_Lunge()
         {
-            NavAgent.speed = GEAI_Preset.Base.LungeSpeed;
-            NavAgent.SetDestination(transform.position + (transform.forward * GEAI_Preset.Base.LungeDistance));
+            NavAgent.speed = GEAI_Preset.GEAI_Options.LungeSpeed;
+            NavAgent.SetDestination(transform.position + (transform.forward * GEAI_Preset.GEAI_Options.LungeDistance));
 
             while (NavAgent.remainingDistance > .002f) //magic number :(
             {

@@ -336,6 +336,7 @@ GameObject:
   - component: {fileID: 7019957170249667432}
   - component: {fileID: 7019957170249667433}
   - component: {fileID: 810221869}
+  - component: {fileID: 6372017631660270270}
   m_Layer: 12
   m_Name: Actor Dummy
   m_TagString: Untagged
@@ -492,6 +493,19 @@ MonoBehaviour:
     _Cooldown: 1
   AttackAction: {fileID: 11400000, guid: 1001be58deac178479d8e92dc250f61d, type: 2}
 --- !u!114 &810221869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7019957170249667424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b02aca0fc6ddd48a0578f35027ce12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RB: {fileID: 0}
+--- !u!114 &6372017631660270270
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
