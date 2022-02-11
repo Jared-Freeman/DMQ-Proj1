@@ -263,18 +263,26 @@ namespace ActorSystem.AI
             {
                 ChangeState(State.Idle);
             }
+
+            //Target exceeds Lunge Loss distance
             else if ((CurrentTarget.transform.position - transform.position).sqrMagnitude >= GEAI_Preset.GEAI_Options.LungeLosePrepareDistance * GEAI_Preset.GEAI_Options.LungeLosePrepareDistance)
             {
                 ChangeState(State.Chasing);
             }
+
+            //Target is outside of Max Facing Angle
             else if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) > GEAI_Preset.Base.MaxFacingAngle / 2)
             {
                 ChangeState(State.Chasing);
             }
+
+            //Target is around some form of corner
             else if(NavAgent.CalculatePath(CurrentTarget.transform.position, NavPath) && !(NavAgent.path.corners.Length < 3))
             {
                 ChangeState(State.Chasing);
             }
+
+            //If we've waited long enough, change state to Lunging
             else if(Time.time - Info.LungeStartTime > GEAI_Preset.GEAI_Options.LungePause)
             {
                 ChangeState(State.Lunging);
