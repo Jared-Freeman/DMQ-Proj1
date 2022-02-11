@@ -17,6 +17,11 @@ namespace ActorSystem.AI
         {
             public bool DrawDebugGizmos = false;
 
+            /// <summary>
+            /// AI Predicts where the CurrentTarget is going to be, and tries to move there
+            /// </summary>
+            public bool InterceptCurrentTarget = true;
+
             [Min(0f)]
             public float AttackRange = 1.25f;
 
@@ -34,6 +39,30 @@ namespace ActorSystem.AI
             public float GrowDuration = 1;
 
             public ActorAI_Logic.TargetPriority _TargetPriority = ActorAI_Logic.TargetPriority.Proximity;
+        }
+    }
+
+    /// <summary>
+    /// Preset for the Shambler AI Logic. A Shambler logic will simply approach an enemy and try to attack them using their attached Ability when within range.
+    /// </summary>
+    [CreateAssetMenu(fileName = "AI_", menuName = "Actor/AI Logic/Shambler", order = 2)]
+    public class AILogic_ShamblerPreset : ActorAI_Logic_PresetBase
+    {
+        public AIOptions_ShamblerPreset Shambler_Options;
+
+        //inspector helper
+        [System.Serializable]
+        public class AIOptions_ShamblerPreset
+        {
+            public AS_Ability_Base AttackAbility;
+
+            public float AttackPrepareDistance = 2.25f;
+            public float AttackLoseDistance = 3.5f;
+
+            [Min(0f)]
+            public float AttackPause = .5f;
+            public float GrowDuration = .5f;
+            public AnimationCurve GrowCurve;
         }
     }
 

@@ -18,6 +18,7 @@ public class ActorAI_Logic : MonoBehaviour
     /// For Logic subroutines (minimize cost-per-frame)
     /// </summary>
     protected readonly static float _RoutineSleepDuration = .125f; //8 times / sec
+    protected readonly static float s_MinimumRBSpeedToIntercept = 6;
 
     #region Members
 
@@ -38,13 +39,53 @@ public class ActorAI_Logic : MonoBehaviour
     /// <summary>
     /// Current Aggro target
     /// </summary>
-    public GameObject CurrentTarget { get { return Info.CurrentTarget; } protected set { Info.CurrentTarget = value; } }
+    public GameObject CurrentTarget 
+    { 
+        get 
+        {
+            return Info.CurrentTarget;
+        } 
+        protected set 
+        { 
+            Info.CurrentTarget = value;
+
+            //also update rigidbody record
+            var rb = Info.CurrentTarget.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                CurrentTargetRigidbody = rb;
+            }
+            else CurrentTargetRigidbody = null;
+        } 
+    }
+    public Rigidbody CurrentTargetRigidbody { get; private set; }
+    public Vector3 CurrentTargetPosition
+    {
+        get
+        {
+            if (!Preset.Base.InterceptCurrentTarget || CurrentTargetRigidbody == null) return CurrentTarget.transform.position;
+            if (CurrentTargetRigidbody.velocity.sqrMagnitude < Mathf.Pow(s_MinimumRBSpeedToIntercept + NavAgent.radius, 2)) return CurrentTarget.transform.position;
+
+            return CurrentTarget.transform.position + Info.CurrentMovementTargetIntercept_Fuzzy;
+
+        }
+    }
     public Transform TurnTarget { get { return Info.TurnTarget; } protected set { Info.TurnTarget = value; } }
     public ActorAI AttachedActor { get; protected set; }
     public NavMeshAgent NavAgent { get; protected set; }
     public Animator Animator { get; protected set; }
     public bool CanMove { get { return Info.CanMove; } }
     public bool CanTurn { get { return Info.CanTurn; } }
+    /// <summary>
+    /// Returns true when Actor is within the facing tolerances specified by the Preset
+    /// </summary>
+    public bool IsFacingTarget
+    {
+        get
+        {
+            return (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= Preset.Base.MaxFacingAngle / 2);
+        }
+    }
 
     #endregion
 
@@ -66,6 +107,11 @@ public class ActorAI_Logic : MonoBehaviour
         /// Transform this Actor AI wants to turn toward
         /// </summary>
         public Transform TurnTarget;
+
+        /// <summary>
+        /// Interpolated velocity prediction
+        /// </summary>
+        public Vector3 CurrentMovementTargetIntercept_Fuzzy = Vector3.zero;
     }
 
     #endregion
@@ -92,6 +138,13 @@ public class ActorAI_Logic : MonoBehaviour
         //only do per-frame interp if we DONT have a rigidbody active, or it's kinematic
         if (gameObject.GetComponent<Rigidbody>() == null) StartCoroutine(I_TurnInterpolate());
         else if (gameObject.GetComponent<Rigidbody>()?.isKinematic == true) StartCoroutine(I_TurnInterpolate());
+
+
+        var a = new Vector3(0, 0, 1);
+        var b = new Vector3(0, 1, 1);
+        var c = Vector3.Angle(a,b);
+        var d = Vector3.Dot(a, b) / (a.magnitude * b.magnitude);
+        Debug.LogError(d);
     }
 
     #endregion
@@ -116,6 +169,36 @@ public class ActorAI_Logic : MonoBehaviour
 
             RB.MoveRotation(QResult);
         }
+
+
+        if(Preset.Base.InterceptCurrentTarget)
+        {
+            UpdateInterceptComputation(Mathf.Clamp(Time.fixedDeltaTime * 3.3f, 0, 1f));
+        }
+
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="t">How much contribution the new computation will have to the current value</param>
+    private void UpdateInterceptComputation(float t)
+    {
+        if (CurrentTarget == null) return;
+
+        //compute a suitable intercept location
+        // construct a parallel velocity vector to RB vel using this logic's standard speed.
+        float dist = (transform.position - CurrentTarget.transform.position).magnitude;
+        float time =  dist / (Preset.Base.MovementSpeed - CurrentTargetRigidbody.velocity.magnitude);
+
+        float certainty = 1 / Mathf.Log(Mathf.Clamp(dist / (Preset.Base.MovementSpeed * Time.fixedDeltaTime), 1, Mathf.Infinity));
+
+        t = certainty;
+
+        Info.CurrentMovementTargetIntercept_Fuzzy = (1-t) * Info.CurrentMovementTargetIntercept_Fuzzy
+            + t * ((-CurrentTargetRigidbody.velocity * time));
+
+        //if (FLAG_Debug) Debug.Log(Info.CurrentMovementTargetIntercept_Fuzzy);
     }
 
     #region Utility Methods

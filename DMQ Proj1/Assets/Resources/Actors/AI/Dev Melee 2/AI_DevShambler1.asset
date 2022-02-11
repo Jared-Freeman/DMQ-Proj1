@@ -10,23 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
-  m_Name: AI_DevMelee2
-  m_EditorClassIdentifier: Assembly-CSharp:ActorSystem.AI:AP2_GenericEnemyAI_LogicPreset
+  m_Name: AI_DevShambler1
+  m_EditorClassIdentifier: Assembly-CSharp:ActorSystem.AI:AILogic_ShamblerPreset
   Base:
-    DrawDebugGizmos: 1
+    DrawDebugGizmos: 0
     AttackRange: 1.25
-    MovementSpeed: 3
+    MovementSpeed: 4.8
     StopSlideDistance: 0.5
     AggroRadius: 20
-    MaxFacingAngle: 60
-    TurningRate: 80
-    LungePrepareDistance: 3
-    LungeLosePrepareDistance: 4
-    LungeDistance: 0
-    LungePause: 1
-    LungeSpeed: 8
-    LungeTimeout: 1.25
-    Lunge_ImpactEffects: []
+    MaxFacingAngle: 70
+    TurningRate: 180
     GrowCurve:
       serializedVersion: 2
       m_Curve:
@@ -53,20 +46,12 @@ MonoBehaviour:
       m_RotationOrder: 4
     GrowDuration: 1
     _TargetPriority: 1
-  GEAI_Options:
-    DrawDebugGizmos: 0
-    AttackRange: 1.25
-    MovementSpeed: 2
-    StopSlideDistance: 0.5
-    AggroRadius: 20
-    MaxFacingAngle: 60
-    LungePrepareDistance: 3
-    LungeLosePrepareDistance: 4
-    LungeDistance: 0
-    LungePause: 2
-    LungeSpeed: 8
-    LungeTimeout: 1.25
-    Lunge_ImpactEffects: []
+  Shambler_Options:
+    AttackAbility: {fileID: 11400000, guid: 0cf78c9f260f1b44c8e822ce097c3efc, type: 2}
+    AttackPrepareDistance: 2.25
+    AttackLoseDistance: 3.5
+    AttackPause: 0.6
+    GrowDuration: 0.6
     GrowCurve:
       serializedVersion: 2
       m_Curve:
@@ -91,4 +76,3 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    GrowDuration: 0.5
