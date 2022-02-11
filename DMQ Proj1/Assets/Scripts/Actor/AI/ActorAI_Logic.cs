@@ -139,12 +139,6 @@ public class ActorAI_Logic : MonoBehaviour
         if (gameObject.GetComponent<Rigidbody>() == null) StartCoroutine(I_TurnInterpolate());
         else if (gameObject.GetComponent<Rigidbody>()?.isKinematic == true) StartCoroutine(I_TurnInterpolate());
 
-
-        var a = new Vector3(0, 0, 1);
-        var b = new Vector3(0, 1, 1);
-        var c = Vector3.Angle(a,b);
-        var d = Vector3.Dot(a, b) / (a.magnitude * b.magnitude);
-        Debug.LogError(d);
     }
 
     #endregion
