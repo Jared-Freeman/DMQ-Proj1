@@ -9,13 +9,17 @@ namespace CSEventArgs
 
     }
 }
-
-public class AP2_ActorAction_Base : ScriptableObject
+namespace ActorSystem.AI
 {
-    public static event System.EventHandler<CSEventArgs.GenericActorActionEventArgs> OnActionStart;
 
-    public virtual void PerformAction(Actor Owner)
+    public class AP2_ActorAction_Base : ScriptableObject
     {
-        OnActionStart?.Invoke(this, new CSEventArgs.GenericActorActionEventArgs());
+        public static event System.EventHandler<CSEventArgs.GenericActorActionEventArgs> OnActionStart;
+
+        public virtual void PerformAction(Actor Owner)
+        {
+            OnActionStart?.Invoke(this, new CSEventArgs.GenericActorActionEventArgs());
+        }
     }
+
 }

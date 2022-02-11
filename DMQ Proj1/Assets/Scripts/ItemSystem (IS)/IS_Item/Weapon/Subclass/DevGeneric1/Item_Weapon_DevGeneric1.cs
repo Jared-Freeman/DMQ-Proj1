@@ -76,8 +76,6 @@ namespace ItemSystem.Weapons
         }
         private void IS_InventoryBase_Event_ItemEntersInventory(object sender, CSEventArgs.ItemAndInventoryEventArgs e)
         {
-            if (s_FLAG_ITEM_DEBUG) Debug.Log("babbo");
-
             if (e.Item == this)
             {
                 if (s_FLAG_ITEM_DEBUG) Debug.Log("CREATING ABILITY INSTANCE");

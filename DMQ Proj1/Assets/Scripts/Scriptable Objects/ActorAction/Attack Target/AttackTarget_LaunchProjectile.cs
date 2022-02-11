@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AP2
+namespace ActorSystem.AI
 {
     [CreateAssetMenu(fileName = "ActorAction", menuName = "ScriptableObjects/Actor Actions/Attack/Attack Target/Launch Projectile", order = 1)]
 
-    public class AttackTarget_LaunchProjectile : AP2.AP2_ActorAction_AttackTarget
+    public class AttackTarget_LaunchProjectile : AP2_ActorAction_AttackTarget
     {
         [System.Serializable]
         public class MoreOptions

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81d7b677faabee7499a79d5ce98caf21, type: 3}
+  m_Name: PICKUP_DevGeneric1
+  m_EditorClassIdentifier: 
+  BaseOptions:
+    PickupRadius: 2
+    PickupStyle: 1
+    CapacityCost: 0
+  List_WhoCanPickUp:
+  - {fileID: 11400000, guid: 414bc1b9b54c2a143a4a2a46d2db0034, type: 2}
+  PickupEffect: {fileID: 11400000, guid: 6d0f73df6167ddc4da89c90488505e97, type: 2}

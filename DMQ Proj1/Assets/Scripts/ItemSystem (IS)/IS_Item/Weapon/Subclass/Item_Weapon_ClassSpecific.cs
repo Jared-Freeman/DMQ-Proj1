@@ -87,8 +87,9 @@ namespace ItemSystem.Weapons
         }
 
 
-        protected virtual void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             IS_InventoryBase.Event_ItemEntersInventory -= IS_InventoryBase_Event_ItemEntersInventory;
             IS_InventoryBase.Event_ItemLeavesInventory -= IS_InventoryBase_Event_ItemLeavesInventory;
         }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AP2
+namespace ActorSystem.AI
 {
     /// <summary>
     /// Applies damage to Target if within range

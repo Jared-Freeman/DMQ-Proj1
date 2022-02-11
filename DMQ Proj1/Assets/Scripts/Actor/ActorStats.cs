@@ -10,6 +10,35 @@ using Utils.Stats;
 
 using ActorSystem.StatusEffect;
 
+namespace ActorSystem.EventArgs
+{
+    public class ActorDamageTakenEventArgs : System.EventArgs
+    {
+        public Actor _Actor;
+        public Actor_DamageMessage _DamageMessage;
+
+        public ActorDamageTakenEventArgs(Actor a, Actor_DamageMessage m)
+        {
+            _Actor = a;
+            _DamageMessage = m;
+        }
+    }
+    public class ActorHealingReceivedEventArgs : System.EventArgs
+    {
+        public Actor _Actor;
+        public ActorStatsData _Modifiers;
+        public bool _ScaledByMaxValues;
+
+        public ActorHealingReceivedEventArgs(Actor a, ActorStatsData m, bool sbmv)
+        {
+            _Actor = a;
+            _Modifiers = m;
+            _ScaledByMaxValues = sbmv;
+        }
+    }
+}
+
+//TODO: Make stat values appropriately scale
 public class ActorStats : MonoBehaviour
 {
 
@@ -107,6 +136,9 @@ public class ActorStats : MonoBehaviour
     #region Events
 
     public UnityEvent OnDeath, OnReceiveDamage, OnHitWhileInvulnerable, OnBecomeVulnerable, OnResetDamage;
+
+    public static event System.EventHandler<ActorSystem.EventArgs.ActorDamageTakenEventArgs> OnDamageTaken;
+    public static event System.EventHandler<ActorSystem.EventArgs.ActorHealingReceivedEventArgs> OnHealingReceived;
 
     #endregion
 
@@ -288,12 +320,69 @@ public class ActorStats : MonoBehaviour
             OnReceiveDamage.Invoke();
         }
 
+        OnDamageTaken?.Invoke(this, new ActorSystem.EventArgs.ActorDamageTakenEventArgs(actor, DamageMessage));
 
         if (HpCurrent <= 0)
         {
             schedule += OnDeath.Invoke; //This avoid race condition when objects kill each other.
             actor.ActorDead();
         }
+    }
+
+    /// <summary>
+    /// Uses the modifiers in the supplied <paramref name="ModifierContainer"/> to augment this actor's stats.
+    /// Multiplicative healing is applied first and == {max, current} * value.modifier.multiply
+    /// </summary>
+    /// <param name="ModifierContainer"></param>
+    /// <param name="scaleByMaxValues">A percentage of default Max value is added instead of scaling the current hp</param>
+    /// <returns>True if successful</returns>
+    public bool ReceiveHealing(ActorSystem.ActorStatsData ModifierContainer, bool scaleByMaxValues = false)
+    {
+        if(ModifierContainer != null)
+        {
+            if(scaleByMaxValues)
+            {
+                HpCurrent += Preset.Data.HP.Default.Max * ModifierContainer.HP.Modifier.Multiply;
+                EnergyCurrent += Preset.Data.Energy.Default.Max * ModifierContainer.Energy.Modifier.Multiply;
+                MoveSpeedCurrent += Preset.Data.MoveSpeed.Default.Max * ModifierContainer.MoveSpeed.Modifier.Multiply;
+            }
+            else
+            {
+                HpCurrent += HpCurrent * ModifierContainer.HP.Modifier.Multiply;
+                EnergyCurrent += EnergyCurrent * ModifierContainer.Energy.Modifier.Multiply;
+                MoveSpeedCurrent += MoveSpeedCurrent + ModifierContainer.MoveSpeed.Modifier.Multiply;
+            }
+
+            HpCurrent += ModifierContainer.HP.Modifier.Add;
+            EnergyCurrent += ModifierContainer.Energy.Modifier.Add;
+            MoveSpeedCurrent += ModifierContainer.MoveSpeed.Modifier.Add;
+
+            ClampStatValues();
+
+            OnHealingReceived?.Invoke(this, new ActorSystem.EventArgs.ActorHealingReceivedEventArgs(actor, ModifierContainer, scaleByMaxValues));
+            return true;
+        }
+        return false;
+    }
+
+    //TODO: Add appropriate scaling
+    /// <summary>
+    /// Guarantees stat values are within min/max bounds.
+    /// </summary>
+    protected void ClampStatValues()
+    {
+        HpCurrent = Mathf.Clamp(HpCurrent, Preset.Data.HP.Default.Min, Preset.Data.HP.Default.Max);
+        EnergyCurrent = Mathf.Clamp(EnergyCurrent, Preset.Data.Energy.Default.Min, Preset.Data.Energy.Default.Max);
+        MoveSpeedCurrent = Mathf.Clamp(MoveSpeedCurrent, Preset.Data.MoveSpeed.Default.Min, Preset.Data.MoveSpeed.Default.Max);
+    }
+
+    /// <summary>
+    /// Consume energy on this Stats instance
+    /// </summary>
+    /// <param name="amount"></param>
+    public void ConsumeEnergy(float amount)
+    {
+        EnergyCurrent -= amount;
     }
 
     #region Deprecated

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AP2
+namespace ActorSystem.AI
 {
     /// <summary>
     /// Not sure if this is a good idea. Launches the owner object toward the 

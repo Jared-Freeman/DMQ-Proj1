@@ -31,11 +31,13 @@ namespace ItemSystem
             }
         }
 
+        public int CurrentCapacity { get { return _Info.CurrentCapacity; } protected set { _Info.CurrentCapacity = value; } }
+
         #region Helpers
         [System.Serializable]
         public struct IS_Inv_StateInfo
         {
-
+            public int CurrentCapacity;
         }
         #endregion
 
@@ -61,6 +63,11 @@ namespace ItemSystem
 
         }
 
+        protected virtual void Start()
+        {
+            RecalculateCurrentCapacity();
+        }
+
         private void OnEnable()
         {
             ValidateItemList();
@@ -77,7 +84,6 @@ namespace ItemSystem
         #endregion
 
 
-
         /// <summary>
         /// Place an item from world space into this container
         /// </summary>
@@ -90,13 +96,14 @@ namespace ItemSystem
                 //TODO: If we implement a more complex cost (i.e. weight) this needs to be altered
 
                 //Must have room left, and Item type must be allowed to be in this container
-                if (_ItemList.Count < _Data.BaseOptions.Capacity && _Data.ItemAllowed(item))
+                if (_ItemList.Count < _Data.BaseOptions.Capacity && ItemAllowed(item))
                 {
-                    if(item.AddItemToInventorySpace())
+                    if(item.AddItemToInventorySpace(this))
                     {
                         _ItemList.Add(item);
-                        item.AddItemToInventorySpace();
+                        item.AddItemToInventorySpace(this);
                         Event_ItemEntersInventory?.Invoke(this, new ItemAndInventoryEventArgs(item, this));
+                        OnItemEntersInventory(item);
                         return true;
                     }
 
@@ -160,7 +167,11 @@ namespace ItemSystem
 
                 _ItemList.Remove(item);
                 Event_ItemLeavesInventory?.Invoke(this, new ItemAndInventoryEventArgs(item, this));
-                Event_ItemEntersInventory?.Invoke(this, new ItemAndInventoryEventArgs(item, other_inventory)); //im sorry but this has to go here for intuitive use of the event...
+                OnItemLeavesInventory(item);
+
+                item.AddItemToInventorySpace(this); //redundant but whatever
+                Event_ItemEntersInventory?.Invoke(this, new ItemAndInventoryEventArgs(item, other_inventory));
+                OnItemEntersInventory(item);
                 return true;
             }
             else
@@ -174,7 +185,7 @@ namespace ItemSystem
         //Please note that this can be extended
         public virtual bool ReceiveItemFromInventory(IS_ItemBase item)
         {
-            if(_ItemList.Count < _Data.BaseOptions.Capacity && _Data.ItemAllowed(item))
+            if(_ItemList.Count < _Data.BaseOptions.Capacity && ItemAllowed(item))
             {
                 if (s_FLAG_DEBUG) Debug.Log("Base Receive evaluated to true");
 
@@ -184,7 +195,7 @@ namespace ItemSystem
 
 
             if(s_FLAG_DEBUG) Debug.Log("Capacity error: " + !(_ItemList.Count < _Data.BaseOptions.Capacity));
-            if (s_FLAG_DEBUG) Debug.Log("Item Return error: " + !(_Data.ItemAllowed(item)));
+            if (s_FLAG_DEBUG) Debug.Log("Item Return error: " + !(ItemAllowed(item)));
             return false;
         }
 
@@ -197,6 +208,16 @@ namespace ItemSystem
                 _ItemList.Remove(args.Item);
             }
         }
+
+        protected void RecalculateCurrentCapacity()
+        {
+            CurrentCapacity = 0;
+            foreach (var i in _ItemList)
+            {
+                CurrentCapacity += i.Preset.BaseOptions.CapacityCost;
+            }
+        }
+
 
         private void ValidateItemList()
         {
@@ -212,6 +233,48 @@ namespace ItemSystem
 
             _ItemList = ValidatedList;
         }
+
+        /// <summary>
+        /// Checks if item is allowed -- uses item's check and preset's check
+        /// </summary>
+        /// <param name="item">item to check</param>
+        /// <returns></returns>
+        public virtual bool ItemAllowed(IS_ItemBase item)
+        {
+            return (item.InventoryAllowed(this) && _Data.ItemAllowed(item.Preset));
+        }
+
+        /// <summary>
+        /// Virtual method helper. Please invoke base if you override
+        /// </summary>
+        /// <param name="item">Item that was added to this inventory</param>
+        protected virtual void OnItemEntersInventory(IS_ItemBase item)
+        {
+            switch(item.Preset.BaseOptions.PickupStyle)
+            {
+                case ItemPickupStyle.AutoPickup: //protects overflowing capacity on dead items if designer messes up zeroed capacity convention
+                    break;
+
+                default:
+                    CurrentCapacity += item.Preset.BaseOptions.CapacityCost;
+                    break;
+            }    
+        }
+
+        /// <summary>
+        /// Virtual method helper. Please invoke base if you override
+        /// </summary>
+        /// <param name="item">Item that was removed from this iventory</param>
+        protected virtual void OnItemLeavesInventory(IS_ItemBase item)
+        {
+            switch (item.Preset.BaseOptions.PickupStyle)
+            {
+                default:
+                    CurrentCapacity -= item.Preset.BaseOptions.CapacityCost;
+                    break;
+            }
+        }
+
         #endregion
     }
 }

@@ -30,6 +30,10 @@ namespace EffectTree
     [System.Serializable]
     public class EffectContext
     {
+        /// <summary>
+        /// Attaches the supplied <paramref name="ctx"/> arg to this class
+        /// </summary>
+        /// <param name="ctx"></param>
         public EffectContext(Utils.AttackContext ctx)
         {
             AttackData = ctx;

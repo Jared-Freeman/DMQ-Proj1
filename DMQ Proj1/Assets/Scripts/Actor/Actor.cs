@@ -70,7 +70,10 @@ public class Actor : MonoBehaviour
     {
         // Actor has run out of HP. Probably want to have an action for handling this later.
         if(Flag_ActorDebug) Debug.Log(gameObject.name + " is dead");
-        gameObject.SetActive(false);
+
+        //TODO: Consider how to handle this!
+        Destroy(gameObject);
+        //gameObject.SetActive(false);
     }
 
 

@@ -27,6 +27,7 @@ namespace CSEventArgs
 namespace ItemSystem
 {
     public enum ItemLocation { Inventory, World } //To distinguish between items in inventories or elsewhere
+    public enum ItemPickupStyle { AddToInventory, AutoPickup };
 
 
     /// <summary>
@@ -91,25 +92,34 @@ namespace ItemSystem
             }
 
             {
-                GameObject GO = new GameObject("Item Trigger Holder (Auto-Generated)");
+                //GameObject GO = new GameObject("Item Trigger Holder (Auto-Generated)");
+                //GO.transform.parent = gameObject.transform;
+                //GO.transform.localPosition = Vector3.zero;
+                //GO.layer = 0; //Default
 
-                var sc = GO.AddComponent<SphereCollider>();
+                var sc = gameObject.AddComponent<SphereCollider>();
                 sc.radius = Preset.BaseOptions.PickupRadius;
                 sc.isTrigger = true;
-                
-                GO.transform.parent = gameObject.transform;
-                GO.transform.localPosition = Vector3.zero;
-                GO.layer = 0; //Default
+                gameObject.layer = 0; //Default
+
             }
         }
 
         private void OnTriggerEnter(Collider other)
         {
             {
-                var inv = other.gameObject.GetComponent<Inventory_Player>();
+                var inv = other.gameObject.GetComponent<Inventory_Player>(); //TODO: Other inventory handlers?
                 if (inv != null)
                 {
-                    inv.AddToItemsNearby(this);
+                    switch(Preset.BaseOptions.PickupStyle)
+                    {
+                        case ItemPickupStyle.AddToInventory:
+                            inv.AddToItemsNearby(this);
+                            break;
+                        case ItemPickupStyle.AutoPickup:
+                            if (inv.ItemAllowed(this)) inv.PickUpItem(this);
+                            break;
+                    }
                 }
             }
         }
@@ -119,7 +129,12 @@ namespace ItemSystem
                 var inv = other.gameObject.GetComponent<Inventory_Player>();
                 if (inv != null)
                 {
-                    inv.RemoveFromItemsNearby(this);
+                    switch (Preset.BaseOptions.PickupStyle)
+                    {
+                        case ItemPickupStyle.AddToInventory:
+                            inv.RemoveFromItemsNearby(this);
+                            break;
+                    }
                 }
             }
         }
@@ -130,7 +145,7 @@ namespace ItemSystem
             return true;
         }
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
             OnItemDestroyed?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
         }
@@ -138,18 +153,34 @@ namespace ItemSystem
         /// <summary>
         /// Virtual impl. Allows designer to implement custom disable routines for item types, should they be needed
         /// </summary>
-        /// <returns></returns>
-        public virtual bool AddItemToInventorySpace()
+        /// <returns>False if the itemw as already in inventory space (i.e. no "move" happened, such as being transferred from one inventory to another)</returns>
+        public virtual bool AddItemToInventorySpace(IS_InventoryBase inv)
         {
-            bool successful = true;
+            bool successful = false;
 
-            gameObject.SetActive(false);
-            Location_State = ItemLocation.Inventory;
-            OnItemRemovedFromWorldspace?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
-            OnItemTransferred_Local?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
+            if (Location_State != ItemLocation.Inventory)
+            {
+                successful = true;
+                gameObject.SetActive(false);
+                Location_State = ItemLocation.Inventory;
+
+                //This ordering is PROBABLY important
+                OnItemRemovedFromWorldspace?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
+                OnItemTransferred_Local?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
+                OnItemAddedToInventory(inv);
+            }
 
             return successful;
         }
+        /// <summary>
+        /// Internal event handler. Can be overwritten
+        /// </summary>
+        /// <param name="inv"></param>
+        protected virtual void OnItemAddedToInventory(IS_InventoryBase inv) 
+        {
+            if (s_FLAG_ITEM_DEBUG) Debug.Log(ToString() + " added to inventory: " + inv.ToString());
+        }
+
 
         public virtual bool AddItemToWorldSpace()
         {
@@ -157,11 +188,18 @@ namespace ItemSystem
 
             gameObject.SetActive(true);
             Location_State = ItemLocation.World;
+
+            //This ordering is PROBABLY important
             OnItemAddedToWorldspace?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
             OnItemTransferred_Local?.Invoke(this, new CSEventArgs.ItemEventArgs(this));
+            OnItemAddedToWorld();
 
             return successful;
         }
+        /// <summary>
+        /// Internal event handler. Can be overwritten
+        /// </summary>
+        protected virtual void OnItemAddedToWorld() { }
 
         /// <summary>
         /// Check if a given position is in the pickup sphere for this item
@@ -175,6 +213,17 @@ namespace ItemSystem
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Whether this item allows the inventory to accept it. 
+        /// Virtual method can be overwritten.
+        /// </summary>
+        /// <param name="inv"></param>
+        /// <returns></returns>
+        public virtual bool InventoryAllowed(IS_InventoryBase inv)
+        {
+            return true;
         }
     }
 }
