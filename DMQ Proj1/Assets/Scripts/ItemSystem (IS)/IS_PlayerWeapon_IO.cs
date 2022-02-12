@@ -8,6 +8,9 @@ using UnityEngine.InputSystem;
 /// Allows players to transmit IO to CurrentWeapon from a PlayerInventory instance.
 /// Useful primarily for dispatching attacks
 /// </summary>
+[RequireComponent(typeof(PlayerInputHost))]
+[RequireComponent(typeof(Inventory_Player))]
+[RequireComponent(typeof(Actor))]
 public class IS_PlayerWeapon_IO : MonoBehaviour
 {
     #region Members
@@ -15,7 +18,8 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
     public bool FLAG_Debug = false;
 
     protected Inventory_Player _Inv;
-    protected PlayerInput _Input;
+    public PlayerInputHost InputHost { get; protected set; }
+    public PlayerInput _Input { get { return InputHost.CurrentPlayerInput; } }
     protected PlayerControls _Controls;
     protected Actor _Actor;
 
@@ -51,6 +55,13 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
             Destroy(this);
         }
 
+        InputHost = gameObject.GetComponent<PlayerInputHost>();
+        if(InputHost == null)
+        {
+            Debug.LogError(ToString() + ": No Input Host instance found! Destroying.");
+            Destroy(this);
+        }
+
         InitInput();
     }
 
@@ -60,15 +71,21 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
     /// </summary>
     private void InitInput()
     {
-        _Input = GetComponent<PlayerInput>();
-        if (_Input == null)
-        {
-            Debug.LogError(ToString() + ": No PlayerInput component found! Destroying.");
-            Destroy(this);
-        }
+        InputHost.OnInputChanged += InputHost_OnInputChanged;
+
+        //_Input = GetComponent<PlayerInput>();
+        //if (_Input == null)
+        //{
+        //    Debug.LogError(ToString() + ": No PlayerInput component found! Destroying.");
+        //    Destroy(this);
+        //}
 
         _Controls = new PlayerControls(); //TODO: Maybe optimize or fix
 
+    }//end InitInput()
+
+    private void InputHost_OnInputChanged(object sender, CSEventArgs.PlayerInputEventArgs e)
+    {
         //set up action map
         if (_Input.currentControlScheme == _Controls.MouseAndKeyboardScheme.name)
         {
@@ -175,7 +192,7 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
         };
 
 
-    }//end InitInput()
+    }
 
     /// <summary>
     /// Generic attack attempt

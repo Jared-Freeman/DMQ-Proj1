@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using ClassSystem;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// Looks at ActivatedPlayers and spawns the appropriate player agent in
@@ -22,15 +23,27 @@ public class DEBUG_PlayerSpawner : MonoBehaviour
                 g = DefaultCharacterClassPreset?.InstantiatePlayerActor();
 
                 if (g != null)
-                    g.transform.position = transform.position;
+                {
+                    InitPlayerActor(g, r.Info._Input);
+                }
             }
             else
             {
                 g = r.Info._CurrentClassPreset?.InstantiatePlayerActor();
 
                 if(g != null)
-                    g.transform.transform.position = transform.position;    
+                {
+                    InitPlayerActor(g, r.Info._Input);
+                }
             }
         }
+    }
+
+    void InitPlayerActor(GameObject g, PlayerInput p)
+    {
+        g.transform.position = transform.position;
+
+        var h = g.GetComponent<PlayerInputHost>();
+        h.CurrentPlayerInput = p;
     }
 }
