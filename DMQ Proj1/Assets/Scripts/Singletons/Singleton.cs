@@ -41,11 +41,19 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         if (m_instance == null)
         {
             m_instance = this as T;
-            DontDestroyOnLoad(gameObject);
+            if(transform.parent == null)
+            {
+                Debug.Log("Singleton has no parent. Marking as DontDestroyOnLoad.");
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            { 
+                //Debug.Log(transform.parent.ToString()); 
+            }
         }
         else
         {
-            Destroy(gameObject);
+            //Destroy(gameObject); //Hopefully this doesnt create any bugs...
         }
     }
 }
