@@ -5,19 +5,22 @@ using UnityEngine;
 
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// Coordinates Input System with the PlayerData singleton to determine Active players (versus just Join'd players)
+/// </summary>
 public class PlayerSession_IO_Listener : MonoBehaviour
 {
     #region Members
 
     protected static bool s_FLAG_DEBUG = true;
 
-    [SerializeField] private List<PlayerInputDataRecord> _ActivePlayers;
+    [SerializeField] private List<PlayerInputDataRecord> _JoinedPlayers;
 
     private PlayerControls _Controls;
 
     #region Properties
 
-    public IReadOnlyCollection<PlayerInputDataRecord> ActivePlayers { get { return _ActivePlayers.AsReadOnly(); } }
+    public IReadOnlyCollection<PlayerInputDataRecord> ActivePlayers { get { return _JoinedPlayers.AsReadOnly(); } }
 
     #endregion
 
@@ -132,7 +135,7 @@ public class PlayerSession_IO_Listener : MonoBehaviour
 
     protected void Awake()
     {
-        _ActivePlayers = new List<PlayerInputDataRecord>();
+        _JoinedPlayers = new List<PlayerInputDataRecord>();
         _Controls = new PlayerControls();
     }
 
@@ -161,7 +164,7 @@ public class PlayerSession_IO_Listener : MonoBehaviour
         record._PlayerInput = obj;
         record._Controls = _Controls;
 
-        _ActivePlayers.Add(record);
+        _JoinedPlayers.Add(record);
 
 
         obj.onActionTriggered += record.Obj_onActionTriggered;
@@ -174,7 +177,7 @@ public class PlayerSession_IO_Listener : MonoBehaviour
 
         if(record != null)
         {
-            _ActivePlayers.Remove(record);
+            _JoinedPlayers.Remove(record);
             record._PlayerInput.onActionTriggered -= record.Obj_onActionTriggered;
             record.OnPlayerActivate -= Record_OnPlayerActivate;
         }
@@ -194,7 +197,7 @@ public class PlayerSession_IO_Listener : MonoBehaviour
 
     PlayerInputDataRecord FindRecord(PlayerInput obj)
     {
-        foreach (var r in _ActivePlayers)
+        foreach (var r in _JoinedPlayers)
         {
             if (r._PlayerInput = obj) return r;
         }

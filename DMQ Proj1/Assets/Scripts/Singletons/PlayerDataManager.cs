@@ -17,13 +17,30 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
 
     #region Members
 
+    public int MaxActivatedPlayerSessions { get; private set; } = 4;
+
     //Save files list. Should these be shared publicly?
     private List<string> _ProfileSavePathList;
 
-    //Data
+    /// <summary>
+    /// All joined players
+    /// </summary>
     [SerializeField] private List<PlayerData_Session> _Data;
-    //Public facing
-    public IReadOnlyCollection<PlayerData_Session> ActivePlayerProfiles { get { return _Data.AsReadOnly(); } }
+    /// <summary>
+    /// Subset of all joined players
+    /// </summary>
+    [SerializeField] private List<PlayerData_Session> _ActivatedPlayers;
+
+
+    /// <summary>
+    /// List of all players JOINED (BOTH active and inactive)
+    /// </summary>
+    public IReadOnlyCollection<PlayerData_Session> JoinedPlayerSessions { get { return _Data.AsReadOnly(); } }
+
+    /// <summary>
+    /// List of all players ACTIVATED. These are the player sessions to be used during gameplay
+    /// </summary>
+    public IReadOnlyCollection<PlayerData_Session> ActivatedPlayerSessions { get { return _ActivatedPlayers.AsReadOnly(); } }
 
 
 
@@ -176,5 +193,22 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
             if (r.Info._Input == p) return r;
         }
         return null;
+    }
+
+    /// <summary>
+    /// Activates specified player. Activated players are the inputs to be used during gameplay.
+    /// </summary>
+    /// <param name="p">player to activate</param>
+    /// <returns>True if player was successfully activated.</returns>
+    public bool ActivatePlayer(PlayerInput p)
+    {
+        var r = GetRecord(p);
+        if (r != null)
+        {
+            _ActivatedPlayers.Add(r);
+
+            return true;
+        }
+        return false;
     }
 }
