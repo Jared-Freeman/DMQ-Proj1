@@ -58,7 +58,6 @@ public class PlayerSession_IO_Listener : MonoBehaviour
 
         public void Obj_onActionTriggered(InputAction.CallbackContext ctx)
         {
-
             ////MOUSE AND KEYBOARD EVENTS REGISTER //////////////////////////////////////
             if (ctx.action.actionMap.name == _Controls.MouseAndKeyboardScheme.name)
             {
@@ -167,8 +166,21 @@ public class PlayerSession_IO_Listener : MonoBehaviour
         _JoinedPlayers.Add(record);
 
 
+        //set up action map
+        if (obj.currentControlScheme == _Controls.MouseAndKeyboardScheme.name)
+        {
+            obj.SwitchCurrentActionMap(_Controls.MouseAndKeyboardScheme.name);
+        }
+        else if (obj.currentControlScheme == _Controls.GamepadScheme.name)
+        {
+            obj.SwitchCurrentActionMap(_Controls.GamepadScheme.name);
+        }
+
+        //event subscriptions
         obj.onActionTriggered += record.Obj_onActionTriggered;
         record.OnPlayerActivate += Record_OnPlayerActivate;
+
+        if(s_FLAG_DEBUG) Debug.Log("Linked player successfully.");
     }
 
     private void InputManager_onPlayerLeft(UnityEngine.InputSystem.PlayerInput obj)
@@ -186,6 +198,8 @@ public class PlayerSession_IO_Listener : MonoBehaviour
     private void Record_OnPlayerActivate(object sender, PlayerInputEventArgs e)
     {
         if(s_FLAG_DEBUG) Debug.Log("Player " + e._PlayerInput.gameObject.ToString() + " is attempting to activate!");
+
+        Singleton<PlayerDataManager>.Instance.ActivatePlayer(e._PlayerInput);
     }
 
 

@@ -195,6 +195,8 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
         return null;
     }
 
+
+
     /// <summary>
     /// Activates specified player. Activated players are the inputs to be used during gameplay.
     /// </summary>
@@ -205,6 +207,8 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
         var r = GetRecord(p);
         if (r != null)
         {
+            if (_ActivatedPlayers.Contains(r)) return true;
+
             _ActivatedPlayers.Add(r);
 
             return true;
