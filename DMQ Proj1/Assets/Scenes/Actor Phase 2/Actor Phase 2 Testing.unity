@@ -3328,6 +3328,16 @@ PrefabInstance:
       propertyPath: CameraDistanceDefault
       value: 75
       objectReference: {fileID: 0}
+    - target: {fileID: 2709226070081022973, guid: 1de20179f0bb7b342acef88b7ff60f5d,
+        type: 3}
+      propertyPath: TargetList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2709226070081022973, guid: 1de20179f0bb7b342acef88b7ff60f5d,
+        type: 3}
+      propertyPath: TargetList.Array.data[0]
+      value: 
+      objectReference: {fileID: 1087481548}
     - target: {fileID: 2709226070081022974, guid: 1de20179f0bb7b342acef88b7ff60f5d,
         type: 3}
       propertyPath: m_RootOrder
@@ -4547,6 +4557,12 @@ PrefabInstance:
         type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a016bb09241674d44a11cab0070c9428, type: 3}
+--- !u!1 &1087481548 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4893124687429797065, guid: 6a33c1699a8b6a54c8e48dc551da2045,
+    type: 3}
+  m_PrefabInstance: {fileID: 5240105835812375756}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1122364925
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -36,26 +36,7 @@ public class DEBUG_PlayerSpawner : MonoBehaviour
 
         foreach(var r in Singleton<PlayerDataManager>.Instance.ActivatedPlayerSessions)
         {
-            GameObject g;
-
-            if(r.Info._CurrentClassPreset == null)
-            {
-                g = DefaultCharacterClassPreset?.InstantiatePlayerActor();
-
-                if (g != null)
-                {
-                    InitPlayerActor(g, r.Info._Input);
-                }
-            }
-            else
-            {
-                g = r.Info._CurrentClassPreset?.InstantiatePlayerActor();
-
-                if(g != null)
-                {
-                    InitPlayerActor(g, r.Info._Input);
-                }
-            }
+            GameObject g = InitGameObjectByDataSession(r);
 
             if(g != null) instances.Add(g);
         }
@@ -63,6 +44,44 @@ public class DEBUG_PlayerSpawner : MonoBehaviour
         OnPlayerAgentsInstantiated?.Invoke(this, new CSEventArgs.GameObjectListEventArgs(instances));
     }
 
+    void OnEnable()
+    {
+        PlayerDataManager.OnPlayerActivated += PlayerDataManager_OnPlayerActivated;
+    }
+    void OnDisable()
+    {
+        PlayerDataManager.OnPlayerActivated -= PlayerDataManager_OnPlayerActivated;
+    }
+    private void PlayerDataManager_OnPlayerActivated(object sender, PlayerDataManager.PlayerDataSessionEventArgs e)
+    {
+        InitGameObjectByDataSession(e.Data);
+    }
+
+    GameObject InitGameObjectByDataSession(PlayerData_Session r)
+    {
+        GameObject g;
+
+        if (r.Info._CurrentClassPreset == null)
+        {
+            g = DefaultCharacterClassPreset?.InstantiatePlayerActor();
+
+            if (g != null)
+            {
+                InitPlayerActor(g, r.Info._Input);
+            }
+        }
+        else
+        {
+            g = r.Info._CurrentClassPreset?.InstantiatePlayerActor();
+
+            if (g != null)
+            {
+                InitPlayerActor(g, r.Info._Input);
+            }
+        }
+
+        return g;
+    }
     void InitPlayerActor(GameObject g, PlayerInput p)
     {
         g.transform.position = transform.position;

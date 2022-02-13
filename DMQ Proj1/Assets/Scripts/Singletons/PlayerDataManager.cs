@@ -15,6 +15,18 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
     private static string s_ProfileSaveFileExtension = ".psave"; //player profile save "psave" idk lol
 
 
+    //event args
+    public class PlayerDataSessionEventArgs : System.EventArgs
+    {
+        public PlayerData_Session Data;
+        public PlayerDataSessionEventArgs(PlayerData_Session d)
+        {
+            Data = d;
+        }
+    }
+
+    public static event System.EventHandler<PlayerDataSessionEventArgs> OnPlayerActivated;
+
     #region Members
 
     public int MaxActivatedPlayerSessions { get; private set; } = 4;
@@ -211,6 +223,7 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
 
             _ActivatedPlayers.Add(r);
 
+            OnPlayerActivated?.Invoke(this, new PlayerDataSessionEventArgs(r));
             return true;
         }
         return false;
