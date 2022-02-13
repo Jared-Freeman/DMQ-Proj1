@@ -43,7 +43,7 @@ public class ActorAI_Logic_Melee : ActorAI_Logic
         UpdateLogic();
     }
 
-    new void UpdateLogic()
+    void UpdateLogic()
     {
         if(isAggro)
         {
