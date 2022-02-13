@@ -26,7 +26,7 @@ public class DEBUG_PlayerSpawner : MonoBehaviour
     public CharacterClass DefaultCharacterClassPreset;
 
     /// <summary>
-    /// Fires when the gameobjects that represent the players are created and initialized
+    /// Fires when the gameobjects that represent the players are created and initialized. New batches may be fired at any time
     /// </summary>
     public static event System.EventHandler<CSEventArgs.GameObjectListEventArgs> OnPlayerAgentsInstantiated;
 
@@ -54,7 +54,12 @@ public class DEBUG_PlayerSpawner : MonoBehaviour
     }
     private void PlayerDataManager_OnPlayerActivated(object sender, PlayerDataManager.PlayerDataSessionEventArgs e)
     {
-        InitGameObjectByDataSession(e.Data);
+        var g = InitGameObjectByDataSession(e.Data);
+
+        List<GameObject> Glist = new List<GameObject>();
+        Glist.Add(g);
+
+        OnPlayerAgentsInstantiated?.Invoke(this, new CSEventArgs.GameObjectListEventArgs(Glist));
     }
 
     GameObject InitGameObjectByDataSession(PlayerData_Session r)
