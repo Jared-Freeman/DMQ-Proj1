@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using UnityEngine.InputSystem;
+
 /// <summary>
 /// Singleton that maintains a list of all loaded player session data. Implements Loading and Saving player session data.
 /// </summary>
@@ -13,15 +15,44 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
     private static string s_ProfileSaveFileExtension = ".psave"; //player profile save "psave" idk lol
 
 
+    //event args
+    public class PlayerDataSessionEventArgs : System.EventArgs
+    {
+        public PlayerData_Session Data;
+        public PlayerDataSessionEventArgs(PlayerData_Session d)
+        {
+            Data = d;
+        }
+    }
+
+    public static event System.EventHandler<PlayerDataSessionEventArgs> OnPlayerActivated;
+
     #region Members
+
+    public int MaxActivatedPlayerSessions { get; private set; } = 4;
 
     //Save files list. Should these be shared publicly?
     private List<string> _ProfileSavePathList;
 
-    //Data
-    private List<PlayerData_Session> _Data;
-    //Public facing
-    public IReadOnlyCollection<PlayerData_Session> ActivePlayerProfiles { get { return _Data.AsReadOnly(); } }
+    /// <summary>
+    /// All joined players
+    /// </summary>
+    [SerializeField] private List<PlayerData_Session> _Data;
+    /// <summary>
+    /// Subset of all joined players
+    /// </summary>
+    [SerializeField] private List<PlayerData_Session> _ActivatedPlayers;
+
+
+    /// <summary>
+    /// List of all players JOINED (BOTH active and inactive)
+    /// </summary>
+    public IReadOnlyCollection<PlayerData_Session> JoinedPlayerSessions { get { return _Data.AsReadOnly(); } }
+
+    /// <summary>
+    /// List of all players ACTIVATED. These are the player sessions to be used during gameplay
+    /// </summary>
+    public IReadOnlyCollection<PlayerData_Session> ActivatedPlayerSessions { get { return _ActivatedPlayers.AsReadOnly(); } }
 
 
 
@@ -66,12 +97,36 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
     {
         base.Awake();
 
+        Singleton<PlayerManager_Proxy>.Instance.InputManager.onPlayerJoined += InputManager_onPlayerJoined;
+        Singleton<PlayerManager_Proxy>.Instance.InputManager.onPlayerLeft += InputManager_onPlayerLeft;
+
         VerifyProfileDirectoryIntegrity(); //Guarantees <PlayerProfilePath> exists
 
         //Test_GenerateSave();
 
         InitProfileFileList();
     }
+
+    private void InputManager_onPlayerLeft(UnityEngine.InputSystem.PlayerInput obj)
+    {
+        var r = GetRecord(obj);
+
+        if(r != null)
+        {
+            _Data.Remove(r);
+        }
+    }
+
+    private void InputManager_onPlayerJoined(UnityEngine.InputSystem.PlayerInput obj)
+    {
+        PlayerData_Session r = new PlayerData_Session();
+
+        r.Info._Input = obj;
+        r.Info._CurrentClassPreset = null;
+
+        _Data.Add(r);
+    }
+
 
 
     /// <summary>
@@ -90,7 +145,6 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
         }
     }
 
-
     private void InitProfileFileList()
     {
         _ProfileSavePathList = new List<string>();
@@ -108,9 +162,11 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
         }
     }
 
-
     #endregion
 
+
+
+    #region Player Data File IO Methods
 
     public void LoadPlayerData(string path) //what info goes in args? file? somethin else?
     {
@@ -140,4 +196,36 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
         SavePlayerData(player_session.SaveDataPath);
     }
 
+    #endregion
+
+    private PlayerData_Session GetRecord(PlayerInput p)
+    {
+        foreach(var r in _Data)
+        {
+            if (r.Info._Input == p) return r;
+        }
+        return null;
+    }
+
+
+
+    /// <summary>
+    /// Activates specified player. Activated players are the inputs to be used during gameplay.
+    /// </summary>
+    /// <param name="p">player to activate</param>
+    /// <returns>True if player was successfully activated.</returns>
+    public bool ActivatePlayer(PlayerInput p)
+    {
+        var r = GetRecord(p);
+        if (r != null)
+        {
+            if (_ActivatedPlayers.Contains(r)) return true;
+
+            _ActivatedPlayers.Add(r);
+
+            OnPlayerActivated?.Invoke(this, new PlayerDataSessionEventArgs(r));
+            return true;
+        }
+        return false;
+    }
 }

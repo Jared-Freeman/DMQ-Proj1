@@ -14,9 +14,7 @@ public struct PlayerMovementEventArgs
     public string test;
 };
 
-[RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(Actor))]
-[RequireComponent(typeof(Inventory))]
 [RequireComponent(typeof(PlayerControls))]
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovementV3 : MonoBehaviour
@@ -28,18 +26,20 @@ public class PlayerMovementV3 : MonoBehaviour
     public bool FLAG_PlayerMovementEnabled = true;
 
 
+    //Move Style
+    [Tooltip("Affects how the rigidbody forces are applied")]
+    public MovementModel MovementStyle = MovementModel.ContinuousAdvanced;
+
+
     //Options
     public PlayerMovementV3Options DashOptions = new PlayerMovementV3Options();
     public PMV3_RunProperties RunOptions = new PMV3_RunProperties();
-    [Tooltip("Affects how the rigidbody forces are applied")]
-    public MovementModel MovementStyle = MovementModel.ContinuousAdvanced;   
     
 
-
     //External objects
-    public PlayerInput Input { get; protected set; }
+    public PlayerInputHost InputHost { get; protected set; }
+    public PlayerInput _Input { get { return InputHost.CurrentPlayerInput; } }
     public Actor AttachedActor { get; protected set; }
-    public Inventory inventory { get; protected set; }
     public PlayerControls controls { get; protected set; }
     public Rigidbody RB { get; protected set; }
     
@@ -148,25 +148,12 @@ public class PlayerMovementV3 : MonoBehaviour
         //ShootProjectile(); //TODO: Remove after testing
         Event_AttackStart?.Invoke(new PlayerMovementEventArgs());
     }
+    /// <summary>
+    /// DEPRECATED
+    /// </summary>
     void ChangeWeaponEvent()
     {
-        if (inventory.currentEquipNumber == 0)
-        {
-            inventory.changeToNumber = -1;
-        }
-        else
-        {
-            inventory.changeToNumber = 0;
-        }
-        if (inventory.currentEquipNumber == 1)
-        {
-            inventory.changeToNumber = -1;
-        }
-        else
-        {
-            inventory.changeToNumber = 1;
-        }
-        Event_ChangeWeapon?.Invoke(new PlayerMovementEventArgs());
+        // DEPRECATED
     }
     void SpecialActionEvent()
     {
@@ -185,13 +172,16 @@ public class PlayerMovementV3 : MonoBehaviour
         AttachedActor = GetComponent<Actor>();
         if (AttachedActor == null) Debug.LogError(ToString() + ": No Actor attached!");
 
-        //Refs
-        if (inventory == null) inventory = GetComponent<Inventory>();
-        if (inventory == null) Debug.LogError("PlayerMovement: No inventory found");
+        //if (_Input == null) _Input = GetComponent<PlayerInput>();
+        //if (_Input == null) Debug.LogError("No _Input found");
 
-        if (Input == null) Input = GetComponent<PlayerInput>();
-        if (Input == null) Debug.LogError("No Input found");
-        
+        InputHost = GetComponent<PlayerInputHost>();
+        if(InputHost == null)
+        {
+            Debug.LogError("No InputHost found! Destroying");
+            Destroy(this);
+        }
+
         RB = gameObject.GetComponent<Rigidbody>();
         if (RB == null)
         {
@@ -225,17 +215,18 @@ public class PlayerMovementV3 : MonoBehaviour
     //    Debug.Log(args.test);
     //}
 
+    //probably need to move this elsewhere...
+    //private void OnEnable()
+    //{
+    //    _Input.enabled = true;
+    //    controls.Enable();
+    //}
+    //private void OnDisable()
+    //{
+    //    _Input.enabled = false;
+    //    controls.Disable();
+    //}
 
-    private void OnEnable()
-    {
-        Input.enabled = true;
-        controls.Enable();
-    }
-    private void OnDisable()
-    {
-        Input.enabled = false;
-        controls.Disable();
-    }
     #endregion
 
     void Update()
@@ -346,7 +337,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
     #endregion
 
-    #region Input Event Dispatcher
+    #region _Input Event Dispatcher
     // This function is called in Awake(), and creates controls 
     // + registers all the events that may occur due to player input
     private void InitInput()
@@ -354,18 +345,53 @@ public class PlayerMovementV3 : MonoBehaviour
 
         controls = new PlayerControls();
 
+        InputHost.OnInputChanged += InputHost_OnInputChanged;
+
+        ////GAMEPAD EVENTS REGISTER //////////////////////////////////////
+        ////register reading movement values from input
+        //controls.Gamepad.Movement.performed += ctx => InputMap = ctx.ReadValue<Vector2>();
+        //controls.Gamepad.Movement.canceled += ctx => InputMap = Vector2.zero;
+        //controls.Gamepad.Attack.performed += ctx => AttackEvent();
+        //controls.Gamepad.SpecialAction.performed += ctx => SpecialActionEvent();
+        //controls.Gamepad.Wepon1Equip.performed += ctx => ChangeWeaponEvent();
+        //controls.Gamepad.Wepon2Equip.performed += ctx => ChangeWeaponEvent();
+
+        //controls.Gamepad.Aim.performed += ctx => AimDirection = ctx.ReadValue<Vector2>().normalized;
+        ////controls.Gamepad.Aim.canceled += ctx => AimDirection = Vector2.zero;
+
+        ////MOUSE AND KEYBOARD EVENTS REGISTER //////////////////////////////////////
+        ////register reading movement values from input
+        //controls.MouseAndKeyboard.Movement.performed += ctx => InputMap = ctx.ReadValue<Vector2>();
+        //controls.MouseAndKeyboard.Movement.canceled += ctx => InputMap = Vector2.zero;
+        //controls.MouseAndKeyboard.Attack.performed += ctx => AttackEvent();
+        //controls.MouseAndKeyboard.SpecialAction.performed += ctx => SpecialActionEvent();
+        //controls.MouseAndKeyboard.Wepon1Equip.performed += ctx => ChangeWeaponEvent();
+        //controls.MouseAndKeyboard.Wepon2Equip.performed += ctx => ChangeWeaponEvent();
+
+        ////Convert to screen space to achieve direction
+        //controls.MouseAndKeyboard.Aim.performed += ctx =>
+        //{
+        //    Vector3 V = Camera.main.WorldToScreenPoint(transform.position);
+        //    AimDirection = (ctx.ReadValue<Vector2>() - new Vector2(V.x, V.y)).normalized;
+        //};
+        ////controls.MouseAndKeyboard.Aim.canceled += ctx => AimDirection = Vector2.zero;
+
+    }
+
+    private void InputHost_OnInputChanged(object sender, CSEventArgs.PlayerInputEventArgs e)
+    {
         //set up action map
-        if(Input.currentControlScheme == controls.MouseAndKeyboardScheme.name)
+        if (_Input.currentControlScheme == controls.MouseAndKeyboardScheme.name)
         {
-            Input.SwitchCurrentActionMap(controls.MouseAndKeyboardScheme.name);
+            _Input.SwitchCurrentActionMap(controls.MouseAndKeyboardScheme.name);
         }
-        else if (Input.currentControlScheme == controls.GamepadScheme.name)
+        else if (_Input.currentControlScheme == controls.GamepadScheme.name)
         {
-            Input.SwitchCurrentActionMap(controls.GamepadScheme.name);
+            _Input.SwitchCurrentActionMap(controls.GamepadScheme.name);
         }
 
         //please someone find a better way to do this (and retain multiplayer functionality)
-        Input.onActionTriggered += ctx =>
+        _Input.onActionTriggered += ctx =>
         {
             ////MOUSE AND KEYBOARD EVENTS REGISTER //////////////////////////////////////
             if (ctx.action.actionMap.name == controls.MouseAndKeyboardScheme.name)
@@ -461,37 +487,6 @@ public class PlayerMovementV3 : MonoBehaviour
                 }
             }
         };
-
-
-        ////GAMEPAD EVENTS REGISTER //////////////////////////////////////
-        ////register reading movement values from input
-        //controls.Gamepad.Movement.performed += ctx => InputMap = ctx.ReadValue<Vector2>();
-        //controls.Gamepad.Movement.canceled += ctx => InputMap = Vector2.zero;
-        //controls.Gamepad.Attack.performed += ctx => AttackEvent();
-        //controls.Gamepad.SpecialAction.performed += ctx => SpecialActionEvent();
-        //controls.Gamepad.Wepon1Equip.performed += ctx => ChangeWeaponEvent();
-        //controls.Gamepad.Wepon2Equip.performed += ctx => ChangeWeaponEvent();
-
-        //controls.Gamepad.Aim.performed += ctx => AimDirection = ctx.ReadValue<Vector2>().normalized;
-        ////controls.Gamepad.Aim.canceled += ctx => AimDirection = Vector2.zero;
-
-        ////MOUSE AND KEYBOARD EVENTS REGISTER //////////////////////////////////////
-        ////register reading movement values from input
-        //controls.MouseAndKeyboard.Movement.performed += ctx => InputMap = ctx.ReadValue<Vector2>();
-        //controls.MouseAndKeyboard.Movement.canceled += ctx => InputMap = Vector2.zero;
-        //controls.MouseAndKeyboard.Attack.performed += ctx => AttackEvent();
-        //controls.MouseAndKeyboard.SpecialAction.performed += ctx => SpecialActionEvent();
-        //controls.MouseAndKeyboard.Wepon1Equip.performed += ctx => ChangeWeaponEvent();
-        //controls.MouseAndKeyboard.Wepon2Equip.performed += ctx => ChangeWeaponEvent();
-
-        ////Convert to screen space to achieve direction
-        //controls.MouseAndKeyboard.Aim.performed += ctx =>
-        //{
-        //    Vector3 V = Camera.main.WorldToScreenPoint(transform.position);
-        //    AimDirection = (ctx.ReadValue<Vector2>() - new Vector2(V.x, V.y)).normalized;
-        //};
-        ////controls.MouseAndKeyboard.Aim.canceled += ctx => AimDirection = Vector2.zero;
-
     }
     #endregion
 
@@ -1155,26 +1150,27 @@ public class PlayerMovementV3 : MonoBehaviour
 
     #endregion
 
-    //TODO: Move this to another script
-    public GameObject ShootableProjectile;
-    public float ShootableProjectileHeightOffset = 1f;
-    void ShootProjectile()
-    {
-        GenericProjectile P_Template = ShootableProjectile.GetComponent<GenericProjectile>();
-        if (ShootableProjectile != null && P_Template != null)
-        {
-            Vector3 AimDir3 = new Vector3(AimDirection.x, 0, AimDirection.y);
-            Vector3 InitPos = transform.position + (AimDir3).normalized * 1.5f + new Vector3(0, ShootableProjectileHeightOffset, 0); //arbitrary spawn loc
+
+    //DEPRECATED
+    //public GameObject ShootableProjectile;
+    //public float ShootableProjectileHeightOffset = 1f;
+    //void ShootProjectile()
+    //{
+    //    GenericProjectile P_Template = ShootableProjectile.GetComponent<GenericProjectile>();
+    //    if (ShootableProjectile != null && P_Template != null)
+    //    {
+    //        Vector3 AimDir3 = new Vector3(AimDirection.x, 0, AimDirection.y);
+    //        Vector3 InitPos = transform.position + (AimDir3).normalized * 1.5f + new Vector3(0, ShootableProjectileHeightOffset, 0); //arbitrary spawn loc
 
 
-            GenericProjectile Proj = GenericProjectile.SpawnProjectile(P_Template, InitPos, AimDir3);
+    //        GenericProjectile Proj = GenericProjectile.SpawnProjectile(P_Template, InitPos, AimDir3);
 
-            if (AttachedActor != null)
-            {
-                Proj.ActorOwner = AttachedActor; //TODO: get better solution...
-                Proj.gameObject.layer = AttachedActor._Team.Options.NoCollideLayer; //no friendly fire atm
-            }
-            else Debug.LogError(ToString() + ": No Actor attached. How did you get around all my checks?");
-        }
-    }
+    //        if (AttachedActor != null)
+    //        {
+    //            Proj.ActorOwner = AttachedActor; //TODO: get better solution...
+    //            Proj.gameObject.layer = AttachedActor._Team.Options.NoCollideLayer; //no friendly fire atm
+    //        }
+    //        else Debug.LogError(ToString() + ": No Actor attached. How did you get around all my checks?");
+    //    }
+    //}
 }

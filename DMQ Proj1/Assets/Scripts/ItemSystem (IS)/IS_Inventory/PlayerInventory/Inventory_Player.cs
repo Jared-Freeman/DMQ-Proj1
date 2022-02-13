@@ -28,7 +28,8 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
         } 
     }
 
-    PlayerInput Input;
+    PlayerInputHost InputHost { get; set; }
+    PlayerInput Input { get { return InputHost.CurrentPlayerInput; } }
     PlayerControls controls;
 
     [SerializeField] protected List<Inventory_WeaponSlot> _WeaponSlots = new List<Inventory_WeaponSlot>();
@@ -89,6 +90,11 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
         }
 
         Info.EquippedWeaponIndex = -1; //No weapon equipped
+    }
+
+    protected override void Start()
+    {
+        base.Start();
 
         InitInput();
     }
@@ -113,10 +119,10 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
     /// </summary>
     private void InitInput()
     {
-        Input = GetComponent<PlayerInput>();
-        if(Input == null)
+        InputHost = GetComponent<PlayerInputHost>();
+        if(InputHost == null)
         {
-            Debug.LogError(ToString() + ": No PlayerInput component found! Destroying.");
+            Debug.LogError(ToString() + ": No Input Host component found! Destroying.");
             Destroy(this);
         }
 

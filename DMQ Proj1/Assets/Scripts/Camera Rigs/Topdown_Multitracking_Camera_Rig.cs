@@ -94,17 +94,36 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
     #region Events
     private void OnEnable()
     {
-        PlayerInputMgr.onPlayerJoined += context => 
-        {
-            TargetList.Add(context.gameObject);
-        };
+        PlayerInputMgr.onPlayerJoined += PlayerInputMgr_onPlayerJoined;
+        PlayerInputMgr.onPlayerLeft += PlayerInputMgr_onPlayerLeft;
+
+        DEBUG_PlayerSpawner.OnPlayerAgentsInstantiated += DEBUG_PlayerSpawner_OnPlayerAgentsInstantiated;
     }
+
+    private void DEBUG_PlayerSpawner_OnPlayerAgentsInstantiated(object sender, CSEventArgs.GameObjectListEventArgs e)
+    {
+        foreach(var g in e.gameObjects)
+        {
+            TargetList.Add(g);
+        }
+    }
+
     private void OnDisable()
     {
-        PlayerInputMgr.onPlayerLeft += context =>
-        {
-            TargetList.Remove(context.gameObject);
-        };
+        PlayerInputMgr.onPlayerJoined -= PlayerInputMgr_onPlayerJoined;
+        PlayerInputMgr.onPlayerLeft -= PlayerInputMgr_onPlayerLeft;
+
+        DEBUG_PlayerSpawner.OnPlayerAgentsInstantiated -= DEBUG_PlayerSpawner_OnPlayerAgentsInstantiated;
+    }
+
+    //functionality removed.
+    private void PlayerInputMgr_onPlayerJoined(PlayerInput obj)
+    {
+        //TargetList.Add(obj.gameObject);
+    }
+    private void PlayerInputMgr_onPlayerLeft(PlayerInput obj)
+    {
+        //TargetList.Remove(obj.gameObject);
     }
     #endregion
 
