@@ -10,9 +10,13 @@ public class FR_LGP_Generator : MonoBehaviour
     //helper structs
     #region Structs
     [System.Serializable]
-    public struct Opt
+    public class Opt
     {
-        public Vector2Int GenerationDimensions;
+        public Vector2Int GenerationDimensions = new Vector2Int(7,7);
+        /// <summary>
+        /// Size of 2D grid spacing
+        /// </summary>
+        public float GridSize = 40f;
     }
     [System.Serializable]
     public struct CR
@@ -630,7 +634,7 @@ public class FR_LGP_Generator : MonoBehaviour
         GMask.DebugPopulateGridSequential();
 
         //GMask.DebugRenderGrid(Parent, Instance);
-        InstantiateConnections(Parent, 40f);
+        InstantiateConnections(Parent, Options.GridSize);
 
         //Loop: Preplace object, Link objects
 
