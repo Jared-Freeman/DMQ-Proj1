@@ -141,6 +141,18 @@ public class ActorAI_Logic : MonoBehaviour
 
     }
 
+    protected virtual void OnEnable()
+    {
+        StartCoroutine(DumbNavMeshAgentFix());
+    }
+
+    protected IEnumerator DumbNavMeshAgentFix()
+    {
+        NavAgent.enabled = false;
+        yield return new WaitForEndOfFrame(); //This hack delays the execution until the mesh is created
+        NavAgent.enabled = true;
+    }
+
     #endregion
 
     /// <summary>
@@ -157,11 +169,16 @@ public class ActorAI_Logic : MonoBehaviour
             float ScaledTurnRate = Preset.Base.TurningRate * Time.fixedDeltaTime;
 
             var Rot = Vector3.ProjectOnPlane((TurnTarget.transform.position - transform.position), Vector3.up);
-            var QResult = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(Rot, Vector3.up), ScaledTurnRate);
+            Quaternion QResult;
+            if (Rot.sqrMagnitude != 0)
+            {
+                QResult = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(Rot, Vector3.up), ScaledTurnRate);
+                RB.MoveRotation(QResult);
+            }
+            //else QResult = Quaternion.identity;
 
             //transform.rotation = QResult;
 
-            RB.MoveRotation(QResult);
         }
 
 
