@@ -37,7 +37,6 @@ namespace EffectTree
                         {
                             if(currentActor._Team != friendlyTeam)
                             {
-                                
                                 Vector3 enemyPosition = otherActors[i].gameObject.transform.position;
                                 distance = Vector3.Distance(enemyPosition, currentPosition);
                                 if (distance < cloestEnemyDistance)

@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BaseOptions:
     PickupRadius: 2
+    PickupStyle: 0
+    CapacityCost: 1
   BaseWeaponOptions:
     EquipTime: 0
     DequipTime: 0
@@ -21,9 +23,9 @@ MonoBehaviour:
       _Cooldown: 1
   ListAbilitiesPerClass:
   - Class: {fileID: 11400000, guid: 75581b3490532144f86873caad3557b2, type: 2}
-    BasicAttack: {fileID: 11400000, guid: 3a34a9c4c98f69a4b8388c93a7b38a7f, type: 2}
-    Ability_1: {fileID: 11400000, guid: 3a34a9c4c98f69a4b8388c93a7b38a7f, type: 2}
-    Ability_2: {fileID: 11400000, guid: 3a34a9c4c98f69a4b8388c93a7b38a7f, type: 2}
-  DefaultBasicAttack: {fileID: 11400000, guid: 4c4947977f628424d8ed56016396397c, type: 2}
-  DefaultAbility_1: {fileID: 11400000, guid: 4c4947977f628424d8ed56016396397c, type: 2}
-  DefaultAbility_2: {fileID: 11400000, guid: 4c4947977f628424d8ed56016396397c, type: 2}
+    BasicAttack: {fileID: 11400000, guid: 1975ebaecaa06834683a06f611e51845, type: 2}
+    Ability_1: {fileID: 11400000, guid: 1975ebaecaa06834683a06f611e51845, type: 2}
+    Ability_2: {fileID: 11400000, guid: 1975ebaecaa06834683a06f611e51845, type: 2}
+  DefaultBasicAttack: {fileID: 11400000, guid: 1975ebaecaa06834683a06f611e51845, type: 2}
+  DefaultAbility_1: {fileID: 11400000, guid: 1975ebaecaa06834683a06f611e51845, type: 2}
+  DefaultAbility_2: {fileID: 11400000, guid: 1975ebaecaa06834683a06f611e51845, type: 2}

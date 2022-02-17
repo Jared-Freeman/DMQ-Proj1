@@ -2205,6 +2205,7 @@ GameObject:
   - component: {fileID: 3367009255486390931}
   - component: {fileID: 3367009255486390930}
   - component: {fileID: 3367009255486390893}
+  - component: {fileID: 2139120299304540019}
   m_Layer: 10
   m_Name: Player V6 (2-12-2022)
   m_TagString: Player
@@ -2475,6 +2476,25 @@ MonoBehaviour:
   FLAG_Debug: 1
   AttackContextInitialPosition: {fileID: 2730663037913604386}
   AttackContextInitialPositionForwardOffset: 2
+--- !u!114 &2139120299304540019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2730663038165717486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed2b59a717b418e4d860744a87f861ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 2730663038165717473}
+  actor: {fileID: 2730663038165717474}
+  weapons: {fileID: 11400000, guid: bb378d36a7f549a4885fc7d2490900b5, type: 2}
+  handpositions:
+  - {fileID: 2730663037300967914}
+  - {fileID: 2730663039089730603}
+  weapon: {fileID: 100050, guid: 9d8cbe7d7c34ac442baea6cd0ea39cd0, type: 3}
 --- !u!1 &2730663038235387407
 GameObject:
   m_ObjectHideFlags: 0
@@ -13397,8 +13417,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2730663039089730602}
   m_LocalRotation: {x: -0.7071035, y: 0.001535124, z: -0.0015344982, w: 0.7071068}
-  m_LocalPosition: {x: -0.35489592, y: -0.0000000667572, z: -0.00000015258789}
-  m_LocalScale: {x: 0.99999994, y: 0.9999998, z: 1.0000005}
+  m_LocalPosition: {x: -0.35489592, y: 0, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2730663038296741601}
   - {fileID: 2730663038659950529}
