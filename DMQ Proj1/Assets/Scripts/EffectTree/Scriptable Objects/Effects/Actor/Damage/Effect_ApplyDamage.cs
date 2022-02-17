@@ -14,23 +14,25 @@ namespace EffectTree
 
         public override bool Invoke(ref EffectContext ctx)
         {
-            Actor actor = ctx.AttackData._TargetGameObject.GetComponent<Actor>();
-
-            if(actor != null && DamageMessage != null && base.Invoke(ref ctx))
+            if(ctx.AttackData._TargetGameObject)
             {
-                Actor_DamageMessage msg = new Actor_DamageMessage();
+                Actor actor = ctx.AttackData._TargetGameObject.GetComponent<Actor>();
+                if (actor != null && DamageMessage != null && base.Invoke(ref ctx))
+                {
+                    Actor_DamageMessage msg = new Actor_DamageMessage();
 
-                //supply preset info
-                msg._DamageInfo = DamageMessage;
+                    //supply preset info
+                    msg._DamageInfo = DamageMessage;
 
-                //supply state info
-                if(ctx.AttackData._Owner != null) msg._Caster = ctx.AttackData._Owner.gameObject;
-                if (ctx.AttackData._InitialGameObject != null) msg._DamageSource = ctx.AttackData._InitialGameObject;
-                if (ctx.AttackData._Team != null) msg._Team = ctx.AttackData._Team;
+                    //supply state info
+                    if (ctx.AttackData._Owner != null) msg._Caster = ctx.AttackData._Owner.gameObject;
+                    if (ctx.AttackData._InitialGameObject != null) msg._DamageSource = ctx.AttackData._InitialGameObject;
+                    if (ctx.AttackData._Team != null) msg._Team = ctx.AttackData._Team;
 
-                actor.Stats.ApplyDamage(msg);
+                    actor.Stats.ApplyDamage(msg);
 
-                return true;
+                    return true;
+                }
             }
             return false;
         }

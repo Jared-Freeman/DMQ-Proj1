@@ -5,6 +5,19 @@ using CSEventArgs;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
+public class InventoryEventArgs : System.EventArgs
+{
+    public InventoryEventArgs(GameObject o,int slot)
+    {
+        obj = o;
+        weaponSlot = slot;
+    }
+    public GameObject obj;
+    public int weaponSlot;
+}
+
+
 //TODO: Interact may need to be buffered/queued somehow (to prevent Interact from doing multiple things)
 /// <summary>
 /// Player inventory instance. Grants players agency over picking up items using player input. 
@@ -12,6 +25,7 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class Inventory_Player : ItemSystem.IS_InventoryBase
 {
+    public static event System.EventHandler<InventoryEventArgs> OnWeaponChanged;
     #region Members
 
     public ItemSystem.Weapons.Item_WeaponBase CurrentWeapon 
@@ -229,6 +243,7 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
         {
             Debug.Log("WEAPON EQUIPPED @index: " + index);
             Info.EquippedWeaponIndex = index;
+            OnWeaponChanged.Invoke(this, new InventoryEventArgs(this.gameObject,index));
         }
         else
         {

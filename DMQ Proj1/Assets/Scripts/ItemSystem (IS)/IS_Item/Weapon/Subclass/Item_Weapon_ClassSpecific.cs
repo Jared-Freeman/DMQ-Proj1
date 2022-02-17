@@ -157,12 +157,9 @@ namespace ItemSystem.Weapons
                 EffectContext ec = new EffectContext(ctx);
 
                 IWCS_StateInfo.CurrentBasicAttack?.ExecuteAbility(ref ec);
-
                 return true;
             }
             return false;
         }
     }
-
-
 }
