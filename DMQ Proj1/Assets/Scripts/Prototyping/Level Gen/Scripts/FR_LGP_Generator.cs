@@ -59,6 +59,9 @@ public class FR_LGP_Generator : MonoBehaviour
     public GameObject Parent;
     public GameObject Instance;
 
+    public GameObject PlayerSpawner;
+    public GameObject ExitPrefab;
+
     //internal
     #region Helper Classes
     private class GridEntry
@@ -77,12 +80,29 @@ public class FR_LGP_Generator : MonoBehaviour
             NESW[i++] = W;
         }
 
+        /// <summary>
+        /// Returns true if any connections exist to this grid entry. 
+        /// Existing connections imply that a room is instantiated on this grid entry.
+        /// </summary>
+        public bool AnyConnectionExists
+        {
+            get
+            {
+                foreach (bool b in NESW) { if (b == true) return true; }
+                return false;
+            }
+        }
     }
     private class GridMask
     {
         //members
         public int NumRows, NumCols;
         public GridEntry[,] Grid; //2d array in c# is weird
+
+        /// <summary>
+        /// The list of all [i,j] values that have connections (and thus will contain instantiated rooms).
+        /// </summary>
+        public List<KeyValuePair<int, int>> PopulatedGridEntries { get; private set; }
 
 
         //ctor
@@ -305,6 +325,9 @@ public class FR_LGP_Generator : MonoBehaviour
             {
                 if (I.Count > LargestIsland.Count) LargestIsland = I;
             }
+
+            // Record for reference outside this class.
+            PopulatedGridEntries = LargestIsland;
 
             for (i = 0; i < NumCols; i++)
             {
@@ -636,6 +659,9 @@ public class FR_LGP_Generator : MonoBehaviour
         //GMask.DebugRenderGrid(Parent, Instance);
         InstantiateConnections(Parent, Options.GridSize);
 
+        //TODO: Make this more elegant
+        InstantiateSpawnAndExit();
+
         //Loop: Preplace object, Link objects
 
         //
@@ -765,6 +791,47 @@ public class FR_LGP_Generator : MonoBehaviour
                 }
 
             }
+        }
+
+    }
+
+    public void InstantiateSpawnAndExit()
+    {
+
+        var remainingEntries = GMask.PopulatedGridEntries;
+
+        {
+            //this is an INDEX to the List of key-value pairs.
+            int index = Random.Range(0, remainingEntries.Count);
+
+            int i, j;
+            i = remainingEntries[index].Key;
+            j = remainingEntries[index].Value;
+
+            Vector3 SpawnPosition = new Vector3(i * Options.GridSize, 0, j * Options.GridSize);
+
+            var GO = Instantiate(PlayerSpawner);
+            if (GO != null)
+                GO.transform.position = SpawnPosition;
+
+            //This grid space can no longer be used
+            remainingEntries.Remove(remainingEntries[index]);
+        }
+
+
+        {
+            //this is an INDEX to the List of key-value pairs.
+            int index = Random.Range(0, GMask.PopulatedGridEntries.Count);
+
+            int i, j;
+            i = GMask.PopulatedGridEntries[index].Key;
+            j = GMask.PopulatedGridEntries[index].Value;
+
+            Vector3 SpawnPosition = new Vector3(i * Options.GridSize, 0, j * Options.GridSize);
+
+            var GO = Instantiate(ExitPrefab);
+            if(GO != null)
+                GO.transform.position = SpawnPosition;
         }
 
     }
