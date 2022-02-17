@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FR_LGP_Connections : MonoBehaviour
 {
-    public static bool FLAG_DrawGizmos = false;
+    public static bool FLAG_DrawGizmos = true;
 
     public float VolumeSize = 1f;
     public bool [] Connections = new bool[4]; //NESW cardinal dir
