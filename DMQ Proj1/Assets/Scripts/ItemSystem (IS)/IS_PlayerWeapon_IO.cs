@@ -84,6 +84,13 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
 
     }//end InitInput()
 
+    void OnDestroy()
+    {
+        InputHost.OnInputChanged -= InputHost_OnInputChanged;
+
+        _Input.onActionTriggered -= _Input_onActionTriggered;
+    }
+
     private void InputHost_OnInputChanged(object sender, CSEventArgs.PlayerInputEventArgs e)
     {
         //set up action map
@@ -96,102 +103,102 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
             _Input.SwitchCurrentActionMap(_Controls.GamepadScheme.name);
         }
 
-        //please someone find a better way to do this (and retain multiplayer functionality)
-        _Input.onActionTriggered += ctx =>
+        _Input.onActionTriggered += _Input_onActionTriggered;
+
+    }
+
+    private void _Input_onActionTriggered(InputAction.CallbackContext ctx)
+    {
+        ////MOUSE AND KEYBOARD EVENTS REGISTER //////////////////////////////////////
+        if (ctx.action.actionMap.name == _Controls.MouseAndKeyboardScheme.name)
         {
-            ////MOUSE AND KEYBOARD EVENTS REGISTER //////////////////////////////////////
-            if (ctx.action.actionMap.name == _Controls.MouseAndKeyboardScheme.name)
+            if (ctx.performed)
             {
-                if (ctx.performed)
+                //MnK
+                if (ctx.action.name == _Controls.MouseAndKeyboard.Attack.name)
                 {
-                    //MnK
-                    if (ctx.action.name == _Controls.MouseAndKeyboard.Attack.name)
+                    _Info.AttackButtonHeld = true;
+                    if (TryInvokeAttack()) AttackEvent();
+                }
+                else if (ctx.action.name == _Controls.MouseAndKeyboard.Aim.name)
+                {
+                    if (Camera.main == null) return;
+
+                    Vector2 In = ctx.ReadValue<Vector2>();
+
+                    //improved aiming using raycast to plane
+                    //TODO: Consider a "raycast to model" approach; consider modifying the CursorPlane to be inline with the projectile spawn height
+                    if (Camera.main.GetComponent<Topdown_Multitracking_Camera_Rig>() != null)
                     {
-                        _Info.AttackButtonHeld = true;
-                        if (TryInvokeAttack()) AttackEvent();
+
+                        //TODO: Consider CamDistanceCurrent improvement. We need a distance from camera to EACH PLAYER, projected onto "2d world plane." 
+                        //For now this should be a fairly strong approximation (but maybe could be broken)
+                        Plane CursorPlane = new Plane(Vector3.up, Camera.main.GetComponent<Topdown_Multitracking_Camera_Rig>().CamDistanceCurrent);
+
+                        Ray RayToCursorPlane = Camera.main.ScreenPointToRay(new Vector3(In.x, In.y, 0));
+
+
+                        Vector3 Hit = Vector3.zero;
+                        if (CursorPlane.Raycast(RayToCursorPlane, out float Point))
+                        {
+                            Hit = RayToCursorPlane.GetPoint(Point);
+                        }
+
+                        //TOOD: Consider this for relaying info to other subsystems
+                        //At this point, Hit == the point on plane where player clicked. Could be useful??
+
+                        Vector3 V = Vector3.ProjectOnPlane((Hit - transform.position), Vector3.up);
+
+                        AimDirection = (new Vector2(V.x, V.z)).normalized;
                     }
-                    else if (ctx.action.name == _Controls.MouseAndKeyboard.Aim.name)
+                    else
                     {
-                        if (Camera.main == null) return;
+                        Vector3 V = Camera.main.WorldToScreenPoint(transform.position);
+                        //Vector3 V = Camera.main.WorldToScreenPoint(transform.position + new Vector3(0, ShootableProjectileHeightOffset, 0)); //hmm 
 
-                        Vector2 In = ctx.ReadValue<Vector2>();
-
-                        //improved aiming using raycast to plane
-                        //TODO: Consider a "raycast to model" approach; consider modifying the CursorPlane to be inline with the projectile spawn height
-                        if (Camera.main.GetComponent<Topdown_Multitracking_Camera_Rig>() != null)
-                        {
-
-                            //TODO: Consider CamDistanceCurrent improvement. We need a distance from camera to EACH PLAYER, projected onto "2d world plane." 
-                            //For now this should be a fairly strong approximation (but maybe could be broken)
-                            Plane CursorPlane = new Plane(Vector3.up, Camera.main.GetComponent<Topdown_Multitracking_Camera_Rig>().CamDistanceCurrent);
-
-                            Ray RayToCursorPlane = Camera.main.ScreenPointToRay(new Vector3(In.x, In.y, 0));
-
-
-                            Vector3 Hit = Vector3.zero;
-                            if (CursorPlane.Raycast(RayToCursorPlane, out float Point))
-                            {
-                                Hit = RayToCursorPlane.GetPoint(Point);
-                            }
-
-                            //TOOD: Consider this for relaying info to other subsystems
-                            //At this point, Hit == the point on plane where player clicked. Could be useful??
-
-                            Vector3 V = Vector3.ProjectOnPlane((Hit - transform.position), Vector3.up);
-
-                            AimDirection = (new Vector2(V.x, V.z)).normalized;
-                        }
-                        else
-                        {
-                            Vector3 V = Camera.main.WorldToScreenPoint(transform.position);
-                            //Vector3 V = Camera.main.WorldToScreenPoint(transform.position + new Vector3(0, ShootableProjectileHeightOffset, 0)); //hmm 
-
-                            AimDirection = (In - new Vector2(V.x, V.y)).normalized;
-                        }
+                        AimDirection = (In - new Vector2(V.x, V.y)).normalized;
                     }
-
                 }
 
-
-                else if (ctx.canceled)
-                {
-                    //MnK
-                    if (ctx.action.name == _Controls.MouseAndKeyboard.Attack.name)
-                    {
-                        _Info.AttackButtonHeld = false;
-                    }
-                }
             }
 
 
-
-            ////GAMEPAD EVENTS REGISTER //////////////////////////////////////
-            else if (ctx.action.actionMap.name == _Controls.GamepadScheme.name)
+            else if (ctx.canceled)
             {
-                if (ctx.performed)
+                //MnK
+                if (ctx.action.name == _Controls.MouseAndKeyboard.Attack.name)
                 {
-                    //Gamepad
-                    if (ctx.action.name == _Controls.Gamepad.Attack.name)
-                    {
-                        _Info.AttackButtonHeld = true;
-                        if (TryInvokeAttack()) AttackEvent();
-                    }
-                    else if (ctx.action.name == _Controls.Gamepad.Aim.name) AimDirection = ctx.ReadValue<Vector2>().normalized;
-
-                }
-
-                else if (ctx.canceled)
-                {
-                    //Gamepad
-                    if (ctx.action.name == _Controls.Gamepad.Attack.name)
-                    {
-                        _Info.AttackButtonHeld = false;
-                    }
+                    _Info.AttackButtonHeld = false;
                 }
             }
-        };
+        }
 
 
+
+        ////GAMEPAD EVENTS REGISTER //////////////////////////////////////
+        else if (ctx.action.actionMap.name == _Controls.GamepadScheme.name)
+        {
+            if (ctx.performed)
+            {
+                //Gamepad
+                if (ctx.action.name == _Controls.Gamepad.Attack.name)
+                {
+                    _Info.AttackButtonHeld = true;
+                    if (TryInvokeAttack()) AttackEvent();
+                }
+                else if (ctx.action.name == _Controls.Gamepad.Aim.name) AimDirection = ctx.ReadValue<Vector2>().normalized;
+
+            }
+
+            else if (ctx.canceled)
+            {
+                //Gamepad
+                if (ctx.action.name == _Controls.Gamepad.Attack.name)
+                {
+                    _Info.AttackButtonHeld = false;
+                }
+            }
+        }
     }
 
     /// <summary>

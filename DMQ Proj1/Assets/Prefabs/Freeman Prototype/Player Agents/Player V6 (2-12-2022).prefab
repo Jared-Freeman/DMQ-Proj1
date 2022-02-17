@@ -2206,6 +2206,7 @@ GameObject:
   - component: {fileID: 3367009255486390930}
   - component: {fileID: 3367009255486390893}
   - component: {fileID: 2139120299304540019}
+  - component: {fileID: 6081834268718954789}
   m_Layer: 10
   m_Name: Player V6 (2-12-2022)
   m_TagString: Player
@@ -2407,7 +2408,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2730663038165717486}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a50327a0e0452744799bdf57d7eb31e0, type: 3}
   m_Name: 
@@ -2495,6 +2496,20 @@ MonoBehaviour:
   - {fileID: 2730663037300967914}
   - {fileID: 2730663039089730603}
   weapon: {fileID: 100050, guid: 9d8cbe7d7c34ac442baea6cd0ea39cd0, type: 3}
+--- !u!114 &6081834268718954789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2730663038165717486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29ae07898717ffa4992dc191c0bc505d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HealthbarPrefab: {fileID: 4948436434746443024, guid: 89320e8571954c34c99913bba9ab3cca,
+    type: 3}
 --- !u!1 &2730663038235387407
 GameObject:
   m_ObjectHideFlags: 0

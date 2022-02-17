@@ -6,6 +6,11 @@ using UnityEngine;
 public class HealthBar : MonoBehaviour
 {
     public Material healthBar;
+
+    public MaterialPropertyBlock matProperties;
+    protected SpriteRenderer _Renderer;
+
+
     public float maxHealth;
     public float curHealth;
     public float maxHealthTotal;
@@ -17,17 +22,27 @@ public class HealthBar : MonoBehaviour
     private float albedo = 1.0f;
     private Color color = new Color(0.0f, 1.0f, 0.0f, 1.0f);
 
+    void Awake()
+    {
+        _Renderer = GetComponent<SpriteRenderer>();
+        if (_Renderer == null) Destroy(this);
+
+        matProperties = new MaterialPropertyBlock();
+    }
+
     void Start()
     {
-        healthBar.SetFloat("_Health", curHealth);
-        healthBar.SetFloat("_CurrentMaxHealth", maxHealth);
-        healthBar.SetFloat("_MaximumHealth", maxHealthTotal);
-        healthBar.SetColor("_Color", color);
+        matProperties.SetFloat("_Health", curHealth);
+        matProperties.SetFloat("_CurrentMaxHealth", maxHealth);
+        matProperties.SetFloat("_MaximumHealth", maxHealthTotal);
+        matProperties.SetColor("_Color", color);
     }
 
     void Update()
     {
-        takeDamage();
+        updateHealthColor();
+
+        _Renderer.SetPropertyBlock(matProperties);
     }
 
     void takeDamage()
@@ -35,7 +50,7 @@ public class HealthBar : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Space))
         {
             curHealth -= 3;
-            healthBar.SetFloat("_Health", curHealth);
+            matProperties.SetFloat("_Health", curHealth);
         }
         updateHealthColor();
     }
@@ -54,6 +69,12 @@ public class HealthBar : MonoBehaviour
             green = 1.0f - ((1.0f - healthPercentage));
         }
         color = new Color(red, green, blue, albedo);
-        healthBar.SetColor("_Color", color);
+
+        matProperties.SetColor("_Color", color);
+
+        matProperties.SetFloat("_Health", curHealth);
+        matProperties.SetFloat("_CurrentMaxHealth", maxHealth);
+        matProperties.SetFloat("_MaximumHealth", maxHealthTotal);
+        matProperties.SetColor("_Color", color);
     }
 }
