@@ -5,13 +5,15 @@ using UnityEngine.InputSystem;
 using UnityEngine.Events;
 
 //TODO: Figure out what data to store in this event args message
-public struct PlayerMovementEventArgs
+public class PlayerMovementEventArgs : System.EventArgs
 {
-    public PlayerMovementEventArgs(string str)
+    public PlayerMovementEventArgs(float v, Actor a)
     {
-        test = str;
+        velocity = v;
+        actor = a;
     }
-    public string test;
+    public float velocity;
+    public Actor actor;
 };
 
 [RequireComponent(typeof(Actor))]
@@ -136,6 +138,8 @@ public class PlayerMovementV3 : MonoBehaviour
     [SerializeField] public PlayerMovementEvent Event_ChangeWeapon;
     [SerializeField] public PlayerMovementEvent Event_SpecialActionStart;
 
+    public static event System.EventHandler<PlayerMovementEventArgs> OnVelocityUpdate;
+    public static event System.EventHandler<PlayerMovementEventArgs> OnDash;
     void InitializeEvents()
     {
         if (Event_AttackStart == null) Event_AttackStart = new PlayerMovementEvent();
@@ -146,7 +150,7 @@ public class PlayerMovementV3 : MonoBehaviour
     void AttackEvent()
     {
         //ShootProjectile(); //TODO: Remove after testing
-        Event_AttackStart?.Invoke(new PlayerMovementEventArgs());
+        //Event_AttackStart?.Invoke(new PlayerMovementEventArgs());
     }
     /// <summary>
     /// DEPRECATED
@@ -160,7 +164,7 @@ public class PlayerMovementV3 : MonoBehaviour
         if(CurrentState != State.Dashing && _Info.Dash_Cooldown.CanUseCooldown())
         {
             ChangeState(State.Dashing);
-            Event_SpecialActionStart?.Invoke(new PlayerMovementEventArgs());
+           // Event_SpecialActionStart?.Invoke(new PlayerMovementEventArgs());
         }
     }
 
@@ -232,8 +236,18 @@ public class PlayerMovementV3 : MonoBehaviour
     void Update()
     {
         Debug.DrawRay(transform.position, new Vector3(AimDirection.x, transform.position.y, AimDirection.y) * 5f, Color.yellow);
+        UpdateRotation();
     }
+    private void UpdateRotation()
+    {
+        Vector2 movementInput = InputMap.normalized;
+        Vector3 move = new Vector3(movementInput.x, 0, movementInput.y);
 
+        if (move != Vector3.zero)
+        {
+            gameObject.transform.forward = move;
+        }
+    }
     private void FixedUpdate()
     {
         if(FLAG_PlayerMovementEnabled) 
@@ -242,6 +256,7 @@ public class PlayerMovementV3 : MonoBehaviour
             {
                 case State.Moving:
                     HorizontalMovementInput();
+                    OnVelocityUpdate?.Invoke(this, new PlayerMovementEventArgs(RB.velocity.magnitude, AttachedActor));
                     break;
 
 
@@ -1031,7 +1046,7 @@ public class PlayerMovementV3 : MonoBehaviour
                     Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + .75f, transform.position.z), -(FilteredRBVelocity - DesiredVelocityDiff) * a, Color.red);
                 }
             }
-
+            OnDash?.Invoke(this, new PlayerMovementEventArgs(RB.velocity.magnitude, AttachedActor));
         }
         else
         {

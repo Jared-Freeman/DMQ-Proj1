@@ -13,10 +13,14 @@ namespace EffectTree
         {
             if (base.Invoke(ref ctx))
             {
-                Rigidbody rb = ctx.AttackData._TargetGameObject.GetComponent<Rigidbody>();
-                if(rb)
+                if (ctx.AttackData._TargetGameObject)
                 {
-                    rb.AddForce(-rb.transform.forward * Force); //Backwards force?
+                    Rigidbody otherRb = ctx.AttackData._TargetGameObject.GetComponent<Rigidbody>();
+                    if (otherRb)
+                    {
+                        Vector3 attackerDirection = ctx.AttackData._Owner.gameObject.transform.forward;
+                        otherRb.AddForce(attackerDirection * Force); 
+                    }
                 }
                 return true;
             }
