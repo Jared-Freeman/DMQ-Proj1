@@ -16,6 +16,51 @@ public static class Freeman_Utilities
 
 namespace Utils
 {
+
+    /// <summary>
+    /// Specifies who will receive this message. For use with Team Scriptable Object
+    /// </summary>
+    [System.Serializable]
+    public class TargetFilterOptions
+    {
+        [Header("Checkbox == Damage message sent to this team (relative to owner of the message)")]
+        public bool Enemy = true;
+        public bool Ally = false;
+        public bool Neutral = false;
+        public bool Self = false;
+
+        /// <summary>
+        /// Returns true if Target is acceptable according to this team's perspective given the target filters
+        /// </summary>
+        /// <param name="InvokingTeam">Team this TargetFilter is being used relative to</param>
+        /// <param name="Target">Target from the InvokingTeam's perspective</param>
+        /// <returns></returns>
+        public bool TargetIsAllowed(Team InvokingTeam, Actor Target)
+        {
+            //No team, no method of determining filter
+            if (InvokingTeam == null) return true;
+
+            if (Self && InvokingTeam.IsSelf(Target._Team))
+            {
+                return true;
+            }
+            else if (Ally && InvokingTeam.IsAlly(Target._Team))
+            {
+                return true;
+            }
+            else if (Neutral && InvokingTeam.IsNeutral(Target._Team))
+            {
+                return true;
+            }
+            else if (Enemy && InvokingTeam.IsEnemy(Target._Team))
+            {
+                return true;
+            }
+
+            return false;
+        }
+    }
+
     namespace Stats
     {
 
