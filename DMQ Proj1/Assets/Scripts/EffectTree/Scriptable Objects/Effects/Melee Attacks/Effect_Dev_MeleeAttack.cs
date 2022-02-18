@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Utils;
+
 namespace EffectTree
 {
     public class MeleeAttackEventArgs : System.EventArgs
@@ -21,8 +23,12 @@ namespace EffectTree
     {
         public static event System.EventHandler<MeleeAttackEventArgs> OnMeleeAttack;
 
+        public TargetFilterOptions TargetFilters;
+
         public GameObject meleeAttackEventObject;
         public List<Effect_Base> EffectList;
+
+        public float EffectDuration = 0.75f; //Arbitrarily chosen number. Probably a better way to do it.
 
         /// <summary>
         /// Create a Trigger that represents this melee attack, and pass in the effect list to be used in that instantiated GameObject
@@ -40,17 +46,21 @@ namespace EffectTree
                 }
 
                 //Instantiate a melee event object
-                float duration = 0.75f; //Arbitrarily chosen number. Probably a better way to do it.
                 GameObject g = ctx.AttackData._Owner.gameObject;
+
                 Vector3 position = g.transform.position;
                 Vector3 direction = g.transform.forward;
                 float distance = 2; //Arbitrarily chosen, seems ok.
+
                 Vector3 spawnPos = position + direction * distance;
+
                 GameObject w = Instantiate(meleeAttackEventObject,spawnPos,Quaternion.identity);
+
                 MeleeEvent m = w.GetComponent<MeleeEvent>();
-                m.eventDuration = duration;
+
+                m.Preset = this;
                 m.ctx = ctx;
-                m.EffectList = EffectList;
+
                 return true;
             }
             return false;
