@@ -18,8 +18,10 @@ namespace EffectTree
         /// <param name="col"></param>
         void OnTriggerEnter(Collider col)
         {
-            if(col.gameObject.GetComponent<Actor>()) //Currently melees only register on actors. Might want to change this to hit objects.
+            if(col.gameObject.GetComponent<Actor>() && !targetsHit.Contains(col.gameObject)) //Currently melees only register on actors. Might want to change this to hit objects.
             {
+                targetsHit.Add(col.gameObject);
+
                 Actor otherActor = col.gameObject.GetComponent<Actor>();
 
                 ctx.AttackData._TargetGameObject = col.gameObject; //We found an enemy actor so set it as the target.
