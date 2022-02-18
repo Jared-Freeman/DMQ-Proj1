@@ -10,7 +10,7 @@ namespace EffectTree
         public EffectContext ctx;
         public float eventDuration = 0; //This value is set by the effect that instantiates this event.
         public List<Effect_Base> EffectList;
-        private List<GameObject> targetsHit;
+        private List<GameObject> targetsHit = new List<GameObject>();
 
         /// <summary>
         /// Dispatch effect tree to targets this trigger has hit.
