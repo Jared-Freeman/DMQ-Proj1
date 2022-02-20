@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using AbilitySystem;
+using EffectTree;
 
 namespace ActorSystem.AI
 {
@@ -12,8 +14,10 @@ namespace ActorSystem.AI
     {
         public static float s_remainingDistanceTolerance = .2f;
 
-        public Utils.CooldownTracker AttackCooldown;
-        public AP2_ActorAction_AttackTarget AttackAction; //TODO: Change to ability
+        //public Utils.CooldownTracker AttackCooldown;
+        //public AP2_ActorAction_AttackTarget AttackAction; //TODO: Change to ability
+
+        protected AS_Ability_Instance_Base _Ability;
 
 
         protected override void ChooseNewTarget()
@@ -61,8 +65,11 @@ namespace ActorSystem.AI
         {
             base.Awake();
 
-            AttackCooldown.InitializeCooldown();
+            //AttackCooldown.InitializeCooldown();
             NavAgent.speed = GEAI_Preset.Base.MovementSpeed;
+
+            _Ability = GEAI_Preset.GEAI_Options.LungeCollisionAbility.GetInstance(gameObject);
+            if (_Ability == null) Debug.LogError("No ability found");
         }
 
         protected override void Start()
@@ -71,7 +78,6 @@ namespace ActorSystem.AI
 
             ChangeState(State.Idle);
             StartCoroutine(UpdateAI());
-
         }
         #endregion
 
@@ -186,16 +192,36 @@ namespace ActorSystem.AI
                     )
                 {
                     if (FLAG_Debug) Debug.Log("ATTACKING " + CurrentTarget.name);
-                    AttackAction.AttackTarget(AttachedActor, CurrentTarget);
+                    //AttackAction.AttackTarget(AttachedActor, CurrentTarget);
                     Info.CurrentAttacksInvoked++;
 
-                    if(GEAI_Preset.GEAI_Options.Lunge_ImpactEffects != null)
+                    if(_Ability != null && _Ability.CanCastAbility)
                     {
-                        foreach(var IFX in GEAI_Preset.GEAI_Options.Lunge_ImpactEffects)
+                        Utils.AttackContext ac = new Utils.AttackContext()
                         {
-                            IFX.SpawnImpactEffect(null, collision.contacts[0].point, collision.contacts[0].normal);
-                        }
+                            _InitialDirection = collision.gameObject.transform.position - gameObject.transform.position,
+                            _InitialGameObject = gameObject,
+                            _InitialPosition = transform.position,
+                            _Owner = AttachedActor,
+                            _TargetDirection = collision.gameObject.transform.position - gameObject.transform.position,
+                            _TargetGameObject = collision.gameObject,
+                            _TargetPosition = collision.gameObject.transform.position,
+                            _Team = AttachedActor._Team
+                        };
+
+                        EffectContext ec = new EffectContext(ac);
+
+                        _Ability.ExecuteAbility(ref ec);
                     }
+
+                    //Obsolete. (2-19-2022) ~Jared
+                    //if(GEAI_Preset.GEAI_Options.Lunge_ImpactEffects != null)
+                    //{
+                    //    foreach(var IFX in GEAI_Preset.GEAI_Options.Lunge_ImpactEffects)
+                    //    {
+                    //        IFX.SpawnImpactEffect(null, collision.contacts[0].point, collision.contacts[0].normal);
+                    //    }
+                    //}
                 }
 
             }
@@ -474,6 +500,4 @@ namespace ActorSystem.AI
 
         #endregion
     }
-
-
 }
