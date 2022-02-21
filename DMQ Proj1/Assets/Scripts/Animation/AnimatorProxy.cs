@@ -10,8 +10,8 @@ public class AnimatorProxy : MonoBehaviour
     public AllPossibleWeapons weapons;
     public Transform[] handpositions = new Transform[2];
     public GameObject weapon;
-    // Start is called before the first frame update
-    void Start()
+
+    void Awake()
     {
         animator = gameObject.GetComponent<Animator>();
         if (!animator)
@@ -19,7 +19,15 @@ public class AnimatorProxy : MonoBehaviour
         actor = gameObject.GetComponent<Actor>();
         if (!animator)
             Debug.Log(gameObject.name + " has no actor");
+
+
+        animator.fireEvents = false;
+    }
+
+    void Start()
+    {
         EventSubscribe();
+
     }
     void Update()
     {
