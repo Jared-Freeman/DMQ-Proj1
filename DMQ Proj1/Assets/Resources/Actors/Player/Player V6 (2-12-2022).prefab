@@ -2368,7 +2368,6 @@ MonoBehaviour:
   _Team: {fileID: 11400000, guid: 414bc1b9b54c2a143a4a2a46d2db0034, type: 2}
   Stats: {fileID: 0}
   Actions: []
-  attack: {fileID: 0}
   Class: {fileID: 11400000, guid: 75581b3490532144f86873caad3557b2, type: 2}
 --- !u!114 &2730663038165717485
 MonoBehaviour:
@@ -3045,7 +3044,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2730663038481069318}
-  - component: {fileID: 2730663038481069319}
   m_Layer: 10
   m_Name: RPG-Character
   m_TagString: Untagged
@@ -3069,25 +3067,6 @@ Transform:
   m_Father: {fileID: 2730663038165717487}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &2730663038481069319
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2730663038481069313}
-  m_Enabled: 0
-  m_Avatar: {fileID: 9000000, guid: e57e9b8cd5e115f4f8d7736473e5c7fd, type: 3}
-  m_Controller: {fileID: 9100000, guid: 09168585c1689ce42b488d2cad639d11, type: 2}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &2730663038495281749
 GameObject:
   m_ObjectHideFlags: 0
