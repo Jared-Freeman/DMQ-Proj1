@@ -46,8 +46,17 @@ public class AnimatorProxy : MonoBehaviour
         //Weapon change
         Inventory_Player.OnWeaponChanged += Inventory_Player_OnWeaponChanged;
         //Ability inputs
-        
+
     }
+    void EventUnsubscribe()
+    {
+        PlayerMovementV3.OnVelocityUpdate -= PlayerMovementV3_OnVelocityUpdate;
+        PlayerMovementV3.OnDash -= PlayerMovementV3_OnDash;
+        Inventory_Player.OnWeaponChanged -= Inventory_Player_OnWeaponChanged;
+
+    }
+
+    #region Event Handlers
 
     private void Effect_Dev_MeleeAttack_OnMeleeAttack(object sender, MeleeAttackEventArgs e)
     {
@@ -99,11 +108,6 @@ public class AnimatorProxy : MonoBehaviour
         }
     }
 
-    void EventUnsubscribe()
-    {
-        PlayerMovementV3.OnVelocityUpdate -= PlayerMovementV3_OnVelocityUpdate;
-        PlayerMovementV3.OnDash -= PlayerMovementV3_OnDash;
-        Inventory_Player.OnWeaponChanged -= Inventory_Player_OnWeaponChanged;
+    #endregion
 
-    }
 }

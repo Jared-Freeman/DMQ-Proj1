@@ -241,6 +241,10 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
         }
         else if(index < _WeaponSlots.Count)
         {
+            //No item in the weapon slot, or duplicate equip request
+            if (_WeaponSlots[index].Items.Count < 1 || index == Info.EquippedWeaponIndex) return;
+
+            //otherwise we equip
             Debug.Log("WEAPON EQUIPPED @index: " + index);
             Info.EquippedWeaponIndex = index;
             OnWeaponChanged.Invoke(this, new InventoryEventArgs(this.gameObject,index));
