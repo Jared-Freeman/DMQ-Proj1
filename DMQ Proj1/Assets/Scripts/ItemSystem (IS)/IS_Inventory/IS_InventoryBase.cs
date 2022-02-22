@@ -20,7 +20,7 @@ namespace ItemSystem
         protected IS_Inv_StateInfo _Info;
 
         //Internal
-        protected List<IS_ItemBase> _ItemList = new List<IS_ItemBase>();
+        public List<IS_ItemBase> _ItemList = new List<IS_ItemBase>();
 
         //Outer facing (dont modify this)
         public IReadOnlyCollection<IS_ItemBase> Items

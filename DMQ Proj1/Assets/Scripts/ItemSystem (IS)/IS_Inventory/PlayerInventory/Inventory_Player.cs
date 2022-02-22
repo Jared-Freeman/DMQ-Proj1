@@ -31,7 +31,7 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
     public ItemSystem.Weapons.Item_WeaponBase CurrentWeapon 
     { get
         {
-            if (Info.EquippedWeaponIndex < 0 || Info.EquippedWeaponIndex + 1 >= _WeaponSlots.Count) //bounds
+            if (Info.EquippedWeaponIndex < 0 || Info.EquippedWeaponIndex >= _WeaponSlots.Count) //bounds
             {
                 return null;
             }
