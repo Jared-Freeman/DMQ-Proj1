@@ -24,13 +24,32 @@ public class ProjectilePreset : ScriptableObject
         [Header("Deprecated. Use EffectList instead")]
         public List<ProjectileEffect> ProjectileFXList;
 
-        public void PerformProjectileEffects(GenericProjectile Projectile, Collider Col = null)
+        public void PerformProjectileEffects(GenericProjectile Projectile, Collider Col = null, Collision collision = null)
         {
             EffectContext c = new EffectContext();
 
-            c.AttackData._InitialDirection = Projectile.transform.forward;
             c.AttackData._InitialGameObject = Projectile.gameObject;
+            c.AttackData._InitialDirection = Projectile.transform.forward;
             c.AttackData._InitialPosition = Projectile.gameObject.transform.position;
+
+            if(collision != null)
+            {
+                var reflect = Vector2.Reflect(new Vector2(Projectile.transform.forward.x, Projectile.transform.forward.z)
+                    , new Vector2(collision.GetContact(0).normal.x, collision.GetContact(0).normal.z));
+
+                var reflect3 = new Vector3(reflect.x, 0, reflect.y);
+
+                //Debug.DrawRay(collision.GetContact(0).point, reflect3 * 3, Color.green, 5f);
+
+                c.AttackData._TargetDirection = collision.GetContact(0).normal;
+                c.AttackData._TargetPosition = collision.GetContact(0).point;
+
+                c.AttackData._InitialDirection = reflect3;
+                c.AttackData._InitialPosition = collision.GetContact(0).point;
+
+
+                //Debug.DrawRay(collision.GetContact(0).point, collision.GetContact(0).normal * 3, Color.red, 5f);
+            }
 
             c.AttackData._Owner = Projectile.ActorOwner;
             if (Projectile.ActorOwner != null)

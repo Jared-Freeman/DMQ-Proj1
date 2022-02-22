@@ -10,18 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 442cd49177849294ab449c577b42b28f, type: 3}
-  m_Name: PR_BulwarkFlintlock1_1
+  m_Name: PR_ArcanistHeavyFlintlock1_1_Base
   m_EditorClassIdentifier: 
   ProjectileFX:
     EndProjectileEffects:
       EffectList: []
       ProjectileFXList: []
     CollisionEnterProjectileEffects:
-      EffectList:
-      - {fileID: 11400000, guid: a03316b7314fd304e844b05667e6578a, type: 2}
-      - {fileID: 11400000, guid: 62a71ec9d6f68ba48af4bdfc676cecc7, type: 2}
-      ProjectileFXList:
-      - {fileID: 11400000, guid: ca0b0f50a832bf64b95a21feb2fd02e5, type: 2}
+      EffectList: []
+      ProjectileFXList: []
     CollisionStayProjectileEffects:
       EffectList: []
       ProjectileFXList: []
@@ -33,9 +30,9 @@ MonoBehaviour:
       ProjectileFXList: []
   DestroyOptions:
     FLAG_UseDuration: 1
-    Duration: 15
-    FLAG_UseCollisionEnters: 1
-    CollisionEnters: 1
+    Duration: 3
+    FLAG_UseCollisionEnters: 0
+    CollisionEnters: 0
     FLAG_UseCollisionStayDuration: 0
     CollisionStayDuration: 0
   MoveOptions:
@@ -43,7 +40,7 @@ MonoBehaviour:
     MovementType: 1
     MovementTypeOptions:
       LinearSimpleOptions:
-        Speed: 20
+        Speed: 25
       ParabolicSimpleOptions:
         TravelTime: 0
         HeightOverTime:
@@ -58,9 +55,9 @@ MonoBehaviour:
         ForcePerSecond: 0
       PhysicsImpulseOptions:
         FLAGScaleForceByMass: 0
-        FLAGUseSpeedComputationInsteadOfForce: 0
-        Force: 0
-        Speed: 0
+        FLAGUseSpeedComputationInsteadOfForce: 1
+        Force: 50
+        Speed: 25
       HomingSimpleOptions:
         Speed: 0
         TurnRate: 0

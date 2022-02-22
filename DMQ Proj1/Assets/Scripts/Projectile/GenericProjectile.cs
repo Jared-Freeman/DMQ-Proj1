@@ -33,6 +33,8 @@ public class GenericProjectile : MonoBehaviour
 
         PR.Info = new StateInfo(LaunchDirection, LaunchDirection_2D, Target);
 
+        PR.Info.CurrentMoveType = Template._Data.MoveOptions.MovementType;
+
         if (actorOwner != null) PR.ActorOwner = actorOwner;
             
         /* Old Info setting model
@@ -85,6 +87,7 @@ public class GenericProjectile : MonoBehaviour
 
     public StateInfo Info = new StateInfo();
 
+    [System.Serializable]
     public struct StateInfo
     {
         public StateInfo(Vector3 dir, Vector2 dir_2D, GameObject target)
@@ -98,6 +101,7 @@ public class GenericProjectile : MonoBehaviour
             LaunchDistance = 0;
             Direction = dir;
             Target = target;
+            CurrentMoveType = ProjectileMoveStyle.None;
         }
 
         public float StartTimestamp;
@@ -105,6 +109,7 @@ public class GenericProjectile : MonoBehaviour
         public int CollisionEnters;
         public float CollisionStayDuration;
 
+        public ProjectileMoveStyle CurrentMoveType;
 
         //Style-Specific stuff ---------------------
         public Vector3 InitialDirection;
@@ -152,6 +157,8 @@ public class GenericProjectile : MonoBehaviour
             Debug.LogError(ToString() + ": No Projectile Data loaded! Destroying object.");
             Destroy(gameObject);
         }
+
+        Info.CurrentMoveType = _Data.MoveOptions.MovementType;
     }
 
     void Start()
@@ -161,6 +168,17 @@ public class GenericProjectile : MonoBehaviour
         _Data.ProjectileFX.StartProjectileEffects.PerformProjectileEffects(this);
     }
     #endregion
+
+    /// <summary>
+    /// Change the movement method during runtime
+    /// </summary>
+    public void ChangeMovementMethod(ProjectileMoveStyle newStyle, StateInfo newInfo)
+    {
+        Info = newInfo;
+        Info.CurrentMoveType = newStyle;
+        InitializeMovementMethod();
+    }
+
 
     private void FixedUpdate()
     {
@@ -221,7 +239,7 @@ public class GenericProjectile : MonoBehaviour
     {
         if (CheckOtherIsTrigger(collision.collider)) return;
 
-        _Data.ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, collision.collider);
+        _Data.ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, collision.collider, collision);
 
         Info.CollisionEnters++;
         if (_Data.DestroyOptions.FLAG_UseCollisionEnters && Info.CollisionEnters >= _Data.DestroyOptions.CollisionEnters)
@@ -233,7 +251,7 @@ public class GenericProjectile : MonoBehaviour
     {
         if (CheckOtherIsTrigger(collision.collider)) return;
 
-        _Data.ProjectileFX.CollisionStayProjectileEffects.PerformProjectileEffects(this, collision.collider);
+        _Data.ProjectileFX.CollisionStayProjectileEffects.PerformProjectileEffects(this, collision.collider, collision);
 
         Info.CollisionStayDuration += Time.fixedDeltaTime;
         if (_Data.DestroyOptions.FLAG_UseCollisionStayDuration && Info.CollisionStayDuration > _Data.DestroyOptions.CollisionStayDuration)
@@ -245,7 +263,7 @@ public class GenericProjectile : MonoBehaviour
     {
         if (CheckOtherIsTrigger(collision.collider)) return;
 
-        _Data.ProjectileFX.CollisionExitProjectileEffects.PerformProjectileEffects(this, collision.collider);
+        _Data.ProjectileFX.CollisionExitProjectileEffects.PerformProjectileEffects(this, collision.collider, collision);
         
     }
 
@@ -293,7 +311,7 @@ public class GenericProjectile : MonoBehaviour
     //Some movement methods need state variables to aid their movement (or to cache to improve performance)
     void InitializeMovementMethod()
     {
-        switch (_Data.MoveOptions.MovementType)
+        switch (Info.CurrentMoveType)
         {
             case ProjectileMoveStyle.None:
                 break;
@@ -331,7 +349,7 @@ public class GenericProjectile : MonoBehaviour
     #region Update Methods
     void UpdateMovement()
     {
-        switch (_Data.MoveOptions.MovementType)
+        switch (Info.CurrentMoveType)
         {
             case ProjectileMoveStyle.None:
                 break;
@@ -365,7 +383,7 @@ public class GenericProjectile : MonoBehaviour
     void FixedUpdateMovement()
     {
 
-        switch (_Data.MoveOptions.MovementType)
+        switch (Info.CurrentMoveType)
         {
             case ProjectileMoveStyle.None:
                 break;
@@ -517,7 +535,8 @@ public class GenericProjectile : MonoBehaviour
         RB.isKinematic = true;
         if (Info.Target == null)
         {
-            Debug.LogError("No GameObject assigned!");
+            //Debug.LogError("No GameObject assigned!");
+            HSM_CurrentDirection = transform.forward.normalized;
         }
         else
         {
@@ -528,11 +547,22 @@ public class GenericProjectile : MonoBehaviour
     //update
     void HomingSimpleMovement()
     {
-        HSM_CurrentDirection = Vector3.RotateTowards(
-            HSM_CurrentDirection
-            , (Info.Target.transform.position - transform.position).normalized
-            , Mathf.Deg2Rad * _Data.MoveOptions.MovementTypeOptions.HomingSimpleOptions.TurnRate * Time.deltaTime
-            , 0);
+
+        if(Info.Target != null)
+        {
+            Debug.Log(Info.Target);
+
+            HSM_CurrentDirection = Vector3.RotateTowards(
+                HSM_CurrentDirection
+                , (Info.Target.transform.position - transform.position)
+                , Mathf.Deg2Rad * _Data.MoveOptions.MovementTypeOptions.HomingSimpleOptions.TurnRate * Time.deltaTime
+                , 0);
+            Debug.Log(HSM_CurrentDirection);
+        }
+
+
+
+        if (_Data.MoveOptions.FLAG_FaceRigidbodyVelocity) transform.forward = HSM_CurrentDirection;
 
         transform.position += HSM_CurrentDirection * _Data.MoveOptions.MovementTypeOptions.HomingSimpleOptions.Speed * Time.deltaTime;
     }
@@ -543,7 +573,7 @@ public class GenericProjectile : MonoBehaviour
 
     void FaceVelocityForward()
     {
-        switch (_Data.MoveOptions.MovementType)
+        switch (Info.CurrentMoveType)
         {
             case ProjectileMoveStyle.PhysicsContinuousForce:
             case ProjectileMoveStyle.PhysicsImpulse:
