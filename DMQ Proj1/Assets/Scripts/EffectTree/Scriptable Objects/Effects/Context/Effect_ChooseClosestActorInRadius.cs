@@ -17,7 +17,7 @@ namespace EffectTree
 
         public override bool Invoke(ref EffectContext ctx)
         {
-            if( base.Invoke(ref ctx))
+            if( base.Invoke(ref ctx) && NextEffect != null)
             {
                 Collider[] cs = Physics.OverlapSphere(ctx.AttackData._InitialPosition, Radius);
 
@@ -55,10 +55,7 @@ namespace EffectTree
 
                 }
 
-                if (NextEffect != null)
-                {
-                    NextEffect.Invoke(ref newContext);
-                }
+                NextEffect.Invoke(ref newContext);
 
                 return true;
             }

@@ -34,20 +34,29 @@ public class ProjectilePreset : ScriptableObject
 
             if(collision != null)
             {
-                var reflect = Vector2.Reflect(new Vector2(Projectile.transform.forward.x, Projectile.transform.forward.z)
+                //computations
+                var reflect2 = Vector2.Reflect(new Vector2(Projectile.transform.forward.x, Projectile.transform.forward.z)
                     , new Vector2(collision.GetContact(0).normal.x, collision.GetContact(0).normal.z));
 
-                var reflect3 = new Vector3(reflect.x, 0, reflect.y);
+                var reflect2_3 = new Vector3(reflect2.x, 0, reflect2.y);
 
-                //Debug.DrawRay(collision.GetContact(0).point, reflect3 * 3, Color.green, 5f);
+                var reflect3 = Vector3.Reflect(Projectile.transform.forward
+                    , collision.GetContact(0).normal);
 
-                c.AttackData._TargetDirection = collision.GetContact(0).normal;
-                c.AttackData._TargetPosition = collision.GetContact(0).point;
+                //ctx assignments
+                c.ContextData._TriggeringCollision = collision;
+                //Done later
+                //c.ContextData._TriggeringCollider = collision.collider; 
 
-                c.AttackData._InitialDirection = reflect3;
+                c.ContextData._NormalVector = collision.GetContact(0).normal;
+                c.ContextData._ReflectionVector = reflect3;
+                c.ContextData._ReflectionVector2D = reflect2_3;
+
+                //Here we override the InitialPosition with more specific data
                 c.AttackData._InitialPosition = collision.GetContact(0).point;
 
 
+                //Debug.DrawRay(collision.GetContact(0).point, reflect3 * 3, Color.green, 5f);
                 //Debug.DrawRay(collision.GetContact(0).point, collision.GetContact(0).normal * 3, Color.red, 5f);
             }
 
@@ -56,7 +65,13 @@ public class ProjectilePreset : ScriptableObject
                 c.AttackData._Team = Projectile.ActorOwner._Team;
 
             if(Col != null)
+            {
                 c.AttackData._TargetGameObject = Col.gameObject;
+                c.AttackData._TargetDirection = Projectile.transform.position - Col.gameObject.transform.position;
+                c.AttackData._TargetPosition = Col.gameObject.transform.position;
+
+                c.ContextData._TriggeringCollider = Col;
+            }
 
             //TODO: Grab collision data and throw it into the remaining c.AttackData fields for Target
 
