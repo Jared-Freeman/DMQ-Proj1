@@ -13,6 +13,15 @@ namespace EffectTree
         public GameObject ProjectilePrefab;
         public bool UseTeamNoCollideLayer = false;
 
+        public enum SpawnContextOptions { InitialDirection, TargetDirection, SurfaceNormal, SurfaceNormal2D, SurfaceReflected, SurfaceReflected2D }
+        /// <summary>
+        /// Determines the facing of the projectile upon instantiation. 
+        /// </summary>
+        /// <remarks>
+        /// All options will be tried until one succeeds or all fail.
+        /// </remarks>
+        public SpawnContextOptions SpawnDirection = SpawnContextOptions.InitialDirection;
+
         public override bool Invoke(ref EffectContext ctx)
         {
             if(base.Invoke(ref ctx))
@@ -20,7 +29,7 @@ namespace EffectTree
                 var Projectile = ProjectilePrefab.GetComponent<GenericProjectile>();
                 if (Projectile == null) return false;
 
-                var instance = Utils.Projectile.CreateProjectileFromAttackContext(Projectile, ctx.AttackData);
+                var instance = Utils.Projectile.CreateProjectileFromEffectContext(Projectile, ctx, SpawnDirection);
                 if(instance == null) return false;
 
                 if(ctx.AttackData._Team != null)
