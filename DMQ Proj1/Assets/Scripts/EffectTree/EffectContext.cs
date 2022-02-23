@@ -10,6 +10,8 @@ namespace EffectTree
     [System.Serializable]
     public class EffectContext
     {
+        #region Constructors
+
         /// <summary>
         /// Attaches the supplied <paramref name="ctx"/> arg to this class
         /// </summary>
@@ -22,7 +24,57 @@ namespace EffectTree
         {
             AttackData = new Utils.AttackContext();
         }
+        #endregion
 
+
+        #region Members
+
+        /// <summary>
+        /// Context supplied from Attack message pattern.
+        /// </summary>
+        /// <remarks>See <see cref="Utils"/> namespace for def</remarks>
         public Utils.AttackContext AttackData = new Utils.AttackContext();
+        /// <summary>
+        /// Supplementary context supplied from <see cref="EffectTree"/> context message.
+        /// </summary>
+        public EffectContextInfo ContextData = new EffectContextInfo();
+
+        #region Helpers
+
+        public class EffectContextInfo
+        {
+            /// <summary>
+            /// Collision data that triggered this effect chain. Mutable.
+            /// </summary>
+            /// <remarks> 
+            /// Null if not loaded in context. Can be supplied from OnCollsion Unity Messages  
+            /// </remarks>
+            public Collision _TriggeringCollision = null;
+            /// <summary>
+            /// Collider data that triggered this effect chain. Mutable.
+            /// </summary>
+            /// <remarks> 
+            /// Null if not loaded in context. Can be supplied from OnCollsion or OnTrigger Unity Messages 
+            /// </remarks>
+            public Collider _TriggeringCollider = null;
+            /// <summary>
+            /// An inferred Normal Vector. Mutable.
+            /// </summary>
+            /// <remarks> 
+            /// If not loaded in context, sqrMagnitude == 0. 
+            /// </remarks>
+            public Vector3 _NormalVector = Vector3.zero;
+            /// <summary>
+            /// An inferred Reflection Vector. Mutable.
+            /// </summary>
+            /// <remarks> 
+            /// If not loaded in context, sqrMagnitude == 0. 
+            /// </remarks>
+            public Vector3 _ReflectionVector2D = Vector3.zero;
+        }
+
+        #endregion
+
+        #endregion
     }
 }
