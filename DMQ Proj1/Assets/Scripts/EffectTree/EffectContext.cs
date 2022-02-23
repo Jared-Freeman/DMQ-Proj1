@@ -77,14 +77,14 @@ namespace EffectTree
             /// </remarks>
             public Vector3 _ReflectionVector = Vector3.zero;
             /// <summary>
-            /// An inferred Normal Vector. Mutable. 2D
+            /// An inferred Normal Vector PROJECTED ONTO THE XZ PLANE. Mutable. 2D
             /// </summary>
             /// <remarks> 
             /// If not loaded in context, sqrMagnitude == 0. 
             /// </remarks>
             public Vector3 _NormalVector2D = Vector3.zero;
             /// <summary>
-            /// An inferred Reflection Vector. Mutable. 2D
+            /// An inferred Reflection Vector PROJECTED ONTO THE XZ PLANE. Mutable. 2D
             /// </summary>
             /// <remarks> 
             /// If not loaded in context, sqrMagnitude == 0. 

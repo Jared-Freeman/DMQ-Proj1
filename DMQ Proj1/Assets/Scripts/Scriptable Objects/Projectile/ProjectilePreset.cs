@@ -49,6 +49,7 @@ public class ProjectilePreset : ScriptableObject
                 //c.ContextData._TriggeringCollider = collision.collider; 
 
                 c.ContextData._NormalVector = collision.GetContact(0).normal;
+                c.ContextData._NormalVector2D = new Vector3(collision.GetContact(0).normal.x, 0, collision.GetContact(0).normal.z);
                 c.ContextData._ReflectionVector = reflect3;
                 c.ContextData._ReflectionVector2D = reflect2_3;
 
