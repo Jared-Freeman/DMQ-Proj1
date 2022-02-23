@@ -16,13 +16,18 @@ namespace EffectTree
         /// Attaches the supplied <paramref name="ctx"/> arg to this class
         /// </summary>
         /// <param name="ctx"></param>
-        public EffectContext(Utils.AttackContext ctx)
+        public EffectContext(Utils.AttackContext ctx, EffectContextInfo effectInfo = null)
         {
             AttackData = ctx;
+            if(effectInfo != null)
+            {
+                ContextData = effectInfo;
+            }
         }
         public EffectContext()
         {
             AttackData = new Utils.AttackContext();
+            ContextData = new EffectContextInfo();
         }
         #endregion
 
