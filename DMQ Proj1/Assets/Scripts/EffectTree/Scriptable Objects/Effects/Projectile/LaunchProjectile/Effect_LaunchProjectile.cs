@@ -13,6 +13,10 @@ namespace EffectTree
         public GameObject ProjectilePrefab;
         public bool UseTeamNoCollideLayer = false;
 
+        [Header("To prevent collider clipping")]
+        [Tooltip("Can set this to (<length of projectile colldier> / 2) + <tiny offset> for good results.")]
+        public float ForwardOffset = 0f;
+
         public enum SpawnContextOptions { InitialDirection, TargetDirection, SurfaceNormal, SurfaceNormal2D, SurfaceReflected, SurfaceReflected2D }
         /// <summary>
         /// Determines the facing of the projectile upon instantiation. 
@@ -29,10 +33,19 @@ namespace EffectTree
                 var Projectile = ProjectilePrefab.GetComponent<GenericProjectile>();
                 if (Projectile == null) return false;
 
-                var instance = Utils.Projectile.CreateProjectileFromEffectContext(Projectile, ctx, SpawnDirection);
+                var instance = Utils.Projectile.CreateProjectileFromEffectContext(Projectile, ctx, SpawnDirection, ForwardOffset);
                 if(instance == null) return false;
 
-                if(ctx.AttackData._Team != null)
+                //apply forward offset
+                instance.transform.position += instance.transform.forward * ForwardOffset;
+
+                //if(Utils.Physics.GameobjectCollisionExists(instance.gameObject))
+                //{
+                //    Destroy(instance.gameObject);
+                //    return false;
+                //}
+
+                if (ctx.AttackData._Team != null)
                 {
                     if (UseTeamNoCollideLayer)
                     {

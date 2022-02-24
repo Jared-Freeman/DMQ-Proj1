@@ -268,6 +268,7 @@ public class GenericProjectile : MonoBehaviour
     // Currently, I see no reason to have projectiles proc PFX on Trigger volumes. This check is used to filter out those.
     protected bool CheckOtherIsTrigger(Collider c)
     {
+        //if(c.isTrigger) Debug.LogWarning("Trigger detect");
         return c.isTrigger;
     }
 

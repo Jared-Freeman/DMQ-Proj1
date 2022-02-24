@@ -11,15 +11,16 @@ namespace Utils
         /// </summary>
         /// <param name="proj"></param>
         /// <param name="ctx"></param>
-        /// <param name="attached_cooldown">optional cooldown instance to respect</param>
+        /// <param name="attached_cooldown">optional cooldown instance to respect. Mostly obsolete</param>
         /// <returns>the newly created projectile, or null if something fails</returns>
         public static GenericProjectile CreateProjectileFromAttackContext(
             GenericProjectile proj_prefab
             , AttackContext ctx
             , EffectTree.Effect_LaunchProjectile.SpawnContextOptions preferredSpawnDirection = EffectTree.Effect_LaunchProjectile.SpawnContextOptions.InitialDirection
+            , float forwardOffset = 0f
             , Utils.CooldownTracker attached_cooldown = null)
         {
-            return CreateProjectileFromEffectContext(proj_prefab, new EffectTree.EffectContext(ctx), preferredSpawnDirection, attached_cooldown);
+            return CreateProjectileFromEffectContext(proj_prefab, new EffectTree.EffectContext(ctx), preferredSpawnDirection, forwardOffset, attached_cooldown);
         }
 
 
@@ -31,6 +32,7 @@ namespace Utils
             GenericProjectile proj_prefab
             , EffectTree.EffectContext ctx
             , EffectTree.Effect_LaunchProjectile.SpawnContextOptions preferredSpawnDirection = EffectTree.Effect_LaunchProjectile.SpawnContextOptions.InitialDirection
+            , float forwardOffset = 0f
             , Utils.CooldownTracker attached_cooldown = null
             )
         {
@@ -66,6 +68,9 @@ namespace Utils
                         , new Vector2(iDir.x, iDir.z)
                         , ctx.AttackData._TargetGameObject
                         , ctx.AttackData._Owner);
+
+                    //EXPERIMENTAL
+                    //instance.transform.position += iDir.normalized * forwardOffset;
 
                     return instance;
                 }
