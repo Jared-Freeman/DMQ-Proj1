@@ -17,8 +17,7 @@ MonoBehaviour:
       EffectList: []
       ProjectileFXList: []
     CollisionEnterProjectileEffects:
-      EffectList:
-      - {fileID: 11400000, guid: d6ac7c942da49424394623d7ca6da05a, type: 2}
+      EffectList: []
       ProjectileFXList: []
     CollisionStayProjectileEffects:
       EffectList: []
@@ -27,10 +26,11 @@ MonoBehaviour:
       EffectList: []
       ProjectileFXList: []
     StartProjectileEffects:
-      EffectList: []
+      EffectList:
+      - {fileID: 11400000, guid: d6ac7c942da49424394623d7ca6da05a, type: 2}
       ProjectileFXList: []
   DestroyOptions:
-    FLAG_UseDuration: 1
+    FLAG_UseDuration: 0
     Duration: 4
     FLAG_UseCollisionEnters: 0
     CollisionEnters: 0
@@ -41,7 +41,7 @@ MonoBehaviour:
     MovementType: 1
     MovementTypeOptions:
       LinearSimpleOptions:
-        Speed: 25
+        Speed: 14
       ParabolicSimpleOptions:
         TravelTime: 0
         HeightOverTime:
@@ -60,5 +60,5 @@ MonoBehaviour:
         Force: 0
         Speed: 0
       HomingSimpleOptions:
-        Speed: 25
-        TurnRate: 10
+        Speed: 14
+        TurnRate: 60

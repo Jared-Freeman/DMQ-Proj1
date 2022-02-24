@@ -79,13 +79,11 @@ public class GenericProjectile : MonoBehaviour
 
 
     #region Members
-    private Rigidbody RB; //Its a good idea to initially make this Kinematic. Could be done in script idk...
-    public Actor ActorOwner;
 
-    public ProjectilePreset _Data;
-
-
+    public ProjectilePreset _Data; //can access through Preset property now (2-24-2022) ~Jared
     public StateInfo Info = new StateInfo();
+
+    #region Helpers
 
     [System.Serializable]
     public struct StateInfo
@@ -100,7 +98,7 @@ public class GenericProjectile : MonoBehaviour
             InitialHorizontalDirection = dir_2D;
             LaunchDistance = 0;
             Direction = dir;
-            Target = target;
+            _Target = target;
             CurrentMoveType = ProjectileMoveStyle.None;
         }
 
@@ -122,11 +120,28 @@ public class GenericProjectile : MonoBehaviour
         public Vector3 Direction;
 
 
-        public GameObject Target;
+        [SerializeField] private GameObject _Target;
+        public GameObject Target { 
+            get { return _Target; }
+            set
+            {
+                _Target = value;
+                Debug.Log("Projectile Target Change");
+            }
+        }
         //End Style-Specific stuff ---------------------
     }
 
-    //public-facing state info
+
+
+    #endregion
+
+    #region Properties
+
+    public ProjectilePreset Preset { get => _Data; }
+    private Rigidbody RB { get; set; } //Its a good idea to initially make this Kinematic. Could be done in script idk...
+    public Actor ActorOwner { get; set; }
+
     public float TimeAlive
     {
         get
@@ -141,6 +156,8 @@ public class GenericProjectile : MonoBehaviour
             return Info.CollisionEnters;
         }
     }
+
+    #endregion
 
     #endregion
 
@@ -167,6 +184,48 @@ public class GenericProjectile : MonoBehaviour
 
         _Data.ProjectileFX.StartProjectileEffects.PerformProjectileEffects(this);
     }
+
+
+    #region Movement Method Initialization
+    //Some movement methods need state variables to aid their movement (or to cache to improve performance)
+    void InitializeMovementMethod()
+    {
+        switch (Info.CurrentMoveType)
+        {
+            case ProjectileMoveStyle.None:
+                break;
+
+            case ProjectileMoveStyle.LinearSimple:
+                if (_Data.MoveOptions.FLAG_FaceRigidbodyVelocity)
+                {
+                    Debug.DrawRay(transform.position, Info.InitialDirection.normalized * 5f, Color.cyan, 5f);
+
+                    transform.rotation = Quaternion.LookRotation(Info.InitialDirection.normalized, Vector3.up);
+                }
+                break;
+
+            case ProjectileMoveStyle.ParabolicSimple:
+                InitParabolicSimple();
+                break;
+
+            //Impl in Fixed FixedUpdateMovement()
+            case ProjectileMoveStyle.PhysicsContinuousForce:
+                InitPhysicsContinuous();
+                break;
+
+            //Impl in Fixed FixedUpdateMovement()
+            case ProjectileMoveStyle.PhysicsImpulse:
+                InitPhysicsImpulse();
+                break;
+
+            case ProjectileMoveStyle.HomingSimple:
+                InitHomingSimple();
+                break;
+        };
+    }
+    #endregion
+
+
     #endregion
 
     /// <summary>
@@ -179,37 +238,13 @@ public class GenericProjectile : MonoBehaviour
         InitializeMovementMethod();
     }
 
-
-    private void FixedUpdate()
-    {
-        UpdateDuration();
-
-        FixedUpdateMovement();
-    }
-
-    void Update()
-    {
-        if (_Data.MoveOptions.FLAG_FaceRigidbodyVelocity) FaceVelocityForward();
-        UpdateMovement();
-    }
-
-
-    void UpdateDuration()
-    {
-        Info.Duration += Time.fixedDeltaTime;
-        if (_Data.DestroyOptions.FLAG_UseDuration && Mathf.Abs(Info.StartTimestamp - Time.time) > Mathf.Abs(_Data.DestroyOptions.Duration))
-        {
-            DestroyProjectile();
-        }
-    }
-
     void DestroyProjectile()
     {
         _Data.ProjectileFX.EndProjectileEffects.PerformProjectileEffects(this);
         Destroy(gameObject);
     }
 
-    #region Collision FX Invokers
+    #region Collision Event (EffectTree) Dispatchers
 
     /// <summary>
     /// Returns a CollisionFilterContext for this object. Useless currently :(
@@ -301,52 +336,31 @@ public class GenericProjectile : MonoBehaviour
     #endregion
 
 
+    #region Update
 
-
-
-    #region Movement
-
-
-    #region Movement Method Initialization
-    //Some movement methods need state variables to aid their movement (or to cache to improve performance)
-    void InitializeMovementMethod()
+    private void FixedUpdate()
     {
-        switch (Info.CurrentMoveType)
-        {
-            case ProjectileMoveStyle.None:
-                break;
+        UpdateDuration();
 
-            case ProjectileMoveStyle.LinearSimple:
-                if (_Data.MoveOptions.FLAG_FaceRigidbodyVelocity)
-                {
-                    Debug.DrawRay(transform.position, Info.InitialDirection.normalized * 5f, Color.cyan, 5f);
-
-                    transform.rotation = Quaternion.LookRotation(Info.InitialDirection.normalized, Vector3.up);
-                }
-                break;
-
-            case ProjectileMoveStyle.ParabolicSimple:
-                InitParabolicSimple();
-                break;
-
-            //Impl in Fixed FixedUpdateMovement()
-            case ProjectileMoveStyle.PhysicsContinuousForce:
-                InitPhysicsContinuous();
-                break;
-
-            //Impl in Fixed FixedUpdateMovement()
-            case ProjectileMoveStyle.PhysicsImpulse:
-                InitPhysicsImpulse();
-                break;
-
-            case ProjectileMoveStyle.HomingSimple:
-                InitHomingSimple();
-                break;
-        };
+        FixedUpdateMovement();
     }
-    #endregion
 
-    #region Update Methods
+    void Update()
+    {
+        if (Preset.MoveOptions.FLAG_FaceRigidbodyVelocity) FaceVelocityForward();
+        UpdateMovement();
+    }
+
+    void UpdateDuration()
+    {
+        Info.Duration += Time.fixedDeltaTime;
+        if (Preset.DestroyOptions.FLAG_UseDuration && Mathf.Abs(Info.StartTimestamp - Time.time) > Mathf.Abs(Preset.DestroyOptions.Duration))
+        {
+            DestroyProjectile();
+        }
+    }
+
+    #region Update Movement
     void UpdateMovement()
     {
         switch (Info.CurrentMoveType)
@@ -388,11 +402,11 @@ public class GenericProjectile : MonoBehaviour
             case ProjectileMoveStyle.None:
                 break;
 
-            //Impl in Fixed UpdateMovement()
+            //Impl in UpdateMovement()
             case ProjectileMoveStyle.LinearSimple:
                 break;
 
-            //Impl in Fixed UpdateMovement()
+            //Impl in UpdateMovement()
             case ProjectileMoveStyle.ParabolicSimple:
                 break;
 
@@ -404,7 +418,7 @@ public class GenericProjectile : MonoBehaviour
                 PhysicsImpulseMovement();
                 break;
 
-            //Impl in Fixed UpdateMovement()
+            //Impl in UpdateMovement()
             case ProjectileMoveStyle.HomingSimple:
                 break;
 
@@ -413,15 +427,35 @@ public class GenericProjectile : MonoBehaviour
                 break;
         };
     }
-    #endregion
 
-    #region Movement Methods (Option Struct's, Update's and Start's)
+    void FaceVelocityForward()
+    {
+        switch (Info.CurrentMoveType)
+        {
+            case ProjectileMoveStyle.PhysicsContinuousForce:
+            case ProjectileMoveStyle.PhysicsImpulse:
+                if (RB.velocity.sqrMagnitude != 0) transform.forward = RB.velocity.normalized;
+                break;
+
+
+            default:
+                break;
+        }
+    }
+
+    #region Movement Methods (Option Struct's, Update's and Initialization's)
+
+    #region Linear Simple
+
     void LinearSimpleMovement()
     {
         transform.position += Info.InitialDirection.normalized * _Data.MoveOptions.MovementTypeOptions.LinearSimpleOptions.Speed * Time.deltaTime;
     }
 
-    // ---------------------------------------------------------------------- 
+    #endregion
+
+    #region Parabolic Simple
+
     //members
     Vector3 ParaS_ImpactTarget = Vector3.zero;
     Vector3 ParaS_InitialPosition = Vector3.zero;
@@ -472,9 +506,10 @@ public class GenericProjectile : MonoBehaviour
         transform.position = NextPosition;
     }
 
+    #endregion
 
-    // ----------------------------------------------------------------------
-    //init
+    #region Physics Impulse
+
     void InitPhysicsImpulse()
     {
         RB.isKinematic = false;
@@ -498,10 +533,10 @@ public class GenericProjectile : MonoBehaviour
 
     }
 
+    #endregion
 
+    #region Physics Continuous (aka "Thruster")
 
-    // ----------------------------------------------------------------------
-    //init
     void InitPhysicsContinuous()
     {
         RB.isKinematic = false;
@@ -524,11 +559,11 @@ public class GenericProjectile : MonoBehaviour
         }
     }
 
+    #endregion
 
+    #region Homing Simple
 
-    // ----------------------------------------------------------------------
-    //members
-    Vector3 HSM_CurrentDirection = Vector3.zero;
+    [SerializeField] Vector3 HSM_CurrentDirection = Vector3.zero;
     //initialization
     void InitHomingSimple()
     {
@@ -550,14 +585,14 @@ public class GenericProjectile : MonoBehaviour
 
         if(Info.Target != null)
         {
-            Debug.Log(Info.Target);
+            //Debug.Log(Info.Target);
 
             HSM_CurrentDirection = Vector3.RotateTowards(
                 HSM_CurrentDirection
                 , (Info.Target.transform.position - transform.position)
                 , Mathf.Deg2Rad * _Data.MoveOptions.MovementTypeOptions.HomingSimpleOptions.TurnRate * Time.deltaTime
                 , 0);
-            Debug.Log(HSM_CurrentDirection);
+            //Debug.Log(HSM_CurrentDirection);
         }
 
 
@@ -566,26 +601,12 @@ public class GenericProjectile : MonoBehaviour
 
         transform.position += HSM_CurrentDirection * _Data.MoveOptions.MovementTypeOptions.HomingSimpleOptions.Speed * Time.deltaTime;
     }
-       
+
     #endregion
 
+    #endregion
 
-
-    void FaceVelocityForward()
-    {
-        switch (Info.CurrentMoveType)
-        {
-            case ProjectileMoveStyle.PhysicsContinuousForce:
-            case ProjectileMoveStyle.PhysicsImpulse:
-                if (RB.velocity.sqrMagnitude != 0) transform.forward = RB.velocity.normalized;
-                break;
-
-
-            default:
-                break;
-        }
-    }
-
+    #endregion
 
     #endregion
 }
