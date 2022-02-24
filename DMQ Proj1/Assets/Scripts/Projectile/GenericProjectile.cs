@@ -236,6 +236,8 @@ public class GenericProjectile : MonoBehaviour
         Info = newInfo;
         Info.CurrentMoveType = newStyle;
         InitializeMovementMethod();
+
+        //Initialization overrides 
     }
 
     void DestroyProjectile()
@@ -575,7 +577,10 @@ public class GenericProjectile : MonoBehaviour
         }
         else
         {
-            HSM_CurrentDirection = (Info.Target.transform.position - transform.position).normalized;
+            //No reason to "snap" forward during initialization
+
+            //HSM_CurrentDirection = (Info.Target.transform.position - transform.position).normalized;
+            HSM_CurrentDirection = transform.forward.normalized;
         }
 
     }
@@ -583,18 +588,54 @@ public class GenericProjectile : MonoBehaviour
     void HomingSimpleMovement()
     {
 
-        if(Info.Target != null)
+        switch(Preset.MoveOptions.MovementTypeOptions.HomingSimpleOptions.MovementStyle)
         {
-            //Debug.Log(Info.Target);
+            case ProjectilePreset.HomingSimpleMovement_Dimensionality.Homing2D:
 
-            HSM_CurrentDirection = Vector3.RotateTowards(
-                HSM_CurrentDirection
-                , (Info.Target.transform.position - transform.position)
-                , Mathf.Deg2Rad * _Data.MoveOptions.MovementTypeOptions.HomingSimpleOptions.TurnRate * Time.deltaTime
-                , 0);
-            //Debug.Log(HSM_CurrentDirection);
+                if (Info.Target != null)
+                {
+                    //Debug.Log(Info.Target);
+                    //HSM_CurrentDirection.y = 0; //no y component in 2D
+
+                    Vector3 targetPlanar = Info.Target.transform.position;
+                    targetPlanar.y = transform.position.y;
+
+                    Vector3 dist = (targetPlanar - transform.position);
+
+                    HSM_CurrentDirection = Vector3.RotateTowards(
+                        HSM_CurrentDirection
+                        , new Vector3(dist.x, transform.position.y, dist.z)
+                        , Mathf.Deg2Rad * _Data.MoveOptions.MovementTypeOptions.HomingSimpleOptions.TurnRate * Time.deltaTime
+                        , 0);
+                    //Debug.Log(HSM_CurrentDirection);
+
+                    HSM_CurrentDirection.y = 0; //no y component in 2D
+                }
+
+                break;
+
+
+            case ProjectilePreset.HomingSimpleMovement_Dimensionality.Homing3D:
+
+                if (Info.Target != null)
+                {
+                    //Debug.Log(Info.Target);
+
+                    HSM_CurrentDirection = Vector3.RotateTowards(
+                        HSM_CurrentDirection
+                        , (Info.Target.transform.position - transform.position)
+                        , Mathf.Deg2Rad * _Data.MoveOptions.MovementTypeOptions.HomingSimpleOptions.TurnRate * Time.deltaTime
+                        , 0);
+                    //Debug.Log(HSM_CurrentDirection);
+                }
+
+                break;
+
+
+            default:
+                Debug.LogError("No implementation found for specified Homing Movement style? Does an implementation exist?");
+                break;
         }
-
 
 
         if (_Data.MoveOptions.FLAG_FaceRigidbodyVelocity) transform.forward = HSM_CurrentDirection;

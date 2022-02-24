@@ -8,7 +8,7 @@ namespace EffectTree
     /// <summary>
     /// Finds the nearest Actor in the specified radius (from InitialPosition)
     /// </summary>
-    [CreateAssetMenu(fileName = "CCAIR_", menuName = "Effect Tree/Choose Closest Actor in Radius", order = 1)]
+    [CreateAssetMenu(fileName = "ActorInRadius_", menuName = "Effect Tree/Modify Context/Choose Closest Actor in Radius", order = 1)]
     public class Effect_ChooseClosestActorInRadius : Effect_Base
     {
         public float Radius;

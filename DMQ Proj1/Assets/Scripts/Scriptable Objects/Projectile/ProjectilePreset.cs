@@ -207,12 +207,15 @@ public class ProjectilePreset : ScriptableObject
         public float ForcePerSecond;
     };
 
+    public enum HomingSimpleMovement_Dimensionality { Homing2D, Homing3D }
     /// <summary>
     /// Turns towards the target at a rate of TurnRate degrees per second
     /// </summary>
     [System.Serializable]
     public struct HomingSimpleMovementOptions
     {
+        public HomingSimpleMovement_Dimensionality MovementStyle;
+
         public float Speed;
         [Min(0f)]
         [Tooltip("Degrees per second")]

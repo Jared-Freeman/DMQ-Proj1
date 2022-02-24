@@ -14,6 +14,28 @@ namespace Utils
     /// </summary>
     public class AttackContext
     {
+        /// <summary>
+        /// Empty constructor
+        /// </summary>
+        public AttackContext() { }
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="other">Object to copy values from</param>
+        public AttackContext(AttackContext other)
+        {
+            _Owner = other._Owner;
+            _Team = other._Team;
+
+            _InitialGameObject = other._InitialGameObject;
+            _InitialPosition = other._InitialPosition;
+            _InitialDirection = other._InitialDirection;
+
+            _TargetGameObject = other._TargetGameObject;
+            _TargetPosition = other._TargetPosition;
+            _TargetDirection = other._TargetDirection;
+        }
+
         public Actor _Owner = null;
         public Team _Team = null;
 

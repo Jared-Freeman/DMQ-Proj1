@@ -16,6 +16,10 @@ namespace EffectTree
         /// Attaches the supplied <paramref name="ctx"/> arg to this class
         /// </summary>
         /// <param name="ctx"></param>
+        /// <remarks>
+        /// THIS IS NOT A COPY CONSTRUCTOR. The objects are acquired by REFERENCE. 
+        /// See <see cref="EffectContext"/> for Constructor definitions.
+        /// </remarks>
         public EffectContext(Utils.AttackContext ctx, EffectContextInfo effectInfo = null)
         {
             AttackData = ctx;
@@ -28,6 +32,24 @@ namespace EffectTree
         {
             AttackData = new Utils.AttackContext();
             ContextData = new EffectContextInfo();
+        }
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="other">Object values to copy into this <see cref="EffectContext"/></param>
+        public EffectContext(EffectContext other)
+        {
+            //we use this class' copy ctor
+            AttackData = new Utils.AttackContext(other.AttackData);
+
+            ContextData = new EffectContextInfo();
+
+            ContextData._NormalVector = other.ContextData._NormalVector;
+            ContextData._NormalVector2D = other.ContextData._NormalVector2D;
+            ContextData._ReflectionVector = other.ContextData._ReflectionVector;
+            ContextData._ReflectionVector2D = other.ContextData._ReflectionVector2D;
+            ContextData._TriggeringCollider = other.ContextData._TriggeringCollider;
+            ContextData._TriggeringCollision = other.ContextData._TriggeringCollision;
         }
         #endregion
 

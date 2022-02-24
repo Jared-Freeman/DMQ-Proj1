@@ -30,10 +30,10 @@ MonoBehaviour:
       - {fileID: 11400000, guid: d6ac7c942da49424394623d7ca6da05a, type: 2}
       ProjectileFXList: []
   DestroyOptions:
-    FLAG_UseDuration: 0
-    Duration: 4
+    FLAG_UseDuration: 1
+    Duration: 8
     FLAG_UseCollisionEnters: 0
-    CollisionEnters: 0
+    CollisionEnters: 2
     FLAG_UseCollisionStayDuration: 0
     CollisionStayDuration: 0
   MoveOptions:
@@ -60,5 +60,6 @@ MonoBehaviour:
         Force: 0
         Speed: 0
       HomingSimpleOptions:
+        MovementStyle: 0
         Speed: 14
-        TurnRate: 60
+        TurnRate: 90
