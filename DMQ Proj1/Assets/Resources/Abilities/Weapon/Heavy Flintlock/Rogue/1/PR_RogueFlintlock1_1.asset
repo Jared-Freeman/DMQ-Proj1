@@ -32,16 +32,16 @@ MonoBehaviour:
   DestroyOptions:
     FLAG_UseDuration: 1
     Duration: 3
-    FLAG_UseCollisionEnters: 0
-    CollisionEnters: 0
+    FLAG_UseCollisionEnters: 1
+    CollisionEnters: 1
     FLAG_UseCollisionStayDuration: 0
     CollisionStayDuration: 0
   MoveOptions:
     FLAG_FaceRigidbodyVelocity: 1
-    MovementType: 3
+    MovementType: 1
     MovementTypeOptions:
       LinearSimpleOptions:
-        Speed: 30
+        Speed: 35
       ParabolicSimpleOptions:
         TravelTime: 0
         HeightOverTime:
@@ -56,9 +56,9 @@ MonoBehaviour:
         ForcePerSecond: 0
       PhysicsImpulseOptions:
         FLAGScaleForceByMass: 0
-        FLAGUseSpeedComputationInsteadOfForce: 0
+        FLAGUseSpeedComputationInsteadOfForce: 1
         Force: 50
-        Speed: 0
+        Speed: 30
       HomingSimpleOptions:
         Speed: 0
         TurnRate: 0

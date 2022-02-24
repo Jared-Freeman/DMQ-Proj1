@@ -9,9 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4646c6294cf80ac48a6705ca8efce7fb, type: 3}
-  m_Name: E_RogueHalberd1_1
+  m_Script: {fileID: 11500000, guid: 6450fdc7c72cd11408ea10e6adabe150, type: 3}
+  m_Name: E_L3P_RogueDirk1_1
   m_EditorClassIdentifier: 
   Conditions:
     _Conditions: []
-  Force: 5062.5
+  ProjectilePrefab: {fileID: 606423617067534954, guid: ba86489e4980ade4b8f1ca8186633e4e,
+    type: 3}
+  UseTeamNoCollideLayer: 0
+  radius: 0.5
+  angleStep: 35

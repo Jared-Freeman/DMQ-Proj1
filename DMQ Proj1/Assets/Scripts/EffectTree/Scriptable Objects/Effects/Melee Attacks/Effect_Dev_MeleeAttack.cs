@@ -18,6 +18,8 @@ namespace EffectTree
         public static event System.EventHandler<MeleeAttackEventArgs> OnMeleeAttack;
         public GameObject meleeAttackEventObject;
         public List<Effect_Base> EffectList;
+        public float distance = 2; //Arbitrarily chosen, seems ok.
+        public float duration = 0.5f; //Arbitrarily chosen number. Probably a better way to do it.
         public override bool Invoke(ref EffectContext ctx)
         {
             if (base.Invoke(ref ctx))
@@ -28,17 +30,13 @@ namespace EffectTree
                     OnMeleeAttack.Invoke(this, new MeleeAttackEventArgs(attackingActor));
                 }
                 //Instantiate a melee event object
-                float duration = 0.75f; //Arbitrarily chosen number. Probably a better way to do it.
                 GameObject g = ctx.AttackData._Owner.gameObject;
                 Vector3 position = g.transform.position;
                 Vector3 direction = g.transform.forward;
-                float distance = 2; //Arbitrarily chosen, seems ok.
                 Vector3 spawnPos = position + direction * distance;
                 GameObject w = Instantiate(meleeAttackEventObject,spawnPos,Quaternion.identity);
                 MeleeEvent m = w.GetComponent<MeleeEvent>();
-                m.eventDuration = duration;
-                m.ctx = ctx;
-                m.EffectList = EffectList;
+                m.Init(EffectList, duration,ctx);
                 return true;
             }
             return false;
