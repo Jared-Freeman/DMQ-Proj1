@@ -276,6 +276,33 @@ public class PlayerMovementV3 : MonoBehaviour
         _Info.DashAbilityInstance = DashOptions.DashAbility.GetInstance(gameObject);
     }
 
+    void Start()
+    {
+
+        EffectTree.Effect_ActorRigidbodyMove.OnRigidbodyMovementAppliedToActor += Effect_ActorRigidbodyMove_OnRigidbodyMovementAppliedToActor;
+    }
+
+    private void Effect_ActorRigidbodyMove_OnRigidbodyMovementAppliedToActor(object sender, CSEventArgs.ActorRigidbodyMoveEventArgs e)
+    {
+        if(e.TargetedActor = AttachedActor)
+        {
+            ChangeState(State.MovementInterrupted);
+
+            //subscribe to local event
+            e.MovementCookie.OnMovementComplete += MovementCookie_OnMovementComplete;
+        }
+    }
+
+    private void MovementCookie_OnMovementComplete(object sender, CSEventArgs.Effect_ActorRigidbodyMove_HelperEventArgs e)
+    {
+        ChangeState(State.Moving);
+
+        if(FLAGDisplayDebugGizmos) Debug.Log("Movement Cookie Completed ops.");
+
+        //unsubscribe from event before it is inevitably destroyed lol
+        e.MovementHelper.OnMovementComplete -= MovementCookie_OnMovementComplete;
+    }
+
     #endregion
 
     #region Updates
@@ -320,7 +347,14 @@ public class PlayerMovementV3 : MonoBehaviour
 
                 case State.Standing: //NYI
                     break;
+                    
+                case State.MovementInterrupted:
+                    OnVelocityUpdate?.Invoke(this, new PlayerMovementEventArgs(RB.velocity.magnitude, AttachedActor));
+                    break;
 
+                default:
+                    Debug.LogError("No implementation exists for this state!");
+                    break;
 
             }
         }
@@ -333,7 +367,7 @@ public class PlayerMovementV3 : MonoBehaviour
     // Place State start stuff here
     private void ChangeState(State S)
     {        
-        StateEnd(S);
+        StateEnd(CurrentState);
 
         CurrentState = S;
 
@@ -360,6 +394,10 @@ public class PlayerMovementV3 : MonoBehaviour
 
             case State.Standing:
 
+                break;
+
+            case State.MovementInterrupted:
+                FLAG_PlayerMovementEnabled = false;
                 break;
 
 
@@ -394,6 +432,9 @@ public class PlayerMovementV3 : MonoBehaviour
 
                 break;
 
+            case State.MovementInterrupted:
+                FLAG_PlayerMovementEnabled = true;
+                break;
 
             default:
                 Debug.LogError("StateEnd(): unrecognized state: " + S.ToString() + ". Does an implementation exist?");
@@ -448,6 +489,8 @@ public class PlayerMovementV3 : MonoBehaviour
     {
         InputHost.OnInputChanged -= InputHost_OnInputChanged;
         _Input.onActionTriggered -= _Input_onActionTriggered;
+
+        EffectTree.Effect_ActorRigidbodyMove.OnRigidbodyMovementAppliedToActor -= Effect_ActorRigidbodyMove_OnRigidbodyMovementAppliedToActor;
     }
 
     private void InputHost_OnInputChanged(object sender, CSEventArgs.PlayerInputEventArgs e)
