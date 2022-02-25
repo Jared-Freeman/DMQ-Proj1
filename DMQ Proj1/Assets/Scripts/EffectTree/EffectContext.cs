@@ -2,6 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+namespace CSEventArgs
+{
+    public class EffectContextEventArgs : System.EventArgs
+    {
+        /// <summary>
+        /// Context arg of this event
+        /// </summary>
+        /// <remarks>
+        /// This is a REFERENCE. You can mutate the context of any effect trees using this Arg packet!
+        /// </remarks>
+        public EffectTree.EffectContext ctx;
+
+        public EffectContextEventArgs(EffectTree.EffectContext context)
+        {
+            ctx = context;
+        }
+    }
+}
+
 namespace EffectTree
 {
     /// <summary>
