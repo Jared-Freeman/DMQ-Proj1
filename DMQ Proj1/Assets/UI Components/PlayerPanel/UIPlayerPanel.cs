@@ -94,41 +94,39 @@ public class UIPlayerPanel : MonoBehaviour
         }
     }
 
-    //Change item texture, used to signal different items
-    public void addItem(Texture tex, int index)
+    #endregion
+
+    #region depricated
+    /*
+//Use item, decrements number of items, starts cooldown
+public void useItem(int index)
+{
+    float count = matProperties[index].GetFloat("_ItemCount");
+    if (count > 0)
     {
-        Renderer m_renderer = null;
-        m_renderer = items[index].GetComponent<Renderer>();
-        if(m_renderer != null)
+        count--;
+        matProperties[index].SetFloat("_ItemCount", count);
+        //StartCoroutine(itemCoolDown(time, 0));
+
+        if (count == 0)
         {
-            m_renderer.material.SetTexture("_FlaskImage", tex);
-            items[index].SetActive(true);
-            matProperties[index].SetFloat("", 1);
+            items[index].SetActive(false);
         }
     }
+}
 
-    public void addItem()
+//Change item texture, used to signal different items
+public void addItem(Texture tex, int index)
+{
+    Renderer m_renderer = null;
+    m_renderer = items[index].GetComponent<Renderer>();
+    if (m_renderer != null)
     {
-
+        m_renderer.material.SetTexture("_FlaskImage", tex);
+        items[index].SetActive(true);
+        matProperties[index].SetFloat("", 1);
     }
-
-    //Use item, decrements number of items, starts cooldown
-    public void useItem(int index)
-    {
-        float count = matProperties[index].GetFloat("_ItemCount");
-        if(count > 0)
-        {
-            count--;
-            matProperties[index].SetFloat("_ItemCount", count);
-            //StartCoroutine(itemCoolDown(time, 0));
-
-            if (count == 0)
-            {
-                items[index].SetActive(false);
-            }
-        }
-    }
-
-
+}
+*/
     #endregion
 }
