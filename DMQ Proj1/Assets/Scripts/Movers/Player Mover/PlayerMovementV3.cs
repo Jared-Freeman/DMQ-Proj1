@@ -189,9 +189,34 @@ public class PlayerMovementV3 : MonoBehaviour
     {
         // DEPRECATED
     }
+
+    /// <summary>
+    /// "Dash" key pressed event dispatcher.
+    /// </summary>
     void SpecialActionEvent()
     {
+        if(DashAbilityInstance.CanCastAbility)
+        {
+            EffectTree.EffectContext ec = new EffectTree.EffectContext();
 
+            Vector3 AimDir3 = new Vector3(AimDirection.x, 0, AimDirection.y);
+            Vector3 MoveDir3 = new Vector3(InputMap.x, 0, InputMap.y);
+
+            ec.AttackData._InitialDirection = MoveDir3;
+            ec.AttackData._InitialGameObject = gameObject;
+            ec.AttackData._InitialPosition = transform.position;
+
+            ec.AttackData._TargetDirection = AimDir3;
+            ec.AttackData._TargetGameObject = gameObject;
+            ec.AttackData._TargetPosition = transform.position;
+
+            ec.AttackData._Team = AttachedActor._Team;
+            ec.AttackData._Owner = AttachedActor;
+
+            //we don't load up the collision context data
+
+            DashAbilityInstance.ExecuteAbility(ref ec);
+        }
 
         //if(CurrentState != State.Dashing && _Info.Dash_Cooldown.CanUseCooldown())
         //{
