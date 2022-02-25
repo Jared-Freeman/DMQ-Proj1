@@ -22,21 +22,26 @@ public class PlayerMovementEventArgs : System.EventArgs
 public class PlayerMovementV3 : MonoBehaviour
 {
     #region Members
-    //Flags
+
+    #region Flags
+
     public bool FLAGCollectDebugTelemetry = false;
     public bool FLAGDisplayDebugGizmos = false;
     public bool FLAG_PlayerMovementEnabled = true;
 
+    #endregion
 
-    //Move Style
+    #region Preset-style Options
+
+    //Preset-style options (NOT scriptable objects!)
     [Tooltip("Affects how the rigidbody forces are applied")]
     public MovementModel MovementStyle = MovementModel.ContinuousAdvanced;
-
-
-    //Options
     public PlayerMovementV3Options DashOptions = new PlayerMovementV3Options();
     public PMV3_RunProperties RunOptions = new PMV3_RunProperties();
-    
+
+    #endregion
+
+    #region Properties
 
     //External objects
     public PlayerInputHost InputHost { get; protected set; }
@@ -44,7 +49,26 @@ public class PlayerMovementV3 : MonoBehaviour
     public Actor AttachedActor { get; protected set; }
     public PlayerControls controls { get; protected set; }
     public Rigidbody RB { get; protected set; }
-    
+    public AbilitySystem.AS_Ability_Base DashAbilityPreset
+    {
+        get { return DashOptions.DashAbility; }
+        set 
+        { 
+            DashOptions.DashAbility = value;
+            Destroy(_Info.DashAbilityInstance);
+
+            //replace abil instance
+            _Info.DashAbilityInstance = DashOptions.DashAbility.GetInstance(gameObject);
+        }
+    }
+    public AbilitySystem.AS_Ability_Instance_Base DashAbilityInstance
+    {
+        get { return _Info.DashAbilityInstance; }
+    }
+
+    #endregion
+
+    #region State Info
 
     //State info
     public State CurrentState { get; protected set; }
@@ -64,21 +88,24 @@ public class PlayerMovementV3 : MonoBehaviour
     Vector2 VelocityMap = Vector2.zero; //affects horizontal movement velocity. Controlled via input
     Vector2 DragVector = Vector2.zero;
 
-
-
     //obsolete currently
     [Tooltip("Determines current \"north\" that the InputMap direction is relative to")]
     private GameObject HorizontalMovementAngleHost;
 
+    #endregion
 
     #region Helpers
 
-    public enum State { Standing, Moving, Sliding, Dashing }
+    public enum State { Standing, Moving, Sliding, Dashing, MovementInterrupted } //As of now, Moving and MovementInterrupted are in-use (2-25-2022) ~Jared
     public enum MovementModel { DebugMovementModel, ContinuousAdvanced, ContinuousSimple, VelocityChange };
 
     [System.Serializable]
     public class PlayerMovementV3Options
     {
+        [Header("New Fields (2-25-2022)")]
+        public AbilitySystem.AS_Ability_Base DashAbility;
+
+        [Header("Deprecated Fields")]
         public float _DashCooldown;
         public AnimationCurve _DashSpeedScale;
         public float _DashDuration = .25f;
@@ -110,6 +137,10 @@ public class PlayerMovementV3 : MonoBehaviour
 
     private struct StateInfo
     {
+        //new
+        public AbilitySystem.AS_Ability_Instance_Base DashAbilityInstance;
+
+        //old
         public Utils.CooldownTracker Dash_Cooldown;
         public float Dash_LastStartTime;
         public Vector3 _DashDesiredDirection;
@@ -124,7 +155,6 @@ public class PlayerMovementV3 : MonoBehaviour
     }
 
     #endregion
-
 
     #endregion
 
@@ -159,18 +189,46 @@ public class PlayerMovementV3 : MonoBehaviour
     {
         // DEPRECATED
     }
+
+    /// <summary>
+    /// "Dash" key pressed event dispatcher.
+    /// </summary>
     void SpecialActionEvent()
     {
-        if(CurrentState != State.Dashing && _Info.Dash_Cooldown.CanUseCooldown())
+        if(DashAbilityInstance.CanCastAbility)
         {
-            ChangeState(State.Dashing);
-           // Event_SpecialActionStart?.Invoke(new PlayerMovementEventArgs());
+            EffectTree.EffectContext ec = new EffectTree.EffectContext();
+
+            Vector3 AimDir3 = new Vector3(AimDirection.x, 0, AimDirection.y);
+            Vector3 MoveDir3 = new Vector3(InputMap.x, 0, InputMap.y);
+
+            ec.AttackData._InitialDirection = MoveDir3;
+            ec.AttackData._InitialGameObject = gameObject;
+            ec.AttackData._InitialPosition = transform.position;
+
+            ec.AttackData._TargetDirection = AimDir3;
+            ec.AttackData._TargetGameObject = gameObject;
+            ec.AttackData._TargetPosition = transform.position;
+
+            ec.AttackData._Team = AttachedActor._Team;
+            ec.AttackData._Owner = AttachedActor;
+
+            //we don't load up the collision context data
+
+            DashAbilityInstance.ExecuteAbility(ref ec);
         }
+
+        //if(CurrentState != State.Dashing && _Info.Dash_Cooldown.CanUseCooldown())
+        //{
+        //    ChangeState(State.Dashing);
+        //   // Event_SpecialActionStart?.Invoke(new PlayerMovementEventArgs());
+        //}
     }
 
     #endregion
 
     #region Initialization
+
     private void Awake()
     {
         AttachedActor = GetComponent<Actor>();
@@ -207,37 +265,54 @@ public class PlayerMovementV3 : MonoBehaviour
         _Info.Dash_Cooldown = new Utils.CooldownTracker(DashOptions._DashCooldown);
         _Info.Dash_Cooldown.InitializeCooldown();
         _Info.Dash_LastStartTime = Time.time;
+
+        if(DashOptions.DashAbility == null)
+        {
+            Debug.LogError("No Dash ability specified! Destroying Component.");
+            Destroy(this);
+        }
+
+        //init abil instance
+        _Info.DashAbilityInstance = DashOptions.DashAbility.GetInstance(gameObject);
     }
 
     void Start()
     {
-        //Event_AttackStart.AddListener(testfunction);
-        //Event_AttackStart?.Invoke(new PlayerMovementEventArgs("test"));
-    }
-    //void testfunction(PlayerMovementEventArgs args)
-    //{
-    //    Debug.Log(args.test);
-    //}
 
-    //probably need to move this elsewhere...
-    //private void OnEnable()
-    //{
-    //    _Input.enabled = true;
-    //    controls.Enable();
-    //}
-    //private void OnDisable()
-    //{
-    //    _Input.enabled = false;
-    //    controls.Disable();
-    //}
+        EffectTree.Effect_ActorRigidbodyMove.OnRigidbodyMovementAppliedToActor += Effect_ActorRigidbodyMove_OnRigidbodyMovementAppliedToActor;
+    }
+
+    private void Effect_ActorRigidbodyMove_OnRigidbodyMovementAppliedToActor(object sender, CSEventArgs.ActorRigidbodyMoveEventArgs e)
+    {
+        if(e.TargetedActor = AttachedActor)
+        {
+            ChangeState(State.MovementInterrupted);
+
+            //subscribe to local event
+            e.MovementCookie.OnMovementComplete += MovementCookie_OnMovementComplete;
+        }
+    }
+
+    private void MovementCookie_OnMovementComplete(object sender, CSEventArgs.Effect_ActorRigidbodyMove_HelperEventArgs e)
+    {
+        ChangeState(State.Moving);
+
+        if(FLAGDisplayDebugGizmos) Debug.Log("Movement Cookie Completed ops.");
+
+        //unsubscribe from event before it is inevitably destroyed lol
+        e.MovementHelper.OnMovementComplete -= MovementCookie_OnMovementComplete;
+    }
 
     #endregion
+
+    #region Updates
 
     void Update()
     {
         Debug.DrawRay(transform.position, new Vector3(AimDirection.x, transform.position.y, AimDirection.y) * 5f, Color.yellow);
         UpdateRotation();
     }
+
     private void UpdateRotation()
     {
         Vector2 movementInput = InputMap.normalized;
@@ -248,6 +323,7 @@ public class PlayerMovementV3 : MonoBehaviour
             gameObject.transform.forward = move;
         }
     }
+
     private void FixedUpdate()
     {
         if(FLAG_PlayerMovementEnabled) 
@@ -271,18 +347,27 @@ public class PlayerMovementV3 : MonoBehaviour
 
                 case State.Standing: //NYI
                     break;
+                    
+                case State.MovementInterrupted:
+                    OnVelocityUpdate?.Invoke(this, new PlayerMovementEventArgs(RB.velocity.magnitude, AttachedActor));
+                    break;
 
+                default:
+                    Debug.LogError("No implementation exists for this state!");
+                    break;
 
             }
         }
     }
+
+    #endregion
 
     #region State Transitions
 
     // Place State start stuff here
     private void ChangeState(State S)
     {        
-        StateEnd(S);
+        StateEnd(CurrentState);
 
         CurrentState = S;
 
@@ -309,6 +394,10 @@ public class PlayerMovementV3 : MonoBehaviour
 
             case State.Standing:
 
+                break;
+
+            case State.MovementInterrupted:
+                FLAG_PlayerMovementEnabled = false;
                 break;
 
 
@@ -343,6 +432,9 @@ public class PlayerMovementV3 : MonoBehaviour
 
                 break;
 
+            case State.MovementInterrupted:
+                FLAG_PlayerMovementEnabled = true;
+                break;
 
             default:
                 Debug.LogError("StateEnd(): unrecognized state: " + S.ToString() + ". Does an implementation exist?");
@@ -397,6 +489,8 @@ public class PlayerMovementV3 : MonoBehaviour
     {
         InputHost.OnInputChanged -= InputHost_OnInputChanged;
         _Input.onActionTriggered -= _Input_onActionTriggered;
+
+        EffectTree.Effect_ActorRigidbodyMove.OnRigidbodyMovementAppliedToActor -= Effect_ActorRigidbodyMove_OnRigidbodyMovementAppliedToActor;
     }
 
     private void InputHost_OnInputChanged(object sender, CSEventArgs.PlayerInputEventArgs e)
@@ -942,6 +1036,8 @@ public class PlayerMovementV3 : MonoBehaviour
     }
     #endregion
 
+    #region Collision Handler(s)
+
     private void OnCollisionEnter(Collision collision)
     {
         //DISABLED THIS STUFF FOR NOW UNTIL BUGS GET FIXED! --Jared
@@ -977,6 +1073,8 @@ public class PlayerMovementV3 : MonoBehaviour
         //}
 
     }
+
+    #endregion
 
     #region Dash Movement Models
 
@@ -1172,6 +1270,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
     #endregion
 
+    #region DEPRECATED
 
     //DEPRECATED
     //public GameObject ShootableProjectile;
@@ -1195,4 +1294,6 @@ public class PlayerMovementV3 : MonoBehaviour
     //        else Debug.LogError(ToString() + ": No Actor attached. How did you get around all my checks?");
     //    }
     //}
+
+    #endregion
 }

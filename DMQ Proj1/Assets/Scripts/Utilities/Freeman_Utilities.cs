@@ -429,6 +429,128 @@ namespace Utils
 
     public static class Physics
     {
+
+        /// <summary>
+        /// Uses dimensions of colliders in <paramref name="go"/> AND transform data to see if the gameobject would collide with anything.
+        /// </summary>
+        /// <param name="go">GameObject to check.</param>
+        /// <returns>True if a collision will occur on the next FixedUpdate</returns>
+        /// <remarks>
+        /// Only supports primitive 3D collider recognition. 
+        /// Useful for seeing if an object would create collisions BEFORE FixedUpate is called (use for collision prevention?).
+        /// </remarks>
+        public static bool GameobjectCollisionExists(GameObject go)
+        {
+            //get bounds of object
+            var cs = go.GetComponentsInChildren<Collider>();
+
+            foreach (Collider c in cs)
+            {
+                if(c.enabled == true)
+                {
+                    //functionality branches based on Collider type
+                    if (c as BoxCollider != null)
+                    {
+                        var box = c as BoxCollider;
+
+                        Collider[] overlapColliders;
+
+                        overlapColliders = UnityEngine.Physics.OverlapBox(box.transform.position + box.center, box.size/2, box.transform.rotation
+                            , PhysicsCollisionMatrixLayerMasks.MaskForLayer(box.gameObject.layer));
+
+                        foreach(var overlapC in overlapColliders)
+                        {
+                            if (overlapC.gameObject != go && !overlapC.gameObject.transform.IsChildOf(go.transform))
+                            {
+                                Debug.LogWarning(overlapC.gameObject);
+                                return true;
+                            }
+                        }
+
+                    }
+                    else if (c as SphereCollider != null)
+                    {
+                        var spr = c as SphereCollider;
+
+                        Collider[] overlapColliders;
+
+                        overlapColliders = UnityEngine.Physics.OverlapSphere(spr.transform.position + spr.center, spr.radius
+                            , PhysicsCollisionMatrixLayerMasks.MaskForLayer(spr.gameObject.layer));
+
+                        foreach (var overlapC in overlapColliders)
+                        {
+                            if (overlapC.gameObject != go && !overlapC.gameObject.transform.IsChildOf(go.transform))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else if (c as CapsuleCollider != null)
+                    {
+                        var cap = c as CapsuleCollider;
+
+                        //why did they not follow the same convention for Collider's...
+                        Vector3 pointDir = cap.transform.up * (cap.height / 2 - cap.radius);
+
+                        Collider[] overlapColliders;
+
+                        overlapColliders = UnityEngine.Physics.OverlapCapsule(cap.transform.position + pointDir, cap.transform.position - pointDir, cap.radius
+                            , PhysicsCollisionMatrixLayerMasks.MaskForLayer(cap.gameObject.layer));
+
+                        foreach (var overlapC in overlapColliders)
+                        {
+                            if (overlapC.gameObject != go && !overlapC.gameObject.transform.IsChildOf(go.transform))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Interface to access Unity CollisionMatrix to get collision masks per layer
+        /// </summary>
+        /// <remarks>
+        /// Courtesy of user bellicapax on Unity Forums.
+        /// See https://forum.unity.com/members/bellicapax.1178328/
+        /// </remarks>
+        public static class PhysicsCollisionMatrixLayerMasks
+        {
+            private static Dictionary<int, int> _masksByLayer;
+            private static bool initialized = false;
+
+            public static void Init()
+            {
+                _masksByLayer = new Dictionary<int, int>();
+                for (int i = 0; i < 32; i++)
+                {
+                    int mask = 0;
+                    for (int j = 0; j < 32; j++)
+                    {
+                        if (!UnityEngine.Physics.GetIgnoreLayerCollision(i, j))
+                        {
+                            mask |= 1 << j;
+                        }
+                    }
+                    _masksByLayer.Add(i, mask);
+                }
+            }
+
+            public static int MaskForLayer(int layer)
+            {
+                if (!initialized) 
+                { 
+                    Init();
+                    initialized = true;
+                }
+                return _masksByLayer[layer];
+            }
+        }
+
         /// <summary>
         /// Helper struct for some Preset info for ComputeFixedContinuousMovement
         /// </summary>
