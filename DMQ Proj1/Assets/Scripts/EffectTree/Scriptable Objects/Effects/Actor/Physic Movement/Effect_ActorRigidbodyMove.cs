@@ -21,14 +21,21 @@ namespace CSEventArgs
         public Actor TargetedActor;
 
         /// <summary>
+        /// The GameObject with persistent movement data being invoked during this event
+        /// </summary>
+        public GameObject MovementCookie;
+
+        /// <summary>
         /// Parameterized constructor
         /// </summary>
-        /// <param name="context"></param>
-        /// <param name="target"></param>
-        public ActorRigidbodyMoveEventArgs(EffectTree.EffectContext context, Actor target)
+        /// <param name="context">Context arg of this event</param>
+        /// <param name="target"> Actor targeted by this movement effect</param>
+        /// <param name="cookie">The GameObject with persistent movement data being invoked during this event</param>
+        public ActorRigidbodyMoveEventArgs(EffectTree.EffectContext context, Actor target, GameObject cookie)
         {
             ctx = context;
             TargetedActor = target;
+            MovementCookie = cookie;
         }
     }
 }
@@ -107,6 +114,8 @@ namespace EffectTree
                         break;
                 }
 
+
+                OnRigidbodyMovementAppliedToActor?.Invoke(this, new CSEventArgs.ActorRigidbodyMoveEventArgs(ctx, h.Target, h.gameObject));
                 return true;
             }
             return false;

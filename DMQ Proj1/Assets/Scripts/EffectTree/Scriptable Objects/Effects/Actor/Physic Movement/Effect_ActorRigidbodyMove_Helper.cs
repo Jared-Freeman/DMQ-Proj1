@@ -2,6 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+namespace CSEventArgs
+{
+    public class Effect_ActorRigidbodyMove_HelperEventArgs : System.EventArgs
+    {
+        public EffectTree.Effect_ActorRigidbodyMove_Helper MovementHelper;
+
+        public Effect_ActorRigidbodyMove_HelperEventArgs(EffectTree.Effect_ActorRigidbodyMove_Helper helper)
+        {
+            MovementHelper = helper;
+        }
+    }
+}
+
 namespace EffectTree
 {
     /// <summary>
@@ -9,6 +22,9 @@ namespace EffectTree
     /// </summary>
     public class Effect_ActorRigidbodyMove_Helper : MonoBehaviour
     {
+        //events
+        public event System.EventHandler<CSEventArgs.Effect_ActorRigidbodyMove_HelperEventArgs> OnMovementComplete;
+
         //assigned by Effect
         public Effect_ActorRigidbodyMove Preset;
         public EffectContext Context;
@@ -20,10 +36,10 @@ namespace EffectTree
 
         void Start()
         {
-            if (Preset == null) Destroy(gameObject);
+            if (Preset == null) DestroyHelper();
 
             TargetRB = Target.GetComponent<Rigidbody>();
-            if (TargetRB == null) Destroy(gameObject);
+            if (TargetRB == null) DestroyHelper();
 
             StartTime = Time.time;
             StartCoroutine(I_ContinueMovement(Preset.Duration));
@@ -37,7 +53,7 @@ namespace EffectTree
             while (Mathf.Abs(Time.time - StartTime) < duration)
             {
 
-                if (TargetRB == null) Destroy(gameObject);
+                if (TargetRB == null) DestroyHelper();
 
                 //Yes, this code is disgusting. No, it's not worth the time to debug and polish right now.
 
@@ -82,9 +98,18 @@ namespace EffectTree
                 yield return new WaitForFixedUpdate();
 
             }
+            DestroyHelper();
+        }
+
+        /// <summary>
+        /// Cleans up GameObject and invokes completion event
+        /// </summary>
+        protected void DestroyHelper()
+        {
+            OnMovementComplete?.Invoke(this, new CSEventArgs.Effect_ActorRigidbodyMove_HelperEventArgs(this));
             Destroy(gameObject);
         }
     }
 
-
+    
 }
