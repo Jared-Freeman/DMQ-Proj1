@@ -22,21 +22,26 @@ public class PlayerMovementEventArgs : System.EventArgs
 public class PlayerMovementV3 : MonoBehaviour
 {
     #region Members
-    //Flags
+
+    #region Flags
+
     public bool FLAGCollectDebugTelemetry = false;
     public bool FLAGDisplayDebugGizmos = false;
     public bool FLAG_PlayerMovementEnabled = true;
 
+    #endregion
 
-    //Move Style
+    #region Preset-style Options
+
+    //Preset-style options (NOT scriptable objects!)
     [Tooltip("Affects how the rigidbody forces are applied")]
     public MovementModel MovementStyle = MovementModel.ContinuousAdvanced;
-
-
-    //Options
     public PlayerMovementV3Options DashOptions = new PlayerMovementV3Options();
     public PMV3_RunProperties RunOptions = new PMV3_RunProperties();
-    
+
+    #endregion
+
+    #region Properties
 
     //External objects
     public PlayerInputHost InputHost { get; protected set; }
@@ -44,7 +49,26 @@ public class PlayerMovementV3 : MonoBehaviour
     public Actor AttachedActor { get; protected set; }
     public PlayerControls controls { get; protected set; }
     public Rigidbody RB { get; protected set; }
-    
+    public AbilitySystem.AS_Ability_Base DashAbilityPreset
+    {
+        get { return DashOptions.DashAbility; }
+        set 
+        { 
+            DashOptions.DashAbility = value;
+            Destroy(_Info.DashAbilityInstance);
+
+            //replace abil instance
+            _Info.DashAbilityInstance = DashOptions.DashAbility.GetInstance(gameObject);
+        }
+    }
+    public AbilitySystem.AS_Ability_Instance_Base DashAbilityInstance
+    {
+        get { return _Info.DashAbilityInstance; }
+    }
+
+    #endregion
+
+    #region State Info
 
     //State info
     public State CurrentState { get; protected set; }
@@ -64,21 +88,24 @@ public class PlayerMovementV3 : MonoBehaviour
     Vector2 VelocityMap = Vector2.zero; //affects horizontal movement velocity. Controlled via input
     Vector2 DragVector = Vector2.zero;
 
-
-
     //obsolete currently
     [Tooltip("Determines current \"north\" that the InputMap direction is relative to")]
     private GameObject HorizontalMovementAngleHost;
 
+    #endregion
 
     #region Helpers
 
-    public enum State { Standing, Moving, Sliding, Dashing }
+    public enum State { Standing, Moving, Sliding, Dashing, MovementInterrupted } //As of now, Moving and MovementInterrupted are in-use (2-25-2022) ~Jared
     public enum MovementModel { DebugMovementModel, ContinuousAdvanced, ContinuousSimple, VelocityChange };
 
     [System.Serializable]
     public class PlayerMovementV3Options
     {
+        [Header("New Fields (2-25-2022)")]
+        public AbilitySystem.AS_Ability_Base DashAbility;
+
+        [Header("Deprecated Fields")]
         public float _DashCooldown;
         public AnimationCurve _DashSpeedScale;
         public float _DashDuration = .25f;
@@ -110,6 +137,10 @@ public class PlayerMovementV3 : MonoBehaviour
 
     private struct StateInfo
     {
+        //new
+        public AbilitySystem.AS_Ability_Instance_Base DashAbilityInstance;
+
+        //old
         public Utils.CooldownTracker Dash_Cooldown;
         public float Dash_LastStartTime;
         public Vector3 _DashDesiredDirection;
@@ -124,7 +155,6 @@ public class PlayerMovementV3 : MonoBehaviour
     }
 
     #endregion
-
 
     #endregion
 
@@ -161,16 +191,19 @@ public class PlayerMovementV3 : MonoBehaviour
     }
     void SpecialActionEvent()
     {
-        if(CurrentState != State.Dashing && _Info.Dash_Cooldown.CanUseCooldown())
-        {
-            ChangeState(State.Dashing);
-           // Event_SpecialActionStart?.Invoke(new PlayerMovementEventArgs());
-        }
+
+
+        //if(CurrentState != State.Dashing && _Info.Dash_Cooldown.CanUseCooldown())
+        //{
+        //    ChangeState(State.Dashing);
+        //   // Event_SpecialActionStart?.Invoke(new PlayerMovementEventArgs());
+        //}
     }
 
     #endregion
 
     #region Initialization
+
     private void Awake()
     {
         AttachedActor = GetComponent<Actor>();
@@ -207,37 +240,27 @@ public class PlayerMovementV3 : MonoBehaviour
         _Info.Dash_Cooldown = new Utils.CooldownTracker(DashOptions._DashCooldown);
         _Info.Dash_Cooldown.InitializeCooldown();
         _Info.Dash_LastStartTime = Time.time;
-    }
 
-    void Start()
-    {
-        //Event_AttackStart.AddListener(testfunction);
-        //Event_AttackStart?.Invoke(new PlayerMovementEventArgs("test"));
-    }
-    //void testfunction(PlayerMovementEventArgs args)
-    //{
-    //    Debug.Log(args.test);
-    //}
+        if(DashOptions.DashAbility == null)
+        {
+            Debug.LogError("No Dash ability specified! Destroying Component.");
+            Destroy(this);
+        }
 
-    //probably need to move this elsewhere...
-    //private void OnEnable()
-    //{
-    //    _Input.enabled = true;
-    //    controls.Enable();
-    //}
-    //private void OnDisable()
-    //{
-    //    _Input.enabled = false;
-    //    controls.Disable();
-    //}
+        //init abil instance
+        _Info.DashAbilityInstance = DashOptions.DashAbility.GetInstance(gameObject);
+    }
 
     #endregion
+
+    #region Updates
 
     void Update()
     {
         Debug.DrawRay(transform.position, new Vector3(AimDirection.x, transform.position.y, AimDirection.y) * 5f, Color.yellow);
         UpdateRotation();
     }
+
     private void UpdateRotation()
     {
         Vector2 movementInput = InputMap.normalized;
@@ -248,6 +271,7 @@ public class PlayerMovementV3 : MonoBehaviour
             gameObject.transform.forward = move;
         }
     }
+
     private void FixedUpdate()
     {
         if(FLAG_PlayerMovementEnabled) 
@@ -276,6 +300,8 @@ public class PlayerMovementV3 : MonoBehaviour
             }
         }
     }
+
+    #endregion
 
     #region State Transitions
 
@@ -942,6 +968,8 @@ public class PlayerMovementV3 : MonoBehaviour
     }
     #endregion
 
+    #region Collision Handler(s)
+
     private void OnCollisionEnter(Collision collision)
     {
         //DISABLED THIS STUFF FOR NOW UNTIL BUGS GET FIXED! --Jared
@@ -977,6 +1005,8 @@ public class PlayerMovementV3 : MonoBehaviour
         //}
 
     }
+
+    #endregion
 
     #region Dash Movement Models
 
@@ -1172,6 +1202,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
     #endregion
 
+    #region DEPRECATED
 
     //DEPRECATED
     //public GameObject ShootableProjectile;
@@ -1195,4 +1226,6 @@ public class PlayerMovementV3 : MonoBehaviour
     //        else Debug.LogError(ToString() + ": No Actor attached. How did you get around all my checks?");
     //    }
     //}
+
+    #endregion
 }
