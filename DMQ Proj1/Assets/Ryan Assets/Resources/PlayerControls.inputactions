@@ -68,6 +68,22 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Ability1",
+                    "type": "Button",
+                    "id": "afc92a77-60af-4284-bdfe-6a69599f3197",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Ability2",
+                    "type": "Button",
+                    "id": "c26963c4-fec5-4c51-9b44-c092f3cb78bc",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -85,7 +101,7 @@
                 {
                     "name": "",
                     "id": "fc1d4f66-5fe7-43c7-9417-67e0da2ef84f",
-                    "path": "<Gamepad>/buttonSouth",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
@@ -96,7 +112,7 @@
                 {
                     "name": "",
                     "id": "41a95257-e253-4864-974e-28fcd94ad8a9",
-                    "path": "<Gamepad>/leftTrigger",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
@@ -129,7 +145,7 @@
                 {
                     "name": "",
                     "id": "364b6292-25af-45dc-80cf-30e8a2ddf83a",
-                    "path": "<Gamepad>/buttonWest",
+                    "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
@@ -156,6 +172,28 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "eb2b8cdb-0c55-43bf-89bc-ebbbb8f90181",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Ability1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b6453937-ecb2-424a-bce6-f32c311ee94e",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Ability2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -225,6 +263,22 @@
                     "name": "Interact",
                     "type": "Button",
                     "id": "e00d0f1a-26f7-4413-9a4f-4095c6b50243",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Ability1",
+                    "type": "Button",
+                    "id": "4cac9b5a-16f3-4174-ae88-e6edda1a394d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Ability2",
+                    "type": "Button",
+                    "id": "62c3dc45-9d9b-4261-be4c-f975b00080ba",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -360,6 +414,28 @@
                     "processors": "",
                     "groups": "MouseAndKeyboard",
                     "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5a3500fb-832d-4210-bdfa-1e1a08f88165",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "MouseAndKeyboard",
+                    "action": "Ability1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0aa4ce71-c2e7-4fcc-b654-32daf895693d",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "MouseAndKeyboard",
+                    "action": "Ability2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

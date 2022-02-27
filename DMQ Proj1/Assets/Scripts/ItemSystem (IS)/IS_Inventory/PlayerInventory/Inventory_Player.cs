@@ -41,6 +41,17 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
             }
         } 
     }
+    /// <summary>
+    /// More specific weapon property than CurrentWeapon
+    /// </summary>
+    public ItemSystem.Weapons.Item_Weapon_ClassSpecific CurrentClassWeapon
+    {
+        get
+        {
+            if (CurrentWeapon == null) return null;
+            return CurrentWeapon as ItemSystem.Weapons.Item_Weapon_ClassSpecific;
+        }
+    }
 
     PlayerInputHost InputHost { get; set; }
     PlayerInput Input { get { return InputHost.CurrentPlayerInput; } }
