@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ActorSystem.StatusEffect;
+using Utils;
 
 namespace EffectTree
 {

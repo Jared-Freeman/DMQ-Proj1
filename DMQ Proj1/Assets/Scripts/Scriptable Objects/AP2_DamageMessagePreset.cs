@@ -1,15 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-/// <summary>
-/// 
-/// Designed to contain any and all information needed to apply damage to ANY target. 
-/// 
-/// </summary>
+using Utils;
 
 // Expand this class as needed, but try not to add variables unless ABSOLUTELY NECESSARY since this is designed to be a lightweight packet of data
 // Extending ScriptableObject allows most of the data to be kept in a catalogue (library of preloaded values)
+/// <summary>
+/// A packet of data that fully defines damage to be applied
+/// </summary>
 [CreateAssetMenu(fileName = "DamageMessage", menuName = "ScriptableObjects/Damage Message", order = 1)]
 public class AP2_DamageMessagePreset : ScriptableObject
 {
@@ -51,48 +49,4 @@ public class Actor_DamageMessage
     public Vector3 _DamageSourceOffset = Vector3.zero; //optional offset from origin
 
     public Team _Team;
-}
-
-/// <summary>
-/// Specifies who will receive this message. For use with Team Scriptable Object
-/// </summary>
-[System.Serializable]
-public class TargetFilterOptions
-{
-    [Header("Checkbox == Damage message sent to this team (relative to owner of the message)")]
-    public bool Enemy = true;
-    public bool Ally = false;
-    public bool Neutral = false;
-    public bool Self = false;
-
-    /// <summary>
-    /// Returns true if Target is acceptable according to this team's perspective given the target filters
-    /// </summary>
-    /// <param name="InvokingTeam">Team this TargetFilter is being used relative to</param>
-    /// <param name="Target">Target from the InvokingTeam's perspective</param>
-    /// <returns></returns>
-    public bool TargetIsAllowed(Team InvokingTeam, Actor Target)
-    {
-        //No team, no method of determining filter
-        if (InvokingTeam == null) return true;
-
-        if(Self && InvokingTeam.IsSelf(Target._Team))
-        {
-            return true;
-        }
-        else if (Ally && InvokingTeam.IsAlly(Target._Team))
-        {
-            return true;
-        }
-        else if (Neutral && InvokingTeam.IsNeutral(Target._Team))
-        {
-            return true;
-        }
-        else if (Enemy && InvokingTeam.IsEnemy(Target._Team))
-        {
-            return true;
-        }
-
-        return false;
-    }
 }
