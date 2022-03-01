@@ -2494,11 +2494,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 2730663038165717473}
   actor: {fileID: 2730663038165717474}
-  weapons: {fileID: 11400000, guid: bb378d36a7f549a4885fc7d2490900b5, type: 2}
+  weapons:
+  - {fileID: 4456945836124224068, guid: 3c69fa93618176a43962f23c5526778b, type: 3}
+  - {fileID: 1092708326585483430, guid: ee50c49e39dc0e74d918ab0f5eed138c, type: 3}
   handpositions:
   - {fileID: 2730663037300967914}
   - {fileID: 2730663039089730603}
-  weapon: {fileID: 100050, guid: 9d8cbe7d7c34ac442baea6cd0ea39cd0, type: 3}
 --- !u!114 &6081834268718954789
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -19,6 +19,8 @@ namespace ItemSystem
             public AbilitySystem.AS_Ability_Base Ability_Attack;
             public AbilitySystem.AS_Ability_Base Ability_Ability1;
             public AbilitySystem.AS_Ability_Base Ability_Ability2;
+
+            public int AnimatorIndex; //Used to tell the animator which weapon is equipped.
         }
 
         public IS_WeaponOptions BaseWeaponOptions;

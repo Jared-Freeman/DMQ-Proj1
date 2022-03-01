@@ -4,17 +4,19 @@ using System.Collections.Generic;
 using CSEventArgs;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using ItemSystem.Weapons;
 
 public class InventoryEventArgs : System.EventArgs
 {
-    public InventoryEventArgs(GameObject o,int slot)
+    public InventoryEventArgs(GameObject o,int slot, Item_Weapon_ClassSpecific wep)
     {
         obj = o;
         weaponSlot = slot;
+        weapon = wep;
     }
     public GameObject obj;
     public int weaponSlot;
+    public Item_Weapon_ClassSpecific weapon;
 }
 
 
@@ -258,7 +260,8 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
             //otherwise we equip
             Debug.Log("WEAPON EQUIPPED @index: " + index);
             Info.EquippedWeaponIndex = index;
-            OnWeaponChanged.Invoke(this, new InventoryEventArgs(this.gameObject,index));
+            Item_Weapon_ClassSpecific currentWeapon = (Item_Weapon_ClassSpecific)_WeaponSlots[index].Weapon;
+            OnWeaponChanged.Invoke(this, new InventoryEventArgs(this.gameObject,index,currentWeapon));
         }
         else
         {
