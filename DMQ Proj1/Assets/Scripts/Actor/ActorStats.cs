@@ -151,6 +151,7 @@ public class ActorStats : MonoBehaviour
 
     void Start()
     {
+        InitializeStateVariables();
         ResetDamage();
 
         foreach (var e in InitialStatusEffects)
@@ -158,6 +159,21 @@ public class ActorStats : MonoBehaviour
             AddStatusEffect(e.CreateInstance(gameObject));
         }
     }
+    /// <summary>
+    /// Initializes the State Variable stat instances on this ActorStats object
+    /// </summary>
+    protected void InitializeStateVariables()
+    {
+        HP.Value = Preset.Data.HP.Default.Max;
+        HP.Modifier = Preset.Data.HP.Modifier;
+
+        Energy.Value = Preset.Data.Energy.Default.Max;
+        Energy.Modifier = Preset.Data.Energy.Modifier;
+
+        MoveSpeed.Value = Preset.Data.MoveSpeed.Default.Max;
+        MoveSpeed.Modifier = Preset.Data.MoveSpeed.Modifier;
+    }
+
     public void ResetDamage()
     {
         HpCurrent = Preset.Data.HP.Default.Max;

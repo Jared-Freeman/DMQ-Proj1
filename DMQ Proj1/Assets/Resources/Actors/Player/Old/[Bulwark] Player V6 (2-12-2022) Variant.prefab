@@ -7,11 +7,43 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2730663038165717402, guid: 62a77e81fa1db6e4799a4e6b2069cd35,
+        type: 3}
+      propertyPath: DashOptions.DashAbility
+      value: 
+      objectReference: {fileID: 11400000, guid: c36789dd60a874a40893ba1f0f527e79,
+        type: 2}
     - target: {fileID: 2730663038165717474, guid: 62a77e81fa1db6e4799a4e6b2069cd35,
         type: 3}
       propertyPath: Class
       value: 
       objectReference: {fileID: 11400000, guid: a13f55a44ed79f4488b73600a23246bf,
+        type: 2}
+    - target: {fileID: 2730663038165717476, guid: 62a77e81fa1db6e4799a4e6b2069cd35,
+        type: 3}
+      propertyPath: m_Height
+      value: 3.1484036
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730663038165717476, guid: 62a77e81fa1db6e4799a4e6b2069cd35,
+        type: 3}
+      propertyPath: m_Radius
+      value: 0.66
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730663038165717476, guid: 62a77e81fa1db6e4799a4e6b2069cd35,
+        type: 3}
+      propertyPath: m_Center.y
+      value: 0.32420182
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730663038165717477, guid: 62a77e81fa1db6e4799a4e6b2069cd35,
+        type: 3}
+      propertyPath: m_Mass
+      value: 14.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730663038165717485, guid: 62a77e81fa1db6e4799a4e6b2069cd35,
+        type: 3}
+      propertyPath: Preset
+      value: 
+      objectReference: {fileID: 11400000, guid: ad6ff1944ecfa624b9015ba56c796a27,
         type: 2}
     - target: {fileID: 2730663038165717486, guid: 62a77e81fa1db6e4799a4e6b2069cd35,
         type: 3}
@@ -78,5 +110,20 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 18943def07ffda04d89f6f8bdb1b4e6f, type: 2}
+    - target: {fileID: 2730663038481069318, guid: 62a77e81fa1db6e4799a4e6b2069cd35,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.33
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730663038481069318, guid: 62a77e81fa1db6e4799a4e6b2069cd35,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.22
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730663038481069318, guid: 62a77e81fa1db6e4799a4e6b2069cd35,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.22
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 62a77e81fa1db6e4799a4e6b2069cd35, type: 3}
