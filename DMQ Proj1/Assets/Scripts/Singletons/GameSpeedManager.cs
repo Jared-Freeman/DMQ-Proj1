@@ -91,6 +91,12 @@ public class GameSpeedManager : Singleton<GameSpeedManager>
     /// </remarks>
     public bool AcquireTimeControlToken(MonoBehaviour invokingComponent)
     {
+        if(CurrentTokenHolder == null)
+        {
+            CurrentTokenHolder = invokingComponent;
+            return true;
+        }
+
         var invokingR = GetPriorityRecord(invokingComponent);
         int newPriority = DefaultTimePriority;
 

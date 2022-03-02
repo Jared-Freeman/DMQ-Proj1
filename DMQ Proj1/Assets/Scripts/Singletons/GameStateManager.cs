@@ -94,11 +94,10 @@ namespace GameState
                 if (ctx.performed)
                 {
                     //MnK
-                    if (ctx.action.name == _PlayerControls.MouseAndKeyboard.Movement.name)
+                    if (ctx.action.name == _PlayerControls.MouseAndKeyboard.Pause.name)
                     {
-
+                        InputPauseEvent();
                     }
-
                 }
 
                 else if (ctx.canceled)
@@ -113,9 +112,9 @@ namespace GameState
                 if (ctx.performed)
                 {
                     //Gamepad
-                    if (ctx.action.name == _PlayerControls.Gamepad.Movement.name)
+                    if (ctx.action.name == _PlayerControls.Gamepad.Pause.name)
                     {
-
+                        InputPauseEvent();
                     }
                 }
 
@@ -133,6 +132,7 @@ namespace GameState
         {
             base.Awake();
             _PlayerControls = new PlayerControls();
+            CurrentGameState = GameState.Gameplay; //may need to change later...
         }
 
         void Start()
@@ -155,7 +155,19 @@ namespace GameState
 
         #endregion
 
+        private void InputPauseEvent()
+        {
+            //Debug.LogWarning("pause event");
 
+            if(CurrentGameState == GameState.Paused)
+            {
+                InvokeResume();
+            }
+            else if(CurrentGameState == GameState.Gameplay)
+            {
+                InvokePause();
+            }
+        }
 
         public void InvokePause()
         {
@@ -203,8 +215,10 @@ namespace GameState
                 case GameState.Gameplay:
                     break;
                 case GameState.Paused:
+                    Debug.LogWarning("pause begin");
                     if (Singleton<GameSpeedManager>.Instance.AcquireTimeControlToken(this))
                     {
+                        Debug.LogWarning("token acquired");
                         Singleton<GameSpeedManager>.Instance.ModifyTimeScale(this, 0f);
                     }
                     break;

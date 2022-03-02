@@ -97,6 +97,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""313fe730-6372-42c5-be7e-412b98d03097"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -209,6 +217,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Ability2"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""73f73108-d848-469e-81c4-3c49af3651f6"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -292,6 +311,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""name"": ""Ability2"",
                     ""type"": ""Button"",
                     ""id"": ""62c3dc45-9d9b-4261-be4c-f975b00080ba"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""397a140e-eb16-4bc0-8790-a1839e439c62"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -449,6 +476,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""processors"": """",
                     ""groups"": ""MouseAndKeyboard"",
                     ""action"": ""Ability2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""56b459b0-5ab5-4c52-bc5e-d4e84daaf74d"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""MouseAndKeyboard"",
+                    ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -726,6 +764,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Gamepad_Interact = m_Gamepad.FindAction("Interact", throwIfNotFound: true);
         m_Gamepad_Ability1 = m_Gamepad.FindAction("Ability1", throwIfNotFound: true);
         m_Gamepad_Ability2 = m_Gamepad.FindAction("Ability2", throwIfNotFound: true);
+        m_Gamepad_Pause = m_Gamepad.FindAction("Pause", throwIfNotFound: true);
         // MouseAndKeyboard
         m_MouseAndKeyboard = asset.FindActionMap("MouseAndKeyboard", throwIfNotFound: true);
         m_MouseAndKeyboard_Movement = m_MouseAndKeyboard.FindAction("Movement", throwIfNotFound: true);
@@ -738,6 +777,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_MouseAndKeyboard_Interact = m_MouseAndKeyboard.FindAction("Interact", throwIfNotFound: true);
         m_MouseAndKeyboard_Ability1 = m_MouseAndKeyboard.FindAction("Ability1", throwIfNotFound: true);
         m_MouseAndKeyboard_Ability2 = m_MouseAndKeyboard.FindAction("Ability2", throwIfNotFound: true);
+        m_MouseAndKeyboard_Pause = m_MouseAndKeyboard.FindAction("Pause", throwIfNotFound: true);
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
@@ -806,6 +846,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Gamepad_Interact;
     private readonly InputAction m_Gamepad_Ability1;
     private readonly InputAction m_Gamepad_Ability2;
+    private readonly InputAction m_Gamepad_Pause;
     public struct GamepadActions
     {
         private @PlayerControls m_Wrapper;
@@ -820,6 +861,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @Interact => m_Wrapper.m_Gamepad_Interact;
         public InputAction @Ability1 => m_Wrapper.m_Gamepad_Ability1;
         public InputAction @Ability2 => m_Wrapper.m_Gamepad_Ability2;
+        public InputAction @Pause => m_Wrapper.m_Gamepad_Pause;
         public InputActionMap Get() { return m_Wrapper.m_Gamepad; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -859,6 +901,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Ability2.started -= m_Wrapper.m_GamepadActionsCallbackInterface.OnAbility2;
                 @Ability2.performed -= m_Wrapper.m_GamepadActionsCallbackInterface.OnAbility2;
                 @Ability2.canceled -= m_Wrapper.m_GamepadActionsCallbackInterface.OnAbility2;
+                @Pause.started -= m_Wrapper.m_GamepadActionsCallbackInterface.OnPause;
+                @Pause.performed -= m_Wrapper.m_GamepadActionsCallbackInterface.OnPause;
+                @Pause.canceled -= m_Wrapper.m_GamepadActionsCallbackInterface.OnPause;
             }
             m_Wrapper.m_GamepadActionsCallbackInterface = instance;
             if (instance != null)
@@ -893,6 +938,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Ability2.started += instance.OnAbility2;
                 @Ability2.performed += instance.OnAbility2;
                 @Ability2.canceled += instance.OnAbility2;
+                @Pause.started += instance.OnPause;
+                @Pause.performed += instance.OnPause;
+                @Pause.canceled += instance.OnPause;
             }
         }
     }
@@ -911,6 +959,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_MouseAndKeyboard_Interact;
     private readonly InputAction m_MouseAndKeyboard_Ability1;
     private readonly InputAction m_MouseAndKeyboard_Ability2;
+    private readonly InputAction m_MouseAndKeyboard_Pause;
     public struct MouseAndKeyboardActions
     {
         private @PlayerControls m_Wrapper;
@@ -925,6 +974,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @Interact => m_Wrapper.m_MouseAndKeyboard_Interact;
         public InputAction @Ability1 => m_Wrapper.m_MouseAndKeyboard_Ability1;
         public InputAction @Ability2 => m_Wrapper.m_MouseAndKeyboard_Ability2;
+        public InputAction @Pause => m_Wrapper.m_MouseAndKeyboard_Pause;
         public InputActionMap Get() { return m_Wrapper.m_MouseAndKeyboard; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -964,6 +1014,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Ability2.started -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnAbility2;
                 @Ability2.performed -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnAbility2;
                 @Ability2.canceled -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnAbility2;
+                @Pause.started -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnPause;
+                @Pause.performed -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnPause;
+                @Pause.canceled -= m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface.OnPause;
             }
             m_Wrapper.m_MouseAndKeyboardActionsCallbackInterface = instance;
             if (instance != null)
@@ -998,6 +1051,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Ability2.started += instance.OnAbility2;
                 @Ability2.performed += instance.OnAbility2;
                 @Ability2.canceled += instance.OnAbility2;
+                @Pause.started += instance.OnPause;
+                @Pause.performed += instance.OnPause;
+                @Pause.canceled += instance.OnPause;
             }
         }
     }
@@ -1113,6 +1169,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnInteract(InputAction.CallbackContext context);
         void OnAbility1(InputAction.CallbackContext context);
         void OnAbility2(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
     }
     public interface IMouseAndKeyboardActions
     {
@@ -1126,6 +1183,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnInteract(InputAction.CallbackContext context);
         void OnAbility1(InputAction.CallbackContext context);
         void OnAbility2(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
     }
     public interface IPlayerActions
     {
