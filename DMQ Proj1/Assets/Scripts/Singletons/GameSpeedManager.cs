@@ -59,6 +59,23 @@ public class GameSpeedManager : Singleton<GameSpeedManager>
         return null;
     }
 
+    /// <summary>
+    /// removes dangling refs from RecordList
+    /// </summary>
+    private void ValidateRecordList()
+    {
+        List<TimePriority> removeList = new List<TimePriority>();
+        foreach(var r in List_TimePriorities)
+        {
+            if (r.Instance == null) removeList.Add(r);
+        }
+
+        foreach(var r in removeList)
+        {
+            List_TimePriorities.Remove(r);
+        }
+    }
+
     #endregion
 
     #region Public Methods
