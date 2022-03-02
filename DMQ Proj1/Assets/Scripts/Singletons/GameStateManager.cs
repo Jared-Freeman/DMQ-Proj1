@@ -188,6 +188,7 @@ namespace GameState
                 case GameState.Gameplay:
                     break;
                 case GameState.Paused:
+                    Singleton<GameSpeedManager>.Instance.RelinquishTimeControlToken(this);
                     break;
 
                 default:
@@ -202,6 +203,10 @@ namespace GameState
                 case GameState.Gameplay:
                     break;
                 case GameState.Paused:
+                    if (Singleton<GameSpeedManager>.Instance.AcquireTimeControlToken(this))
+                    {
+                        Singleton<GameSpeedManager>.Instance.ModifyTimeScale(this, 0f);
+                    }
                     break;
 
                 default:
