@@ -15,11 +15,13 @@ MonoBehaviour:
   Base:
     DrawDebugGizmos: 0
     InterceptCurrentTarget: 0
+    AttackWhileMoving: 0
+    StationaryVelocityThreshold: 0.05
     AttackRange: 1.25
     MovementSpeed: 3
-    StopSlideDistance: 0.5
+    StopSlideDistance: 0
     AggroRadius: 20
-    MaxFacingAngle: 60
+    MaxFacingAngle: 120
     TurningRate: 240
     GrowCurve:
       serializedVersion: 2
@@ -49,10 +51,10 @@ MonoBehaviour:
     _TargetPriority: 1
   Shambler_Options:
     AttackAbility: {fileID: 11400000, guid: 0cf78c9f260f1b44c8e822ce097c3efc, type: 2}
-    AttackPrepareDistance: 2.25
-    AttackLoseDistance: 3.5
-    AttackPause: 0.5
-    GrowDuration: 0.5
+    AttackPrepareDistance: 3.5
+    AttackLoseDistance: 5
+    AttackPause: 1
+    GrowDuration: 1
     GrowCurve:
       serializedVersion: 2
       m_Curve:

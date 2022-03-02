@@ -18,6 +18,7 @@ namespace ActorSystem.AI
 
         public AS_Ability_Instance_Base Ability { get; protected set; }
         public State CurrentState { get; protected set; }
+        protected Rigidbody RB { get; set; }
 
         #region Properties
 
@@ -50,6 +51,9 @@ namespace ActorSystem.AI
 
             Ability = S_Preset.Shambler_Options.AttackAbility.GetInstance(gameObject);
             if(Ability == null) { Debug.LogError("No Ability found on Preset!"); }
+
+            RB = GetComponent<Rigidbody>();
+            if(RB == null) { Debug.LogError("No Rigidbody found! Destroying"); Destroy(this); }
         }
 
         protected override void Start()
@@ -198,6 +202,12 @@ namespace ActorSystem.AI
                 ChangeState(State.Idle);
             }
 
+            //Velocity Exceeds tolerance (if Preset flag is enabled)
+            else if (!Preset.Base.AttackWhileMoving && RB.velocity.sqrMagnitude > Math.Pow(Preset.Base.StationaryVelocityThreshold, 2))
+            {
+                ChangeState(State.Chasing);
+            }
+
             //Target exceeds Attack Loss distance
             else if ((CurrentTarget.transform.position - transform.position).sqrMagnitude >= Mathf.Pow(S_Preset.Shambler_Options.AttackLoseDistance, 2) )
             {
@@ -212,7 +222,7 @@ namespace ActorSystem.AI
 
             else if(!IsFacingTarget)
             {
-
+                ChangeState(State.Chasing);
             }
 
             //If we've waited long enough, change state to Attacking. Ability must also be castable. Also must be facing target
@@ -261,11 +271,16 @@ namespace ActorSystem.AI
             var DefaultScale = transform.localScale;
 
             float StartTime = Time.time;
-            while (CurrentState == State.PrepAttack 
+            while (
+                CurrentState == State.PrepAttack 
                 && Time.time - StartTime < S_Preset.Shambler_Options.AttackPause
-                && IsFacingTarget)
+                && IsFacingTarget
+                && (Preset.Base.AttackWhileMoving || (RB.velocity.sqrMagnitude < Math.Pow(Preset.Base.StationaryVelocityThreshold, 2)))
+                )
             {
-                transform.localScale = DefaultScale * Preset.Base.GrowCurve.Evaluate((Time.time - StartTime) / S_Preset.Shambler_Options.AttackPause);
+                if (FLAG_Debug) Debug.Log("THRESH: " + (Preset.Base.AttackWhileMoving || (RB.velocity.sqrMagnitude < Math.Pow(Preset.Base.StationaryVelocityThreshold, 2))));
+
+                transform.localScale = DefaultScale * S_Preset.Shambler_Options.GrowCurve.Evaluate((Time.time - StartTime) / S_Preset.Shambler_Options.AttackPause);
                 yield return null;
             }
 

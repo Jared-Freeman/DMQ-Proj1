@@ -9,12 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f490a31b86dc6f44d8234f47aed5c8bf, type: 3}
-  m_Name: DM_BulwarkHeavyFlintlock1_1
+  m_Script: {fileID: 11500000, guid: 98e72267c7846c543b5b7010ea90813d, type: 3}
+  m_Name: AD_BulwarkHeavyFlintlockBasic
   m_EditorClassIdentifier: 
-  DamageAmount: 1
-  TargetFilters:
-    Enemy: 1
-    Ally: 0
-    Neutral: 0
-    Self: 0
+  Conditions:
+    _Conditions: []
+  DamageMessage: {fileID: 11400000, guid: 3b860ca4ed0228043aeb14354074aff6, type: 2}

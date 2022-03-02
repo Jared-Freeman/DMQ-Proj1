@@ -121,7 +121,7 @@ Transform:
   m_GameObject: {fileID: 4133825113689899084}
   m_LocalRotation: {x: 0.70710576, y: -0, z: -0, w: 0.7071079}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.4196116, y: 0.41387004, z: 0.4196116}
+  m_LocalScale: {x: 0.6887505, y: 0.4854058, z: 0.6887505}
   m_Children: []
   m_Father: {fileID: 6373691387816632735}
   m_RootOrder: 1
@@ -312,5 +312,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 083729aca9b56a843839ff0eee975386, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ActorOwner: {fileID: 0}
   _Data: {fileID: 11400000, guid: 8eaa0f074af3e0d48b59a424b167f2d5, type: 2}
+  Info:
+    StartTimestamp: 0
+    Duration: 0
+    CollisionEnters: 0
+    CollisionStayDuration: 0
+    CurrentMoveType: 0
+    InitialDirection: {x: 0, y: 0, z: 0}
+    InitialHorizontalDirection: {x: 0, y: 0}
+    LaunchDistance: 0
+    Direction: {x: 0, y: 0, z: 0}
+    _Target: {fileID: 0}
+  HSM_CurrentDirection: {x: 0, y: 0, z: 0}
