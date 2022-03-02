@@ -171,10 +171,43 @@ namespace GameState
         {
             OnGameStateEnd?.Invoke(this, new CSEventArgs.StateContext_EventArgs(new StateContext(CurrentGameState)));
 
+            GameStateEnd(CurrentGameState);
+
             CurrentGameState = s;
+
+            GameStateBegin(CurrentGameState);
 
             OnGameStateBegin?.Invoke(this, new CSEventArgs.StateContext_EventArgs(new StateContext(CurrentGameState)));
             OnGameStateChanged?.Invoke(this, new CSEventArgs.StateContext_EventArgs(new StateContext(CurrentGameState)));
+        }
+
+        private void GameStateEnd(GameState s)
+        {
+            switch (s)
+            {
+                case GameState.Gameplay:
+                    break;
+                case GameState.Paused:
+                    break;
+
+                default:
+                    Debug.LogError("Unrecognized GameState? Does impl exist?");
+                    break;
+            }
+        }
+        private void GameStateBegin(GameState s)
+        {
+            switch (s)
+            {
+                case GameState.Gameplay:
+                    break;
+                case GameState.Paused:
+                    break;
+
+                default:
+                    Debug.LogError("Unrecognized GameState? Does impl exist?");
+                    break;
+            }
         }
     }
 
