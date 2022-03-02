@@ -32,7 +32,7 @@ public class ProjectilePreset : ScriptableObject
             c.AttackData._InitialDirection = Projectile.transform.forward;
             c.AttackData._InitialPosition = Projectile.gameObject.transform.position;
 
-            if(collision != null)
+            if(collision != null && collision.contactCount > 0)
             {
                 //computations
                 var reflect2 = Vector2.Reflect(new Vector2(Projectile.transform.forward.x, Projectile.transform.forward.z)
