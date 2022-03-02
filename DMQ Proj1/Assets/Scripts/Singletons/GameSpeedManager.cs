@@ -113,8 +113,8 @@ public class GameSpeedManager : Singleton<GameSpeedManager>
             curPriority = curR.Priority;
         }
 
-        //if new priority is greater than current, token is acquired
-        if (newPriority > curPriority)
+        //if new priority is smaller (aka higher) than current, token is acquired
+        if (newPriority < curPriority)
         {
             RelinquishTimeControlToken(CurrentTokenHolder);
             CurrentTokenHolder = invokingComponent;
