@@ -33,10 +33,22 @@ namespace EffectTree
             {
                 List_TargetsHit.Add(col.gameObject);
 
-                ctx.AttackData._TargetGameObject = col.gameObject; //We found an enemy actor so set it as the target.
+                EffectContext newContext = new EffectContext(ctx);
+
+                newContext.AttackData._TargetGameObject = col.gameObject; //We found an enemy actor so set it as the target.
 
                 foreach (Effect_Base effect in Preset.EffectList)
-                    effect.Invoke(ref ctx);
+                    effect.Invoke(ref newContext);
+            }
+            else if(a == null)
+            {
+                List_TargetsHit.Add(col.gameObject);
+
+                EffectContext newContext = new EffectContext(ctx);
+                newContext.AttackData._TargetGameObject = col.gameObject; //We found an enemy actor so set it as the target.
+
+                foreach (Effect_Base effect in Preset.EffectList)
+                    effect.Invoke(ref newContext);
             }
         }
 

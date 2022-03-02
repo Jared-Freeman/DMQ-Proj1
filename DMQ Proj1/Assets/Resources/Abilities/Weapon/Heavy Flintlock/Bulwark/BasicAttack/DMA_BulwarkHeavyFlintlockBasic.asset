@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Conditions:
     _Conditions: []
+  AttachAttackToCaster: 1
   TargetFilters:
     Enemy: 1
     Ally: 0
@@ -23,4 +24,5 @@ MonoBehaviour:
     type: 3}
   EffectList:
   - {fileID: 11400000, guid: 15530197c63decf43b6062720e2bef8e, type: 2}
-  EffectDuration: 0.4
+  - {fileID: 11400000, guid: b6a1510f93d329548933da9101a8eb40, type: 2}
+  EffectDuration: 0.2
