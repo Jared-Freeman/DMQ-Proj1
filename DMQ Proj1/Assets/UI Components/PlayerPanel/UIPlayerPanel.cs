@@ -8,7 +8,8 @@ using TMPro;
 
 public class UIPlayerPanel : MonoBehaviour
 {
-    protected SpriteRenderer _Renderer;
+    protected CanvasRenderer _Renderer;
+
 
     public GameObject activePanel;
     public GameObject inactivePanel;
@@ -25,17 +26,16 @@ public class UIPlayerPanel : MonoBehaviour
     public TMP_Text characterClassText;
     public float time = 10.0f;
 
-    void awake()
+    void Awake()
     {
-        _Renderer = GetComponent<SpriteRenderer>();
-        if (_Renderer == null) Destroy(this);
+        _Renderer = GetComponent<CanvasRenderer>();
+        //if (_Renderer == null) Destroy(this);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        characterClassText = this.GetComponentInChildren<TMP_Text>();
-        setCharacterClassName("MINE");
+
     }
 
     // Update is called once per frame
@@ -43,7 +43,7 @@ public class UIPlayerPanel : MonoBehaviour
     {
         for(int i = 0; i < 2; i++)
         {
-            _Renderer.SetPropertyBlock(matProperties[i]);
+            //_Renderer?.SetPropertyBlock(matProperties[i]);
         }
     }
 
