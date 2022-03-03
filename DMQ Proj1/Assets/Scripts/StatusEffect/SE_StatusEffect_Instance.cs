@@ -17,6 +17,20 @@ namespace CSEventArgs
             _Actor = attached_actor;
         }
     }
+
+    public class StatusEffectStackAdded_EventArgs : System.EventArgs
+    {
+        public ActorSystem.StatusEffect.SE_StatusEffect_Instance _StatusEffect;
+        public Actor _Actor;
+        public int _StacksAdded;
+
+        public StatusEffectStackAdded_EventArgs(ActorSystem.StatusEffect.SE_StatusEffect_Instance effect, Actor attached_actor, int count)
+        {
+            _StatusEffect = effect;
+            _Actor = attached_actor;
+            _StacksAdded = count;
+        }
+    }
 }
 
 namespace ActorSystem.StatusEffect
@@ -38,7 +52,7 @@ namespace ActorSystem.StatusEffect
         #region Properties
 
         public SE_StatusEffect_Base.SE_EffectSettings FX { get { return Preset.Settings.Effects; } }
-        public float RemainingDuration { get { return Info.RemainingDuration; } }
+        public float RemainingDuration { get { return Info.RemainingDuration; } set { Info.RemainingDuration = value; } }
         public Actor AttachedActor { get { return Info.AttachedActor; } }
 
         #endregion
@@ -51,6 +65,8 @@ namespace ActorSystem.StatusEffect
             public Actor AttachedActor;
 
             public float RemainingDuration;
+
+            public int CurrentStacks;
         }
 
         #endregion
@@ -63,6 +79,8 @@ namespace ActorSystem.StatusEffect
         public static event System.EventHandler<CSEventArgs.StatusEffect_Actor_EventArgs> OnStatusEffectDestroy;
         public event System.EventHandler<CSEventArgs.StatusEffect_Actor_EventArgs> OnStatusEffectDestroy_Local;
 
+        public static event System.EventHandler<CSEventArgs.StatusEffectStackAdded_EventArgs> OnStatusEffectStacksAdded;
+
         #endregion
 
         #region Initialization
@@ -73,6 +91,7 @@ namespace ActorSystem.StatusEffect
         protected void Awake()
         {
             Info.AttachedActor = gameObject.GetComponent<Actor>();
+            Info.CurrentStacks = 0;
         }
 
         protected void Start()
@@ -140,6 +159,29 @@ namespace ActorSystem.StatusEffect
 
             OnStatusEffectDestroy?.Invoke(this, new CSEventArgs.StatusEffect_Actor_EventArgs(this, AttachedActor));
             OnStatusEffectDestroy_Local?.Invoke(this, new CSEventArgs.StatusEffect_Actor_EventArgs(this, AttachedActor));
+        }
+
+        /// <summary>
+        /// Adds <paramref name="count"/> stacks to this status effect instance.
+        /// </summary>
+        /// <param name="count">number of stacks to add</param>
+        /// <remarks>
+        /// Will be clamped by Preset's max stacks value.
+        /// </remarks>
+        public void AddStacks(int count)
+        {
+            UpdateEffectContext();
+
+            int stacksAdded = 0;
+            while(Info.CurrentStacks < Preset.Settings.Defaults.MaxStacks && stacksAdded < count)
+            {
+                FX.Effect_StackAdded?.Invoke(ref _InstanceContext);
+
+                Info.CurrentStacks++;
+                stacksAdded++;
+            }
+
+            OnStatusEffectStacksAdded?.Invoke(this, new CSEventArgs.StatusEffectStackAdded_EventArgs(this, AttachedActor, stacksAdded));
         }
     }
 }

@@ -202,22 +202,24 @@ public class ActorStats : MonoBehaviour
     /// <summary>
     /// Appends a stat data modifier into this ActorStat's modifier buffer
     /// </summary>
-    /// <param name="append_data"></param>
     public void AddStatusEffect(SE_StatusEffect_Instance Effect)
     {
-        _ListStatusEffects.Add(Effect);
+        if (!_ListStatusEffects.Contains(Effect))
+        {
+            _ListStatusEffects.Add(Effect);
 
-        Effect.OnStatusEffectDestroy_Local += Effect_OnStatusEffectDestroy_Local;
+            Effect.OnStatusEffectDestroy_Local += Effect_OnStatusEffectDestroy_Local;
 
-        var append_data = Effect.Preset.Settings.StatsModifiers;
+            var append_data = Effect.Preset.Settings.StatsModifiers;
 
-        HP.Modifier.Add += append_data.HP.Modifier.Add;
-        Energy.Modifier.Add += append_data.Energy.Modifier.Add;
-        MoveSpeed.Modifier.Add += append_data.MoveSpeed.Modifier.Add;
+            HP.Modifier.Add += append_data.HP.Modifier.Add;
+            Energy.Modifier.Add += append_data.Energy.Modifier.Add;
+            MoveSpeed.Modifier.Add += append_data.MoveSpeed.Modifier.Add;
 
-        HP.Modifier.Multiply *= append_data.HP.Modifier.Multiply;
-        Energy.Modifier.Multiply *= append_data.Energy.Modifier.Multiply;
-        MoveSpeed.Modifier.Multiply *= append_data.MoveSpeed.Modifier.Multiply;
+            HP.Modifier.Multiply *= append_data.HP.Modifier.Multiply;
+            Energy.Modifier.Multiply *= append_data.Energy.Modifier.Multiply;
+            MoveSpeed.Modifier.Multiply *= append_data.MoveSpeed.Modifier.Multiply;
+        }
     }
 
     /// <summary>

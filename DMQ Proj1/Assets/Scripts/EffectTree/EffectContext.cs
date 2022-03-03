@@ -94,6 +94,15 @@ namespace EffectTree
         }
 
         /// <summary>
+        /// Options for obtaining a GameObject from the Context
+        /// </summary>
+        public enum TargetOptions
+        {
+            Caster, _InitialGameObject, _TargetGameObject
+        }
+
+
+        /// <summary>
         /// Context supplied from Attack message pattern.
         /// </summary>
         /// <remarks>See <see cref="Utils"/> namespace for def</remarks>
@@ -252,8 +261,38 @@ namespace EffectTree
                         return true;
                     }
                     return false;
+
+                default:
+                    Debug.LogError("Context did not interpret the PositionOption! Does an impl exist?");
+                    break;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Retrieves gameobject from the context.
+        /// </summary>
+        /// <param name="option"></param>
+        /// <returns>The GameObject specified or null if none exists.</returns>
+        public GameObject RetrieveGameObject(TargetOptions option)
+        {
+            switch(option)
+            {
+                case TargetOptions.Caster:
+                    return AttackData._Owner.gameObject;
+
+                case TargetOptions._InitialGameObject:
+                    return AttackData._InitialGameObject;
+
+                case TargetOptions._TargetGameObject:
+                    return AttackData._TargetGameObject;
+
+                default:
+                    Debug.LogError("Context did not interpret the TargetOption! Does an impl exist?");
+                    break;
+            }
+
+            return null;
         }
 
         #endregion
