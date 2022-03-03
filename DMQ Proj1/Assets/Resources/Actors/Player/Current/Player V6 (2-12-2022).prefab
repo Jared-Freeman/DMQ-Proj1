@@ -2369,7 +2369,7 @@ MonoBehaviour:
   _Team: {fileID: 11400000, guid: 414bc1b9b54c2a143a4a2a46d2db0034, type: 2}
   Stats: {fileID: 0}
   Actions: []
-  Class: {fileID: 11400000, guid: 75581b3490532144f86873caad3557b2, type: 2}
+  Class: {fileID: 11400000, guid: a13f55a44ed79f4488b73600a23246bf, type: 2}
 --- !u!114 &2730663038165717485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2477,7 +2477,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4446c7f94fbe37145bb024eda589e1fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FLAG_Debug: 1
+  FLAG_Debug: 0
   AttackContextInitialPosition: {fileID: 2730663037913604386}
   AttackContextInitialPositionForwardOffset: 2
 --- !u!114 &2139120299304540019
@@ -2494,11 +2494,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 2730663038165717473}
   actor: {fileID: 2730663038165717474}
-  weapons: {fileID: 11400000, guid: bb378d36a7f549a4885fc7d2490900b5, type: 2}
+  weapons:
+  - {fileID: 4456945836124224068, guid: 3c69fa93618176a43962f23c5526778b, type: 3}
+  - {fileID: 1092708326585483430, guid: ee50c49e39dc0e74d918ab0f5eed138c, type: 3}
   handpositions:
   - {fileID: 2730663037300967914}
   - {fileID: 2730663039089730603}
-  weapon: {fileID: 100050, guid: 9d8cbe7d7c34ac442baea6cd0ea39cd0, type: 3}
 --- !u!114 &6081834268718954789
 MonoBehaviour:
   m_ObjectHideFlags: 0

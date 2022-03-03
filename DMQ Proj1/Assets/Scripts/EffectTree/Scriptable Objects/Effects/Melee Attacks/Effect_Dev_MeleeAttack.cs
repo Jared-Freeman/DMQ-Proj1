@@ -23,8 +23,13 @@ namespace EffectTree
     {
         public static event System.EventHandler<MeleeAttackEventArgs> OnMeleeAttack;
 
+        public bool AttachAttackToCaster = true;
+
         public TargetFilterOptions TargetFilters;
 
+        /// <summary>
+        /// Reference GameObject prefab containing a MeleeEvent class, and a Trigger collider.
+        /// </summary>
         public GameObject meleeAttackEventObject;
         public List<Effect_Base> EffectList;
 
@@ -54,7 +59,10 @@ namespace EffectTree
 
                 Vector3 spawnPos = position + direction * distance;
 
+
                 GameObject w = Instantiate(meleeAttackEventObject,spawnPos,Quaternion.identity);
+
+                if (AttachAttackToCaster) w.transform.parent = ctx.AttackData._Owner.gameObject.transform;
 
                 MeleeEvent m = w.GetComponent<MeleeEvent>();
 

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 442c1fa517ad5fa4a97ff6c1b360b4f9, type: 3}
+  m_Name: WEP_Halberd
+  m_EditorClassIdentifier: 
+  BaseOptions:
+    PickupRadius: 2
+    PickupStyle: 0
+    CapacityCost: 1
+  BaseWeaponOptions:
+    EquipTime: 0
+    DequipTime: 0
+    CooldownPreset:
+      _Cooldown: 1
+    Ability_Attack: {fileID: 0}
+    Ability_Ability1: {fileID: 0}
+    Ability_Ability2: {fileID: 0}
+    AnimatorIndex: 0
+  ListAbilitiesPerClass: []
+  DefaultBasicAttack: {fileID: 11400000, guid: 1975ebaecaa06834683a06f611e51845, type: 2}
+  DefaultAbility_1: {fileID: 11400000, guid: 1975ebaecaa06834683a06f611e51845, type: 2}
+  DefaultAbility_2: {fileID: 11400000, guid: 1975ebaecaa06834683a06f611e51845, type: 2}
