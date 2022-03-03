@@ -155,6 +155,9 @@ namespace ActorSystem.StatusEffect
 
         protected void OnDestroy()
         {
+            Debug.LogWarning("Destroying Insstance");
+
+
             FX.Effect_Destroyed?.Invoke(ref _InstanceContext);
 
             OnStatusEffectDestroy?.Invoke(this, new CSEventArgs.StatusEffect_Actor_EventArgs(this, AttachedActor));
@@ -170,8 +173,6 @@ namespace ActorSystem.StatusEffect
         /// </remarks>
         public void AddStacks(int count)
         {
-            UpdateEffectContext();
-
             int stacksAdded = 0;
             while(Info.CurrentStacks < Preset.Settings.Defaults.MaxStacks && stacksAdded < count)
             {

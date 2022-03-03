@@ -53,7 +53,7 @@ public class ActorStats : MonoBehaviour
 
     public List<SE_StatusEffect_Base> InitialStatusEffects = new List<SE_StatusEffect_Base>();
 
-    protected List<SE_StatusEffect_Instance> _ListStatusEffects = new List<SE_StatusEffect_Instance>();
+    [SerializeField] protected List<SE_StatusEffect_Instance> _ListStatusEffects = new List<SE_StatusEffect_Instance>();
     public IReadOnlyCollection<SE_StatusEffect_Instance> StatusEffects
     {
         get
@@ -123,7 +123,7 @@ public class ActorStats : MonoBehaviour
     }
     public float MoveSpeedCurrent
     {
-        get { return MoveSpeed.Value; }
+        get { return MoveSpeed.Value * MoveSpeed.Modifier.Multiply + MoveSpeed.Modifier.Add; }
         protected set { MoveSpeed.Value = value; }
     }
 
@@ -266,8 +266,9 @@ public class ActorStats : MonoBehaviour
 
     private void Effect_OnStatusEffectDestroy_Local(object sender, CSEventArgs.StatusEffect_Actor_EventArgs e)
     {
-        if(e._Actor == this)
+        if (actor == e._Actor)
         {
+            if (FLAG_Debug) Debug.Log("Removing SFX: " + e._StatusEffect.name);
             RemoveStatusMutation(e._StatusEffect);
         }
 
@@ -280,7 +281,7 @@ public class ActorStats : MonoBehaviour
     /// </summary>
     /// <param name="append_data"></param>
     protected void RemoveStatusMutation(SE_StatusEffect_Instance Effect)
-    {
+    {        
         _ListStatusEffects.Remove(Effect);
 
         var append_data = Effect.Preset.Settings.StatsModifiers;

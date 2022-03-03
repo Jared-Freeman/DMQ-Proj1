@@ -30,10 +30,10 @@ namespace ActorSystem.StatusEffect
         [System.Serializable]
         public class SE_Preset_Settings
         {
-            public SE_Defaults Defaults;
+            public SE_Defaults Defaults = new SE_Defaults();
             public SE_Flags Flags;
             public SE_EffectSettings Effects;
-            public ActorStatsData StatsModifiers;
+            public ActorStatsData StatsModifiers = new ActorStatsData();
         }
 
         [System.Serializable]
@@ -43,12 +43,12 @@ namespace ActorSystem.StatusEffect
         }
 
         [System.Serializable]
-        public struct SE_Defaults
+        public class SE_Defaults
         {
             [Min(0f)]
-            public float Duration;
+            public float Duration = 1;
             [Min(0)]
-            public int MaxStacks;
+            public int MaxStacks = 1;
         }
 
 
