@@ -8,7 +8,8 @@ using TMPro;
 
 public class UIPlayerPanel : MonoBehaviour
 {
-    protected CanvasRenderer _Renderer;
+    public List<SpriteRenderer> ListRenderers = new List<SpriteRenderer>();
+    public CanvasRenderer _Renderer;
 
 
     public GameObject activePanel;
@@ -28,6 +29,12 @@ public class UIPlayerPanel : MonoBehaviour
 
     void Awake()
     {
+        var r = GetComponentsInChildren<SpriteRenderer>();
+        foreach(var r2 in r)
+        {
+            ListRenderers.Add(r2);
+        }
+
         _Renderer = GetComponent<CanvasRenderer>();
         //if (_Renderer == null) Destroy(this);
     }

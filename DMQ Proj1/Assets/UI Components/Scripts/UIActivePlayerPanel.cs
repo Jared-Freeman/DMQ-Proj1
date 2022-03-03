@@ -22,10 +22,11 @@ public class UIActivePlayerPanel : MonoBehaviour
     #endregion
     // Containers such as structs, or maybe enum declarations
     #region Helpers 
-    public struct UIPlayerInfo
+    public class UIPlayerInfo
     {
         public Actor_Player _Player;
         public Inventory_Player _Inventory;
+        public int EquipedWeaponIndex = 0;
 
         public UIPlayerInfo(GameObject p)
         {
@@ -47,12 +48,11 @@ public class UIActivePlayerPanel : MonoBehaviour
 
     #region Event Subscriptions
     #endregion
-    #region structs
 
-    #endregion
     public List<UIPlayerPanel> ListPlayerPanels = new List<UIPlayerPanel>();
     public List<UIPlayerInfo> Listplayers = new List<UIPlayerInfo>();
     private int playerIndex;
+    private int frames = 0;
     private Canvas canvas;
 
     private void Awake()
@@ -86,7 +86,65 @@ public class UIActivePlayerPanel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        ///<summary>
+        ///Updates every 10 frames
+        /// </summary>
+        frames++;
+        if(frames % 10 == 0)
+        {
+            for(int i = 0; i < Listplayers.Count && i < ListPlayerPanels.Count; i++)
+            {
+                ///<summary>
+                ///Sets character class text
+                /// </summary>
+                ListPlayerPanels[i].setCharacterClassName(Listplayers[i]._Player.Class.ClassName);
+
+                ///<summary>
+                ///Swaps active weapon icon
+                /// </summary>
+                //if(Listplayers[i].EquipedWeaponIndex != Listplayers[i]._Inventory.)
+
+                ///<summary>
+                ///Sets weapon slot one
+                /// </summary>
+                //function here
+                
+                ///<summary>
+                ///Updates weapon one cool downs
+                /// </summary>
+                //function here
+
+                ///<summary>
+                ///Sets weapon slot two
+                /// </summary>
+                //function here
+
+                ///<summary>
+                ///Updates weapon two cool downs
+                /// </summary>
+                //function here
+
+                ///<summary>
+                ///Set item slot one
+                /// </summary>
+                //function here
+
+                ///<summary>
+                ///Update item one cool down
+                /// </summary>
+                //function here
+
+                ///<summary>
+                ///Set item slot two
+                /// </summary>
+                //function here
+
+                ///<summary>
+                ///Update item two cool down
+                /// </summary>
+                //function here
+            }
+        }
     }
 
     void OnDestroy()
