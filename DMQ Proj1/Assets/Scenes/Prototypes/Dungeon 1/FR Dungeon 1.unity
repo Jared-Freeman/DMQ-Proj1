@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -2168,6 +2168,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1819425110}
     m_Modifications:
+    - target: {fileID: 478168198935952622, guid: d0693b7aacf1f9e4c81a10d305e24b58,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 478168200565674933, guid: d0693b7aacf1f9e4c81a10d305e24b58,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1553836779553066010, guid: d0693b7aacf1f9e4c81a10d305e24b58,
         type: 3}
       propertyPath: playerPanel.Array.size
@@ -2177,6 +2187,26 @@ PrefabInstance:
         type: 3}
       propertyPath: playerPanel.Array.data[0]
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3004922483658569614, guid: d0693b7aacf1f9e4c81a10d305e24b58,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3004922485299763413, guid: d0693b7aacf1f9e4c81a10d305e24b58,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4851776393446873044, guid: d0693b7aacf1f9e4c81a10d305e24b58,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4851776395055675535, guid: d0693b7aacf1f9e4c81a10d305e24b58,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4898329602023552498, guid: d0693b7aacf1f9e4c81a10d305e24b58,
         type: 3}
@@ -2501,6 +2531,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8678358206048850686, guid: d0693b7aacf1f9e4c81a10d305e24b58,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d0693b7aacf1f9e4c81a10d305e24b58, type: 3}
