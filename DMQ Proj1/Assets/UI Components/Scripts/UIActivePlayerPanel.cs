@@ -14,7 +14,7 @@ public class UIActivePlayerPanel : MonoBehaviour
 
     #region Members
     //fields go here
-
+    private int currentPlayerCount = 0;
 
 
     //properties are fancy Fields
@@ -79,7 +79,9 @@ public class UIActivePlayerPanel : MonoBehaviour
         {
             Listplayers.Add(new UIPlayerInfo(p));
         }
-        activatePlayerPanel();
+        currentPlayerCount++;
+        activateNewPlayerPanel(currentPlayerCount);
+        ListPlayerPanels[0].swapWeapon();
         Debug.Log("Event received");
     }
 
@@ -102,7 +104,12 @@ public class UIActivePlayerPanel : MonoBehaviour
                 ///<summary>
                 ///Swaps active weapon icon
                 /// </summary>
-                //if(Listplayers[i].EquipedWeaponIndex != Listplayers[i]._Inventory.)
+                if(Listplayers[i]._Inventory.GetInfo().EquippedWeaponIndex > -1 
+                    && Listplayers[i].EquipedWeaponIndex != Listplayers[i]._Inventory.GetInfo().EquippedWeaponIndex)
+                {
+                    ListPlayerPanels[i].setActiveWeaponIndex(Listplayers[i]._Inventory.GetInfo().EquippedWeaponIndex);
+                    ListPlayerPanels[i].swapWeapon();
+                }
 
                 ///<summary>
                 ///Sets weapon slot one
@@ -152,8 +159,8 @@ public class UIActivePlayerPanel : MonoBehaviour
         DEBUG_PlayerSpawner.OnPlayerAgentsInstantiated -= HandlePlayerAgentInstantiation;
     }
 
-    void activatePlayerPanel()
+    void activateNewPlayerPanel(int i)
     {
-
+        ListPlayerPanels[i].activePlayerPanel();
     }
 }

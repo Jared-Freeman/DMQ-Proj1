@@ -63,6 +63,10 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
     [SerializeField] protected List<Inventory_WeaponSlot> _WeaponSlots = new List<Inventory_WeaponSlot>();
 
     [SerializeField] protected PlayerInvInfo Info;
+    public PlayerInvInfo GetInfo()
+    {
+        return Info;
+    }
 
     [Tooltip("No reference here will use the Transform of THIS Gameobject")]
     [SerializeField] protected Transform _PickupTransform;

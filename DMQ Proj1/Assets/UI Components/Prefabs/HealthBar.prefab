@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7119146311594161817}
   - component: {fileID: 7119146311594161819}
   - component: {fileID: 7119146311594161818}
+  - component: {fileID: 6890679738857973603}
   m_Layer: 0
   m_Name: HealthBar
   m_TagString: Untagged
@@ -71,7 +72,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: bd12bdfdc28b25d4cb0faf7f0d970e91, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e1004cc4c09eb1f46b25b180b62c5c73, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -99,3 +100,16 @@ MonoBehaviour:
   curHealth: 200
   maxHealthTotal: 2000
   healthPercentage: 0.1
+--- !u!114 &6890679738857973603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7119146311594161816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44dda14869128604699ec51c766cc572, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _Stats: {fileID: 0}
