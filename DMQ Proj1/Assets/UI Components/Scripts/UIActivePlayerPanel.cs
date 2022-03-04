@@ -16,7 +16,6 @@ public class UIActivePlayerPanel : MonoBehaviour
     //fields go here
     private int currentPlayerCount = 0;
 
-
     //properties are fancy Fields
     #region Properties 
     #endregion
@@ -112,17 +111,19 @@ public class UIActivePlayerPanel : MonoBehaviour
                 }
 
                 ///<summary>
-                ///Sets weapon slot one
+                ///Sets UI weapon slots
                 /// </summary>
-                //function here
+                if(Listplayers[i]._Inventory.getWeaponSlots().Count != ListPlayerPanels[i].currentWeaponCount)
+                {
+                    ListPlayerPanels[i].currentWeaponCount = Listplayers[i]._Inventory.getWeaponSlots().Count;
+                    foreach(var j in Listplayers[i]._Inventory.getWeaponSlots())
+                    {
+                        //Get weapon info here
+                    }
+                }
                 
                 ///<summary>
                 ///Updates weapon one cool downs
-                /// </summary>
-                //function here
-
-                ///<summary>
-                ///Sets weapon slot two
                 /// </summary>
                 //function here
 

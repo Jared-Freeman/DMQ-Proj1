@@ -61,6 +61,8 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
     PlayerControls controls;
 
     [SerializeField] protected List<Inventory_WeaponSlot> _WeaponSlots = new List<Inventory_WeaponSlot>();
+    public List<Inventory_WeaponSlot> getWeaponSlots()
+        { return _WeaponSlots; }
 
     [SerializeField] protected PlayerInvInfo Info;
     public PlayerInvInfo GetInfo()
