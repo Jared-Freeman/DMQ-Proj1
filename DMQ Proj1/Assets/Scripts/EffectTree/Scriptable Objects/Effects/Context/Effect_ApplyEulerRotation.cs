@@ -18,6 +18,16 @@ namespace EffectTree
         [Header("Rotation about X, Y, and Z Axes")]
         public Vector3 EulerRotation;
 
+        public bool UseRandomRotation = false;
+        public RotRandomOptions RandomRotation;
+
+        [System.Serializable]
+        public class RotRandomOptions
+        {
+            public Vector3 Point1;
+            public Vector3 Point2;
+        }
+
         public override bool Invoke(ref EffectContext ctx)
         {
             if (base.Invoke(ref ctx))
@@ -25,7 +35,18 @@ namespace EffectTree
                 //COPY CTOR, refs are not passed along
                 EffectContext newContext = new EffectContext(ctx);
 
-                Quaternion rot = Quaternion.Euler(EulerRotation);
+                Quaternion rot;
+
+                if(UseRandomRotation)
+                {
+                    var randRotation = (RandomRotation.Point1 - RandomRotation.Point2) * Random.value;
+                    
+                    rot = Quaternion.Euler(randRotation);
+                }
+                else
+                {
+                    rot = Quaternion.Euler(EulerRotation);
+                }
 
                 //Update Attack Data
                 newContext.AttackData._InitialDirection = rot * newContext.AttackData._InitialDirection;

@@ -26,6 +26,7 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
     }
 
     public static event System.EventHandler<PlayerDataSessionEventArgs> OnPlayerActivated;
+    public static event System.EventHandler<PlayerDataSessionEventArgs> OnPlayerDeactivated;
 
     #region Members
 
@@ -225,6 +226,30 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
 
             OnPlayerActivated?.Invoke(this, new PlayerDataSessionEventArgs(r));
             return true;
+        }
+        return false;
+    }
+
+
+    /// <summary>
+    /// Deactivates specified player. 
+    /// </summary>
+    /// <param name="p">player to activate</param>
+    /// <returns>True if player was successfully deactivated.</returns>
+    /// <remarks>
+    /// Activated players are the inputs to be used during gameplay.
+    /// </remarks>
+    public bool DeactivatePlayer(PlayerInput p)
+    {
+        var r = GetRecord(p);
+        if (r != null)
+        {
+            if (_ActivatedPlayers.Contains(r))
+            {
+                _ActivatedPlayers.Remove(r);
+                OnPlayerDeactivated?.Invoke(this, new PlayerDataSessionEventArgs(r));
+                return true;
+            }
         }
         return false;
     }

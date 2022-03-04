@@ -72,8 +72,35 @@ namespace EffectTree
         }
         #endregion
 
-
         #region Members
+        
+        /// <summary>
+        /// Options for obtaining a direction vector from the Context
+        /// </summary>
+        public enum FacingOptions
+        {
+            None, _InitialDirection, _TargetDirection
+                , CollisionNormal, CollisionNormal2D
+                , CollisionReflected, CollisionReflected2D
+                , FromInitialToTarget
+        }
+        /// <summary>
+        /// Options for obtaining a position vector from the Context
+        /// </summary>
+        public enum PositionOptions
+        {
+            None, _InitialPosition, _TargetPosition
+                , CollisionImpactPoint
+        }
+
+        /// <summary>
+        /// Options for obtaining a GameObject from the Context
+        /// </summary>
+        public enum TargetOptions
+        {
+            Caster, _InitialGameObject, _TargetGameObject
+        }
+
 
         /// <summary>
         /// Context supplied from Attack message pattern.
@@ -134,6 +161,139 @@ namespace EffectTree
         }
 
         #endregion
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Utility for getting a direction from the context using an option interface
+        /// </summary>
+        /// <param name="option">Choice of direction</param>
+        /// <returns>The specified Direction or zero, if none exists</returns>
+        /// <remarks>
+        /// Results may not be normalized. Check for Vector3.zero to see if this operation failed.
+        /// </remarks>
+        public Vector3 RetrieveDirectionVector(FacingOptions option)
+        {
+            Vector3 zeroVector = Vector3.zero;
+
+            switch(option)
+            {
+                case FacingOptions.None:
+                    return zeroVector;
+
+                case FacingOptions._InitialDirection:
+                    return AttackData._InitialDirection;
+
+                case FacingOptions._TargetDirection:
+                    return AttackData._TargetDirection;
+                
+                case FacingOptions.CollisionNormal:
+                    return ContextData._NormalVector;
+                
+                case FacingOptions.CollisionNormal2D:
+                    return ContextData._NormalVector2D;
+                
+                case FacingOptions.CollisionReflected:
+                    return ContextData._ReflectionVector;
+               
+                case FacingOptions.CollisionReflected2D:
+                    return ContextData._ReflectionVector2D;
+                
+                case FacingOptions.FromInitialToTarget:
+                    if(AttackData._InitialGameObject != null && AttackData._TargetGameObject != null)
+                    {
+                        return (AttackData._InitialGameObject.transform.position - AttackData._TargetGameObject.transform.position).normalized;
+                    }
+                    return zeroVector;
+
+                default:
+                    Debug.LogError("No direction found for FacingOption specified! Does a direction exist?");
+                    return zeroVector;
+            }
+        }
+
+        /// <summary>
+        /// Returns the first valid direction vector in this Context.
+        /// </summary>
+        /// <returns>First valid direction, or Vector3.forward if none exists.</returns>
+        public Vector3 GetAnyDirectionVector()
+        {
+            Vector3 result;
+
+            //go through each FacingOption and try to retrieve a dir vector
+            foreach (FacingOptions f in System.Enum.GetValues(typeof(FacingOptions)))
+            {
+                result = RetrieveDirectionVector(f);
+
+                if (result.sqrMagnitude > 0) return result;
+            }
+
+            return Vector3.forward;
+        }
+
+        /// <summary>
+        /// Returns a position vector based on input options
+        /// </summary>
+        /// <param name="option">The type of position to retrieve</param>
+        /// <param name="result">Where to store the result, if one exists.</param>
+        /// <returns>True, if a position was retrieved.</returns>
+        public bool RetrievePosition(PositionOptions option, ref Vector3 result)
+        {
+            switch(option)
+            {
+                case PositionOptions.None:
+                    return true;
+
+                case PositionOptions._InitialPosition:
+                    result = AttackData._InitialPosition;
+                    return true;
+
+                case PositionOptions._TargetPosition:
+                    result = AttackData._TargetPosition;
+                    return true;
+
+                case PositionOptions.CollisionImpactPoint:
+                    if(ContextData._TriggeringCollision != null && ContextData._TriggeringCollision.contactCount > 0)
+                    {
+                        result = ContextData._TriggeringCollision.GetContact(0).point;
+                        return true;
+                    }
+                    return false;
+
+                default:
+                    Debug.LogError("Context did not interpret the PositionOption! Does an impl exist?");
+                    break;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Retrieves gameobject from the context.
+        /// </summary>
+        /// <param name="option"></param>
+        /// <returns>The GameObject specified or null if none exists.</returns>
+        public GameObject RetrieveGameObject(TargetOptions option)
+        {
+            switch(option)
+            {
+                case TargetOptions.Caster:
+                    return AttackData._Owner.gameObject;
+
+                case TargetOptions._InitialGameObject:
+                    return AttackData._InitialGameObject;
+
+                case TargetOptions._TargetGameObject:
+                    return AttackData._TargetGameObject;
+
+                default:
+                    Debug.LogError("Context did not interpret the TargetOption! Does an impl exist?");
+                    break;
+            }
+
+            return null;
+        }
 
         #endregion
     }

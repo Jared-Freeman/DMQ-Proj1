@@ -21,6 +21,9 @@ namespace GameState
     /// <summary>
     /// Context of a game state change. Add stuff here that needs to be communicated on a Game State change
     /// </summary>
+    /// <remarks>
+    /// This is a message packet sent in <see cref="CSEventArgs.StateContext_EventArgs"/> for GameState events.
+    /// </remarks>
     [System.Serializable]
     public class StateContext
     {
@@ -41,21 +44,190 @@ namespace GameState
     /// </summary>
     public class GameStateManager : Singleton<GameStateManager>
     {
+        #region Events
+
         public static event System.EventHandler<CSEventArgs.StateContext_EventArgs> OnGameStateChanged;
+        public static event System.EventHandler<CSEventArgs.StateContext_EventArgs> OnGameStateEnd;
+        public static event System.EventHandler<CSEventArgs.StateContext_EventArgs> OnGameStateBegin;
+
+        #endregion
+
+        #region Members
+
+        /// <summary>
+        /// For internal input parsing
+        /// </summary>
+        private PlayerControls _PlayerControls;
+        /// <summary>
+        /// The current Game State
+        /// </summary>
+        public GameState CurrentGameState
+        {
+            get;
+            private set;
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        private void PlayerDataManager_OnPlayerActivated(object sender, PlayerDataManager.PlayerDataSessionEventArgs e)
+        {
+            e.Data.Info._Input.onActionTriggered += _Input_onActionTriggered;
+        }
+        private void PlayerDataManager_OnPlayerDeactivated(object sender, PlayerDataManager.PlayerDataSessionEventArgs e)
+        {
+            e.Data.Info._Input.onActionTriggered -= _Input_onActionTriggered;
+        }
+
+        /// <summary>
+        /// Input event handler.
+        /// </summary>
+        /// <param name="ctx">The input context</param>
+        private void _Input_onActionTriggered(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
+        {
+            //Debug.Log("Player used: " + ctx.action.name);
+
+            ////MOUSE AND KEYBOARD EVENTS REGISTER //////////////////////////////////////
+            if (ctx.action.actionMap.name == _PlayerControls.MouseAndKeyboardScheme.name)
+            {
+                if (ctx.performed)
+                {
+                    //MnK
+                    if (ctx.action.name == _PlayerControls.MouseAndKeyboard.Pause.name)
+                    {
+                        InputPauseEvent();
+                    }
+                }
+
+                else if (ctx.canceled)
+                {
+                }
+            }
+
+
+            ////GAMEPAD EVENTS REGISTER //////////////////////////////////////
+            else if (ctx.action.actionMap.name == _PlayerControls.GamepadScheme.name)
+            {
+                if (ctx.performed)
+                {
+                    //Gamepad
+                    if (ctx.action.name == _PlayerControls.Gamepad.Pause.name)
+                    {
+                        InputPauseEvent();
+                    }
+                }
+
+                else if (ctx.canceled)
+                {
+                }
+            }
+        }
+
+        #endregion
+
+        #region Initialization
+
+        protected override void Awake()
+        {
+            base.Awake();
+            _PlayerControls = new PlayerControls();
+            CurrentGameState = GameState.Gameplay; //may need to change later...
+        }
+
+        void Start()
+        {
+            //Listen for pause events. Could filter based on P1 in event handler if need be
+            PlayerDataManager.OnPlayerActivated += PlayerDataManager_OnPlayerActivated;
+            PlayerDataManager.OnPlayerDeactivated += PlayerDataManager_OnPlayerDeactivated;
+        }
+
+
+        #endregion
+
+        #region Destroy
+
+        void OnDestroy()
+        {
+            PlayerDataManager.OnPlayerActivated -= PlayerDataManager_OnPlayerActivated;
+            PlayerDataManager.OnPlayerActivated -= PlayerDataManager_OnPlayerDeactivated;
+        }
+
+        #endregion
+
+        private void InputPauseEvent()
+        {
+            //Debug.LogWarning("pause event");
+
+            if(CurrentGameState == GameState.Paused)
+            {
+                InvokeResume();
+            }
+            else if(CurrentGameState == GameState.Gameplay)
+            {
+                InvokePause();
+            }
+        }
 
         public void InvokePause()
         {
-            StateContext c = new StateContext(GameState.Paused);
-            OnGameStateChanged?.Invoke(this, new CSEventArgs.StateContext_EventArgs(c));
-
+            ChangeGameState(GameState.Paused);
         }
 
         public void InvokeResume()
         {
-            StateContext c = new StateContext(GameState.Gameplay);
-            OnGameStateChanged?.Invoke(this, new CSEventArgs.StateContext_EventArgs(c));        
+            ChangeGameState(GameState.Gameplay);
         }
 
+        private void ChangeGameState(GameState s)
+        {
+            OnGameStateEnd?.Invoke(this, new CSEventArgs.StateContext_EventArgs(new StateContext(CurrentGameState)));
+
+            GameStateEnd(CurrentGameState);
+
+            CurrentGameState = s;
+
+            GameStateBegin(CurrentGameState);
+
+            OnGameStateBegin?.Invoke(this, new CSEventArgs.StateContext_EventArgs(new StateContext(CurrentGameState)));
+            OnGameStateChanged?.Invoke(this, new CSEventArgs.StateContext_EventArgs(new StateContext(CurrentGameState)));
+        }
+
+        private void GameStateEnd(GameState s)
+        {
+            switch (s)
+            {
+                case GameState.Gameplay:
+                    break;
+                case GameState.Paused:
+                    Singleton<GameSpeedManager>.Instance.RelinquishTimeControlToken(this);
+                    break;
+
+                default:
+                    Debug.LogError("Unrecognized GameState? Does impl exist?");
+                    break;
+            }
+        }
+        private void GameStateBegin(GameState s)
+        {
+            switch (s)
+            {
+                case GameState.Gameplay:
+                    break;
+                case GameState.Paused:
+                    Debug.LogWarning("pause begin");
+                    if (Singleton<GameSpeedManager>.Instance.AcquireTimeControlToken(this))
+                    {
+                        Debug.LogWarning("token acquired");
+                        Singleton<GameSpeedManager>.Instance.ModifyTimeScale(this, 0f);
+                    }
+                    break;
+
+                default:
+                    Debug.LogError("Unrecognized GameState? Does impl exist?");
+                    break;
+            }
+        }
     }
 
 }

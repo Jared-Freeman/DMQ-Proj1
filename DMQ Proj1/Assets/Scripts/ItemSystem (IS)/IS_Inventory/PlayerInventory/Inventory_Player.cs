@@ -4,17 +4,19 @@ using System.Collections.Generic;
 using CSEventArgs;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using ItemSystem.Weapons;
 
 public class InventoryEventArgs : System.EventArgs
 {
-    public InventoryEventArgs(GameObject o,int slot)
+    public InventoryEventArgs(GameObject o,int slot, Item_Weapon_ClassSpecific wep)
     {
         obj = o;
         weaponSlot = slot;
+        weapon = wep;
     }
     public GameObject obj;
     public int weaponSlot;
+    public Item_Weapon_ClassSpecific weapon;
 }
 
 
@@ -29,7 +31,8 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
     #region Members
 
     public ItemSystem.Weapons.Item_WeaponBase CurrentWeapon 
-    { get
+    { 
+        get
         {
             if (Info.EquippedWeaponIndex < 0 || Info.EquippedWeaponIndex >= _WeaponSlots.Count) //bounds
             {
@@ -40,6 +43,17 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
                 return _WeaponSlots[Info.EquippedWeaponIndex].Weapon;
             }
         } 
+    }
+    /// <summary>
+    /// More specific weapon property than CurrentWeapon
+    /// </summary>
+    public ItemSystem.Weapons.Item_Weapon_ClassSpecific CurrentClassWeapon
+    {
+        get
+        {
+            if (CurrentWeapon == null) return null;
+            return CurrentWeapon as ItemSystem.Weapons.Item_Weapon_ClassSpecific;
+        }
     }
 
     PlayerInputHost InputHost { get; set; }
@@ -247,7 +261,8 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
             //otherwise we equip
             Debug.Log("WEAPON EQUIPPED @index: " + index);
             Info.EquippedWeaponIndex = index;
-            OnWeaponChanged.Invoke(this, new InventoryEventArgs(this.gameObject,index));
+            Item_Weapon_ClassSpecific currentWeapon = (Item_Weapon_ClassSpecific)_WeaponSlots[index].Weapon;
+            OnWeaponChanged.Invoke(this, new InventoryEventArgs(this.gameObject,index,currentWeapon));
         }
         else
         {

@@ -15,6 +15,7 @@ namespace EffectTree
         float colliderExpireTimer = 0;
         bool triggerUp = true;
         SphereCollider shieldCollider;
+        public List<Effect_Base> EffectList;
         // Start is called before the first frame update
         void Start()
         {
@@ -37,30 +38,25 @@ namespace EffectTree
             }
         }
         
-        private void OnTriggerEnter(Collider other)
+        private void OnTriggerEnter(Collider col)
         {
-            //If other actors are within the radius when the shield is planted
-            ActorStats otherStats;
-            if (otherStats = other.gameObject.GetComponent<ActorStats>())
+            if (col.gameObject.GetComponent<Actor>()) //Currently melees only register on actors. Might want to change this to hit objects.
             {
-                Actor_DamageMessage msg = new Actor_DamageMessage();
-                msg._DamageInfo = damageMessagePreset;
-                if (ctx.AttackData._Owner != null) msg._Caster = ctx.AttackData._Owner.gameObject;
-                if (ctx.AttackData._InitialGameObject != null) msg._DamageSource = ctx.AttackData._InitialGameObject;
-                if (ctx.AttackData._Team != null) msg._Team = ctx.AttackData._Team;
-                otherStats.ApplyDamage(msg);
-
-                //Also need to apply knockback
-                Actor otherActor = other.gameObject.GetComponent<Actor>();
-                if(otherActor)
+                Team friendlyTeam = ctx.AttackData._Team;
+                Actor otherActor = col.gameObject.GetComponent<Actor>();
+                Debug.Log("FriendlyTeam: " + friendlyTeam);
+                if (otherActor._Team != friendlyTeam)
                 {
-                    Team otherTeam = otherActor._Team;
-                    Rigidbody rb = other.gameObject.GetComponent<Rigidbody>();
-                    if (rb && otherTeam != ctx.AttackData._Team)
-                    {
-                        rb.AddForce(-rb.transform.forward * knockbackForce); //Backwards force?
-                    }
+                    ctx.AttackData._TargetGameObject = col.gameObject; //We found an enemy actor so set it as the target.
+                    foreach (Effect_Base effect in EffectList)
+                        effect.Invoke(ref ctx);
                 }
+            }
+            else //We hit a cube or something
+            {
+                ctx.AttackData._TargetGameObject = col.gameObject;
+                foreach (Effect_Base effect in EffectList)
+                    effect.Invoke(ref ctx);
             }
         }
         private void OnCollisionEnter(Collision col)

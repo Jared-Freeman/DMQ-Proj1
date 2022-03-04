@@ -7,9 +7,9 @@ public class AnimatorProxy : MonoBehaviour
 {
     public Animator animator;
     public Actor actor;
-    public AllPossibleWeapons weapons;
+    public GameObject[] weapons;
     public Transform[] handpositions = new Transform[2];
-    public GameObject weapon;
+    public GameObject equippedWeapon;
 
     void Awake()
     {
@@ -70,13 +70,16 @@ public class AnimatorProxy : MonoBehaviour
     {
         GameObject g = e.obj;
         Actor a = g.GetComponent<Actor>();
-        int i = e.weaponSlot;
         if (a == actor)
         {
+            if(equippedWeapon)
+                Destroy(equippedWeapon);
+            int i = e.weaponSlot;
+            int animIndex = e.weapon.BaseWeaponPreset.BaseWeaponOptions.AnimatorIndex;
             animator.SetTrigger("WeaponChangeTrigger");
-            animator.SetInteger("Weapon", i);
-            GameObject w = Instantiate(weapons.weaponList[i].model[i], handpositions[i].position, handpositions[i].rotation);
-            w.transform.parent = handpositions[i];
+            animator.SetInteger("Weapon", animIndex);
+            equippedWeapon = Instantiate(weapons[animIndex], handpositions[0].position, handpositions[0].rotation);
+            equippedWeapon.transform.parent = handpositions[0]; //For now, all weapons go in right hand.
         }
     }
 

@@ -22,6 +22,15 @@ namespace ActorSystem.AI
             /// </summary>
             public bool InterceptCurrentTarget = true;
 
+            /// <summary>
+            /// Can this AI invoke attacks while moving?
+            /// </summary>
+            public bool AttackWhileMoving = false;
+            /// <summary>
+            /// Velocity Tolerance that counts as stationary
+            /// </summary>
+            public float StationaryVelocityThreshold = .05f;
+
             [Min(0f)]
             public float AttackRange = 1.25f;
 

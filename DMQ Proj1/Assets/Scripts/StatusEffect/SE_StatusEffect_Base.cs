@@ -16,22 +16,24 @@ namespace ActorSystem.StatusEffect
     {
         #region Members
 
+        public enum DurationApplicationBehavior { ExtendDuration, ResetDuration, UseHighestDuration }
+
         public string Name;
         [Multiline] public string Description;
         public Sprite Icon;
 
-        public SE_Preset_Settings Settings;
+        public SE_Preset_Settings Settings = new SE_Preset_Settings();
 
 
         #region Helper structs
 
         [System.Serializable]
-        public struct SE_Preset_Settings
+        public class SE_Preset_Settings
         {
-            public SE_Defaults Defaults;
+            public SE_Defaults Defaults = new SE_Defaults();
             public SE_Flags Flags;
             public SE_EffectSettings Effects;
-            public ActorStatsData StatsModifiers;
+            public ActorStatsData StatsModifiers = new ActorStatsData();
         }
 
         [System.Serializable]
@@ -41,10 +43,12 @@ namespace ActorSystem.StatusEffect
         }
 
         [System.Serializable]
-        public struct SE_Defaults
+        public class SE_Defaults
         {
             [Min(0f)]
-            public float Duration;
+            public float Duration = 1;
+            [Min(0)]
+            public int MaxStacks = 1;
         }
 
 
@@ -65,6 +69,9 @@ namespace ActorSystem.StatusEffect
 
             [Header("Effect Destroyed occurs when the effect is removed (regardless of duration).")]
             public Effect_Base Effect_Destroyed;
+
+            [Header("Effect Destroyed occurs when a stack is added to the Status Effect.")]
+            public Effect_Base Effect_StackAdded;
         }
 
         #endregion
@@ -72,15 +79,51 @@ namespace ActorSystem.StatusEffect
         #endregion
 
         /// <summary>
-        /// Creates a new status effect instance using this preset's data.
+        /// Creates or gets status effect instance using this preset's data.
         /// </summary>
-        /// <param name="instance_holder">Gameobject to attach the new component to</param>
-        /// <returns>The newly created status effect component</returns>
+        /// <param name="instance_holder">Gameobject the status effect instance attaches to</param>
+        /// <returns>The newly created status effect component, or the existing instance on this object</returns>
+        /// <remarks>
+        /// Is not guaranteed to make a NEW instance, but will always return a <see cref="SE_StatusEffect_Instance"/>
+        /// </remarks>
         // TODO: Create a method to pass in context!
-        public SE_StatusEffect_Instance CreateInstance(GameObject instance_holder)
+        public SE_StatusEffect_Instance CreateInstance(GameObject instance_holder, DurationApplicationBehavior durationBehavior = DurationApplicationBehavior.ResetDuration)
         {
-            var inst = instance_holder.AddComponent<SE_StatusEffect_Instance>();
-            inst.Preset = this;
+            var sfx = instance_holder.GetComponents<SE_StatusEffect_Instance>();
+            
+            //find existing instance, should it exist.
+            SE_StatusEffect_Instance inst = null;
+            foreach (var f in sfx)
+            {
+                if(f.Preset == this)
+                {
+                    inst = f;
+
+                    switch(durationBehavior)
+                    {
+                        case DurationApplicationBehavior.ExtendDuration:
+                            inst.RemainingDuration += Settings.Defaults.Duration;
+                            break;
+
+
+                        //currently no fancy impl exists for UseHighest.
+                        case DurationApplicationBehavior.UseHighestDuration:
+                        case DurationApplicationBehavior.ResetDuration:
+                            inst.RemainingDuration = Settings.Defaults.Duration;
+                            break;
+
+                        default:
+                            Debug.LogError("No impl found for durationBehavior! Does one exist?");
+                            break;
+                    }
+                }
+            }
+
+            if(inst == null)
+            {
+                inst = instance_holder.AddComponent<SE_StatusEffect_Instance>();
+                inst.Preset = this;
+            }
 
             return inst;
         }

@@ -50,6 +50,16 @@ namespace EffectTree
             duration = Mathf.Abs(duration);
 
             yield return new WaitForFixedUpdate(); //this needs to come first
+
+            if(Preset.OverrideCurrentVelocity && TargetRB != null && Mathf.Abs(Time.time - StartTime) < duration)
+            {
+                TargetRB.AddForce(
+                    Preset.VelocityScaleCurve.Evaluate((Time.time - StartTime) / duration) * Context.AttackData._InitialDirection.normalized
+                    , ForceMode.VelocityChange
+                    );
+                yield return new WaitForFixedUpdate();
+            }
+
             while (Mathf.Abs(Time.time - StartTime) < duration)
             {
 

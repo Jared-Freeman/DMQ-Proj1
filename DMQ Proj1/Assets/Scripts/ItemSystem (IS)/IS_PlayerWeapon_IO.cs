@@ -33,6 +33,8 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
     public struct StateInfo
     {
         public bool AttackButtonHeld;
+        public bool Ability1ButtonHeld;
+        public bool Ability2ButtonHeld;
     }
     #endregion
 
@@ -120,6 +122,16 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
                     _Info.AttackButtonHeld = true;
                     if (TryInvokeAttack()) AttackEvent();
                 }
+                else if (ctx.action.name == _Controls.MouseAndKeyboard.Ability1.name)
+                {
+                    _Info.Ability1ButtonHeld = true;
+                    if (TryInvokeAbility1()) Ability1Event();
+                }
+                else if (ctx.action.name == _Controls.MouseAndKeyboard.Ability2.name)
+                {
+                    _Info.Ability2ButtonHeld = true;
+                    if (TryInvokeAbility2()) Ability2Event();
+                }
                 else if (ctx.action.name == _Controls.MouseAndKeyboard.Aim.name)
                 {
                     if (Camera.main == null) return;
@@ -170,6 +182,16 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
                 {
                     _Info.AttackButtonHeld = false;
                 }
+                //MnK
+                if (ctx.action.name == _Controls.MouseAndKeyboard.Ability1.name)
+                {
+                    _Info.Ability1ButtonHeld = false;
+                }
+                //MnK
+                if (ctx.action.name == _Controls.MouseAndKeyboard.Ability2.name)
+                {
+                    _Info.Ability2ButtonHeld = false;
+                }
             }
         }
 
@@ -186,6 +208,16 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
                     _Info.AttackButtonHeld = true;
                     if (TryInvokeAttack()) AttackEvent();
                 }
+                else if (ctx.action.name == _Controls.Gamepad.Ability1.name)
+                {
+                    _Info.Ability1ButtonHeld = true;
+                    if (TryInvokeAbility1()) Ability1Event();
+                }
+                else if (ctx.action.name == _Controls.Gamepad.Ability2.name)
+                {
+                    _Info.Ability2ButtonHeld = true;
+                    if (TryInvokeAbility2()) Ability2Event();
+                }
                 else if (ctx.action.name == _Controls.Gamepad.Aim.name) AimDirection = ctx.ReadValue<Vector2>().normalized;
 
             }
@@ -196,6 +228,16 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
                 if (ctx.action.name == _Controls.Gamepad.Attack.name)
                 {
                     _Info.AttackButtonHeld = false;
+                }
+                //Gamepad
+                if (ctx.action.name == _Controls.Gamepad.Ability1.name)
+                {
+                    _Info.Ability1ButtonHeld = false;
+                }
+                //Gamepad
+                if (ctx.action.name == _Controls.Gamepad.Ability2.name)
+                {
+                    _Info.Ability2ButtonHeld = false;
                 }
             }
         }
@@ -211,20 +253,7 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
         {
             if (!_Inv.CurrentWeapon.CanAttack) return false; //potentially avoids expense of creating a new attack context
 
-            var aimDir3 = new Vector3(AimDirection.x, 0, AimDirection.y);
-            var ctx = new Utils.AttackContext
-            {
-                _InitialDirection = aimDir3,
-                _InitialPosition = AttackContextInitialPosition.position + aimDir3.normalized * AttackContextInitialPositionForwardOffset,
-                _InitialGameObject = gameObject,
-
-                _TargetGameObject = null,
-                _TargetDirection = Vector3.zero,
-                _TargetPosition = AttackContextInitialPosition.position + aimDir3.normalized * AttackContextInitialPositionForwardOffset,
-
-                _Owner = _Actor,
-                _Team = _Actor._Team
-            };
+            var ctx = CreateAttackContext();
 
             return _Inv.CurrentWeapon.InvokeAttack(ctx);
         }
@@ -232,16 +261,88 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Generic Ability attempt
+    /// </summary>
+    /// <returns>True, if attack succeeds</returns>
+    private bool TryInvokeAbility1()
+
+    {
+        if (_Inv.CurrentWeapon != null)
+        {
+            if (!_Inv.CurrentWeapon.CanAbility1) return false; //potentially avoids expense of creating a new attack context
+
+            var ctx = CreateAttackContext();
+
+            return _Inv.CurrentClassWeapon.InvokeAbility1(ctx);
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Generic Ability attempt
+    /// </summary>
+    /// <returns>True, if attack succeeds</returns>
+    private bool TryInvokeAbility2()
+
+    {
+        if (_Inv.CurrentWeapon != null)
+        {
+            if (!_Inv.CurrentWeapon.CanAbility2) return false; //potentially avoids expense of creating a new attack context
+
+            var ctx = CreateAttackContext();
+
+            return _Inv.CurrentClassWeapon.InvokeAbility2(ctx);
+        }
+        return false;
+    }
+
+    protected Utils.AttackContext CreateAttackContext()
+    {
+        var aimDir3 = new Vector3(AimDirection.x, 0, AimDirection.y);
+        var ctx = new Utils.AttackContext
+        {
+            _InitialDirection = aimDir3,
+            _InitialPosition = AttackContextInitialPosition.position + aimDir3.normalized * AttackContextInitialPositionForwardOffset,
+            _InitialGameObject = gameObject,
+
+            _TargetGameObject = null,
+            _TargetDirection = Vector3.zero,
+            _TargetPosition = AttackContextInitialPosition.position + aimDir3.normalized * AttackContextInitialPositionForwardOffset,
+
+            _Owner = _Actor,
+            _Team = _Actor._Team
+        };
+
+        return ctx;
+    }
+
     private void AttackEvent()
     {
         if (FLAG_Debug) Debug.Log("AttackEvent!");
     }
+    private void Ability1Event()
+    {
+        if (FLAG_Debug) Debug.Log("abilityEvent!");
+    }
+    private void Ability2Event()
+    {
+        if (FLAG_Debug) Debug.Log("abilityEvent!");
+    }
 
     protected void Update()
     {
-        if(_Info.AttackButtonHeld)
+        if (_Info.AttackButtonHeld)
         {
             TryInvokeAttack();
+        }
+        if (_Info.Ability1ButtonHeld)
+        {
+            TryInvokeAbility1();
+        }
+        if (_Info.Ability2ButtonHeld)
+        {
+            TryInvokeAbility2();
         }
     }
 }

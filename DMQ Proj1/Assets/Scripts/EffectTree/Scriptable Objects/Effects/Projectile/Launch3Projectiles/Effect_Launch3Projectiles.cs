@@ -9,43 +9,41 @@ namespace EffectTree
     {
         public GameObject ProjectilePrefab;
         public bool UseTeamNoCollideLayer = false;
-
+        public float radius;
+        public float angleStep;
         public override bool Invoke(ref EffectContext ctx)
         {
+            var Projectile = ProjectilePrefab.GetComponent<GenericProjectile>();
+            if (Projectile == null) return false;
             if (base.Invoke(ref ctx))
             {
-                var Projectile = ProjectilePrefab.GetComponent<GenericProjectile>();
-                if (Projectile == null) return false;
-
-                //Give the projectiles some spread? Not sure how to do this. 
-
-                var instance1= Utils.Projectile.CreateProjectileFromAttackContext(Projectile, ctx.AttackData);
-                if (instance1== null) return false;
-
-                var instance2 = Utils.Projectile.CreateProjectileFromAttackContext(Projectile, ctx.AttackData);
-                if (instance2 == null) return false;
-
-                var instance3 = Utils.Projectile.CreateProjectileFromAttackContext(Projectile, ctx.AttackData);
-                if (instance3 == null) return false;
-
-                if (ctx.AttackData._Team != null)
+                float angle = 0;
+                Vector3 startPoint = ctx.AttackData._InitialDirection;
+                for(int i = 0;i<3;i++)
                 {
-                    if (UseTeamNoCollideLayer)
+                    float projectileDirXPos = startPoint.x + Mathf.Sin((angle * Mathf.PI) / 180) * radius;
+                    float projectileDirYPos = startPoint.z + Mathf.Sin((angle * Mathf.PI) / 180) * radius;
+                    angle += angleStep;
+                    ctx.AttackData._InitialDirection = new Vector3(projectileDirXPos, 0, projectileDirYPos);
+                    var proj = Utils.Projectile.CreateProjectileFromAttackContext(Projectile, ctx.AttackData);
+                    if (ctx.AttackData._Team != null)
                     {
-                        if (!Utils.TransformUtils.ChangeLayerOfGameObjectAndChildren(instance1.gameObject, ctx.AttackData._Team.Options.NoCollideLayer))
+                        if (UseTeamNoCollideLayer)
                         {
-                            Debug.LogError("Error converting projectile to team layer! Is layer set within proper bounds?");
+                            if (!Utils.TransformUtils.ChangeLayerOfGameObjectAndChildren(proj.gameObject, ctx.AttackData._Team.Options.NoCollideLayer))
+                            {
+                                Debug.LogError("Error converting projectile to team layer! Is layer set within proper bounds?");
+                            }
                         }
-                    }
-                    else
-                    {
-                        if (!Utils.TransformUtils.ChangeLayerOfGameObjectAndChildren(instance1.gameObject, ctx.AttackData._Team.Options.Layer))
+                        else
                         {
-                            Debug.LogError("Error converting projectile to team layer! Is layer set within proper bounds?");
+                            if (!Utils.TransformUtils.ChangeLayerOfGameObjectAndChildren(proj.gameObject, ctx.AttackData._Team.Options.Layer))
+                            {
+                                Debug.LogError("Error converting projectile to team layer! Is layer set within proper bounds?");
+                            }
                         }
                     }
                 }
-
                 return true;
             }
             return false;

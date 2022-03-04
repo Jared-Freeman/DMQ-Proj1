@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ActorSystem;
 
+//DEPRECATED
 namespace ActorSystem.StatusEffect
 {
     /// <summary>
@@ -26,9 +27,9 @@ namespace ActorSystem.StatusEffect
         public SFX_Opt Options;
 
         [System.Serializable]
-        public struct SFX_Opt
+        public class SFX_Opt
         {
-
+            public int MaxStacks = 1;
         }
     }
 }
