@@ -9,19 +9,16 @@ using TMPro;
 public class UIPlayerPanel : MonoBehaviour
 {
     public List<SpriteRenderer> ListRenderers = new List<SpriteRenderer>();
+    public List<GameObject> ListWeaponSlots = new List<GameObject>();
+    public int activeWeaponIndex = 1;
     public CanvasRenderer _Renderer;
-
+    private int frames = 0;
 
     public GameObject activePanel;
     public GameObject inactivePanel;
-
-    public GameObject weaponOne;
-    public GameObject weaponTwo;
-    public int activeWeapon = 0;
-
     public GameObject[] items;
 
-    public MaterialPropertyBlock[] matProperties;
+    public MaterialPropertyBlock matProperties;
 
     //public TextMeshProUGUI characterClassText;
     public TMP_Text characterClassText;
@@ -37,6 +34,10 @@ public class UIPlayerPanel : MonoBehaviour
 
         _Renderer = GetComponent<CanvasRenderer>();
         //if (_Renderer == null) Destroy(this);
+        activePanel = GameObject.Find("ActivePlayerPanel");
+        inactivePanel = GameObject.Find("InactivePlayerPanel");
+        ListWeaponSlots.Add(GameObject.Find("WeaponOneBorder"));
+        ListWeaponSlots.Add(GameObject.Find("WeaponTwoBorder"));
     }
 
     // Start is called before the first frame update
@@ -48,9 +49,13 @@ public class UIPlayerPanel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        for(int i = 0; i < 2; i++)
+        frames++;
+        if(frames % 10 == 0)
         {
-            //_Renderer?.SetPropertyBlock(matProperties[i]);
+            foreach(var r in ListRenderers)
+            {
+                r.SetPropertyBlock(matProperties);
+            }
         }
     }
 
@@ -64,47 +69,37 @@ public class UIPlayerPanel : MonoBehaviour
     //Set Active weapon to front of UI
     public void swapWeapon()
     {
-        if(weaponOne != null && weaponTwo != null)
+        if(activeWeaponIndex <= 0)
         {
-            if(activeWeapon == 0)
-            {
-                activeWeapon = 1;
-                weaponOne.transform.position = new Vector3(-100,-2,-2);
-                weaponTwo.transform.position = new Vector3(-50,-1,-4);
-
-            }
-            else
-            {
-                activeWeapon = 0;
-                weaponOne.transform.position = new Vector3(-100,-2,-4);
-                weaponTwo.transform.position= new Vector3(-50,-1,-2);
-            }
+            var r = ListWeaponSlots[0].GetComponent<RectTransform>();
+            var r2 = ListWeaponSlots[1].GetComponent<RectTransform>();
+            r.localPosition = new Vector3(-100, -2, -4);
+            r2.localPosition = new Vector3(-50, -1, -2);
+        }
+        else
+        {
+            var r = ListWeaponSlots[0].GetComponent<RectTransform>();
+            var r2 = ListWeaponSlots[1].GetComponent<RectTransform>();
+            r.localPosition = new Vector3(-100, -2, -2);
+            r2.localPosition = new Vector3(-50, -1, -4);
         }
     }
 
-    //Change weapon texture, used to signal different weapons
-    public void changeWeapon(Texture tex)
+    public void activePlayerPanel()
     {
-        Renderer m_renderer = null;
-        if(weaponOne != null && weaponTwo != null)
-        {
-            if(activeWeapon == 0)
-            {
-                m_renderer = weaponOne.GetComponent<Renderer>();
-                m_renderer.material.SetTexture("_WeaponTex", tex);
-            }
-            else
-            {
-                m_renderer=weaponTwo.GetComponent<Renderer>();
-                m_renderer.material.SetTexture("_WeaponTex", tex);
-            }
-        }
+        activePanel.SetActive(true);
+        inactivePanel.SetActive(false);
+    }
+
+    public void setActiveWeaponIndex(int i)
+    {
+        activeWeaponIndex = i;
     }
 
     #endregion
 
     #region depricated
-    /*
+/*
 //Use item, decrements number of items, starts cooldown
 public void useItem(int index)
 {
@@ -134,6 +129,25 @@ public void addItem(Texture tex, int index)
         matProperties[index].SetFloat("", 1);
     }
 }
+
+    //Change weapon texture, used to signal different weapons
+    public void changeWeapon(Texture tex)
+    {
+        Renderer m_renderer = null;
+        if(weaponOne != null && weaponTwo != null)
+        {
+            if(activeWeapon == 0)
+            {
+                m_renderer = weaponOne.GetComponent<Renderer>();
+                m_renderer.material.SetTexture("_WeaponTex", tex);
+            }
+            else
+            {
+                m_renderer=weaponTwo.GetComponent<Renderer>();
+                m_renderer.material.SetTexture("_WeaponTex", tex);
+            }
+        }
+    }
 */
     #endregion
 }
