@@ -37,8 +37,7 @@ public class UIPlayerPanel : MonoBehaviour
         //if (_Renderer == null) Destroy(this);
         //activePanel = GameObject.Find("ActivePlayerPanel");
         //inactivePanel = GameObject.Find("InactivePlayerPanel");
-        ListWeaponSlots.Add(GameObject.Find("WeaponOneBorder"));
-        ListWeaponSlots.Add(GameObject.Find("WeaponTwoBorder"));
+
 
 
     }
@@ -92,6 +91,8 @@ public class UIPlayerPanel : MonoBehaviour
     {
         activePanel.SetActive(true);
         inactivePanel.SetActive(false);
+        ListWeaponSlots.Add(GameObject.Find("WeaponOneBorder"));
+        ListWeaponSlots.Add(GameObject.Find("WeaponTwoBorder"));
     }
 
     public void setActiveWeaponIndex(int i)
