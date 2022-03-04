@@ -278,7 +278,7 @@ namespace ActorSystem.AI
                 && (Preset.Base.AttackWhileMoving || (RB.velocity.sqrMagnitude < Math.Pow(Preset.Base.StationaryVelocityThreshold, 2)))
                 )
             {
-                if (FLAG_Debug) Debug.Log("THRESH: " + (Preset.Base.AttackWhileMoving || (RB.velocity.sqrMagnitude < Math.Pow(Preset.Base.StationaryVelocityThreshold, 2))));
+                //if (FLAG_Debug) Debug.Log("THRESH: " + (Preset.Base.AttackWhileMoving || (RB.velocity.sqrMagnitude < Math.Pow(Preset.Base.StationaryVelocityThreshold, 2))));
 
                 transform.localScale = DefaultScale * S_Preset.Shambler_Options.GrowCurve.Evaluate((Time.time - StartTime) / S_Preset.Shambler_Options.AttackPause);
                 yield return null;

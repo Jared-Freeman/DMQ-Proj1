@@ -19,6 +19,7 @@ MonoBehaviour:
     CollisionEnterProjectileEffects:
       EffectList:
       - {fileID: 11400000, guid: 780ebdf16af73664596bf1a3ffac595a, type: 2}
+      - {fileID: 11400000, guid: 25830fe573e815944ba8814a66f5b047, type: 2}
       ProjectileFXList: []
     CollisionStayProjectileEffects:
       EffectList: []
@@ -60,5 +61,6 @@ MonoBehaviour:
         Force: 50
         Speed: 30
       HomingSimpleOptions:
+        MovementStyle: 0
         Speed: 0
         TurnRate: 0

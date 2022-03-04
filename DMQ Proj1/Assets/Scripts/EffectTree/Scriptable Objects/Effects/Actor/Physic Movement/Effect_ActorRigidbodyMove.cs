@@ -55,6 +55,10 @@ namespace EffectTree
         /// </summary>
         public enum TargetSelection { EffectTreeOwner, InitialGameObject, TargetGameObject }
 
+        /// <summary>
+        /// When this movement starts, do we cancel out existing velocity?
+        /// </summary>
+        public bool OverrideCurrentVelocity = false;
 
         public TargetSelection TargetContext = TargetSelection.EffectTreeOwner;
 
