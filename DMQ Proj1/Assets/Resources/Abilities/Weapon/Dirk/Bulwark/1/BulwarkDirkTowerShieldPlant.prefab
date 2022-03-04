@@ -129,9 +129,12 @@ MonoBehaviour:
   damageAmount: 50
   damagePerProjectile: 1
   reflectProjectileProbability: 0.25
-  knockbackForce: 10000
+  knockbackForce: 2000
   damageMessagePreset: {fileID: 11400000, guid: 9d1611366877e424abe33b24a9d56899,
     type: 2}
+  EffectList:
+  - {fileID: 11400000, guid: fb858ac013b8b4c479c4ec1d3ae0b699, type: 2}
+  - {fileID: 11400000, guid: adb6d42e7e5216544a71668c3010efd2, type: 2}
 --- !u!135 &-1389433290900110309
 SphereCollider:
   m_ObjectHideFlags: 0
