@@ -35,16 +35,18 @@ public class UIPlayerPanel : MonoBehaviour
 
         _Renderer = GetComponent<CanvasRenderer>();
         //if (_Renderer == null) Destroy(this);
-        activePanel = GameObject.Find("ActivePlayerPanel");
-        inactivePanel = GameObject.Find("InactivePlayerPanel");
+        //activePanel = GameObject.Find("ActivePlayerPanel");
+        //inactivePanel = GameObject.Find("InactivePlayerPanel");
         ListWeaponSlots.Add(GameObject.Find("WeaponOneBorder"));
         ListWeaponSlots.Add(GameObject.Find("WeaponTwoBorder"));
+
+
     }
 
     // Start is called before the first frame update
     void Start()
     {
-
+        activePanel.SetActive(false);
     }
 
     // Update is called once per frame

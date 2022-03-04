@@ -74,12 +74,12 @@ public class UIActivePlayerPanel : MonoBehaviour
 
     private void HandlePlayerAgentInstantiation(object sender, GameObjectListEventArgs e)
     {
-        foreach(var p in e.gameObjects)
+        activateNewPlayerPanel(currentPlayerCount - 1);
+        foreach (var p in e.gameObjects)
         {
             Listplayers.Add(new UIPlayerInfo(p));
         }
         currentPlayerCount++;
-        activateNewPlayerPanel(currentPlayerCount);
         ListPlayerPanels[0].swapWeapon();
         Debug.Log("Event received");
     }
@@ -162,6 +162,9 @@ public class UIActivePlayerPanel : MonoBehaviour
 
     void activateNewPlayerPanel(int i)
     {
-        ListPlayerPanels[i].activePlayerPanel();
+        if(i > -1)
+        {
+            ListPlayerPanels[i].activePlayerPanel();
+        }
     }
 }
