@@ -104,7 +104,7 @@ public class UIActivePlayerPanel : MonoBehaviour
                 ///Swaps active weapon icon
                 /// </summary>
                 if(Listplayers[i]._Inventory.GetInfo().EquippedWeaponIndex > -1 
-                    && Listplayers[i].EquipedWeaponIndex != Listplayers[i]._Inventory.GetInfo().EquippedWeaponIndex)
+                    && ListPlayerPanels[i].activeWeaponIndex != Listplayers[i]._Inventory.GetInfo().EquippedWeaponIndex)
                 {
                     ListPlayerPanels[i].setActiveWeaponIndex(Listplayers[i]._Inventory.GetInfo().EquippedWeaponIndex);
                     ListPlayerPanels[i].swapWeapon();
