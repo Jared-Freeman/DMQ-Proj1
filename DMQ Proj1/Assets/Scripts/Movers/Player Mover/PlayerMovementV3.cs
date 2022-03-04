@@ -22,21 +22,26 @@ public class PlayerMovementEventArgs : System.EventArgs
 public class PlayerMovementV3 : MonoBehaviour
 {
     #region Members
-    //Flags
+
+    #region Flags
+
     public bool FLAGCollectDebugTelemetry = false;
     public bool FLAGDisplayDebugGizmos = false;
     public bool FLAG_PlayerMovementEnabled = true;
 
+    #endregion
 
-    //Move Style
+    #region Preset-style Options
+
+    //Preset-style options (NOT scriptable objects!)
     [Tooltip("Affects how the rigidbody forces are applied")]
     public MovementModel MovementStyle = MovementModel.ContinuousAdvanced;
-
-
-    //Options
     public PlayerMovementV3Options DashOptions = new PlayerMovementV3Options();
     public PMV3_RunProperties RunOptions = new PMV3_RunProperties();
-    
+
+    #endregion
+
+    #region Properties
 
     //External objects
     public PlayerInputHost InputHost { get; protected set; }
@@ -44,7 +49,28 @@ public class PlayerMovementV3 : MonoBehaviour
     public Actor AttachedActor { get; protected set; }
     public PlayerControls controls { get; protected set; }
     public Rigidbody RB { get; protected set; }
-    
+    public AbilitySystem.AS_Ability_Base DashAbilityPreset
+    {
+        get { return DashOptions.DashAbility; }
+        set 
+        { 
+            DashOptions.DashAbility = value;
+            Destroy(_Info.DashAbilityInstance);
+
+            //replace abil instance
+            _Info.DashAbilityInstance = DashOptions.DashAbility.GetInstance(gameObject);
+        }
+    }
+    public AbilitySystem.AS_Ability_Instance_Base DashAbilityInstance
+    {
+        get { return _Info.DashAbilityInstance; }
+    }
+
+
+    public float CurMoveSpeed { get => AttachedActor.Stats.MoveSpeedCurrent; }
+    #endregion
+
+    #region State Info
 
     //State info
     public State CurrentState { get; protected set; }
@@ -64,21 +90,24 @@ public class PlayerMovementV3 : MonoBehaviour
     Vector2 VelocityMap = Vector2.zero; //affects horizontal movement velocity. Controlled via input
     Vector2 DragVector = Vector2.zero;
 
-
-
     //obsolete currently
     [Tooltip("Determines current \"north\" that the InputMap direction is relative to")]
     private GameObject HorizontalMovementAngleHost;
 
+    #endregion
 
     #region Helpers
 
-    public enum State { Standing, Moving, Sliding, Dashing }
+    public enum State { Standing, Moving, Sliding, Dashing, MovementInterrupted } //As of now, Moving and MovementInterrupted are in-use (2-25-2022) ~Jared
     public enum MovementModel { DebugMovementModel, ContinuousAdvanced, ContinuousSimple, VelocityChange };
 
     [System.Serializable]
     public class PlayerMovementV3Options
     {
+        [Header("New Fields (2-25-2022)")]
+        public AbilitySystem.AS_Ability_Base DashAbility;
+
+        [Header("Deprecated Fields")]
         public float _DashCooldown;
         public AnimationCurve _DashSpeedScale;
         public float _DashDuration = .25f;
@@ -103,6 +132,7 @@ public class PlayerMovementV3 : MonoBehaviour
         [Tooltip("m / sec^2")]
         public float HorizontalAcceleration = 100f;
 
+        [Header("Obsolete")]
         [Tooltip("Meters / sec")]
         public float MoveSpd = 7.5f;
 
@@ -110,6 +140,10 @@ public class PlayerMovementV3 : MonoBehaviour
 
     private struct StateInfo
     {
+        //new
+        public AbilitySystem.AS_Ability_Instance_Base DashAbilityInstance;
+
+        //old
         public Utils.CooldownTracker Dash_Cooldown;
         public float Dash_LastStartTime;
         public Vector3 _DashDesiredDirection;
@@ -124,7 +158,6 @@ public class PlayerMovementV3 : MonoBehaviour
     }
 
     #endregion
-
 
     #endregion
 
@@ -159,18 +192,46 @@ public class PlayerMovementV3 : MonoBehaviour
     {
         // DEPRECATED
     }
+
+    /// <summary>
+    /// "Dash" key pressed event dispatcher.
+    /// </summary>
     void SpecialActionEvent()
     {
-        if(CurrentState != State.Dashing && _Info.Dash_Cooldown.CanUseCooldown())
+        if(DashAbilityInstance.CanCastAbility)
         {
-            ChangeState(State.Dashing);
-           // Event_SpecialActionStart?.Invoke(new PlayerMovementEventArgs());
+            EffectTree.EffectContext ec = new EffectTree.EffectContext();
+
+            Vector3 AimDir3 = new Vector3(AimDirection.x, 0, AimDirection.y);
+            Vector3 MoveDir3 = new Vector3(InputMap.x, 0, InputMap.y);
+
+            ec.AttackData._InitialDirection = MoveDir3;
+            ec.AttackData._InitialGameObject = gameObject;
+            ec.AttackData._InitialPosition = transform.position;
+
+            ec.AttackData._TargetDirection = AimDir3;
+            ec.AttackData._TargetGameObject = gameObject;
+            ec.AttackData._TargetPosition = transform.position;
+
+            ec.AttackData._Team = AttachedActor._Team;
+            ec.AttackData._Owner = AttachedActor;
+
+            //we don't load up the collision context data
+
+            DashAbilityInstance.ExecuteAbility(ref ec);
         }
+
+        //if(CurrentState != State.Dashing && _Info.Dash_Cooldown.CanUseCooldown())
+        //{
+        //    ChangeState(State.Dashing);
+        //   // Event_SpecialActionStart?.Invoke(new PlayerMovementEventArgs());
+        //}
     }
 
     #endregion
 
     #region Initialization
+
     private void Awake()
     {
         AttachedActor = GetComponent<Actor>();
@@ -207,37 +268,54 @@ public class PlayerMovementV3 : MonoBehaviour
         _Info.Dash_Cooldown = new Utils.CooldownTracker(DashOptions._DashCooldown);
         _Info.Dash_Cooldown.InitializeCooldown();
         _Info.Dash_LastStartTime = Time.time;
+
+        if(DashOptions.DashAbility == null)
+        {
+            Debug.LogError("No Dash ability specified! Destroying Component.");
+            Destroy(this);
+        }
+
+        //init abil instance
+        _Info.DashAbilityInstance = DashOptions.DashAbility.GetInstance(gameObject);
     }
 
     void Start()
     {
-        //Event_AttackStart.AddListener(testfunction);
-        //Event_AttackStart?.Invoke(new PlayerMovementEventArgs("test"));
-    }
-    //void testfunction(PlayerMovementEventArgs args)
-    //{
-    //    Debug.Log(args.test);
-    //}
 
-    //probably need to move this elsewhere...
-    //private void OnEnable()
-    //{
-    //    _Input.enabled = true;
-    //    controls.Enable();
-    //}
-    //private void OnDisable()
-    //{
-    //    _Input.enabled = false;
-    //    controls.Disable();
-    //}
+        EffectTree.Effect_ActorRigidbodyMove.OnRigidbodyMovementAppliedToActor += Effect_ActorRigidbodyMove_OnRigidbodyMovementAppliedToActor;
+    }
+
+    private void Effect_ActorRigidbodyMove_OnRigidbodyMovementAppliedToActor(object sender, CSEventArgs.ActorRigidbodyMoveEventArgs e)
+    {
+        if(e.TargetedActor = AttachedActor)
+        {
+            ChangeState(State.MovementInterrupted);
+
+            //subscribe to local event
+            e.MovementCookie.OnMovementComplete += MovementCookie_OnMovementComplete;
+        }
+    }
+
+    private void MovementCookie_OnMovementComplete(object sender, CSEventArgs.Effect_ActorRigidbodyMove_HelperEventArgs e)
+    {
+        ChangeState(State.Moving);
+
+        if(FLAGDisplayDebugGizmos) Debug.Log("Movement Cookie Completed ops.");
+
+        //unsubscribe from event before it is inevitably destroyed lol
+        e.MovementHelper.OnMovementComplete -= MovementCookie_OnMovementComplete;
+    }
 
     #endregion
+
+    #region Updates
 
     void Update()
     {
         Debug.DrawRay(transform.position, new Vector3(AimDirection.x, transform.position.y, AimDirection.y) * 5f, Color.yellow);
         UpdateRotation();
     }
+
     private void UpdateRotation()
     {
         Vector2 movementInput = InputMap.normalized;
@@ -248,6 +326,7 @@ public class PlayerMovementV3 : MonoBehaviour
             gameObject.transform.forward = move;
         }
     }
+
     private void FixedUpdate()
     {
         if(FLAG_PlayerMovementEnabled) 
@@ -271,18 +350,27 @@ public class PlayerMovementV3 : MonoBehaviour
 
                 case State.Standing: //NYI
                     break;
+                    
+                case State.MovementInterrupted:
+                    OnVelocityUpdate?.Invoke(this, new PlayerMovementEventArgs(RB.velocity.magnitude, AttachedActor));
+                    break;
 
+                default:
+                    Debug.LogError("No implementation exists for this state!");
+                    break;
 
             }
         }
     }
+
+    #endregion
 
     #region State Transitions
 
     // Place State start stuff here
     private void ChangeState(State S)
     {        
-        StateEnd(S);
+        StateEnd(CurrentState);
 
         CurrentState = S;
 
@@ -309,6 +397,10 @@ public class PlayerMovementV3 : MonoBehaviour
 
             case State.Standing:
 
+                break;
+
+            case State.MovementInterrupted:
+                FLAG_PlayerMovementEnabled = false;
                 break;
 
 
@@ -343,6 +435,9 @@ public class PlayerMovementV3 : MonoBehaviour
 
                 break;
 
+            case State.MovementInterrupted:
+                FLAG_PlayerMovementEnabled = true;
+                break;
 
             default:
                 Debug.LogError("StateEnd(): unrecognized state: " + S.ToString() + ". Does an implementation exist?");
@@ -393,6 +488,14 @@ public class PlayerMovementV3 : MonoBehaviour
 
     }
 
+    void OnDestroy()
+    {
+        InputHost.OnInputChanged -= InputHost_OnInputChanged;
+        _Input.onActionTriggered -= _Input_onActionTriggered;
+
+        EffectTree.Effect_ActorRigidbodyMove.OnRigidbodyMovementAppliedToActor -= Effect_ActorRigidbodyMove_OnRigidbodyMovementAppliedToActor;
+    }
+
     private void InputHost_OnInputChanged(object sender, CSEventArgs.PlayerInputEventArgs e)
     {
         //set up action map
@@ -405,103 +508,104 @@ public class PlayerMovementV3 : MonoBehaviour
             _Input.SwitchCurrentActionMap(controls.GamepadScheme.name);
         }
 
-        //please someone find a better way to do this (and retain multiplayer functionality)
-        _Input.onActionTriggered += ctx =>
+        _Input.onActionTriggered += _Input_onActionTriggered;
+    }
+
+    private void _Input_onActionTriggered(InputAction.CallbackContext ctx)
+    {
+        ////MOUSE AND KEYBOARD EVENTS REGISTER //////////////////////////////////////
+        if (ctx.action.actionMap.name == controls.MouseAndKeyboardScheme.name)
         {
-            ////MOUSE AND KEYBOARD EVENTS REGISTER //////////////////////////////////////
-            if (ctx.action.actionMap.name == controls.MouseAndKeyboardScheme.name)
+            if (ctx.performed)
             {
-                if (ctx.performed)
+                //MnK
+                if (ctx.action.name == controls.MouseAndKeyboard.Movement.name) InputMap = ctx.ReadValue<Vector2>();
+
+                else if (ctx.action.name == controls.MouseAndKeyboard.Attack.name) AttackEvent();
+
+                else if (ctx.action.name == controls.MouseAndKeyboard.SpecialAction.name) SpecialActionEvent();
+
+                else if (ctx.action.name == controls.MouseAndKeyboard.Wepon1Equip.name) ChangeWeaponEvent();
+
+                else if (ctx.action.name == controls.MouseAndKeyboard.Wepon2Equip.name) ChangeWeaponEvent();
+
+                else if (ctx.action.name == controls.MouseAndKeyboard.Aim.name)
                 {
-                    //MnK
-                    if (ctx.action.name == controls.MouseAndKeyboard.Movement.name) InputMap = ctx.ReadValue<Vector2>();
+                    if (Camera.main == null) return;
 
-                    else if (ctx.action.name == controls.MouseAndKeyboard.Attack.name) AttackEvent();
+                    Vector2 In = ctx.ReadValue<Vector2>();
 
-                    else if (ctx.action.name == controls.MouseAndKeyboard.SpecialAction.name) SpecialActionEvent();
-
-                    else if (ctx.action.name == controls.MouseAndKeyboard.Wepon1Equip.name) ChangeWeaponEvent();
-
-                    else if (ctx.action.name == controls.MouseAndKeyboard.Wepon2Equip.name) ChangeWeaponEvent();
-
-                    else if (ctx.action.name == controls.MouseAndKeyboard.Aim.name)
+                    //improved aiming using raycast to plane
+                    //TODO: Consider a "raycast to model" approach; consider modifying the CursorPlane to be inline with the projectile spawn height
+                    if (Camera.main.GetComponent<Topdown_Multitracking_Camera_Rig>() != null)
                     {
-                        if (Camera.main == null) return;
 
-                        Vector2 In = ctx.ReadValue<Vector2>();
+                        //TODO: Consider CamDistanceCurrent improvement. We need a distance from camera to EACH PLAYER, projected onto "2d world plane." 
+                        //For now this should be a fairly strong approximation (but maybe could be broken)
+                        Plane CursorPlane = new Plane(Vector3.up, Camera.main.GetComponent<Topdown_Multitracking_Camera_Rig>().CamDistanceCurrent);
 
-                        //improved aiming using raycast to plane
-                        //TODO: Consider a "raycast to model" approach; consider modifying the CursorPlane to be inline with the projectile spawn height
-                        if (Camera.main.GetComponent<Topdown_Multitracking_Camera_Rig>() != null)
+                        Ray RayToCursorPlane = Camera.main.ScreenPointToRay(new Vector3(In.x, In.y, 0));
+
+
+                        Vector3 Hit = Vector3.zero;
+                        if (CursorPlane.Raycast(RayToCursorPlane, out float Point))
                         {
-
-                            //TODO: Consider CamDistanceCurrent improvement. We need a distance from camera to EACH PLAYER, projected onto "2d world plane." 
-                            //For now this should be a fairly strong approximation (but maybe could be broken)
-                            Plane CursorPlane = new Plane(Vector3.up, Camera.main.GetComponent<Topdown_Multitracking_Camera_Rig>().CamDistanceCurrent);
-
-                            Ray RayToCursorPlane = Camera.main.ScreenPointToRay(new Vector3(In.x, In.y, 0));
-
-
-                            Vector3 Hit = Vector3.zero;
-                            if (CursorPlane.Raycast(RayToCursorPlane, out float Point))
-                            {
-                                Hit = RayToCursorPlane.GetPoint(Point);
-                            }
-
-                            //TOOD: Consider this for relaying info to other subsystems
-                            //At this point, Hit == the point on plane where player clicked. Could be useful??
-
-                            Vector3 V = Vector3.ProjectOnPlane((Hit - transform.position), Vector3.up);
-
-                            AimDirection = (new Vector2(V.x, V.z)).normalized;
+                            Hit = RayToCursorPlane.GetPoint(Point);
                         }
-                        else
-                        {
-                            Vector3 V = Camera.main.WorldToScreenPoint(transform.position);
-                            //Vector3 V = Camera.main.WorldToScreenPoint(transform.position + new Vector3(0, ShootableProjectileHeightOffset, 0)); //hmm 
 
-                            AimDirection = (In - new Vector2(V.x, V.y)).normalized;
-                        }
+                        //TOOD: Consider this for relaying info to other subsystems
+                        //At this point, Hit == the point on plane where player clicked. Could be useful??
+
+                        Vector3 V = Vector3.ProjectOnPlane((Hit - transform.position), Vector3.up);
+
+                        AimDirection = (new Vector2(V.x, V.z)).normalized;
+                    }
+                    else
+                    {
+                        Vector3 V = Camera.main.WorldToScreenPoint(transform.position);
+                        //Vector3 V = Camera.main.WorldToScreenPoint(transform.position + new Vector3(0, ShootableProjectileHeightOffset, 0)); //hmm 
+
+                        AimDirection = (In - new Vector2(V.x, V.y)).normalized;
                     }
                 }
-
-
-                else if (ctx.canceled)
-                {
-                    //MnK
-                    if (ctx.action.name == controls.MouseAndKeyboard.Movement.name) InputMap = Vector2.zero;
-                }
             }
 
 
-
-            ////GAMEPAD EVENTS REGISTER //////////////////////////////////////
-            else if (ctx.action.actionMap.name == controls.GamepadScheme.name)
+            else if (ctx.canceled)
             {
-                if (ctx.performed)
-                {
-                    //Gamepad
-                    if (ctx.action.name == controls.Gamepad.Movement.name) InputMap = ctx.ReadValue<Vector2>();
-
-                    else if (ctx.action.name == controls.Gamepad.Attack.name) AttackEvent();
-
-                    else if (ctx.action.name == controls.Gamepad.SpecialAction.name) SpecialActionEvent();
-
-                    else if (ctx.action.name == controls.Gamepad.Wepon1Equip.name) ChangeWeaponEvent();
-
-                    else if (ctx.action.name == controls.Gamepad.Wepon2Equip.name) ChangeWeaponEvent();
-
-                    else if (ctx.action.name == controls.Gamepad.Aim.name) AimDirection = ctx.ReadValue<Vector2>().normalized;
-                }
-
-
-                else if (ctx.canceled)
-                {
-                    //Gamepad
-                    if (ctx.action.name == controls.Gamepad.Movement.name) InputMap = Vector2.zero;
-                }
+                //MnK
+                if (ctx.action.name == controls.MouseAndKeyboard.Movement.name) InputMap = Vector2.zero;
             }
-        };
+        }
+
+
+
+        ////GAMEPAD EVENTS REGISTER //////////////////////////////////////
+        else if (ctx.action.actionMap.name == controls.GamepadScheme.name)
+        {
+            if (ctx.performed)
+            {
+                //Gamepad
+                if (ctx.action.name == controls.Gamepad.Movement.name) InputMap = ctx.ReadValue<Vector2>();
+
+                else if (ctx.action.name == controls.Gamepad.Attack.name) AttackEvent();
+
+                else if (ctx.action.name == controls.Gamepad.SpecialAction.name) SpecialActionEvent();
+
+                else if (ctx.action.name == controls.Gamepad.Wepon1Equip.name) ChangeWeaponEvent();
+
+                else if (ctx.action.name == controls.Gamepad.Wepon2Equip.name) ChangeWeaponEvent();
+
+                else if (ctx.action.name == controls.Gamepad.Aim.name) AimDirection = ctx.ReadValue<Vector2>().normalized;
+            }
+
+
+            else if (ctx.canceled)
+            {
+                //Gamepad
+                if (ctx.action.name == controls.Gamepad.Movement.name) InputMap = Vector2.zero;
+            }
+        }
     }
     #endregion
 
@@ -595,7 +699,7 @@ public class PlayerMovementV3 : MonoBehaviour
             //TODO: verify angle computation is correct in all cases
             if (
                 FilteredRBVelocity.sqrMagnitude != 0 
-                && (FilteredRBVelocity.sqrMagnitude > RunOptions.MoveSpd * RunOptions.MoveSpd) 
+                && (FilteredRBVelocity.sqrMagnitude > Mathf.Pow(CurMoveSpeed, 2)) 
                 && Mathf.Abs(AngleDiff) > MIN_ANGLE_TOLERANCE 
                 && Mathf.Abs(AngleDiff) < MAX_ANGLE_TOLERANCE
                 ) 
@@ -624,7 +728,7 @@ public class PlayerMovementV3 : MonoBehaviour
         }
         //Naive model
         //if(InputDirection.sqrMagnitude > 1) InputDirection = InputDirection.normalized;
-        //DesiredVelocity = Vector3.zero; if (InputDirection.sqrMagnitude > 0) DesiredVelocity = InputDirection * MoveSpd;
+        //DesiredVelocity = Vector3.zero; if (InputDirection.sqrMagnitude > 0) DesiredVelocity = InputDirection * CurMoveSpeed;
 
         //If a direction exists, accelerate towards it. otherwise decelerate towards 0
         if (InputDirection.sqrMagnitude == 0)
@@ -645,8 +749,8 @@ public class PlayerMovementV3 : MonoBehaviour
             DesiredVelocity = DesiredVelocity + InputDirection.normalized * RunOptions.HorizontalAcceleration * Time.fixedDeltaTime;
 
             //clamp desired velocity max to move speed max
-            if (DesiredVelocity.sqrMagnitude > RunOptions.MoveSpd * RunOptions.MoveSpd)
-                DesiredVelocity = DesiredVelocity.normalized * RunOptions.MoveSpd;
+            if (DesiredVelocity.sqrMagnitude > Mathf.Pow(CurMoveSpeed,2))
+                DesiredVelocity = DesiredVelocity.normalized * CurMoveSpeed;
 
         }
 
@@ -689,7 +793,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
 
         //Damp (within standard movement speed control)
-        if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= RunOptions.MoveSpd * RunOptions.MoveSpd) //First check was causing sloppy deceleration within standard MoveSpd
+        if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= Mathf.Pow(CurMoveSpeed,2)) //First check was causing sloppy deceleration within standard CurMoveSpeed
         {
             RB.AddForce(AddVelocity * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
 
@@ -746,7 +850,7 @@ public class PlayerMovementV3 : MonoBehaviour
         }
         if (FLAGCollectDebugTelemetry)
         {
-            //OBSERVATION: We never alter more than MoveSpd's worth of velocity 
+            //OBSERVATION: We never alter more than CurMoveSpeed's worth of velocity 
             if ((-(FilteredRBVelocity - DesiredVelocityDiff) + AddVelocity).sqrMagnitude > _DebugInfo.LargestVelocityChangeMagnitude * _DebugInfo.LargestVelocityChangeMagnitude)
             {
                 _DebugInfo.LargestVelocityChange = (-(FilteredRBVelocity - DesiredVelocityDiff) + AddVelocity);
@@ -764,7 +868,7 @@ public class PlayerMovementV3 : MonoBehaviour
     void ContinuousMovementModelV2()
     {
 
-        //float MoveSpd = 10f;
+        //float CurMoveSpeed = 10f;
         //float HorizontalAcceleration = 100f;
 
         float ForceCoefficient = RB.mass / Time.fixedDeltaTime;
@@ -787,8 +891,8 @@ public class PlayerMovementV3 : MonoBehaviour
 
 
 
-        if (DesiredVelocity.sqrMagnitude > RunOptions.MoveSpd * RunOptions.MoveSpd)
-            DesiredVelocity = DesiredVelocity.normalized * RunOptions.MoveSpd;
+        if (DesiredVelocity.sqrMagnitude > Mathf.Pow(CurMoveSpeed,2))
+            DesiredVelocity = DesiredVelocity.normalized * CurMoveSpeed;
 
 
         Vector3 DesiredVelocityDiff = Vector3.zero;
@@ -800,7 +904,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
         // Damp ////////////////////////////////////////////////
         //Vector3 ForceDamp = Vector3.zero;
-        //if ((AddVelocity + RB.velocity).sqrMagnitude > MoveSpd * MoveSpd)
+        //if ((AddVelocity + RB.velocity).sqrMagnitude > CurMoveSpeed * CurMoveSpeed)
         //{
         //    ForceDamp = -RB.velocity.normalized * HorizontalAcceleration * RB.mass;
         //    if (ForceDamp.sqrMagnitude > RB.velocity.sqrMagnitude)
@@ -908,9 +1012,9 @@ public class PlayerMovementV3 : MonoBehaviour
         VelocityMap += DragVector;
 
 
-        if (VelocityMap.sqrMagnitude > RunOptions.MoveSpd * RunOptions.MoveSpd * 4)
+        if (VelocityMap.sqrMagnitude > CurMoveSpeed * CurMoveSpeed * 4)
         {
-            VelocityMap = VelocityMap.normalized * RunOptions.MoveSpd * 2; //max spd clamp
+            VelocityMap = VelocityMap.normalized * CurMoveSpeed * 2; //max spd clamp
         }
 
         if (FLAGDisplayDebugGizmos)
@@ -923,7 +1027,7 @@ public class PlayerMovementV3 : MonoBehaviour
         Vector3 VelocityMap3 = new Vector3(VelocityMap.x, 0, VelocityMap.y);
         VelocityMap3 += RetainedVelocity;
 
-        //if ((RB.velocity + VelocityMap3).sqrMagnitude > MoveSpd * MoveSpd)
+        //if ((RB.velocity + VelocityMap3).sqrMagnitude > CurMoveSpeed * CurMoveSpeed)
 
         RB.AddForce(VelocityMap3 - RB.velocity, ForceMode.VelocityChange);
 
@@ -934,6 +1038,8 @@ public class PlayerMovementV3 : MonoBehaviour
         //RB.MovePosition( RB.position + Displacement );
     }
     #endregion
+
+    #region Collision Handler(s)
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -970,6 +1076,8 @@ public class PlayerMovementV3 : MonoBehaviour
         //}
 
     }
+
+    #endregion
 
     #region Dash Movement Models
 
@@ -1024,7 +1132,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
             //TODO: Figure out + impl best practice for dash Dampening
             //Damp (within standard movement speed control)
-            if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= RunOptions.MoveSpd * RunOptions.MoveSpd || true) //First check was causing sloppy deceleration within standard MoveSpd
+            if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= Mathf.Pow(CurMoveSpeed,2) || true) //First check was causing sloppy deceleration within standard CurMoveSpeed
             {
                 RB.AddForce(DashAddVelocity * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
 
@@ -1124,7 +1232,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
             //TODO: Figure out + impl best practice for dash Dampening
             //Damp (within standard movement speed control)
-            if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= RunOptions.MoveSpd * RunOptions.MoveSpd || true) //First check was causing sloppy deceleration within standard MoveSpd
+            if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= Mathf.Pow(CurMoveSpeed,2) || true) //First check was causing sloppy deceleration within standard CurMoveSpeed
             {
                 RB.AddForce(DashAddVelocity * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
 
@@ -1165,6 +1273,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
     #endregion
 
+    #region DEPRECATED
 
     //DEPRECATED
     //public GameObject ShootableProjectile;
@@ -1188,4 +1297,6 @@ public class PlayerMovementV3 : MonoBehaviour
     //        else Debug.LogError(ToString() + ": No Actor attached. How did you get around all my checks?");
     //    }
     //}
+
+    #endregion
 }

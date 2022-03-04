@@ -121,7 +121,7 @@ Transform:
   m_GameObject: {fileID: 4133825113689899084}
   m_LocalRotation: {x: 0.70710576, y: -0, z: -0, w: 0.7071079}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.4196116, y: 0.41387004, z: 0.4196116}
+  m_LocalScale: {x: 0.6887505, y: 0.4854058, z: 0.6887505}
   m_Children: []
   m_Father: {fileID: 6373691387816632735}
   m_RootOrder: 1
@@ -182,7 +182,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 4133825113689899084}
   m_Material: {fileID: 13400000, guid: a43acfe435787e24193166f4d98c48ac, type: 2}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
@@ -279,10 +279,10 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6373691387816632710}
   m_Material: {fileID: 13400000, guid: a43acfe435787e24193166f4d98c48ac, type: 2}
-  m_IsTrigger: 1
-  m_Enabled: 0
+  m_IsTrigger: 0
+  m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 0.6, y: 0.6, z: 0.6}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &6373691387816632731
 Rigidbody:
@@ -312,5 +312,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 083729aca9b56a843839ff0eee975386, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ActorOwner: {fileID: 0}
   _Data: {fileID: 11400000, guid: 8eaa0f074af3e0d48b59a424b167f2d5, type: 2}
+  Info:
+    StartTimestamp: 0
+    Duration: 0
+    CollisionEnters: 0
+    CollisionStayDuration: 0
+    CurrentMoveType: 0
+    InitialDirection: {x: 0, y: 0, z: 0}
+    InitialHorizontalDirection: {x: 0, y: 0}
+    LaunchDistance: 0
+    Direction: {x: 0, y: 0, z: 0}
+    _Target: {fileID: 0}
+  HSM_CurrentDirection: {x: 0, y: 0, z: 0}

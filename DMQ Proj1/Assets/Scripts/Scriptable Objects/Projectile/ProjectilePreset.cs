@@ -24,20 +24,55 @@ public class ProjectilePreset : ScriptableObject
         [Header("Deprecated. Use EffectList instead")]
         public List<ProjectileEffect> ProjectileFXList;
 
-        public void PerformProjectileEffects(GenericProjectile Projectile, Collider Col = null)
+        public void PerformProjectileEffects(GenericProjectile Projectile, Collider Col = null, Collision collision = null)
         {
             EffectContext c = new EffectContext();
 
-            c.AttackData._InitialDirection = Projectile.transform.forward;
             c.AttackData._InitialGameObject = Projectile.gameObject;
+            c.AttackData._InitialDirection = Projectile.transform.forward;
             c.AttackData._InitialPosition = Projectile.gameObject.transform.position;
+
+            if(collision != null && collision.contactCount > 0)
+            {
+                //computations
+                var reflect2 = Vector2.Reflect(new Vector2(Projectile.transform.forward.x, Projectile.transform.forward.z)
+                    , new Vector2(collision.GetContact(0).normal.x, collision.GetContact(0).normal.z));
+
+                var reflect2_3 = new Vector3(reflect2.x, 0, reflect2.y);
+
+                var reflect3 = Vector3.Reflect(Projectile.transform.forward
+                    , collision.GetContact(0).normal);
+
+                //ctx assignments
+                c.ContextData._TriggeringCollision = collision;
+                //Done later
+                //c.ContextData._TriggeringCollider = collision.collider; 
+
+                c.ContextData._NormalVector = collision.GetContact(0).normal;
+                c.ContextData._NormalVector2D = new Vector3(collision.GetContact(0).normal.x, 0, collision.GetContact(0).normal.z);
+                c.ContextData._ReflectionVector = reflect3;
+                c.ContextData._ReflectionVector2D = reflect2_3;
+
+                //Here we override the InitialPosition with more specific data
+                c.AttackData._InitialPosition = collision.GetContact(0).point;
+
+
+                //Debug.DrawRay(collision.GetContact(0).point, reflect3 * 3, Color.green, 5f);
+                //Debug.DrawRay(collision.GetContact(0).point, collision.GetContact(0).normal * 3, Color.red, 5f);
+            }
 
             c.AttackData._Owner = Projectile.ActorOwner;
             if (Projectile.ActorOwner != null)
                 c.AttackData._Team = Projectile.ActorOwner._Team;
 
             if(Col != null)
+            {
                 c.AttackData._TargetGameObject = Col.gameObject;
+                c.AttackData._TargetDirection = Projectile.transform.position - Col.gameObject.transform.position;
+                c.AttackData._TargetPosition = Col.gameObject.transform.position;
+
+                c.ContextData._TriggeringCollider = Col;
+            }
 
             //TODO: Grab collision data and throw it into the remaining c.AttackData fields for Target
 
@@ -172,12 +207,15 @@ public class ProjectilePreset : ScriptableObject
         public float ForcePerSecond;
     };
 
+    public enum HomingSimpleMovement_Dimensionality { Homing2D, Homing3D }
     /// <summary>
     /// Turns towards the target at a rate of TurnRate degrees per second
     /// </summary>
     [System.Serializable]
     public struct HomingSimpleMovementOptions
     {
+        public HomingSimpleMovement_Dimensionality MovementStyle;
+
         public float Speed;
         [Min(0f)]
         [Tooltip("Degrees per second")]

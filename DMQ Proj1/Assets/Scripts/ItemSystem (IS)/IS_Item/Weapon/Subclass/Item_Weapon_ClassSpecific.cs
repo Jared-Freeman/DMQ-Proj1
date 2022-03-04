@@ -11,6 +11,12 @@ namespace ItemSystem.Weapons
 {
     public class Item_Weapon_ClassSpecific : Item_WeaponBase
     {
+        #region Members
+
+        protected ItemWeapClassSpecific_StateInfo IWCS_StateInfo;
+
+        #region Properties
+
         public override IS_ItemPresetBase Preset 
         { 
             get
@@ -32,7 +38,18 @@ namespace ItemSystem.Weapons
             } 
         }
 
-        protected ItemWeapClassSpecific_StateInfo IWCS_StateInfo;
+        public override bool CanAttack
+        {
+            get => IWCS_StateInfo.CurrentBasicAttack.CanCastAbility;
+        }
+        public override bool CanAbility1
+        {
+            get => IWCS_StateInfo.CurrentAbility_1.CanCastAbility;
+        }
+        public override bool CanAbility2
+        {
+            get => IWCS_StateInfo.CurrentAbility_2.CanCastAbility;
+        }
 
         //for internal convenience
         private Item_Weapon_ClassSpecificPreset IWCS_Preset
@@ -42,6 +59,10 @@ namespace ItemSystem.Weapons
                 return Preset as Item_Weapon_ClassSpecificPreset;
             }
         }
+
+        #endregion
+
+        #region Helpers
 
         protected struct ItemWeapClassSpecific_StateInfo
         {
@@ -69,6 +90,12 @@ namespace ItemSystem.Weapons
             }
         }
 
+        #endregion
+
+        #endregion
+
+        #region Initialization
+
         protected override void Awake()
         {
             base.Awake();
@@ -94,6 +121,7 @@ namespace ItemSystem.Weapons
             IS_InventoryBase.Event_ItemLeavesInventory -= IS_InventoryBase_Event_ItemLeavesInventory;
         }
 
+        #endregion
 
         #region Event Handlers
 
@@ -154,10 +182,37 @@ namespace ItemSystem.Weapons
         {
             if( base.InvokeAttack(ctx))
             {
+                if (IWCS_StateInfo.CurrentBasicAttack == null) return false;
+
                 EffectContext ec = new EffectContext(ctx);
 
-                IWCS_StateInfo.CurrentBasicAttack?.ExecuteAbility(ref ec);
-                return true;
+                return IWCS_StateInfo.CurrentBasicAttack.ExecuteAbility(ref ec);
+            }
+            return false;
+        }
+
+        public override bool InvokeAbility1(AttackContext ctx)
+        {
+            if( base.InvokeAbility1(ctx))
+            {
+                if (IWCS_StateInfo.CurrentAbility_1 == null) return false;
+
+                EffectTree.EffectContext ec = new EffectTree.EffectContext(ctx);
+
+                return (IWCS_StateInfo.CurrentAbility_1.ExecuteAbility(ref ec));
+            }
+            return false;
+        }
+
+        public override bool InvokeAbility2(AttackContext ctx)
+        {
+            if( base.InvokeAbility2(ctx))
+            {
+                if (IWCS_StateInfo.CurrentAbility_2 == null) return false;
+
+                EffectTree.EffectContext ec = new EffectTree.EffectContext(ctx);
+
+                return (IWCS_StateInfo.CurrentAbility_2.ExecuteAbility(ref ec));
             }
             return false;
         }

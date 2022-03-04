@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Utils;
 using ActorSystem.StatusEffect;
 
 namespace EffectTree
@@ -18,16 +18,29 @@ namespace EffectTree
         /// </summary>
         public List<SE_StatusEffect_Base> List_StatusEffects;
 
+        public SE_StatusEffect_Base.DurationApplicationBehavior ApplyDurationBehavior = SE_StatusEffect_Base.DurationApplicationBehavior.ResetDuration;
+
+        public EffectContext.TargetOptions Target = EffectContext.TargetOptions._TargetGameObject;
+
+        [Header("Won't exceed Preset's max stacks")]
+        public int Stacks = 1;
+
         public override bool Invoke(ref EffectContext ctx)
         {
-            Actor actor = ctx.AttackData._TargetGameObject.GetComponent<Actor>();
+            GameObject g = ctx.RetrieveGameObject(Target);
+            if (g == null) return false;
+
+            Actor actor = g.GetComponent<Actor>();
 
             //this branch includes a short circuit eval
             if(actor != null && TargetFilters.TargetIsAllowed(ctx.AttackData._Team, actor) && base.Invoke(ref ctx))
             {
                 foreach(SE_StatusEffect_Base fx in List_StatusEffects)
                 {
-                    actor.Stats.AddStatusEffect(fx.CreateInstance(actor.gameObject));
+                    var inst = fx.CreateInstance(actor.gameObject);
+                    inst.AddStacks(Stacks);
+                    actor.Stats.AddStatusEffect(inst);
+
                 }
 
                 return true;

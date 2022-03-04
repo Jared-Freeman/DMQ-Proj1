@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aea8d1911d90ea24c955a06eb8a18f94, type: 3}
+  m_Name: AI_Shooter1
+  m_EditorClassIdentifier: 
+  Base:
+    DrawDebugGizmos: 0
+    InterceptCurrentTarget: 1
+    AttackRange: 13
+    MovementSpeed: 4
+    StopSlideDistance: 0.5
+    AggroRadius: 20
+    MaxFacingAngle: 40
+    TurningRate: 180
+    GrowCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0.5
+        outSlope: 0.5
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 1.5
+        inSlope: 0.5
+        outSlope: 0.5
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    GrowDuration: 1
+    _TargetPriority: 1
+  RAI_Options:
+    AttackCooldown: 1
+    AttackRangeMin: 1
+    AttackRangeMax: 17
+    AttackChargeTime: 1
+    AttackAbility: {fileID: 11400000, guid: 3a34a9c4c98f69a4b8388c93a7b38a7f, type: 2}

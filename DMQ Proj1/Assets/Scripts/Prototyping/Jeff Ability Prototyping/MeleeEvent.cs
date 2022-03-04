@@ -6,48 +6,56 @@ namespace EffectTree
 {
     public class MeleeEvent : MonoBehaviour
     {
-        
+        public Effect_Dev_MeleeAttack Preset;
+
+
         public EffectContext ctx;
-        public Effect_Dev_MeleeAttack preset;
-        public float eventDuration = 0; //This value is set by the effect that instantiates this event.
-        public List<Effect_Base> EffectList;
-        private List<GameObject> targetsHit;
-        public void Init(List<Effect_Base> list,float duration, EffectContext ctx )
+        private List<GameObject> List_TargetsHit = new List<GameObject>();
+
+        void Start()
         {
-            eventDuration = duration;
-            EffectList = list;
-            this.ctx = ctx;
+            StartCoroutine(DestroyAfterSeconds(Preset.EffectDuration));
         }
+
+        /// <summary>
+        /// Dispatch effect tree to targets this trigger has hit.
+        /// </summary>
+        /// <param name="col"></param>
         void OnTriggerEnter(Collider col)
         {
-            if(col.gameObject.GetComponent<Actor>()) //Currently melees only register on actors. Might want to change this to hit objects.
+            //Currently melees only register on actors. Might want to change this to hit objects.
+            var a = col.gameObject.GetComponent<Actor>();
+            if (
+                a != null 
+                && !List_TargetsHit.Contains(col.gameObject) 
+                && Preset.TargetFilters.TargetIsAllowed(ctx.AttackData._Team, a)
+                ) 
             {
-                Team friendlyTeam = ctx.AttackData._Team;
-                Actor otherActor = col.gameObject.GetComponent<Actor>();
-                Debug.Log("FriendlyTeam: " + friendlyTeam);
-                if(otherActor._Team != friendlyTeam)
-                {
-                    ctx.AttackData._TargetGameObject = col.gameObject; //We found an enemy actor so set it as the target.
-                    foreach (Effect_Base effect in EffectList)
-                        effect.Invoke(ref ctx);
-                }
+                List_TargetsHit.Add(col.gameObject);
+
+                EffectContext newContext = new EffectContext(ctx);
+
+                newContext.AttackData._TargetGameObject = col.gameObject; //We found an enemy actor so set it as the target.
+
+                foreach (Effect_Base effect in Preset.EffectList)
+                    effect.Invoke(ref newContext);
             }
-            else //We hit a cube or something
+            else if(a == null)
             {
-                ctx.AttackData._TargetGameObject = col.gameObject;
-                foreach (Effect_Base effect in EffectList)
-                    effect.Invoke(ref ctx);
-            }    
+                List_TargetsHit.Add(col.gameObject);
+
+                EffectContext newContext = new EffectContext(ctx);
+                newContext.AttackData._TargetGameObject = col.gameObject; //We found an enemy actor so set it as the target.
+
+                foreach (Effect_Base effect in Preset.EffectList)
+                    effect.Invoke(ref newContext);
+            }
         }
-        void Update()
+
+        protected IEnumerator DestroyAfterSeconds(float time)
         {
-            if(eventDuration != 0)
-            {
-                if(eventDuration > 0)
-                    eventDuration -= Time.deltaTime;
-                if(eventDuration < 0)
-                    Destroy(gameObject);
-            }
+            yield return new WaitForSeconds(time);
+            Destroy(gameObject);
         }
     }
 }

@@ -22,6 +22,15 @@ namespace ActorSystem.AI
             /// </summary>
             public bool InterceptCurrentTarget = true;
 
+            /// <summary>
+            /// Can this AI invoke attacks while moving?
+            /// </summary>
+            public bool AttackWhileMoving = false;
+            /// <summary>
+            /// Velocity Tolerance that counts as stationary
+            /// </summary>
+            public float StationaryVelocityThreshold = .05f;
+
             [Min(0f)]
             public float AttackRange = 1.25f;
 
@@ -39,57 +48,6 @@ namespace ActorSystem.AI
             public float GrowDuration = 1;
 
             public ActorAI_Logic.TargetPriority _TargetPriority = ActorAI_Logic.TargetPriority.Proximity;
-        }
-    }
-
-
-
-    [CreateAssetMenu(fileName = "AI_", menuName = "Actor/AI Logic/Generic Charging Enemy", order = 2)]
-    public class AP2_GenericEnemyAI_LogicPreset : ActorAI_Logic_PresetBase
-    {
-        //TODO: What goes here versus the base preset?
-        public AIOptions_AP2_GenericEnemyAI GEAI_Options;
-
-        //inspector helper
-        [System.Serializable]
-        public class AIOptions_AP2_GenericEnemyAI
-        {
-            [Min(0f)]
-            public float LungePrepareDistance = 4;
-            public float LungeLosePrepareDistance = 5.5f;
-            public float LungeDistance = 4.5f;
-            [Min(0f)]
-            public float LungeSpeed = 22f;
-            [Min(0f)]
-            public float LungeTimeout = 1.25f;
-
-            public List<ImpactFX.ImpactEffect> Lunge_ImpactEffects = new List<ImpactFX.ImpactEffect>();
-
-
-            [Min(0f)]
-            public float LungePause = .5f;
-            public float GrowDuration = .5f;
-            public AnimationCurve GrowCurve;
-        }
-    }
-
-
-    [CreateAssetMenu(fileName = "AI_", menuName = "Actor/AI Logic/Generic Ranged Enemy", order = 2)]
-    public class AP2_RangedAI_1_LogicPreset : ActorAI_Logic_PresetBase
-    {
-        //TODO: What goes here versus the base preset?
-        public AIOptions_AP2_RangedAI_1_LogicPreset RAI_Options;
-
-        //inspector helper
-        [System.Serializable]
-        public class AIOptions_AP2_RangedAI_1_LogicPreset
-        {
-            public float AttackCooldown;
-            public float AttackRangeMin;
-            public float AttackRangeMax;
-            public float AttackChargeTime;
-
-            public AbilitySystem.AS_Ability_Base AttackAbility;
         }
     }
 }

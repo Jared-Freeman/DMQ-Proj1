@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4782f18afa2a6ad49a20d69378095382, type: 3}
+  m_Name: AI_Shambler1
+  m_EditorClassIdentifier: 
+  Base:
+    DrawDebugGizmos: 0
+    InterceptCurrentTarget: 0
+    AttackWhileMoving: 0
+    StationaryVelocityThreshold: 1.33
+    AttackRange: 1.25
+    MovementSpeed: 6
+    StopSlideDistance: 0
+    AggroRadius: 20
+    MaxFacingAngle: 120
+    TurningRate: 240
+    GrowCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0.5
+        outSlope: 0.5
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 1.5
+        inSlope: 0.5
+        outSlope: 0.5
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    GrowDuration: 1
+    _TargetPriority: 1
+  Shambler_Options:
+    AttackAbility: {fileID: 11400000, guid: 0cf78c9f260f1b44c8e822ce097c3efc, type: 2}
+    AttackPrepareDistance: 3.5
+    AttackLoseDistance: 5
+    AttackPause: 1
+    GrowDuration: 1
+    GrowCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0.5
+        outSlope: 0.5
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 1.5
+        inSlope: 0.5
+        outSlope: 0.5
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4

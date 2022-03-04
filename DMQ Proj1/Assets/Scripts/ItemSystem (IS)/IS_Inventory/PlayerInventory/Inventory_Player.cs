@@ -4,17 +4,19 @@ using System.Collections.Generic;
 using CSEventArgs;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using ItemSystem.Weapons;
 
 public class InventoryEventArgs : System.EventArgs
 {
-    public InventoryEventArgs(GameObject o,int slot)
+    public InventoryEventArgs(GameObject o,int slot, Item_Weapon_ClassSpecific wep)
     {
         obj = o;
         weaponSlot = slot;
+        weapon = wep;
     }
     public GameObject obj;
     public int weaponSlot;
+    public Item_Weapon_ClassSpecific weapon;
 }
 
 
@@ -29,9 +31,10 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
     #region Members
 
     public ItemSystem.Weapons.Item_WeaponBase CurrentWeapon 
-    { get
+    { 
+        get
         {
-            if (Info.EquippedWeaponIndex < 0 || Info.EquippedWeaponIndex + 1 >= _WeaponSlots.Count) //bounds
+            if (Info.EquippedWeaponIndex < 0 || Info.EquippedWeaponIndex >= _WeaponSlots.Count) //bounds
             {
                 return null;
             }
@@ -41,14 +44,31 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
             }
         } 
     }
+    /// <summary>
+    /// More specific weapon property than CurrentWeapon
+    /// </summary>
+    public ItemSystem.Weapons.Item_Weapon_ClassSpecific CurrentClassWeapon
+    {
+        get
+        {
+            if (CurrentWeapon == null) return null;
+            return CurrentWeapon as ItemSystem.Weapons.Item_Weapon_ClassSpecific;
+        }
+    }
 
     PlayerInputHost InputHost { get; set; }
     PlayerInput Input { get { return InputHost.CurrentPlayerInput; } }
     PlayerControls controls;
 
     [SerializeField] protected List<Inventory_WeaponSlot> _WeaponSlots = new List<Inventory_WeaponSlot>();
+    public List<Inventory_WeaponSlot> getWeaponSlots()
+        { return _WeaponSlots; }
 
     [SerializeField] protected PlayerInvInfo Info;
+    public PlayerInvInfo GetInfo()
+    {
+        return Info;
+    }
 
     [Tooltip("No reference here will use the Transform of THIS Gameobject")]
     [SerializeField] protected Transform _PickupTransform;
@@ -241,9 +261,14 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
         }
         else if(index < _WeaponSlots.Count)
         {
+            //No item in the weapon slot, or duplicate equip request
+            if (_WeaponSlots[index].Items.Count < 1 || index == Info.EquippedWeaponIndex) return;
+
+            //otherwise we equip
             Debug.Log("WEAPON EQUIPPED @index: " + index);
             Info.EquippedWeaponIndex = index;
-            OnWeaponChanged.Invoke(this, new InventoryEventArgs(this.gameObject,index));
+            Item_Weapon_ClassSpecific currentWeapon = (Item_Weapon_ClassSpecific)_WeaponSlots[index].Weapon;
+            OnWeaponChanged.Invoke(this, new InventoryEventArgs(this.gameObject,index,currentWeapon));
         }
         else
         {
