@@ -25,7 +25,7 @@ public class PlayerInputHost : MonoBehaviour
 {
     public event System.EventHandler<CSEventArgs.PlayerInputEventArgs> OnInputChanged;
 
-    private PlayerInput _curPlayerInput;
+    [SerializeField] private PlayerInput _curPlayerInput;
 
     public PlayerInput CurrentPlayerInput 
     { 

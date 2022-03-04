@@ -104,11 +104,26 @@ PrefabInstance:
       propertyPath: m_Mass
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 6648787620572903228, guid: b35d1837499e03246a6c566c803e95d2,
+        type: 3}
+      propertyPath: m_Constraints
+      value: 112
+      objectReference: {fileID: 0}
+    - target: {fileID: 6648787620572903235, guid: b35d1837499e03246a6c566c803e95d2,
+        type: 3}
+      propertyPath: FLAGDisplayDebugGizmos
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6648787620572903235, guid: b35d1837499e03246a6c566c803e95d2,
         type: 3}
       propertyPath: DashOptions.DashAbility
       value: 
       objectReference: {fileID: 11400000, guid: ad686cfdb8e88c543b82966db2dcb8d5,
         type: 2}
+    - target: {fileID: 6648787620572903235, guid: b35d1837499e03246a6c566c803e95d2,
+        type: 3}
+      propertyPath: FLAGCollectDebugTelemetry
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b35d1837499e03246a6c566c803e95d2, type: 3}

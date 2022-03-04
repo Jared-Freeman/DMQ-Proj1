@@ -23,6 +23,8 @@ public class PlayerMovementV3 : MonoBehaviour
 {
     #region Members
 
+    public static float s_FreeRotation_VelocityTolerance = .5f;
+
     #region Flags
 
     public bool FLAGCollectDebugTelemetry = false;
@@ -84,7 +86,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
     Vector2 InputMap = Vector2.zero; //Raw input from input events
 
-    Vector3 DesiredVelocity = Vector3.zero;
+    Vector3 DesiredVelocity = Vector3.zero; //gathering correctly 3-4-2022
     Vector3 AddVelocity = Vector2.zero;
 
     Vector2 VelocityMap = Vector2.zero; //affects horizontal movement velocity. Controlled via input
@@ -312,24 +314,34 @@ public class PlayerMovementV3 : MonoBehaviour
 
     void Update()
     {
-        Debug.DrawRay(transform.position, new Vector3(AimDirection.x, transform.position.y, AimDirection.y) * 5f, Color.yellow);
-        UpdateRotation();
+        if (FLAGDisplayDebugGizmos)
+        {
+            Debug.DrawRay(transform.position, new Vector3(AimDirection.x, transform.position.y, AimDirection.y) * 5f, Color.yellow);
+            Debug.DrawRay(transform.position, new Vector3(InputMap.x, 0, InputMap.y) * 5f, Color.cyan);
+        }
     }
 
     private void UpdateRotation()
     {
-        Vector2 movementInput = InputMap.normalized;
-        Vector3 move = new Vector3(movementInput.x, 0, movementInput.y);
+        Vector2 movementInput = InputMap;
+        Vector3 move = new Vector3(RB.velocity.x, 0, RB.velocity.z);
+
+        if(RB.velocity.sqrMagnitude < s_FreeRotation_VelocityTolerance)
+        {
+            gameObject.transform.forward = new Vector3(movementInput.x, 0, movementInput.y).normalized;
+        }
 
         if (move != Vector3.zero)
         {
-            gameObject.transform.forward = move;
+            gameObject.transform.forward = move.normalized;
         }
     }
 
     private void FixedUpdate()
     {
-        if(FLAG_PlayerMovementEnabled) 
+        UpdateRotation();
+
+        if (FLAG_PlayerMovementEnabled) 
         {
             switch(CurrentState)
             {
@@ -722,7 +734,8 @@ public class PlayerMovementV3 : MonoBehaviour
                 if(FLAGDisplayDebugGizmos)
                 {
                     float a = 5;
-                    Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z), InputDirection * a, Color.yellow);
+                    Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z), InputDirection * a, Color.yellow, Time.fixedDeltaTime);
+
                 }
             }
         }
@@ -775,7 +788,10 @@ public class PlayerMovementV3 : MonoBehaviour
             Vector3 Parallel = Vector3.zero;
             Vector3 Perpendicular = Vector3.zero;
 
-            Parallel = (Vector3.Dot(DesiredVelocity, FilteredVelocity) / FilteredVelocity.magnitude) * FilteredVelocity.normalized;
+            if (FilteredVelocity.sqrMagnitude <= 0)
+                Parallel = (Vector3.Dot(DesiredVelocity, FilteredVelocity) / FilteredVelocity.magnitude) * FilteredVelocity.normalized;
+            else
+                Parallel = DesiredVelocity;
             //Perpendicular = DesiredVelocity - Parallel;
 
             AddVelocity = (Parallel.normalized * RunOptions.Deceleration * Time.fixedDeltaTime) + Perpendicular;
@@ -796,7 +812,6 @@ public class PlayerMovementV3 : MonoBehaviour
         if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= Mathf.Pow(CurMoveSpeed,2)) //First check was causing sloppy deceleration within standard CurMoveSpeed
         {
             RB.AddForce(AddVelocity * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
-
 
             if ((AddVelocity).sqrMagnitude < (FilteredRBVelocity - DesiredVelocityDiff).sqrMagnitude)
             {
