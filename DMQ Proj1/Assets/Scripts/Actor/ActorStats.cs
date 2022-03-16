@@ -9,6 +9,7 @@ using UnityEngine.Events;
 using Utils.Stats;
 
 using ActorSystem.StatusEffect;
+using System;
 
 namespace ActorSystem.EventArgs
 {
@@ -62,6 +63,9 @@ public class ActorStats : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// The actor attached to this gameobject.
+    /// </summary>
     Actor actor;
     System.Action schedule;
 
@@ -158,7 +162,23 @@ public class ActorStats : MonoBehaviour
         {
             AddStatusEffect(e.CreateInstance(gameObject));
         }
+
+        EventSubscriptions();
     }
+
+    private void EventSubscriptions()
+    {
+        SE_StatusEffect_Instance.OnStatusEffectStacksAdded += SE_StatusEffect_Instance_OnStatusEffectStacksAdded;
+    }
+
+    private void SE_StatusEffect_Instance_OnStatusEffectStacksAdded(object sender, CSEventArgs.StatusEffectStackAdded_EventArgs e)
+    {
+        if(e._Actor == actor)
+        {
+            RecalculateStatusMutations(); //lazy but fast impl
+        }
+    }
+
     /// <summary>
     /// Initializes the State Variable stat instances on this ActorStats object
     /// </summary>
@@ -195,31 +215,60 @@ public class ActorStats : MonoBehaviour
         //recalculate per-status
         foreach (var m in _ListStatusEffects)
         {
-            AddStatusEffect(m);
+            ComputeStatusEffectModifiers(m);
         }
     }
 
     /// <summary>
-    /// Appends a stat data modifier into this ActorStat's modifier buffer
+    /// Appends a stat data modifier into this ActorStat's modifier buffer.
     /// </summary>
+    /// <remarks>
+    /// If the instance is already in the list, input is ignored.
+    /// </remarks>
     public void AddStatusEffect(SE_StatusEffect_Instance Effect)
     {
-        if (!_ListStatusEffects.Contains(Effect))
+
+        //If we already have this status effect, we append stacks from incoming instance and delete the instance
+        if(_ListStatusEffects.Exists(x => x.Preset == Effect.Preset))
+        {
+            var cur = _ListStatusEffects.Find(x => x.Preset == Effect.Preset);
+
+            cur.AddStacks(Effect.Stacks);
+            Destroy(Effect);
+        }
+
+
+        //if we dont already have a status effect instance, we add it to the list instead.
+        else if (!_ListStatusEffects.Contains(Effect))
         {
             _ListStatusEffects.Add(Effect);
 
             Effect.OnStatusEffectDestroy_Local += Effect_OnStatusEffectDestroy_Local;
 
-            var append_data = Effect.Preset.Settings.StatsModifiers;
-
-            HP.Modifier.Add += append_data.HP.Modifier.Add;
-            Energy.Modifier.Add += append_data.Energy.Modifier.Add;
-            MoveSpeed.Modifier.Add += append_data.MoveSpeed.Modifier.Add;
-
-            HP.Modifier.Multiply *= append_data.HP.Modifier.Multiply;
-            Energy.Modifier.Multiply *= append_data.Energy.Modifier.Multiply;
-            MoveSpeed.Modifier.Multiply *= append_data.MoveSpeed.Modifier.Multiply;
+            ComputeStatusEffectModifiers(Effect);
         }
+    }
+
+    /// <summary>
+    /// Computes the modifier contribution of this status effect. 
+    /// </summary>
+    /// <remarks>
+    /// Note that multiplier and additive modifiers are separated and thus commutative
+    /// , so order of operations doesnt matter when computing the modifiers for every status effect.
+    /// </remarks>
+    /// <param name="Effect"></param>
+    public void ComputeStatusEffectModifiers(SE_StatusEffect_Instance Effect)
+    {
+
+        var append_data = Effect.Preset.Settings.StatsModifiers;
+
+        HP.Modifier.Add += append_data.HP.Modifier.Add * Effect.Stacks;
+        Energy.Modifier.Add += append_data.Energy.Modifier.Add * Effect.Stacks;
+        MoveSpeed.Modifier.Add += append_data.MoveSpeed.Modifier.Add * Effect.Stacks;
+
+        HP.Modifier.Multiply *= append_data.HP.Modifier.Multiply * Effect.Stacks;
+        Energy.Modifier.Multiply *= append_data.Energy.Modifier.Multiply * Effect.Stacks;
+        MoveSpeed.Modifier.Multiply *= append_data.MoveSpeed.Modifier.Multiply * Effect.Stacks;
     }
 
     /// <summary>
