@@ -378,7 +378,9 @@ public class ActorStats : MonoBehaviour
 
             HpCurrent -= Mathf.Max(DamageMessage._DamageInfo.DamageAmount, 0);
             OnReceiveDamage.Invoke();
+            OnDamageTaken?.Invoke(this, new ActorSystem.EventArgs.ActorDamageTakenEventArgs(actor, DamageMessage));
         }
+
         //target filtering
         else if(DamageMessage._DamageInfo.TargetFilters.TargetIsAllowed(DamageMessage._Team, actor))
         {
@@ -386,9 +388,9 @@ public class ActorStats : MonoBehaviour
 
             HpCurrent -= Mathf.Max(DamageMessage._DamageInfo.DamageAmount, 0);
             OnReceiveDamage.Invoke();
+            OnDamageTaken?.Invoke(this, new ActorSystem.EventArgs.ActorDamageTakenEventArgs(actor, DamageMessage));
         }
 
-        OnDamageTaken?.Invoke(this, new ActorSystem.EventArgs.ActorDamageTakenEventArgs(actor, DamageMessage));
 
         if (HpCurrent <= 0)
         {
