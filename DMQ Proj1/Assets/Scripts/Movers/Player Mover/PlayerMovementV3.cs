@@ -413,6 +413,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
             case State.MovementInterrupted:
                 FLAG_PlayerMovementEnabled = false;
+                RB.velocity = Vector3.zero; //TODO: Make this better...
                 break;
 
 
