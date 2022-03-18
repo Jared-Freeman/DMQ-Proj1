@@ -23,7 +23,7 @@ public class PlayerMovementV3 : MonoBehaviour
 {
     #region Members
 
-    public static float s_FreeRotation_VelocityTolerance = .5f;
+    public static float s_FreeRotation_VelocityTolerance = 1.5f;
 
     #region Flags
 
@@ -326,12 +326,12 @@ public class PlayerMovementV3 : MonoBehaviour
         Vector2 movementInput = InputMap;
         Vector3 move = new Vector3(RB.velocity.x, 0, RB.velocity.z);
 
-        if(RB.velocity.sqrMagnitude < s_FreeRotation_VelocityTolerance)
+        if(InputMap.sqrMagnitude > 0 && RB.velocity.sqrMagnitude < s_FreeRotation_VelocityTolerance)
         {
             gameObject.transform.forward = new Vector3(movementInput.x, 0, movementInput.y).normalized;
         }
 
-        if (move != Vector3.zero)
+        if (move.sqrMagnitude > s_FreeRotation_VelocityTolerance)
         {
             gameObject.transform.forward = move.normalized;
         }
