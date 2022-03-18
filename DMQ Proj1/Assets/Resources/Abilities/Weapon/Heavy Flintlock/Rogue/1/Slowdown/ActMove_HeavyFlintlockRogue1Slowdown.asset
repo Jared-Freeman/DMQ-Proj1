@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: adb4e84686d3af64bb28ff41eb495811, type: 3}
-  m_Name: ActMove_DevGun
+  m_Name: ActMove_HeavyFlintlockRogue1Slowdown
   m_EditorClassIdentifier: 
   Conditions:
     _Conditions: []
@@ -21,34 +21,25 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
-      inSlope: 2.1470263
-      outSlope: 2.1470263
-      tangentMode: 34
+      value: 0
+      inSlope: -0.1971928
+      outSlope: -0.1971928
+      tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.2007899
-      value: 1.4311012
-      inSlope: 0.25287563
-      outSlope: 0.25287563
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.06420317
+      outWeight: 0.035779383
     - serializedVersion: 3
       time: 1
-      value: 1
-      inSlope: -0.96185535
-      outSlope: -0.96185535
+      value: 0
+      inSlope: 0.2153327
+      outSlope: 0.2153327
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.06153658
+      inWeight: 0.034588933
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  Duration: 0.05
-  VelocityDefault: 25
+  Duration: 0.45
+  VelocityDefault: 15
   Deceleration: 10
