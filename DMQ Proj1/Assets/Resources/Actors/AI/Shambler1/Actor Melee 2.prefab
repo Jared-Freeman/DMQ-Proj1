@@ -48,7 +48,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 1269984483864059920}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 0.6
   m_Speed: 5
   m_Acceleration: 2
   avoidancePriority: 50
@@ -82,7 +82,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1269984483864059920}
   serializedVersion: 2
-  m_Mass: 2
+  m_Mass: 10
   m_Drag: 0
   m_AngularDrag: 0
   m_UseGravity: 1
@@ -97,7 +97,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1269984483864059920}
-  m_Material: {fileID: 13400000, guid: 9547e215c74d46142ae64d00ab825310, type: 2}
+  m_Material: {fileID: 13400000, guid: 7f3046a74a68a9c40830383c83d77c60, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.45
@@ -135,6 +135,7 @@ MonoBehaviour:
   FLAG_Debug: 0
   Preset: {fileID: 11400000, guid: 714096e6b0a1ff5438bb50f0cf5b10df, type: 2}
   InitialStatusEffects: []
+  _ListStatusEffects: []
   m_timeSinceLastHit: 0
   OnDeath:
     m_PersistentCalls:
