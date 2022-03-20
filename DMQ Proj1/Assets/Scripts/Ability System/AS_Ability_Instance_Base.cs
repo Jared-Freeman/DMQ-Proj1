@@ -100,7 +100,6 @@ namespace AbilitySystem
 
         private void Cooldown_OnCooldownAvailable(object sender, Utils.CooldownTracker.CooldownTrackerEventArgs e)
         {
-            Debug.Log("Cooldown Avaialbel!!!");
 
             //note this is a very limited effect context
             EffectTree.EffectContext ctx = Owner.GetDefaultEffectContext();
