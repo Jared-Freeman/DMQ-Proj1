@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
 
 //Author: Jared Freeman
 //Desc: This class implements some helpful utility methods for use in Unity game design
@@ -262,6 +263,29 @@ namespace Utils
 
         private float LastUsedTime;
 
+        /// <summary>
+        /// Fires when the Cooldown is available to use again.
+        /// </summary>
+        public event System.EventHandler<CooldownTrackerEventArgs> OnCooldownAvailable;
+        public event System.EventHandler<CooldownTrackerEventArgs> OnCooldownUsed;
+
+        #region Helpers
+
+        /// <summary>
+        /// Event args for cooldown events.
+        /// </summary>
+        public class CooldownTrackerEventArgs : System.EventArgs
+        {
+            public CooldownTracker cooldown;
+
+            public CooldownTrackerEventArgs(CooldownTracker cd)
+            {
+                cooldown = cd;
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region Properties
@@ -344,9 +368,22 @@ namespace Utils
             if(CanUseCooldown())
             {
                 LastUsedTime = Time.time;
+
+                System.Threading.Tasks.Task t = DelayedCooldownAvailableTask();
+
+                OnCooldownUsed?.Invoke(this, new CooldownTrackerEventArgs(this));
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Schedules a CooldownAvailable event to fire once the cooldown duration has finished.
+        /// </summary>
+        protected async System.Threading.Tasks.Task DelayedCooldownAvailableTask()
+        {
+            await System.Threading.Tasks.Task.Delay((int)(1000 * Cooldown) + 1);
+            OnCooldownAvailable?.Invoke(this, new CooldownTrackerEventArgs(this));
         }
 
         //Return true if _Cooldown CAN be used
