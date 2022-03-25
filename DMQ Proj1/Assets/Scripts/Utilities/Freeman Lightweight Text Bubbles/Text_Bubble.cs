@@ -55,7 +55,7 @@ public class Text_Bubble : MonoBehaviour
     public static Text_Bubble CreateTemporaryTextBubble(string message, float duration, GameObject parent)
     {
         Text_Bubble txt = CreateTemporaryTextBubble(message, duration);
-        txt.gameObject.transform.SetParent(parent.transform);
+        if (parent != null) txt.gameObject.transform.SetParent(parent.transform);
         return txt;
     }
     public static Text_Bubble CreateTemporaryTextBubble(string message, float duration, GameObject parent, Color color)
