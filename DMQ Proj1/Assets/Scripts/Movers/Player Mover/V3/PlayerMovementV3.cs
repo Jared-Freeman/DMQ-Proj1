@@ -16,6 +16,16 @@ public class PlayerMovementEventArgs : System.EventArgs
     public Actor actor;
 };
 
+public class PlayerMovementV3EventArgs : System.EventArgs
+{
+    public PlayerMovementV3 Mover;
+
+    public PlayerMovementV3EventArgs(PlayerMovementV3 mover)
+    {
+        Mover = mover;
+    }
+}
+
 [RequireComponent(typeof(Actor))]
 [RequireComponent(typeof(PlayerControls))]
 [RequireComponent(typeof(Rigidbody))]
@@ -68,8 +78,47 @@ public class PlayerMovementV3 : MonoBehaviour
         get { return _Info.DashAbilityInstance; }
     }
 
-
+    //Public-facing state info properties
     public float CurMoveSpeed { get => AttachedActor.Stats.MoveSpeedCurrent; }
+
+    private bool _ExceedingCurrentMaxMovementSpeed;
+    /// <summary>
+    /// Whether or not the mover is moving faster than it can affect. 
+    /// </summary>
+    /// <remarks> 
+    /// Exceeding the max means the player will slide, decelerate, and their steering will be more limited.
+    /// </remarks>
+    public bool ExceedingCurrentMaxMovementSpeed
+    {
+        //get
+        //{
+        //    Vector3 FilteredRBVelocity = new Vector3(RB.velocity.x, 0, RB.velocity.z);
+        //    if (FilteredRBVelocity.sqrMagnitude >= Mathf.Pow(CurMoveSpeed, 2)) return true;
+        //    return false;
+        //}
+
+        get
+        {
+            return _ExceedingCurrentMaxMovementSpeed;
+        }
+        
+        set
+        {
+            if(_ExceedingCurrentMaxMovementSpeed != value)
+            {
+                if(value == true)
+                {
+                    OnBeginExceedingCurrentMaxMovementSpeed?.Invoke(this, new PlayerMovementV3EventArgs(this));
+                }
+                else 
+                {
+                    OnFinishExceedingCurrentMaxMovementSpeed?.Invoke(this, new PlayerMovementV3EventArgs(this));
+                }
+
+                _ExceedingCurrentMaxMovementSpeed = value;
+            }
+        }
+    }
     #endregion
 
     #region State Info
@@ -140,6 +189,9 @@ public class PlayerMovementV3 : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// internal state info helper struct
+    /// </summary>
     private struct StateInfo
     {
         //new
@@ -150,6 +202,9 @@ public class PlayerMovementV3 : MonoBehaviour
         public float Dash_LastStartTime;
         public Vector3 _DashDesiredDirection;
     }
+    /// <summary>
+    /// Helpful info tracking for debugging physics
+    /// </summary>
     private struct PMV3_DebugTelemetry
     {
         //Debug members
@@ -175,6 +230,10 @@ public class PlayerMovementV3 : MonoBehaviour
 
     public static event System.EventHandler<PlayerMovementEventArgs> OnVelocityUpdate;
     public static event System.EventHandler<PlayerMovementEventArgs> OnDash;
+
+    public static event System.EventHandler<PlayerMovementV3EventArgs> OnBeginExceedingCurrentMaxMovementSpeed;
+    public static event System.EventHandler<PlayerMovementV3EventArgs> OnFinishExceedingCurrentMaxMovementSpeed;
+
     void InitializeEvents()
     {
         if (Event_AttackStart == null) Event_AttackStart = new PlayerMovementEvent();
@@ -413,6 +472,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
             case State.MovementInterrupted:
                 FLAG_PlayerMovementEnabled = false;
+                ExceedingCurrentMaxMovementSpeed = true;
                 RB.velocity = Vector3.zero; //TODO: Make this better...
                 break;
 
@@ -450,6 +510,8 @@ public class PlayerMovementV3 : MonoBehaviour
 
             case State.MovementInterrupted:
                 FLAG_PlayerMovementEnabled = true;
+
+                ExceedingCurrentMaxMovementSpeed = false;
                 break;
 
             default:
@@ -812,6 +874,8 @@ public class PlayerMovementV3 : MonoBehaviour
         //Damp (within standard movement speed control)
         if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= Mathf.Pow(CurMoveSpeed,2)) //First check was causing sloppy deceleration within standard CurMoveSpeed
         {
+            ExceedingCurrentMaxMovementSpeed = false;
+
             RB.AddForce(AddVelocity * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
 
             if ((AddVelocity).sqrMagnitude < (FilteredRBVelocity - DesiredVelocityDiff).sqrMagnitude)
@@ -834,6 +898,8 @@ public class PlayerMovementV3 : MonoBehaviour
         //Damp (exceeding movement speed max)
         else
         {
+            ExceedingCurrentMaxMovementSpeed = true;
+
             //"Parachute" idea: Add the velocity * forceCoefficient, but pull "backward" on the rigidbody by the amount needed to maintain current velocity (a direction change, but not a velocity one)
 
             Vector3 ModifiedVelocity = AddVelocity + FilteredRBVelocity;

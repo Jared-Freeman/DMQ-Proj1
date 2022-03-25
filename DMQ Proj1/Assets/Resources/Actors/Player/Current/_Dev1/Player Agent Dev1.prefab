@@ -2673,6 +2673,7 @@ GameObject:
   - component: {fileID: 9016195848402252287}
   - component: {fileID: 3807614015225175977}
   - component: {fileID: 2703067647547508208}
+  - component: {fileID: 6918448714649507075}
   m_Layer: 10
   m_Name: Player Agent Dev1
   m_TagString: Player
@@ -2996,6 +2997,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Ability: {fileID: 11400000, guid: 0d484ac1d48c43a42b5debfb07a46a7d, type: 2}
+--- !u!114 &6918448714649507075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4995929453615511394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb221fedf2e9bbe4aabfb63b81ce41ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Preset: {fileID: 11400000, guid: 8c47d57a8acac9d4c81ee7f72f65951a, type: 2}
+  DashTrailPositionReference: {fileID: 4995929452893489070}
 --- !u!1 &4995929453676773666
 GameObject:
   m_ObjectHideFlags: 0
