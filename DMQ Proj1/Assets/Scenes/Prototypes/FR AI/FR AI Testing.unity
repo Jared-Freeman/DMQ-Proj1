@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -6203,6 +6203,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Item_Dev Gun
       objectReference: {fileID: 0}
+    - target: {fileID: 7685263435890885400, guid: d875a0dff228cb345b6942f4001159e1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d875a0dff228cb345b6942f4001159e1, type: 3}
 --- !u!4 &1691108496 stripped
@@ -6732,7 +6737,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1802977463
 Transform:
   m_ObjectHideFlags: 0
@@ -7376,7 +7381,7 @@ PrefabInstance:
         type: 3}
       propertyPath: ClassSpawnQueue.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: 9ffa9595ba30a124ab0f7ad3d97ba16c,
+      objectReference: {fileID: 11400000, guid: a13f55a44ed79f4488b73600a23246bf,
         type: 2}
     - target: {fileID: 5762306507741685714, guid: 49c8ac051e8df454da1d340e5c896506,
         type: 3}

@@ -14,14 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Conditions:
     _Conditions: []
-  Direction: 1
+  Target: 0
+  Direction: 2
   ForceStyle: 0
   Options:
     TargetActorsOnly: 0
     DontTargetActors: 0
-    Amount: 5
+    Amount: 18
     TargetFilters:
-      Enemy: 1
-      Ally: 0
+      Enemy: 0
+      Ally: 1
       Neutral: 0
-      Self: 0
+      Self: 1
