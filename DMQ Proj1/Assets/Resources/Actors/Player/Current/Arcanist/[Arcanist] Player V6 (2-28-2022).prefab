@@ -18,6 +18,11 @@ PrefabInstance:
       propertyPath: m_Mass
       value: 6.25
       objectReference: {fileID: 0}
+    - target: {fileID: 8665573587634798087, guid: a89981f7ef2943143a9b6cf22118f938,
+        type: 3}
+      propertyPath: m_Constraints
+      value: 112
+      objectReference: {fileID: 0}
     - target: {fileID: 8665573587634798092, guid: a89981f7ef2943143a9b6cf22118f938,
         type: 3}
       propertyPath: m_Name
@@ -86,10 +91,20 @@ PrefabInstance:
         type: 2}
     - target: {fileID: 8665573587634798200, guid: a89981f7ef2943143a9b6cf22118f938,
         type: 3}
+      propertyPath: FLAGDisplayDebugGizmos
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8665573587634798200, guid: a89981f7ef2943143a9b6cf22118f938,
+        type: 3}
       propertyPath: DashOptions.DashAbility
       value: 
       objectReference: {fileID: 11400000, guid: cf1fbe86769e9a74594e88a62b4e7b87,
         type: 2}
+    - target: {fileID: 8665573587634798200, guid: a89981f7ef2943143a9b6cf22118f938,
+        type: 3}
+      propertyPath: FLAGCollectDebugTelemetry
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8665573587855432420, guid: a89981f7ef2943143a9b6cf22118f938,
         type: 3}
       propertyPath: m_LocalScale.x

@@ -53,7 +53,7 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
     /// <summary>
     /// List of all players ACTIVATED. These are the player sessions to be used during gameplay
     /// </summary>
-    public IReadOnlyCollection<PlayerData_Session> ActivatedPlayerSessions { get { return _ActivatedPlayers.AsReadOnly(); } }
+    public List<PlayerData_Session> ActivatedPlayerSessions { get { return _ActivatedPlayers; } }
 
 
 
@@ -199,7 +199,7 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
 
     #endregion
 
-    private PlayerData_Session GetRecord(PlayerInput p)
+    public PlayerData_Session GetRecord(PlayerInput p)
     {
         foreach(var r in _Data)
         {

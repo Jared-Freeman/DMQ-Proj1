@@ -63,19 +63,10 @@ public class PlayerSession_IO_Listener : MonoBehaviour
             {
                 if (ctx.performed)
                 {
-                    //MnK
-                    if (ctx.action.name == _Controls.MouseAndKeyboard.Movement.name) { }
-
-                    else if (ctx.action.name == _Controls.MouseAndKeyboard.Attack.name)
+                    if (ctx.action.name == _Controls.MouseAndKeyboard.Pause.name)
                     {
                         JoinPlayer();
                     }
-
-                    else if (ctx.action.name == _Controls.MouseAndKeyboard.SpecialAction.name) { }
-
-                    else if (ctx.action.name == _Controls.MouseAndKeyboard.Wepon1Equip.name) { }
-
-                    else if (ctx.action.name == _Controls.MouseAndKeyboard.Wepon2Equip.name) { }
 
                 }
 
@@ -90,21 +81,10 @@ public class PlayerSession_IO_Listener : MonoBehaviour
             {
                 if (ctx.performed)
                 {
-                    //Gamepad
-                    if (ctx.action.name == _Controls.Gamepad.Movement.name) { }
-
-                    else if (ctx.action.name == _Controls.Gamepad.Attack.name)
+                    if (ctx.action.name == _Controls.Gamepad.Pause.name)
                     {
                         JoinPlayer();
                     }
-
-                    else if (ctx.action.name == _Controls.Gamepad.SpecialAction.name) { }
-
-                    else if (ctx.action.name == _Controls.Gamepad.Wepon1Equip.name) { }
-
-                    else if (ctx.action.name == _Controls.Gamepad.Wepon2Equip.name) { }
-
-                    else if (ctx.action.name == _Controls.Gamepad.Aim.name) { }
                 }
 
 
@@ -197,7 +177,7 @@ public class PlayerSession_IO_Listener : MonoBehaviour
 
     private void Record_OnPlayerActivate(object sender, PlayerInputEventArgs e)
     {
-        if(s_FLAG_DEBUG) Debug.Log("Player " + e._PlayerInput.gameObject.ToString() + " is attempting to activate!");
+        //if (s_FLAG_DEBUG) Debug.Log("Player " + e._PlayerInput.gameObject.ToString() + " is attempting to activate!");
 
         Singleton<PlayerDataManager>.Instance.ActivatePlayer(e._PlayerInput);
     }

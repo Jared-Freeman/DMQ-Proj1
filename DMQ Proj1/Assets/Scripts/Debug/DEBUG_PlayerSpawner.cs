@@ -23,7 +23,9 @@ namespace CSEventArgs
 /// </summary>
 public class DEBUG_PlayerSpawner : MonoBehaviour
 {
-    public CharacterClass DefaultCharacterClassPreset;
+    private int _CurrentClassSpawnIndex = 0;
+    public bool ForceUseSpawnQueue = true;
+    public List<CharacterClass> ClassSpawnQueue = new List<CharacterClass>();
 
     /// <summary>
     /// Fires when the gameobjects that represent the players are created and initialized. New batches may be fired at any time
@@ -66,9 +68,10 @@ public class DEBUG_PlayerSpawner : MonoBehaviour
     {
         GameObject g;
 
-        if (r.Info._CurrentClassPreset == null)
+        if (ForceUseSpawnQueue || r.Info._CurrentClassPreset == null)
         {
-            g = DefaultCharacterClassPreset?.InstantiatePlayerActor();
+            g = ClassSpawnQueue[_CurrentClassSpawnIndex]?.InstantiatePlayerActor();
+            _CurrentClassSpawnIndex = _CurrentClassSpawnIndex + 1 % ClassSpawnQueue.Count;
 
             if (g != null)
             {

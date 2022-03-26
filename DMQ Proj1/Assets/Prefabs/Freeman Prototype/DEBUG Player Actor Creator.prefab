@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1932174634480983902}
   - component: {fileID: 1932174634480983901}
   m_Layer: 0
-  m_Name: DEBUG Player Actor Spawner
+  m_Name: DEBUG Player Actor Creator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,5 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49f6fdb4a65b8cc4a98da595ad3f054a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DefaultCharacterClassPreset: {fileID: 11400000, guid: 9ffa9595ba30a124ab0f7ad3d97ba16c,
-    type: 2}
+  ForceUseSpawnQueue: 1
+  ClassSpawnQueue:
+  - {fileID: 11400000, guid: a13f55a44ed79f4488b73600a23246bf, type: 2}
+  - {fileID: 11400000, guid: f793555b814d3724381a0654989e00b5, type: 2}
+  - {fileID: 11400000, guid: 75581b3490532144f86873caad3557b2, type: 2}
+  - {fileID: 11400000, guid: 353bdd29f65b24c43bffdc6a9ae8519c, type: 2}

@@ -9,6 +9,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2730663038165717402, guid: 62a77e81fa1db6e4799a4e6b2069cd35,
         type: 3}
+      propertyPath: FLAGDisplayDebugGizmos
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730663038165717402, guid: 62a77e81fa1db6e4799a4e6b2069cd35,
+        type: 3}
       propertyPath: DashOptions.DashAbility
       value: 
       objectReference: {fileID: 11400000, guid: c36789dd60a874a40893ba1f0f527e79,
@@ -17,6 +22,11 @@ PrefabInstance:
         type: 3}
       propertyPath: RunOptions.Deceleration
       value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730663038165717402, guid: 62a77e81fa1db6e4799a4e6b2069cd35,
+        type: 3}
+      propertyPath: FLAGCollectDebugTelemetry
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2730663038165717402, guid: 62a77e81fa1db6e4799a4e6b2069cd35,
         type: 3}
@@ -48,6 +58,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mass
       value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730663038165717477, guid: 62a77e81fa1db6e4799a4e6b2069cd35,
+        type: 3}
+      propertyPath: m_Constraints
+      value: 112
       objectReference: {fileID: 0}
     - target: {fileID: 2730663038165717485, guid: 62a77e81fa1db6e4799a4e6b2069cd35,
         type: 3}
