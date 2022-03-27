@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ActorSystem.StatusEffect
+namespace AbilitySystem
 {
     /// <summary>
     /// Attempts to cast the supplied ability when the attached actor Stats takes damage.
@@ -36,7 +36,7 @@ namespace ActorSystem.StatusEffect
             ActorStats.OnDamageTaken += ActorStats_OnDamageTaken;
         }
 
-        private void ActorStats_OnDamageTaken(object sender, EventArgs.ActorDamageTakenEventArgs e)
+        private void ActorStats_OnDamageTaken(object sender, ActorSystem.EventArgs.ActorDamageTakenEventArgs e)
         {
             if(e._Actor == actor && _AbilityInstance.CanCastAbility)
             {
