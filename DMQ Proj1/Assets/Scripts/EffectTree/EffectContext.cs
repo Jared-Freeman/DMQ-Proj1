@@ -29,6 +29,46 @@ namespace EffectTree
     [System.Serializable]
     public class EffectContext
     {
+        #region Static Methods
+
+        /// <summary>
+        /// Infers <see cref="EffectContextInfo"/> from the supplied <see cref="Collision"/>.
+        /// </summary>
+        /// <param name="collision">Collision to glean info frmo</param>
+        /// <remarks>Uses the first contact point, and the first collider from that contact point to infer surface reflection. 
+        /// Could be inaccurate depending largely on Unity's internal implementation.</remarks>
+        /// <returns>A newly instantiated ContextInfo object built on the supplied arg</returns>
+        public static EffectContextInfo CreateContextDataFromCollision(Collision collision)
+        {
+            if (collision != null && collision.contactCount > 0)
+            {
+                EffectContextInfo ctxI = new EffectContextInfo();
+                var firstCollisionDir3 = collision.GetContact(0).thisCollider.gameObject.transform.forward;
+
+                //computations
+                var reflect2 = Vector2.Reflect(new Vector2(firstCollisionDir3.x, firstCollisionDir3.z)
+                    , new Vector2(collision.GetContact(0).normal.x, collision.GetContact(0).normal.z));
+
+                var reflect2_3 = new Vector3(reflect2.x, 0, reflect2.y);
+
+                var reflect3 = Vector3.Reflect(firstCollisionDir3, collision.GetContact(0).normal);
+
+                //EffectContextInfo assignments
+                ctxI._TriggeringCollision = collision;
+                ctxI._TriggeringCollider = collision.collider;
+
+                ctxI._NormalVector = collision.GetContact(0).normal;
+                ctxI._NormalVector2D = new Vector3(collision.GetContact(0).normal.x, 0, collision.GetContact(0).normal.z);
+                ctxI._ReflectionVector = reflect3;
+                ctxI._ReflectionVector2D = reflect2_3;
+
+                return ctxI;
+            }
+            return null;
+        }
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
