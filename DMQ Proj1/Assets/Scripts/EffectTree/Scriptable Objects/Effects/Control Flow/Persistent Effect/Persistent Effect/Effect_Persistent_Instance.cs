@@ -57,8 +57,15 @@ namespace EffectTree
                 e.Invoke(ref c);
             }
 
-            if (Preset.Duration > 0) StartCoroutine(DestroyAfterSeconds(Preset.Duration));
-            if (Preset.Period > 0) StartCoroutine(DoPeriodicEffect(Preset.Period));
+            if (Preset.Duration > 0)
+            {
+                StartCoroutine(DestroyAfterSeconds(Preset.Duration));
+                if (Preset.Period > 0) StartCoroutine(DoPeriodicEffect(Preset.Period));
+            }
+            else
+            {
+                StartCoroutine(DestroyAfterSeconds(0));
+            }
         }
 
         protected IEnumerator DestroyAfterSeconds(float duration)

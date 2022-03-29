@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
 
 //Author: Jared Freeman
 //Desc: This class implements some helpful utility methods for use in Unity game design
@@ -262,6 +263,29 @@ namespace Utils
 
         private float LastUsedTime;
 
+        /// <summary>
+        /// Fires when the Cooldown is available to use again.
+        /// </summary>
+        public event System.EventHandler<CooldownTrackerEventArgs> OnCooldownAvailable;
+        public event System.EventHandler<CooldownTrackerEventArgs> OnCooldownUsed;
+
+        #region Helpers
+
+        /// <summary>
+        /// Event args for cooldown events.
+        /// </summary>
+        public class CooldownTrackerEventArgs : System.EventArgs
+        {
+            public CooldownTracker cooldown;
+
+            public CooldownTrackerEventArgs(CooldownTracker cd)
+            {
+                cooldown = cd;
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region Properties
@@ -344,9 +368,22 @@ namespace Utils
             if(CanUseCooldown())
             {
                 LastUsedTime = Time.time;
+
+                System.Threading.Tasks.Task t = DelayedCooldownAvailableTask();
+
+                OnCooldownUsed?.Invoke(this, new CooldownTrackerEventArgs(this));
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Schedules a CooldownAvailable event to fire once the cooldown duration has finished.
+        /// </summary>
+        protected async System.Threading.Tasks.Task DelayedCooldownAvailableTask()
+        {
+            await System.Threading.Tasks.Task.Delay((int)(1000 * Cooldown) + 1);
+            OnCooldownAvailable?.Invoke(this, new CooldownTrackerEventArgs(this));
         }
 
         //Return true if _Cooldown CAN be used
@@ -431,6 +468,92 @@ namespace Utils
     {
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="go">The GameObject instance containing Colliders to perform overlap checks on.</param>
+        /// <returns>A list of gameobjects that are colliding with <paramref name="go"/>  </returns>
+        public static List<GameObject> GetOverlappingGameObjects(GameObject go)
+        {
+            List<GameObject> List_Return = new List<GameObject>();
+
+            var cs = go.GetComponentsInChildren<Collider>();
+
+            foreach (Collider c in cs)
+            {
+                if (c.enabled == true)
+                {
+                    //functionality branches based on Collider type
+                    if (c as BoxCollider != null)
+                    {
+                        var box = c as BoxCollider;
+
+                        Collider[] overlapColliders;
+
+                        overlapColliders = UnityEngine.Physics.OverlapBox(box.transform.position + box.center, box.size / 2, box.transform.rotation
+                            , PhysicsCollisionMatrixLayerMasks.MaskForLayer(box.gameObject.layer));
+
+                        foreach (var overlapC in overlapColliders)
+                        {
+                            if (
+                                overlapC.gameObject != go 
+                                && !overlapC.gameObject.transform.IsChildOf(go.transform)
+                                && !List_Return.Contains(overlapC.gameObject)
+                                )
+                            {
+                                List_Return.Add(overlapC.gameObject);
+                            }
+                        }
+
+                    }
+                    else if (c as SphereCollider != null)
+                    {
+                        var spr = c as SphereCollider;
+
+                        Collider[] overlapColliders;
+
+                        overlapColliders = UnityEngine.Physics.OverlapSphere(spr.transform.position + spr.center, spr.radius
+                            , PhysicsCollisionMatrixLayerMasks.MaskForLayer(spr.gameObject.layer));
+
+                        foreach (var overlapC in overlapColliders)
+                        {
+                            if (overlapC.gameObject != go 
+                                && !overlapC.gameObject.transform.IsChildOf(go.transform)
+                                && !List_Return.Contains(overlapC.gameObject))
+                            {
+                                List_Return.Add(overlapC.gameObject);
+                            }
+                        }
+                    }
+                    else if (c as CapsuleCollider != null)
+                    {
+                        var cap = c as CapsuleCollider;
+
+                        //why did they not follow the same convention for Collider's...
+                        Vector3 pointDir = cap.transform.up * (cap.height / 2 - cap.radius);
+
+                        Collider[] overlapColliders;
+
+                        overlapColliders = UnityEngine.Physics.OverlapCapsule(cap.transform.position + pointDir, cap.transform.position - pointDir, cap.radius
+                            , PhysicsCollisionMatrixLayerMasks.MaskForLayer(cap.gameObject.layer));
+
+                        foreach (var overlapC in overlapColliders)
+                        {
+                            if (overlapC.gameObject != go 
+                                && !overlapC.gameObject.transform.IsChildOf(go.transform)
+                                && !List_Return.Contains(overlapC.gameObject))
+                            {
+                                List_Return.Add(overlapC.gameObject);
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            return List_Return;
+        }
+
+        /// <summary>
         /// Uses dimensions of colliders in <paramref name="go"/> AND transform data to see if the gameobject would collide with anything.
         /// </summary>
         /// <param name="go">GameObject to check.</param>
@@ -462,7 +585,6 @@ namespace Utils
                         {
                             if (overlapC.gameObject != go && !overlapC.gameObject.transform.IsChildOf(go.transform))
                             {
-                                Debug.LogWarning(overlapC.gameObject);
                                 return true;
                             }
                         }

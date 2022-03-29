@@ -83,7 +83,9 @@ public class ActorAI_Logic : MonoBehaviour
     {
         get
         {
-            return (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= Preset.Base.MaxFacingAngle / 2);
+            if(CurrentTarget != null)
+                return (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= Preset.Base.MaxFacingAngle / 2);
+            else return false;
         }
     }
 

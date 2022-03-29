@@ -54,6 +54,7 @@ namespace ActorSystem.StatusEffect
         public SE_StatusEffect_Base.SE_EffectSettings FX { get { return Preset.Settings.Effects; } }
         public float RemainingDuration { get { return Info.RemainingDuration; } set { Info.RemainingDuration = value; } }
         public Actor AttachedActor { get { return Info.AttachedActor; } }
+        public int Stacks { get => Info.CurrentStacks; }
 
         #endregion
 
@@ -91,7 +92,7 @@ namespace ActorSystem.StatusEffect
         protected void Awake()
         {
             Info.AttachedActor = gameObject.GetComponent<Actor>();
-            Info.CurrentStacks = 0;
+            Info.CurrentStacks = 1;
         }
 
         protected void Start()
@@ -180,6 +181,27 @@ namespace ActorSystem.StatusEffect
 
                 Info.CurrentStacks++;
                 stacksAdded++;
+            }
+
+            switch(Preset.Settings.DurationExtensionType)
+            {
+                case SE_StatusEffect_Base.DurationApplicationBehavior.ExtendDuration:
+                    RemainingDuration += Preset.Settings.Defaults.Duration * stacksAdded; //append duration for each stack added
+                    break;
+
+
+                //currently no fancy impl exists for UseHighest.
+                case SE_StatusEffect_Base.DurationApplicationBehavior.UseHighestDuration:
+                case SE_StatusEffect_Base.DurationApplicationBehavior.ResetDuration:
+                    RemainingDuration = Preset.Settings.Defaults.Duration;
+                    break;
+
+                case SE_StatusEffect_Base.DurationApplicationBehavior.None:
+                    break;
+
+                default:
+                    Debug.LogError("No impl found for durationBehavior! Does one exist?");
+                    break;
             }
 
             OnStatusEffectStacksAdded?.Invoke(this, new CSEventArgs.StatusEffectStackAdded_EventArgs(this, AttachedActor, stacksAdded));
