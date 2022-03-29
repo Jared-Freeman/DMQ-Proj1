@@ -35,10 +35,10 @@ public class Procedural_Prop : MonoBehaviour
             Destroy(this);
         }
 
-        int index = Random.Range(0, preset.PreFabProps.Count);
-        if (preset.PreFabProps[index] != null)
+        int index = Random.Range(0, preset.List_Props.Count);
+        if (preset.List_Props[index] != null)
         {
-            var go = Instantiate(preset.PreFabProps[index]);
+            var go = Instantiate(preset.List_Props[index]);
             go.transform.position  = transform.position;
             go.transform.position += go.transform.forward * offsetVector.z;
             go.transform.position += go.transform.right * offsetVector.x;
