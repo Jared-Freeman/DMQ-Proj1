@@ -8,7 +8,7 @@ namespace EffectTree.Condition
     /// <summary>
     /// 
     /// </summary>
-    [CreateAssetMenu(fileName = "Cond_PC_", menuName = "Effect Tree/Conditions/Collision Force", order = 2)]
+    [CreateAssetMenu(fileName = "Cond_PC_", menuName = "Effect Tree/Conditions/Collision Exists", order = 2)]
     public class E_C_CollisionExists : E_Condition_Base
     {
         public E_C_ColExistsOptions AllowedCollisions = E_C_ColExistsOptions.CollisionsAllowed;

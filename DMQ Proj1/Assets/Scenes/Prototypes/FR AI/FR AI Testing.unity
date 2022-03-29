@@ -4786,7 +4786,7 @@ Transform:
   - {fileID: 937620729}
   - {fileID: 1342382300}
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1820183516 stripped
 Transform:
@@ -5215,7 +5215,7 @@ PrefabInstance:
     - target: {fileID: 5731128197601131216, guid: 49c8ac051e8df454da1d340e5c896506,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 5731128197601131216, guid: 49c8ac051e8df454da1d340e5c896506,
         type: 3}
@@ -5225,7 +5225,7 @@ PrefabInstance:
     - target: {fileID: 5731128197601131216, guid: 49c8ac051e8df454da1d340e5c896506,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 5731128197601131216, guid: 49c8ac051e8df454da1d340e5c896506,
         type: 3}
@@ -5906,6 +5906,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: '[ParticleSystem] Explosion 1 PS'
       objectReference: {fileID: 0}
+    - target: {fileID: 6103640045438283448, guid: 19efb513a5cb9c640869d81cfd71e5d5,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 19efb513a5cb9c640869d81cfd71e5d5, type: 3}
 --- !u!1001 &233395433056421376
@@ -5920,10 +5925,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: '[ParticleTrail] Trail 1 PS'
       objectReference: {fileID: 0}
+    - target: {fileID: 233395432576276762, guid: c33a0ef33abad294db8bc396b07cf724,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 233395432576276765, guid: c33a0ef33abad294db8bc396b07cf724,
         type: 3}
       propertyPath: m_RootOrder
-      value: 14
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 233395432576276765, guid: c33a0ef33abad294db8bc396b07cf724,
         type: 3}
@@ -6282,6 +6292,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: '[ParticleSystem] RogueFlintlockBasic'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4857291849020377369, guid: 312bc0a881be1484b8698c9e6c3a519c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 312bc0a881be1484b8698c9e6c3a519c, type: 3}
