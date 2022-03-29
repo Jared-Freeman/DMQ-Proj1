@@ -89,7 +89,7 @@ namespace AbilitySystem
             }
             else if(!Cooldown.CooldownAvailable)
             {
-                Settings.EffectEvents.Effect_CastWhileOnCooldown.Invoke(ref ctx);
+                Settings.EffectEvents.Effect_CastWhileOnCooldown?.Invoke(ref ctx);
             }
             return false;
         }

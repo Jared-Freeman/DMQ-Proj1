@@ -11,22 +11,7 @@ namespace AbilitySystem
     {
         #region Members
 
-        //presets
-        /// <summary>
-        /// Ability to invoke upon CollisionEnter Unity message
-        /// </summary>
-        public AbilitySystem.AS_Ability_Base Ability_CollisionEnter;
-        /// <summary>
-        /// Ability to invoke upon CollisionStay Unity message
-        /// </summary>
-        /// <remarks>
-        /// Recall that abilities have a cooldown. Using a short cooldown, CollisionStay can be useful for having sparks fly when we're scraping against metal
-        /// </remarks>
-        public AbilitySystem.AS_Ability_Base Ability_CollisionStay;
-        /// <summary>
-        /// Ability to invoke upon CollisionExit Unity message
-        /// </summary>
-        public AbilitySystem.AS_Ability_Base Ability_CollisionExit;
+        public AS_ExecuteAbilityOnPhysicCollisionPreset Preset;
 
         //instances
         protected AbilitySystem.AS_Ability_Instance_Base _AbilityInstanceEnter;
@@ -44,11 +29,18 @@ namespace AbilitySystem
 
         #endregion
 
+        void Awake()
+        {
+            //Validate refs we need
+            if (!Utils.Testing.ReferenceIsValid(Preset)) Destroy(this);
+        }
+
         void Start()
         {
-            _AbilityInstanceEnter = Ability_CollisionEnter.GetInstance(gameObject);
-            _AbilityInstanceStay = Ability_CollisionStay.GetInstance(gameObject);
-            _AbilityInstanceExit = Ability_CollisionExit.GetInstance(gameObject);
+            //these can be null (aka no ability exists in preset).
+            if (Preset.Ability_CollisionEnter) _AbilityInstanceEnter = Preset.Ability_CollisionEnter?.GetInstance(gameObject);
+            if (Preset.Ability_CollisionStay) _AbilityInstanceStay = Preset.Ability_CollisionStay?.GetInstance(gameObject);
+            if (Preset.Ability_CollisionExit) _AbilityInstanceExit = Preset.Ability_CollisionExit?.GetInstance(gameObject);
         }
 
         void OnCollisionEnter(Collision c)
