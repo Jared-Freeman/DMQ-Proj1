@@ -6,7 +6,7 @@ using UnityEngine;
 namespace EffectTree.Condition
 {
     /// <summary>
-    /// 
+    /// Checks that a Collision/Trigger exists in the EffectContext. SO instances can specify which.
     /// </summary>
     [CreateAssetMenu(fileName = "Cond_PC_", menuName = "Effect Tree/Conditions/Collision Exists", order = 2)]
     public class E_C_CollisionExists : E_Condition_Base
