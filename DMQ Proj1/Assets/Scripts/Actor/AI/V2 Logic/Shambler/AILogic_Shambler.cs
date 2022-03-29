@@ -168,7 +168,10 @@ namespace ActorSystem.AI
                         break;
 
                     case State.Chasing:
-                        Info.TurnTarget = CurrentTarget.transform;
+                        if (CurrentTarget != null)
+                        {
+                            Info.TurnTarget = CurrentTarget.transform;
+                        }
                         ChaseCurrentTarget();
                         break;
 

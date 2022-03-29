@@ -7,11 +7,12 @@ using UnityEngine;
 namespace EffectTree
 {
     /// <summary>
-    /// 
+    /// Applies a physic impulse to the target
     /// </summary>
     [CreateAssetMenu(fileName = "PItT_", menuName = "Effect Tree/Physics/Physics Impulse to Target", order = 2)]
     public class Effect_ApplyPhysicsImpulse : Effect_Base
     {
+        public EffectContext.TargetOptions Target = EffectContext.TargetOptions._TargetGameObject;
         public enum ImpulseTargetStyles { FromCasterToTarget, ctxInitialDirection, ctxTargetDirection }
         public enum ImpulseForceStyles { Speed, ImpulseForce, ImpulseForceScaledByMass }
 
@@ -45,13 +46,21 @@ namespace EffectTree
         {
             if( base.Invoke(ref ctx))
             {
+                GameObject goTarget = ctx.RetrieveGameObject(Target);
+
                 //validations
-                if (ctx.AttackData._TargetGameObject == null) return false;
+                if (goTarget == null)
+                {
+                    return false;
+                }
 
-                Rigidbody targetRB = ctx.AttackData._TargetGameObject.GetComponentInChildren<Rigidbody>();
-                Actor targetActor = ctx.AttackData._TargetGameObject.GetComponentInChildren<Actor>();
+                Rigidbody targetRB = goTarget.GetComponentInChildren<Rigidbody>();
+                Actor targetActor = goTarget.GetComponentInChildren<Actor>();
 
-                if (targetRB == null) return false;
+                if (targetRB == null)
+                {
+                    return false;
+                }
                 //Actor validation based on flags
                 if ((Options.TargetActorsOnly && targetActor == null) || (Options.DontTargetActors && targetActor != null)) return false;
 

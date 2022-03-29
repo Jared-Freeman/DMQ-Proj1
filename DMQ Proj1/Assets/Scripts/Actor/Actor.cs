@@ -96,4 +96,23 @@ public class Actor : MonoBehaviour
         //}
             
     }
+
+    public EffectTree.EffectContext GetDefaultEffectContext()
+    {
+        Utils.AttackContext ac = new Utils.AttackContext()
+        {
+            _InitialDirection = transform.forward,
+            _InitialGameObject = gameObject,
+            _InitialPosition = transform.position,
+            _TargetDirection = transform.forward,
+            _TargetGameObject = transform.gameObject,
+            _TargetPosition = transform.position,
+            _Owner = this,
+            _Team = _Team
+        };
+
+        EffectTree.EffectContext ctx = new EffectTree.EffectContext(ac);
+
+        return ctx;
+    }
 }

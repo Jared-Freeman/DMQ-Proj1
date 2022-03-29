@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Conditions:
     _Conditions: []
+  OverrideCurrentVelocity: 0
   TargetContext: 0
   VelocityScaleCurve:
     serializedVersion: 2
@@ -48,6 +49,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  Duration: 1
-  VelocityDefault: 15
+  Duration: 0.05
+  VelocityDefault: 25
   Deceleration: 10
