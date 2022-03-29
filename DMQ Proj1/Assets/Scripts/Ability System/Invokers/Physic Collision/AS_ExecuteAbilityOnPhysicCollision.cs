@@ -33,10 +33,7 @@ namespace AbilitySystem
         {
             //Validate refs we need
             if (!Utils.Testing.ReferenceIsValid(Preset)) Destroy(this);
-        }
 
-        void Start()
-        {
             //these can be null (aka no ability exists in preset).
             if (Preset.Ability_CollisionEnter) _AbilityInstanceEnter = Preset.Ability_CollisionEnter?.GetInstance(gameObject);
             if (Preset.Ability_CollisionStay) _AbilityInstanceStay = Preset.Ability_CollisionStay?.GetInstance(gameObject);
