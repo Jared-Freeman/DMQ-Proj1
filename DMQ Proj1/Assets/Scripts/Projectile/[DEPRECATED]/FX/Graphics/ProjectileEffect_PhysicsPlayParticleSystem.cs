@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "PE_", menuName = "ScriptableObjects/ProjectileEffect/Graphics/Play Particle System", order = 1)]
+//[CreateAssetMenu(fileName = "PE_", menuName = "ScriptableObjects/ProjectileEffect/Graphics/Play Particle System", order = 1)]
 public class ProjectileEffect_PhysicsPlayParticleSystem : ProjectileEffect
 {
     #region Members

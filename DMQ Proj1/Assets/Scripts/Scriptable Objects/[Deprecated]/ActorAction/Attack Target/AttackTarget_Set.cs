@@ -7,7 +7,7 @@ namespace ActorSystem.AI
     /// <summary>
     /// Allows for multiple ActorActions to be invoked from a single dispatcher. (i.e., dealing damage and applying a physics impulse)
     /// </summary>
-    [CreateAssetMenu(fileName = "ActorAction", menuName = "ScriptableObjects/Actor Actions/Attack/Attack Target/_Set", order = 1)]
+    //[CreateAssetMenu(fileName = "ActorAction", menuName = "ScriptableObjects/Actor Actions/Attack/Attack Target/_Set", order = 1)]
     public class AttackTarget_Set : AP2_ActorAction_AttackTarget
     {
 

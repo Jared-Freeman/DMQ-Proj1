@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[CreateAssetMenu(fileName = "ProjectileEffect_PhysicsExplosiveImpulse", menuName = "ScriptableObjects/ProjectileEffect/Physics/Explosive Impulse to Target", order = 1)]
+//[CreateAssetMenu(fileName = "ProjectileEffect_PhysicsExplosiveImpulse", menuName = "ScriptableObjects/ProjectileEffect/Physics/Explosive Impulse to Target", order = 1)]
 public class ProjectileEffect_PhysicsExplosiveImpulse : ProjectileEffect
 {
     #region Members
