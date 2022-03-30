@@ -13,6 +13,18 @@ using ActorSystem.AI;
 public class ActorAI_Logic : MonoBehaviour
 {
     public enum TargetPriority { None, Proximity }
+    /// <summary>
+    /// Enum containing all possible states for every AI, ever. 
+    /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///     Add to the end of this enum to append new states.
+    ///     </para>
+    ///     <para>
+    ///     Not every state should be implemented in every AI Logic. 
+    ///     </para>
+    /// </remarks>
+    public enum ActorAILogic_State { Idle, Repositioning, TurningToFaceTarget, ChargingAttack, Attacking, Chasing, PreparingToLunge, Lunging }
 
     /// <summary>
     /// For Logic subroutines (minimize cost-per-frame)
@@ -320,6 +332,26 @@ public class ActorAI_Logic : MonoBehaviour
 
             yield return null;
         }
+    }
+
+    /// <summary>
+    /// Rudimentary utility method that causes the Agent to grow over a period of time equal to Preset.Base.GrowDuration, then return back to original scale.
+    /// </summary>
+    /// <remarks>
+    /// Other scale affecting methods can be disrupted by this routine!
+    /// </remarks>
+    protected IEnumerator I_IncreaseScale()
+    {
+        var DefaultScale = transform.localScale;
+
+        float StartTime = Time.time;
+        while (Time.time - StartTime < Preset.Base.GrowDuration)
+        {
+            transform.localScale = DefaultScale * Preset.Base.GrowCurve.Evaluate((Time.time - StartTime) / Preset.Base.GrowDuration);
+            yield return null;
+        }
+
+        transform.localScale = DefaultScale;
     }
 
     #endregion
