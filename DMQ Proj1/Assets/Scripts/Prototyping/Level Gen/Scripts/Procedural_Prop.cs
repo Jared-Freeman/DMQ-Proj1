@@ -22,6 +22,15 @@ public class Procedural_Prop : MonoBehaviour
 
     void Awake()
     {
+        if (preset == null)
+        {
+            Debug.LogError("Cant fine me props");
+            Destroy(this);
+        }
+    }
+
+    void Start()
+    {
         RandomDistance = Mathf.Clamp(RandomDistance, 0, VolumeSize);
         Vector3 offsetVector = Vector3.zero;
         offsetVector.x += Random.Range(-RandomDistance, RandomDistance);
@@ -29,17 +38,12 @@ public class Procedural_Prop : MonoBehaviour
 
         float randomRotation = Random.Range(MinYaw, MaxYaw);
 
-        if (preset == null)
-        {
-            Debug.LogError("Cant fine me props");
-            Destroy(this);
-        }
 
         int index = Random.Range(0, preset.List_Props.Count);
         if (preset.List_Props[index] != null)
         {
             var go = Instantiate(preset.List_Props[index]);
-            go.transform.position  = transform.position;
+            go.transform.position = transform.position;
             go.transform.position += go.transform.forward * offsetVector.z;
             go.transform.position += go.transform.right * offsetVector.x;
             go.transform.rotation = transform.rotation;
