@@ -118,9 +118,9 @@ namespace ItemSystem.Weapons
             if (ctx == null) return false;
             else return true;
 
-            EffectTree.EffectContext ec = new EffectTree.EffectContext(ctx);
+            //EffectTree.EffectContext ec = new EffectTree.EffectContext(ctx);
 
-            return (BaseWeaponInfo.AbilInstance_Attack.ExecuteAbility(ref ec));
+            //return (BaseWeaponInfo.AbilInstance_Attack.ExecuteAbility(ref ec));
         }
         /// <summary>
         /// Tries to cast ability
@@ -136,9 +136,9 @@ namespace ItemSystem.Weapons
             if (ctx == null) return false;
             else return true;
 
-            EffectTree.EffectContext ec = new EffectTree.EffectContext(ctx);
+            //EffectTree.EffectContext ec = new EffectTree.EffectContext(ctx);
 
-            return (BaseWeaponInfo.AbilInstance_Ability1.ExecuteAbility(ref ec));
+            //return (BaseWeaponInfo.AbilInstance_Ability1.ExecuteAbility(ref ec));
         }
         /// <summary>
         /// Tries to cast ability
@@ -154,9 +154,9 @@ namespace ItemSystem.Weapons
             if (ctx == null) return false;
             else return true;
 
-            EffectTree.EffectContext ec = new EffectTree.EffectContext(ctx);
+            //EffectTree.EffectContext ec = new EffectTree.EffectContext(ctx);
 
-            return (BaseWeaponInfo.AbilInstance_Ability2.ExecuteAbility(ref ec));
+            //return (BaseWeaponInfo.AbilInstance_Ability2.ExecuteAbility(ref ec));
         }
 
     }
