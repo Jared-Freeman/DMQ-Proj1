@@ -46,7 +46,8 @@ namespace AbilitySystem
             ctx.ContextData = EffectTree.EffectContext.CreateContextDataFromCollision(c);
             ctx.AttackData = EffectTree.EffectContext.CreateAttackContextDataFromCollision(c);
 
-            _AbilityInstanceEnter?.ExecuteAbility(ref ctx);
+            if(_AbilityInstanceEnter != null)
+                _AbilityInstanceEnter?.ExecuteAbility(ref ctx);
         }
         void OnCollisionStay(Collision c)
         {
@@ -54,7 +55,8 @@ namespace AbilitySystem
             ctx.ContextData = EffectTree.EffectContext.CreateContextDataFromCollision(c);
             ctx.AttackData = EffectTree.EffectContext.CreateAttackContextDataFromCollision(c);
 
-            AbilityInstanceStay?.ExecuteAbility(ref ctx);
+            if (AbilityInstanceStay != null)
+                AbilityInstanceStay?.ExecuteAbility(ref ctx);
         }
         void OnCollisionExit(Collision c)
         {
@@ -62,7 +64,8 @@ namespace AbilitySystem
             ctx.ContextData = EffectTree.EffectContext.CreateContextDataFromCollision(c);
             ctx.AttackData = EffectTree.EffectContext.CreateAttackContextDataFromCollision(c);
 
-            AbilityInstanceExit?.ExecuteAbility(ref ctx);
+            if (AbilityInstanceExit != null)
+                AbilityInstanceExit?.ExecuteAbility(ref ctx);
         }
     }
 }
