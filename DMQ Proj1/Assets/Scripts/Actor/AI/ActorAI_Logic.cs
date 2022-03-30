@@ -29,6 +29,7 @@ public class ActorAI_Logic : MonoBehaviour
     protected StateInfo Info = new StateInfo();
     [SerializeField]
     private ActorAI_Logic_PresetBase _Preset;
+    [SerializeField]
     private ActorSystem.AI.Flocking.ActorAI_FlockingParametersPreset _FlockingPreset;
 
     #region Properties
@@ -129,10 +130,10 @@ public class ActorAI_Logic : MonoBehaviour
         NavAgent = GetComponent<NavMeshAgent>();
 
         //Ref Tests
-        if (!Utils.Testing.ReferenceIsValid(AttachedActor)) Destroy(this);
-        if (!Utils.Testing.ReferenceIsValid(NavAgent)) Destroy(this);
-        if (!Utils.Testing.ReferenceIsValid(_FlockingPreset)) Destroy(this);
-        if (!Utils.Testing.ReferenceIsValid(_Preset)) Destroy(this);
+        if (!Utils.Testing.ReferenceIsValid(AttachedActor)) Destroy(gameObject);
+        if (!Utils.Testing.ReferenceIsValid(NavAgent)) Destroy(gameObject);
+        if (!Utils.Testing.ReferenceIsValid(_FlockingPreset)) Destroy(gameObject);
+        if (!Utils.Testing.ReferenceIsValid(_Preset)) Destroy(gameObject);
 
         //Overrides of NavAgent properties
         NavAgent.updateRotation = false;

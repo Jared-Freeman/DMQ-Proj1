@@ -14,6 +14,7 @@ namespace ActorSystem.AI.Flocking
     /// <para>https://www.oreilly.com/library/view/ai-for-game/0596005555/ch04.html</para>
     /// <para>https://cs.stanford.edu/people/eroberts/courses/soco/projects/2008-09/modeling-natural-systems/boids.html</para>
     /// </remarks>
+    [CreateAssetMenu(fileName = "AI_FlockPreset_", menuName = "Actor/AI Flocking Preset", order = 1)]
     public class ActorAI_FlockingParametersPreset : ScriptableObject
     {
 

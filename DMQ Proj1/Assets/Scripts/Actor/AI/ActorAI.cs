@@ -16,6 +16,6 @@ public class ActorAI : Actor
     {
         base.Awake();
         Logic = GetComponent<ActorAI_Logic>();
-        if (!Utils.Testing.ReferenceIsValid(Logic)) Destroy(this);
+        if (!Utils.Testing.ReferenceIsValid(Logic)) Destroy(gameObject);
     }
 }
