@@ -47,6 +47,10 @@ public class ActorAI_Logic : MonoBehaviour
     #region Properties
 
     /// <summary>
+    /// The current state in this AI Logic's internal state machine.
+    /// </summary>
+    public ActorAILogic_State CurrentState { get; protected set; }
+    /// <summary>
     /// Virtual Property that can be overwritten to enforce subclassing
     /// </summary>
     public virtual ActorAI_Logic_PresetBase Preset { get { return _Preset; } set { _Preset = value; } }
@@ -173,6 +177,8 @@ public class ActorAI_Logic : MonoBehaviour
 
     #endregion
 
+    #region Update
+
     /// <summary>
     /// Rigidbody compliant turn interpolation... This solves stutter issue from the coroutine method
     /// </summary>
@@ -207,9 +213,13 @@ public class ActorAI_Logic : MonoBehaviour
 
     }
 
+
     /// <summary>
-    /// 
+    /// This computation attempts to use the target's velocity to predict where it will be when the AI agent arrives. 
     /// </summary>
+    /// <remarks>
+    /// Useful for intercepting a moving target, as implied. Functionality is currently too rough for final product imo. ~Jared Freeman
+    /// </remarks>
     /// <param name="t">How much contribution the new computation will have to the current value</param>
     private void UpdateInterceptComputation(float t)
     {
@@ -229,6 +239,47 @@ public class ActorAI_Logic : MonoBehaviour
 
         //if (FLAG_Debug) Debug.Log(Info.CurrentMovementTargetIntercept_Fuzzy);
     }
+
+    #endregion
+
+    #region State Change
+
+    /// <summary>
+    /// Fires when the AI Logic triggers a state change.
+    /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///     PLEASE use StateEnd and StateBegin unless you have a good reason for overriding this.
+    ///     </para>
+    ///     <para>
+    ///     This base class fires State End and State Begin methods.
+    ///     </para>
+    /// </remarks>
+    /// <param name="nextState">The new state to change to.</param>
+    protected virtual void ChangeState(ActorAILogic_State nextState)
+    {
+        StateEnd(CurrentState);
+        CurrentState = nextState;
+        StateBegin(CurrentState);
+    }
+    /// <summary>
+    /// Fires when a state ends. Useful for cleaning up temporary mutations in a given state.
+    /// </summary>
+    /// <param name="stateToEnd">The state that is ending currently.</param>
+    protected virtual void StateEnd(ActorAILogic_State stateToEnd)
+    {
+
+    }
+    /// <summary>
+    /// Fires when a new state begins. Useful for initializing status mutations for a given state.
+    /// </summary>
+    /// <param name="stateToStart">The state that is starting.</param>
+    protected virtual void StateBegin(ActorAILogic_State stateToStart)
+    {
+
+    }
+
+    #endregion
 
     #region Utility Methods
 
