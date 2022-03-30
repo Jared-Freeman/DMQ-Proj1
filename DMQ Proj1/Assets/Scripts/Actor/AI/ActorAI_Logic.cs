@@ -252,12 +252,19 @@ public class ActorAI_Logic : MonoBehaviour
     ///     PLEASE use StateEnd and StateBegin unless you have a good reason for overriding this.
     ///     </para>
     ///     <para>
+    ///     To override: invoke base, then hook up a switch statement and you should be good to go.
+    ///     </para>
+    ///     <para>
     ///     This base class fires State End and State Begin methods.
     ///     </para>
     /// </remarks>
     /// <param name="nextState">The new state to change to.</param>
     protected virtual void ChangeState(ActorAILogic_State nextState)
     {
+        if (FLAG_Debug)
+        {
+            Debug.Log("State Change: " + nextState.ToString());
+        }
         StateEnd(CurrentState);
         CurrentState = nextState;
         StateBegin(CurrentState);
@@ -265,18 +272,30 @@ public class ActorAI_Logic : MonoBehaviour
     /// <summary>
     /// Fires when a state ends. Useful for cleaning up temporary mutations in a given state.
     /// </summary>
+    ///     <remarks>
+    ///     To override: invoke base, then hook up a switch statement and you should be good to go.
+    ///     </remarks>
     /// <param name="stateToEnd">The state that is ending currently.</param>
     protected virtual void StateEnd(ActorAILogic_State stateToEnd)
     {
-
+        if(FLAG_Debug)
+        {
+            Debug.Log("State End: " + stateToEnd.ToString());
+        }
     }
     /// <summary>
     /// Fires when a new state begins. Useful for initializing status mutations for a given state.
     /// </summary>
+    ///     <remarks>
+    ///     To override: invoke base, then hook up a switch statement and you should be good to go.
+    ///     </remarks>
     /// <param name="stateToStart">The state that is starting.</param>
     protected virtual void StateBegin(ActorAILogic_State stateToStart)
     {
-
+        if (FLAG_Debug)
+        {
+            Debug.Log("State Start: " + stateToStart.ToString());
+        }
     }
 
     #endregion
