@@ -235,11 +235,14 @@ public class ActorAI_Logic : MonoBehaviour
 
     private void UpdateFlocking()
     {
+        //DesiredVelocity = NavAgent.desiredVelocity; return;
 
         List<GameObject> ignoredGOs = new List<GameObject>();
         ignoredGOs.Add(gameObject);
 
-        List<Actor> List_ProximalActors = Utils.ComponentFinder<Actor>.GetComponentsWithColliderInRadius(transform.position, 5f, ignoredGOs);
+        float searchRadius = 5f; //TODO: make this the max radius of the 3 params
+
+        List<Actor> List_ProximalActors = Utils.ComponentFinder<Actor>.GetComponentsWithColliderInRadius(transform.position, searchRadius, ignoredGOs);
 
         Flocking_Avoidance(List_ProximalActors);
 
@@ -263,20 +266,35 @@ public class ActorAI_Logic : MonoBehaviour
 
     private void Flocking_Avoidance(List<Actor> proximalActors)
     {
+        Vector3 distance;
+        float v_maxDistSquared = Mathf.Pow(_FlockingPreset.Options.Separation.Radius, 2);
+
+        //filter out proximals that are too far away. Cheaper than doing multiple sphere overlaps.
+        List<Actor> allowedProxActors = new List<Actor>();
+        foreach(var a in proximalActors)
+        {
+            distance = a.transform.position - gameObject.transform.position;
+            if (distance.sqrMagnitude <= v_maxDistSquared)
+            {
+                allowedProxActors.Add(a);
+            }
+        }
+
+
+
         //Here we use a reciprocal function to weight closer agents stronger than distant ones.
         float maxStrength = _FlockingPreset.Options.Separation.MaxStrength; // Strength when distance == 0. Useful for determining the theoretical maximum contribution.
-        float steepness = 50f; // Steepness will make the strength taper more/less harshly.
+        float steepness = .25f; // Steepness will make the strength taper more/less harshly.
                               // Low values look like a square wave (e.g. 0 to maxStrength instantly). High values look like a horizontal line at y=maxStrength
 
         Vector3 totalVelocityDesired = Vector3.zero;
 
-        Vector3 distance;
         float v_denom_term2 = steepness * (1 / maxStrength); //term 2 in the denominator
-        float aCount = proximalActors.Count; //normalizing term
+        float aCount = allowedProxActors.Count; //normalizing term
         float spd = AttachedActor.Stats.MoveSpeedCurrent;
         float v_numerator = spd * steepness / aCount; //numerator
         //compute vector sum of all proximal actors using the avoidance function
-        foreach (var a in proximalActors)
+        foreach (var a in allowedProxActors)
         {
             //if (FLAG_Debug)
             //{
