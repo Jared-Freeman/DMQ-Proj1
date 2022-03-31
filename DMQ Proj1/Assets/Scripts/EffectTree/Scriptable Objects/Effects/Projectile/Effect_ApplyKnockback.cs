@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace EffectTree
 {
-    [CreateAssetMenu(fileName = "E_", menuName = "Effect Tree/Apply Knockback", order = 1)]
+    [CreateAssetMenu(fileName = "E_", menuName = "Effect Tree/Physics/[Experimental] Apply Knockback", order = 1)]
     public class Effect_ApplyKnockback : Effect_Base
     {
         public float BaseForce;

@@ -18,7 +18,8 @@ namespace Utils
             {
                 return true;
             }
-            Debug.LogError(reference.ToString() + " is null! Was it initialized correctly?");
+            Debug.LogError("Null object found during reference validation! Was it initialized correctly?" +
+                "\n Likely either an inspector empty reference or a failed script init.");
             return false;
         }
     }

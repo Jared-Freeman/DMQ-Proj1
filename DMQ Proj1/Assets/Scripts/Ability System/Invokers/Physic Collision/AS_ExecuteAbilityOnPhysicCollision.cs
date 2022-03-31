@@ -33,10 +33,7 @@ namespace AbilitySystem
         {
             //Validate refs we need
             if (!Utils.Testing.ReferenceIsValid(Preset)) Destroy(this);
-        }
 
-        void Start()
-        {
             //these can be null (aka no ability exists in preset).
             if (Preset.Ability_CollisionEnter) _AbilityInstanceEnter = Preset.Ability_CollisionEnter?.GetInstance(gameObject);
             if (Preset.Ability_CollisionStay) _AbilityInstanceStay = Preset.Ability_CollisionStay?.GetInstance(gameObject);
@@ -49,7 +46,8 @@ namespace AbilitySystem
             ctx.ContextData = EffectTree.EffectContext.CreateContextDataFromCollision(c);
             ctx.AttackData = EffectTree.EffectContext.CreateAttackContextDataFromCollision(c);
 
-            _AbilityInstanceEnter?.ExecuteAbility(ref ctx);
+            if(_AbilityInstanceEnter != null)
+                _AbilityInstanceEnter?.ExecuteAbility(ref ctx);
         }
         void OnCollisionStay(Collision c)
         {
@@ -57,7 +55,8 @@ namespace AbilitySystem
             ctx.ContextData = EffectTree.EffectContext.CreateContextDataFromCollision(c);
             ctx.AttackData = EffectTree.EffectContext.CreateAttackContextDataFromCollision(c);
 
-            AbilityInstanceStay?.ExecuteAbility(ref ctx);
+            if (AbilityInstanceStay != null)
+                AbilityInstanceStay?.ExecuteAbility(ref ctx);
         }
         void OnCollisionExit(Collision c)
         {
@@ -65,7 +64,8 @@ namespace AbilitySystem
             ctx.ContextData = EffectTree.EffectContext.CreateContextDataFromCollision(c);
             ctx.AttackData = EffectTree.EffectContext.CreateAttackContextDataFromCollision(c);
 
-            AbilityInstanceExit?.ExecuteAbility(ref ctx);
+            if (AbilityInstanceExit != null)
+                AbilityInstanceExit?.ExecuteAbility(ref ctx);
         }
     }
 }

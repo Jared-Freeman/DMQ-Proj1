@@ -11,7 +11,7 @@ namespace Utils.Compare
     [System.Serializable]
     public class FloatComparison
     {
-        public enum ComparisonTypes{ GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, EqualTo }
+        public enum ComparisonTypes{ GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, EqualTo, NotEqualTo }
 
         public ComparisonTypes ComparisonType = ComparisonTypes.GreaterThan;
 
@@ -37,6 +37,10 @@ namespace Utils.Compare
 
                 case ComparisonTypes.EqualTo:
                     if (lhs == rhs) return true;
+                    break;
+
+                case ComparisonTypes.NotEqualTo:
+                    if (lhs != rhs) return true;
                     break;
 
 

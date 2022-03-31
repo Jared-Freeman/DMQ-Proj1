@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //TODO: Consider a less expensive way to compute this (a Coroutine with OnDOTEnter() OnDOTExit() and lower frequency???)
-[CreateAssetMenu(fileName = "ProjectileEffect", menuName = "ScriptableObjects/ProjectileEffect/Actor/Apply Damage Over Time to Actor (Fixed DT)", order = 1)]
+//[CreateAssetMenu(fileName = "ProjectileEffect", menuName = "ScriptableObjects/ProjectileEffect/Actor/Apply Damage Over Time to Actor (Fixed DT)", order = 1)]
 public class ProjectileEffect_ApplyDamageOverTimeToActor : ProjectileEffect
 {
     [System.Serializable]

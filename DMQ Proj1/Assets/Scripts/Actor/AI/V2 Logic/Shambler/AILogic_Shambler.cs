@@ -50,10 +50,10 @@ namespace ActorSystem.AI
             NavAgent.speed = Preset.Base.MovementSpeed;
 
             Ability = S_Preset.Shambler_Options.AttackAbility.GetInstance(gameObject);
-            if(Ability == null) { Debug.LogError("No Ability found on Preset!"); }
+            if (!Utils.Testing.ReferenceIsValid(Ability)) Destroy(this);
 
             RB = GetComponent<Rigidbody>();
-            if(RB == null) { Debug.LogError("No Rigidbody found! Destroying"); Destroy(this); }
+            if (!Utils.Testing.ReferenceIsValid(RB)) Destroy(this);
         }
 
         protected override void Start()

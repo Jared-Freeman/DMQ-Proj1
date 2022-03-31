@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "PE_", menuName = "ScriptableObjects/ProjectileEffect/Graphics/Play Impact FX", order = 1)]
+//[CreateAssetMenu(fileName = "PE_", menuName = "ScriptableObjects/ProjectileEffect/Graphics/Play Impact FX", order = 1)]
 public class PE_ImpactFXRelay : ProjectileEffect
 {
 

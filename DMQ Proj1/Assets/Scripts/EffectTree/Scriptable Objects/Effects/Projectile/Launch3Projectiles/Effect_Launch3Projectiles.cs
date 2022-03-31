@@ -4,7 +4,14 @@ using UnityEngine;
 
 namespace EffectTree
 {
-    [CreateAssetMenu(fileName = "LP_", menuName = "Effect Tree/Launch 3 Projectiles", order = 1)]
+    /// <summary>
+    /// DEPRECATED. DO NOT USE.
+    /// </summary>
+    /// <remarks>
+    /// Can use <see cref="Effect_LaunchProjectile"/> with an <see cref="Effect_Persistent"/>, an <see cref="Effect_Set"/>,  
+    /// or a ModifyContext such as <see cref="Effect_ApplyEulerRotation"/>, etc. to get this functionality.
+    /// </remarks>
+    //[CreateAssetMenu(fileName = "LP_", menuName = "Effect Tree/Launch 3 Projectiles", order = 1)]
     public class Effect_Launch3Projectiles : Effect_Base
     {
         public GameObject ProjectilePrefab;
