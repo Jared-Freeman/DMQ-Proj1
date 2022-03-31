@@ -38,7 +38,8 @@ public class ActorAI_Logic : MonoBehaviour
     public bool FLAG_Debug = false;
 
     //refs and state info
-    protected StateInfo Info = new StateInfo();
+    protected StateInfo Info { get; set; } = new StateInfo();
+    protected FlockingStateInfo FlockingInfo { get; set; } = new FlockingStateInfo();
     [SerializeField]
     private ActorAI_Logic_PresetBase _Preset;
     [SerializeField]
@@ -49,7 +50,7 @@ public class ActorAI_Logic : MonoBehaviour
     /// <summary>
     /// The current state in this AI Logic's internal state machine.
     /// </summary>
-    public ActorAILogic_State CurrentState { get; protected set; }
+    public ActorAILogic_State CurrentState = ActorAILogic_State.Idle;
     /// <summary>
     /// Virtual Property that can be overwritten to enforce subclassing
     /// </summary>
@@ -132,6 +133,15 @@ public class ActorAI_Logic : MonoBehaviour
         /// Interpolated velocity prediction
         /// </summary>
         public Vector3 CurrentMovementTargetIntercept_Fuzzy = Vector3.zero;
+    }
+
+    /// <summary>
+    /// The flocking contributions container
+    /// </summary>
+    [System.Serializable]
+    protected class FlockingStateInfo
+    {
+
     }
 
     #endregion

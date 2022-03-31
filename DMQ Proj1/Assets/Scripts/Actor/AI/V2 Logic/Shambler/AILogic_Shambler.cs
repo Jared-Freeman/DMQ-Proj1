@@ -17,7 +17,6 @@ namespace ActorSystem.AI
         #region Members
 
         public AS_Ability_Instance_Base Ability { get; protected set; }
-        public State CurrentState { get; protected set; }
         protected Rigidbody RB { get; set; }
 
         #region Properties
@@ -32,8 +31,6 @@ namespace ActorSystem.AI
         #endregion
 
         #region Helpers
-
-        public enum State { Idle, Chasing, PrepAttack, Attacking }
 
         #endregion
 
@@ -60,7 +57,7 @@ namespace ActorSystem.AI
         {
             base.Start();
 
-            ChangeState(State.Idle);
+            ChangeState(ActorAILogic_State.Idle);
             StartCoroutine(UpdateAI());
         }
 
@@ -68,62 +65,61 @@ namespace ActorSystem.AI
 
 
         /// <summary>
-        /// Allows us to perform stuff on end of state. 
-        /// This method is fired PRIOR to initializing the NEXT state during a state change.
+        /// Allows us to perform stuff on end of ActorAILogic_State. 
+        /// This method is fired PRIOR to initializing the NEXT ActorAILogic_State during a ActorAILogic_State change.
         /// </summary>
         /// <param name="StateToEnd"></param>
-        private void EndState(State StateToEnd)
+        private void EndState(ActorAILogic_State StateToEnd)
         {
             switch (StateToEnd)
             {
-                case State.Idle:
+                case ActorAILogic_State.Idle:
                     break;
 
-                case State.Chasing:
+                case ActorAILogic_State.Chasing:
                     break;
 
-                case State.PrepAttack:
+                case ActorAILogic_State.ChargingAttack:
                     break;
 
-                case State.Attacking:
+                case ActorAILogic_State.Attacking:
                     break;
 
                 default:
-                    Debug.LogError(ToString() + ": Unrecognized AI State!");
+                    Debug.LogError(ToString() + ": Unrecognized AI ActorAILogic_State!");
                     break;
             }
         }
 
         /// <summary>
-        /// Fires when the Logic moves into a new State. Useful for initializing a state's variables or reporting changes to other objects
+        /// Fires when the Logic moves into a new ActorAILogic_State. Useful for initializing a ActorAILogic_State's variables or reporting changes to other objects
         /// </summary>
         /// <param name="Next_State"></param>
-        private void ChangeState(State Next_State)
+        protected override void ChangeState(ActorAILogic_State nextState)
         {
-            EndState(CurrentState);
-            CurrentState = Next_State;
+            base.ChangeState(nextState);
 
-            if (FLAG_Debug) Debug.Log("STATE CHANGE: " + CurrentState.ToString());
+            //if (FLAG_Debug) Debug.Log("ActorAILogic_State CHANGE: " + CurrentState.ToString());
 
             switch (CurrentState)
             {
-                case State.Idle:
+                case ActorAILogic_State.Idle:
                     Info.CanTurn = true;
                     break;
 
-                case State.Chasing:
+                case ActorAILogic_State.Chasing:
                     Info.CanTurn = true;
                     break;
 
-                case State.PrepAttack:
+                case ActorAILogic_State.ChargingAttack:
                     Info.CanTurn = true;
                     NavAgent.SetDestination(transform.position + (transform.forward * Preset.Base.StopSlideDistance));
                     Info.LungeStartTime = Time.time;
                     StartCoroutine(I_IncreaseScale());
                     break;
 
-                    //This state is instantaneous, so we just do its thing and change state again.
-                case State.Attacking:
+                    //This ActorAILogic_State is instantaneous, so we just do its thing and change ActorAILogic_State again.
+                case ActorAILogic_State.Attacking:
 
                     Utils.AttackContext a = new Utils.AttackContext();
 
@@ -142,12 +138,12 @@ namespace ActorSystem.AI
 
                     Ability?.ExecuteAbility(ref ec);
 
-                    ChangeState(State.Chasing);
+                    ChangeState(ActorAILogic_State.Chasing);
 
                     break;
 
                 default:
-                    Debug.LogError("AP2_GenericEnemyAI: Unrecognized AI State!");
+                    Debug.LogError("AP2_GenericEnemyAI: Unrecognized AI ActorAILogic_State!");
                     break;
             }
 
@@ -162,12 +158,12 @@ namespace ActorSystem.AI
             {
                 switch (CurrentState)
                 {
-                    case State.Idle:
+                    case ActorAILogic_State.Idle:
                         Info.TurnTarget = transform; //Probably not an amazing idea
                         SearchForTargets();
                         break;
 
-                    case State.Chasing:
+                    case ActorAILogic_State.Chasing:
                         if (CurrentTarget != null)
                         {
                             Info.TurnTarget = CurrentTarget.transform;
@@ -175,16 +171,16 @@ namespace ActorSystem.AI
                         ChaseCurrentTarget();
                         break;
 
-                    case State.PrepAttack:
+                    case ActorAILogic_State.ChargingAttack:
                         PrepareAttack();
                         break;
 
-                    case State.Attacking:
+                    case ActorAILogic_State.Attacking:
                         //Attack the target
                         break;
 
                     default:
-                        Debug.LogError("AP2_GenericEnemyAI: Unrecognized AI State!");
+                        Debug.LogError("AP2_GenericEnemyAI: Unrecognized AI ActorAILogic_State!");
                         break;
                 }
 
@@ -202,36 +198,36 @@ namespace ActorSystem.AI
         {
             if (CurrentTarget == null)
             {
-                ChangeState(State.Idle);
+                ChangeState(ActorAILogic_State.Idle);
             }
 
             //Velocity Exceeds tolerance (if Preset flag is enabled)
             else if (!Preset.Base.AttackWhileMoving && RB.velocity.sqrMagnitude > Math.Pow(Preset.Base.StationaryVelocityThreshold, 2))
             {
-                ChangeState(State.Chasing);
+                ChangeState(ActorAILogic_State.Chasing);
             }
 
             //Target exceeds Attack Loss distance
             else if ((CurrentTarget.transform.position - transform.position).sqrMagnitude >= Mathf.Pow(S_Preset.Shambler_Options.AttackLoseDistance, 2) )
             {
-                ChangeState(State.Chasing);
+                ChangeState(ActorAILogic_State.Chasing);
             }
 
             //Target is around some form of corner
             else if (!(NavAgent.path.corners.Length < 3))
             {
-                ChangeState(State.Chasing);
+                ChangeState(ActorAILogic_State.Chasing);
             }
 
             else if(!IsFacingTarget)
             {
-                ChangeState(State.Chasing);
+                ChangeState(ActorAILogic_State.Chasing);
             }
 
-            //If we've waited long enough, change state to Attacking. Ability must also be castable. Also must be facing target
+            //If we've waited long enough, change ActorAILogic_State to Attacking. Ability must also be castable. Also must be facing target
             else if (Time.time - Info.LungeStartTime > S_Preset.Shambler_Options.AttackPause && Ability.CanCastAbility)
             {
-                ChangeState(State.Attacking);
+                ChangeState(ActorAILogic_State.Attacking);
             }
         }
 
@@ -239,14 +235,14 @@ namespace ActorSystem.AI
         {
             if (CurrentTarget == null)
             {
-                ChangeState(State.Idle);
+                ChangeState(ActorAILogic_State.Idle);
             }
             else if (
                 (CurrentTarget.transform.position - transform.position).sqrMagnitude <= Mathf.Pow(S_Preset.Shambler_Options.AttackPrepareDistance, 2)
                 && (NavAgent.path.corners.Length < 3) //straight shot. Still relevant to help enforce LOS on this shambler
                 )
             {
-                ChangeState(State.PrepAttack);
+                ChangeState(ActorAILogic_State.ChargingAttack);
             }
             else if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= Preset.Base.MaxFacingAngle / 2)
             {
@@ -264,7 +260,7 @@ namespace ActorSystem.AI
             if (EnemyExistsInAggroRadius())
             {
                 ChooseNewTarget();
-                ChangeState(State.Chasing);
+                ChangeState(ActorAILogic_State.Chasing);
             }
         }
 
@@ -275,7 +271,7 @@ namespace ActorSystem.AI
 
             float StartTime = Time.time;
             while (
-                CurrentState == State.PrepAttack 
+                CurrentState == ActorAILogic_State.ChargingAttack
                 && Time.time - StartTime < S_Preset.Shambler_Options.AttackPause
                 && IsFacingTarget
                 && (Preset.Base.AttackWhileMoving || (RB.velocity.sqrMagnitude < Math.Pow(Preset.Base.StationaryVelocityThreshold, 2)))
