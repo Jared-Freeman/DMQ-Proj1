@@ -30,7 +30,7 @@ namespace ActorSystem.AI.Flocking
         public class ActorAI_FlockingParametersPreset_Options
         {
             [Range(0,1)]
-            public float OverallFlockingStrength = .25f;
+            public float OverallFlockingStrength = 1;
 
             // The 3 flocking contributors. These weights will be normalized during computation.
             public ActorAI_FlockingParametersPreset_FlockingParameter Separation = new ActorAI_FlockingParametersPreset_FlockingParameter();
@@ -46,9 +46,9 @@ namespace ActorSystem.AI.Flocking
             /// </summary>
             public float Radius = 0f;
             /// <summary>
-            /// How much weight this parameter is given.
+            /// The Distance that this weight will begin to taper off from "1."
             /// </summary>
-            public float Strength = 0f;
+            public float MaxStrength = 3f;
         }
 
         #endregion

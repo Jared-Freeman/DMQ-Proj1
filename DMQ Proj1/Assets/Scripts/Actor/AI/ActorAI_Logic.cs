@@ -107,6 +107,7 @@ public class ActorAI_Logic : MonoBehaviour
             else return false;
         }
     }
+    public Vector3 DesiredVelocity { get; protected set; }
 
     #endregion
 
@@ -141,7 +142,10 @@ public class ActorAI_Logic : MonoBehaviour
     [System.Serializable]
     protected class FlockingStateInfo
     {
-
+        //MAGNITUDE contributions
+        public Vector3 Avoidance;
+        public Vector3 Alignment;
+        public Vector3 Cohesion_Position; //this one is actually a position!
     }
 
     #endregion
@@ -221,7 +225,89 @@ public class ActorAI_Logic : MonoBehaviour
             UpdateInterceptComputation(Mathf.Clamp(Time.fixedDeltaTime * 3.3f, 0, 1f));
         }
 
+        //can afford to do this here since we're using FixedTime for physic movement
+        UpdateFlocking();
     }
+
+    protected virtual void Update()
+    {
+    }
+
+    private void UpdateFlocking()
+    {
+
+        List<GameObject> ignoredGOs = new List<GameObject>();
+        ignoredGOs.Add(gameObject);
+
+        List<Actor> List_ProximalActors = Utils.ComponentFinder<Actor>.GetComponentsWithColliderInRadius(transform.position, 5f, ignoredGOs);
+
+        Flocking_Avoidance(List_ProximalActors);
+
+        //assemble final velocity contributions
+        Vector3 v_desiredVelocity = NavAgent.desiredVelocity + FlockingInfo.Avoidance;
+        if(v_desiredVelocity.sqrMagnitude > Mathf.Pow(AttachedActor.Stats.MoveSpeedCurrent,2))
+        {
+            v_desiredVelocity = v_desiredVelocity.normalized * AttachedActor.Stats.MoveSpeedCurrent;
+        }
+
+        if (FLAG_Debug)
+        {
+            Debug.DrawRay(transform.position + new Vector3(0, .5f, 0), v_desiredVelocity, Color.cyan, Time.fixedDeltaTime);
+        }
+
+        //end goal, the NavAgent's desired movement is respected more as we get closer to target
+        DesiredVelocity = v_desiredVelocity;
+    }
+
+    #region Flocking
+
+    private void Flocking_Avoidance(List<Actor> proximalActors)
+    {
+        //Here we use a reciprocal function to weight closer agents stronger than distant ones.
+        float maxStrength = _FlockingPreset.Options.Separation.MaxStrength; // Strength when distance == 0. Useful for determining the theoretical maximum contribution.
+        float steepness = 50f; // Steepness will make the strength taper more/less harshly.
+                              // Low values look like a square wave (e.g. 0 to maxStrength instantly). High values look like a horizontal line at y=maxStrength
+
+        Vector3 totalVelocityDesired = Vector3.zero;
+
+        Vector3 distance;
+        float v_denom_term2 = steepness * (1 / maxStrength); //term 2 in the denominator
+        float aCount = proximalActors.Count; //normalizing term
+        float spd = AttachedActor.Stats.MoveSpeedCurrent;
+        float v_numerator = spd * steepness / aCount; //numerator
+        //compute vector sum of all proximal actors using the avoidance function
+        foreach (var a in proximalActors)
+        {
+            //if (FLAG_Debug)
+            //{
+            //    Debug.DrawRay(a.transform.position, new Vector3(0, 8f, 0), Color.red, Time.fixedDeltaTime);
+            //}
+
+            distance = a.transform.position - gameObject.transform.position;
+
+            totalVelocityDesired += (v_numerator / (distance.magnitude + v_denom_term2)) * distance.normalized;
+        }
+
+        totalVelocityDesired *= spd;
+
+        //if (FLAG_Debug)
+        //{
+        //    Debug.DrawRay(transform.position + new Vector3(0, .5f, 0), -totalVelocityDesired, Color.cyan, Time.fixedDeltaTime);
+        //    Debug.Log(totalVelocityDesired);
+        //}
+
+        FlockingInfo.Avoidance = -totalVelocityDesired;
+    }
+    private void Flocking_Cohesion(List<Actor> proximalActors)
+    {
+
+    }
+    private void Flocking_Alignment(List<Actor> proximalActors)
+    {
+
+    }
+
+    #endregion
 
 
     /// <summary>
