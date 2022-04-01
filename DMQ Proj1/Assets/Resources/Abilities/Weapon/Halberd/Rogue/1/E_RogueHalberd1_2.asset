@@ -14,8 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Conditions:
     _Conditions: []
+  AttachAttackToCaster: 1
+  TargetFilters:
+    Enemy: 1
+    Ally: 0
+    Neutral: 0
+    Self: 0
   meleeAttackEventObject: {fileID: 7916369456241327206, guid: 67092574fc487cd4d8a67513b1e2d42a,
     type: 3}
   EffectList:
   - {fileID: 11400000, guid: 08d1e6702b5a19a4abe52a493292f635, type: 2}
   - {fileID: 11400000, guid: 0a2ec0e1555dcae459e0566fa5f0f750, type: 2}
+  EffectDuration: 0.75

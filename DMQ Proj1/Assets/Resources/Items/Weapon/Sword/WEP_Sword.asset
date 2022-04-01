@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 442c1fa517ad5fa4a97ff6c1b360b4f9, type: 3}
+  m_Name: WEP_Sword
+  m_EditorClassIdentifier: 
+  BaseOptions:
+    PickupRadius: 2
+    PickupStyle: 0
+    CapacityCost: 1
+  BaseWeaponOptions:
+    EquipTime: 0
+    DequipTime: 0
+    CooldownPreset:
+      _Cooldown: 1
+    Ability_Attack: {fileID: 0}
+    Ability_Ability1: {fileID: 0}
+    Ability_Ability2: {fileID: 0}
+    AnimatorIndex: 0
+  ListAbilitiesPerClass:
+  - Class: {fileID: 11400000, guid: f793555b814d3724381a0654989e00b5, type: 2}
+    BasicAttack: {fileID: 11400000, guid: 90bd51bb27e5cfc48b12d0fd9182197d, type: 2}
+    Ability_1: {fileID: 11400000, guid: 424132bd014f32d468f6132dd5659f86, type: 2}
+    Ability_2: {fileID: 11400000, guid: 5094c6e4def078348b765f2f9b8f7f32, type: 2}
+  - Class: {fileID: 11400000, guid: a13f55a44ed79f4488b73600a23246bf, type: 2}
+    BasicAttack: {fileID: 11400000, guid: 90bd51bb27e5cfc48b12d0fd9182197d, type: 2}
+    Ability_1: {fileID: 11400000, guid: 4c4947977f628424d8ed56016396397c, type: 2}
+    Ability_2: {fileID: 11400000, guid: db6d829f054025240b6ffe605c561781, type: 2}
+  DefaultBasicAttack: {fileID: 11400000, guid: d1bd28c8865a4ae4fa2e5e79965cf0de, type: 2}
+  DefaultAbility_1: {fileID: 11400000, guid: d1bd28c8865a4ae4fa2e5e79965cf0de, type: 2}
+  DefaultAbility_2: {fileID: 11400000, guid: d1bd28c8865a4ae4fa2e5e79965cf0de, type: 2}

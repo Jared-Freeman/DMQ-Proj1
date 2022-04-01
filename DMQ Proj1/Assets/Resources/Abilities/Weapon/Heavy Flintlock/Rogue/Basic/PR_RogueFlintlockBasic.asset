@@ -37,11 +37,11 @@ MonoBehaviour:
     FLAG_UseCollisionStayDuration: 0
     CollisionStayDuration: 0
   MoveOptions:
-    FLAG_FaceRigidbodyVelocity: 0
+    FLAG_FaceRigidbodyVelocity: 1
     MovementType: 1
     MovementTypeOptions:
       LinearSimpleOptions:
-        Speed: 25
+        Speed: 50
       ParabolicSimpleOptions:
         TravelTime: 0
         HeightOverTime:
