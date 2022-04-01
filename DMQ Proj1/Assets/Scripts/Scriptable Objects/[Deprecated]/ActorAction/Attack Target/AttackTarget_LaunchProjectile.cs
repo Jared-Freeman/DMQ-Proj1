@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ActorSystem.AI
 {
-    [CreateAssetMenu(fileName = "ActorAction", menuName = "ScriptableObjects/Actor Actions/Attack/Attack Target/Launch Projectile", order = 1)]
+    //[CreateAssetMenu(fileName = "ActorAction", menuName = "ScriptableObjects/Actor Actions/Attack/Attack Target/Launch Projectile", order = 1)]
 
     public class AttackTarget_LaunchProjectile : AP2_ActorAction_AttackTarget
     {

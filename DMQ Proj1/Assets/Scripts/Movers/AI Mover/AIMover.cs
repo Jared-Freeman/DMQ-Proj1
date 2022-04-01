@@ -15,7 +15,7 @@ using ActorSystem.AI;
 public class AIMover : MonoBehaviour
 {
     public NavMeshAgent Agent { get; protected set; }
-    public Rigidbody RB;
+    public Rigidbody RB { get; protected set; }
     public ActorAI_Logic Logic { get; protected set; }
 
     protected Vector3 _DesiredVelocityLastFixedUpdate_Normalized { get; private set; }

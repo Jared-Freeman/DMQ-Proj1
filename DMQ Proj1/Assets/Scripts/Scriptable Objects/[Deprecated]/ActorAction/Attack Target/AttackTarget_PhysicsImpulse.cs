@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ActorSystem.AI
 {
-    [CreateAssetMenu(fileName = "ActorAction", menuName = "ScriptableObjects/Actor Actions/Attack/Attack Target/Physic Impulse", order = 1)]
+    //[CreateAssetMenu(fileName = "ActorAction", menuName = "ScriptableObjects/Actor Actions/Attack/Attack Target/Physic Impulse", order = 1)]
     public class AttackTarget_PhysicsImpulse : AP2_ActorAction_AttackTarget
     {
         [System.Serializable]
