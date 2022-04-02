@@ -24,6 +24,18 @@ namespace EffectTree
         public static event System.EventHandler<MeleeAttackEventArgs> OnMeleeAttack;
 
         public bool AttachAttackToCaster = true;
+        /// <summary>
+        /// Should the hitbox be rotated so that its forward (blue arrow) aligns to the effect context direction?
+        /// </summary>
+        public bool AdjustRotationToFaceContextDirection = true;
+
+        /// <summary>
+        /// Distance from spawn position that the prefab is spawned.
+        /// </summary>
+        public float Distance = 2f;
+
+
+        public EffectContext.FacingOptions Direction = EffectContext.FacingOptions._TargetDirection;
 
         public TargetFilterOptions TargetFilters;
 
@@ -54,13 +66,19 @@ namespace EffectTree
                 GameObject g = ctx.AttackData._Owner.gameObject;
 
                 Vector3 position = g.transform.position;
-                Vector3 direction = g.transform.forward;
-                float distance = 2; //Arbitrarily chosen, seems ok.
 
-                Vector3 spawnPos = position + direction * distance;
+                Vector3 direction = ctx.RetrieveDirectionVector(Direction);
+                if(direction.sqrMagnitude == 0) direction = ctx.GetAnyDirectionVector();
+
+
+                Vector3 spawnPos = position + direction * Distance;
 
 
                 GameObject w = Instantiate(meleeAttackEventObject,spawnPos,Quaternion.identity);
+
+                if (w == null) return false;
+
+                if (AdjustRotationToFaceContextDirection) w.transform.forward = direction;
 
                 if (AttachAttackToCaster) w.transform.parent = ctx.AttackData._Owner.gameObject.transform;
 

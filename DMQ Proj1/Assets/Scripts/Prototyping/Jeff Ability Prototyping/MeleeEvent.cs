@@ -8,8 +8,7 @@ namespace EffectTree
     {
         public Effect_Dev_MeleeAttack Preset;
 
-
-        public EffectContext ctx;
+        public EffectContext ctx { get; set; }
         private List<GameObject> List_TargetsHit = new List<GameObject>();
 
         void Start()
