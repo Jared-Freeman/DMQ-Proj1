@@ -12,3 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2454f152cf1b4a74d9cc4210ff531cc8, type: 3}
   m_Name: AI_FlockPreset_FRDev1
   m_EditorClassIdentifier: 
+  FLAG_Debug: 0
+  Options:
+    OverallFlockingStrength: 1
+    Avoidance:
+      Radius: 5
+      MaxStrength: 1.5
+      CurveSteepness: 1.22
+    Cohesion:
+      Radius: 0
+      MaxStrength: 1
+      CurveSteepness: 1
+    Alignment:
+      Radius: 3
+      MaxStrength: 0.45
+      CurveSteepness: 3

@@ -14,14 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Base:
     DrawDebugGizmos: 0
-    InterceptCurrentTarget: 0
+    InterceptCurrentTarget: 1
+    InterceptCurrentTargetStrength: 0.08
+    InterceptCurrentTargetDisableDistance: 4
     AttackWhileMoving: 0
-    StationaryVelocityThreshold: 1.33
-    AttackRange: 1.25
-    MovementSpeed: 6
+    StationaryVelocityThreshold: 2
+    AttackRange: 5
+    MovementSpeed: 10
     StopSlideDistance: 0
-    AggroRadius: 20
-    MaxFacingAngle: 120
+    AggroRadius: 25
+    MaxFacingAngle: 150
     TurningRate: 240
     GrowCurve:
       serializedVersion: 2
@@ -51,30 +53,39 @@ MonoBehaviour:
     _TargetPriority: 1
   Shambler_Options:
     AttackAbility: {fileID: 11400000, guid: 0cf78c9f260f1b44c8e822ce097c3efc, type: 2}
-    AttackPrepareDistance: 3.5
-    AttackLoseDistance: 5
-    AttackPause: 1
-    GrowDuration: 1
+    AttackPrepareDistance: 4
+    AttackLoseDistance: 6.25
+    AttackPause: 0.85
+    GrowDuration: 0.85
     GrowCurve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
         value: 1
-        inSlope: 0.5
-        outSlope: 0.5
+        inSlope: 0.9715307
+        outSlope: 0.9715307
         tangentMode: 34
         weightedMode: 0
         inWeight: 0
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 1
-        value: 1.5
-        inSlope: 0.5
-        outSlope: 0.5
-        tangentMode: 34
+        time: 0.39793774
+        value: 1.3866087
+        inSlope: 0.46316594
+        outSlope: 0.46316594
+        tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
+        outWeight: 0.11442662
+      - serializedVersion: 3
+        time: 1
+        value: 1.4999124
+        inSlope: 0.03569968
+        outSlope: 0.03569968
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.0882206
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
