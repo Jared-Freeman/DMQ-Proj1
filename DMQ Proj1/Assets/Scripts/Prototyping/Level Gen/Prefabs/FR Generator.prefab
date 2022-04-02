@@ -44,16 +44,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FLAG_Debug: 0
+  FLAG_UseResourcePaths: 0
   Options:
     GenerationDimensions: {x: 5, y: 5}
+    GridSize: 40
   C_Repo:
-    N_Connections:
-    - {fileID: 7239970378133364235, guid: ed8dde74fd0ec964eadd266c4abc215a, type: 3}
-    NS_Connections:
-    - {fileID: 7835790620440068912, guid: fa1165a9a8a51454db37c5ad682cd83b, type: 3}
-    NE_Connections:
-    - {fileID: 2106745640875733083, guid: e0952437466de7f43970fa84cfd656a9, type: 3}
-    WNE_Connections:
-    - {fileID: 9062976364536147831, guid: ad505ac4b4a362745ac879655f709ea8, type: 3}
-    NESW_Connections:
-    - {fileID: 4167215030961930317, guid: 85359877f73db9f49b42883c5edfe86b, type: 3}
+    ConnectionLists:
+      N_Connections: []
+      NS_Connections: []
+      NE_Connections: []
+      WNE_Connections: []
+      NESW_Connections: []
+    ResourcePaths:
+      N_Connections: 
+      NS_Connections: 
+      NE_Connections: 
+      WNE_Connections: 
+      NESW_Connections: 
+  Parent: {fileID: 0}
+  Instance: {fileID: 0}
+  PlayerSpawner: {fileID: 0}
+  ExitPrefab: {fileID: 0}
