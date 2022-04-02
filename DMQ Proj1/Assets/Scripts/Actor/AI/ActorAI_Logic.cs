@@ -30,11 +30,11 @@ public class ActorAI_Logic : MonoBehaviour
     /// For Logic subroutines (minimize cost-per-frame)
     /// </summary>
     protected readonly static float _RoutineSleepDuration = .125f; //8 times / sec
-    protected readonly static float s_MinimumRBSpeedToIntercept = 6;
+    protected static float s_MinimumRBSpeedToIntercept { get; } = 1;
     /// <summary>
     /// A property to introduce fuzziness to prevent P.F. priority fighting if we're close enough to our current destination
     /// </summary>
-    protected readonly static float s_CloseEnoughToTarget = .5f;
+    protected readonly static float s_CloseEnoughToTarget = .025f;
 
     #region Members
 
@@ -273,8 +273,8 @@ public class ActorAI_Logic : MonoBehaviour
         }
 
         if(Info.FlockingEnabled 
-            && Info.DistanceToCurrentTargetMagnitude_AtLastPoll <= s_CloseEnoughToTarget
-            && Info.DistanceToCurrentTargetMagnitude_AtLastPoll <= Preset.Base.InterceptCurrentTargetDisableDistance)
+            && Info.DistanceToCurrentTargetMagnitude_AtLastPoll >= s_CloseEnoughToTarget
+            && Info.DistanceToCurrentTargetMagnitude_AtLastPoll >= Preset.Base.InterceptCurrentTargetDisableDistance)
         {
             //can afford to do this here since we're using FixedTime for physic movement
             UpdateFlocking();

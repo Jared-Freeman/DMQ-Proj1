@@ -238,13 +238,37 @@ namespace ActorSystem.AI
                 ChangeState(ActorAILogic_State.Idle);
             }
             else if (
-                (CurrentTarget.transform.position - transform.position).sqrMagnitude <= Mathf.Pow(S_Preset.Shambler_Options.AttackPrepareDistance, 2)
-                && (NavAgent.path.corners.Length < 3) //straight shot. Still relevant to help enforce LOS on this shambler
+                Info.DistanceToCurrentTargetMagnitude_AtLastPoll <= S_Preset.Shambler_Options.AttackPrepareDistance
+                //&& (NavAgent.path.corners.Length < 3) //straight shot. Still relevant to help enforce LOS on this shambler
                 )
             {
-                ChangeState(ActorAILogic_State.ChargingAttack);
+                Vector3 dir2D = transform.position - CurrentTarget.transform.position;
+                dir2D.y = 0;
+
+                //here we do a raycast to see if anything occludes LOS. Slightly looser than Navagent corners method from earlier in dev't.
+                RaycastHit hit;
+                if (Physics.Raycast(
+                    transform.position + new Vector3(0, .25f, 0) //TODO: Base this on some hitbox height -- we're currently using a magic number...
+                    , -dir2D
+                    , out hit
+                    , S_Preset.Shambler_Options.AttackLoseDistance))
+                {
+                    //if (hit.collider.gameObject == gameObject) Debug.LogError("Need filtering!!! SELF!!!");
+                    //else Debug.LogError("HIT: " + hit.collider.gameObject.name);
+
+                    if (hit.collider.gameObject == CurrentTarget)
+                    {
+                        ChangeState(ActorAILogic_State.ChargingAttack);
+                        return;
+                    }
+                }
             }
-            else if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= Preset.Base.MaxFacingAngle / 2)
+            //else
+            //{
+            //    Debug.LogWarning(Info.DistanceToCurrentTargetMagnitude_AtLastPoll);
+            //}
+
+            if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= Preset.Base.MaxFacingAngle / 2)
             {
                 NavAgent.SetDestination(CurrentTargetPosition);
                 if(NavAgent.path.corners.Length > 3) NavAgent.SetDestination(CurrentTarget.transform.position);

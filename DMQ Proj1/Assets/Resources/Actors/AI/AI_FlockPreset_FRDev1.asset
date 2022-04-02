@@ -16,14 +16,14 @@ MonoBehaviour:
   Options:
     OverallFlockingStrength: 1
     Avoidance:
-      Radius: 6
-      MaxStrength: 0
-      CurveSteepness: 2
+      Radius: 5
+      MaxStrength: 1.5
+      CurveSteepness: 1.22
     Cohesion:
       Radius: 0
       MaxStrength: 1
       CurveSteepness: 1
     Alignment:
-      Radius: 6
-      MaxStrength: 1.6
+      Radius: 3
+      MaxStrength: 0.45
       CurveSteepness: 3

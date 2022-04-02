@@ -250,7 +250,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.33333334
   m_BuildHeightMesh: 0
   m_NavMeshData: {fileID: 23800000, guid: b74c8b8ed8205b344b3aef1c7cc573e4, type: 2}
 --- !u!1 &6894663540625286408
@@ -771,6 +771,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4167215030961930316}
     m_Modifications:
+    - target: {fileID: 6187161416314951912, guid: 47dc46d5787d5f34790938ed79a3e759,
+        type: 3}
+      propertyPath: _FlockingPreset
+      value: 
+      objectReference: {fileID: 11400000, guid: 8610ab2a257f29c49bde36a3d9d8867d,
+        type: 2}
     - target: {fileID: 6187161416314951917, guid: 47dc46d5787d5f34790938ed79a3e759,
         type: 3}
       propertyPath: m_Name
