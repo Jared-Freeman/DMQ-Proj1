@@ -10,14 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 442cd49177849294ab449c577b42b28f, type: 3}
-  m_Name: PR_
+  m_Name: PR_BulwarkSwordSlicingProj
   m_EditorClassIdentifier: 
   ProjectileFX:
     EndProjectileEffects:
       EffectList: []
       ProjectileFXList: []
     CollisionEnterProjectileEffects:
-      EffectList: []
+      EffectList:
+      - {fileID: 11400000, guid: 42c58836bdcf6b147ba2f2dc4fbe4b70, type: 2}
       ProjectileFXList: []
     CollisionStayProjectileEffects:
       EffectList: []
@@ -29,18 +30,18 @@ MonoBehaviour:
       EffectList: []
       ProjectileFXList: []
   DestroyOptions:
-    FLAG_UseDuration: 0
-    Duration: 0
-    FLAG_UseCollisionEnters: 0
-    CollisionEnters: 0
+    FLAG_UseDuration: 1
+    Duration: 5
+    FLAG_UseCollisionEnters: 1
+    CollisionEnters: 5
     FLAG_UseCollisionStayDuration: 0
     CollisionStayDuration: 0
   MoveOptions:
     FLAG_FaceRigidbodyVelocity: 0
-    MovementType: 0
+    MovementType: 1
     MovementTypeOptions:
       LinearSimpleOptions:
-        Speed: 0
+        Speed: 30
       ParabolicSimpleOptions:
         TravelTime: 0
         HeightOverTime:
