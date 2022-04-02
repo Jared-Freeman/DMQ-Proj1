@@ -16,7 +16,7 @@ MonoBehaviour:
     DrawDebugGizmos: 0
     InterceptCurrentTarget: 1
     InterceptCurrentTargetStrength: 0.08
-    InterceptCurrentTargetDisableDistance: 7
+    InterceptCurrentTargetDisableDistance: 4
     AttackWhileMoving: 0
     StationaryVelocityThreshold: 2
     AttackRange: 5
@@ -54,9 +54,9 @@ MonoBehaviour:
   Shambler_Options:
     AttackAbility: {fileID: 11400000, guid: 0cf78c9f260f1b44c8e822ce097c3efc, type: 2}
     AttackPrepareDistance: 4
-    AttackLoseDistance: 5.5
-    AttackPause: 1
-    GrowDuration: 1
+    AttackLoseDistance: 6.25
+    AttackPause: 0.85
+    GrowDuration: 0.85
     GrowCurve:
       serializedVersion: 2
       m_Curve:

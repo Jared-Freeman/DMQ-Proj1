@@ -8,7 +8,6 @@ using System;
 
 namespace ActorSystem.AI 
 {
-
     /// <summary>
     /// A Shambler logic will simply approach an enemy and try to attack them using their attached Ability when within range.
     /// </summary>
