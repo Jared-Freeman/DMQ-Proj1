@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ProjectileFX:
     EndProjectileEffects:
-      EffectList: []
-      ProjectileFXList: []
-    CollisionEnterProjectileEffects:
       EffectList:
       - {fileID: 11400000, guid: 957ae7d5b7450bb47aef94f563bdf8d8, type: 2}
       - {fileID: 11400000, guid: 117f22f59b6e43e43ad93c244e7d9da5, type: 2}
+      - {fileID: 11400000, guid: d9be53898c137ca4aa0a3c6957f80214, type: 2}
+      ProjectileFXList: []
+    CollisionEnterProjectileEffects:
+      EffectList: []
       ProjectileFXList: []
     CollisionStayProjectileEffects:
       EffectList: []
@@ -32,9 +33,9 @@ MonoBehaviour:
       ProjectileFXList: []
   DestroyOptions:
     FLAG_UseDuration: 1
-    Duration: 7
-    FLAG_UseCollisionEnters: 1
-    CollisionEnters: 1
+    Duration: 4
+    FLAG_UseCollisionEnters: 0
+    CollisionEnters: 3
     FLAG_UseCollisionStayDuration: 0
     CollisionStayDuration: 0
   MoveOptions:
@@ -59,7 +60,7 @@ MonoBehaviour:
         FLAGScaleForceByMass: 0
         FLAGUseSpeedComputationInsteadOfForce: 1
         Force: 0
-        Speed: 15
+        Speed: 20
       HomingSimpleOptions:
         MovementStyle: 0
         Speed: 0
