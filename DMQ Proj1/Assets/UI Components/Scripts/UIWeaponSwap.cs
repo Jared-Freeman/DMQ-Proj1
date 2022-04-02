@@ -18,7 +18,7 @@ public class UIWeaponSwap : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.Space)) ;
+        if (Input.GetKeyUp(KeyCode.Space))
         {
             weaponOne.transform.RotateAround(rotationPoint.transform.position, Vector3.up,20 * Time.deltaTime);
         }

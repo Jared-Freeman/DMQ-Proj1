@@ -7,7 +7,7 @@ namespace ActorSystem.AI
     /// <summary>
     /// Not sure if this is a good idea. Launches the owner object toward the 
     /// </summary>
-    [CreateAssetMenu(fileName = "ActorAction", menuName = "ScriptableObjects/Actor Actions/Attack/Attack Target/Launch Owner Toward Target", order = 1)]
+    //[CreateAssetMenu(fileName = "ActorAction", menuName = "ScriptableObjects/Actor Actions/Attack/Attack Target/Launch Owner Toward Target", order = 1)]
     public class AttackTarget_LeapTowardTarget : AP2_ActorAction_AttackTarget
     {
         [System.Serializable]

@@ -7,17 +7,15 @@ using UnityEngine.AI;
 public class ActorAI : Actor
 {
     #region members
+
     ActorAI_Logic Logic;
+
     #endregion
 
-    new protected void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
         Logic = GetComponent<ActorAI_Logic>();
-    }
-
-    new protected void Update()
-    {
-        base.Update();
+        if (!Utils.Testing.ReferenceIsValid(Logic)) Destroy(gameObject);
     }
 }
