@@ -14,9 +14,15 @@ namespace ActorSystem.StatusEffect
     [CreateAssetMenu(fileName = "STATUS_", menuName = "Actor/Status Effect", order = 1)]
     public class SE_StatusEffect_Base : ScriptableObject
     {
+        #region Events
+
+
+
+        #endregion
+
         #region Members
 
-        public enum DurationApplicationBehavior { ExtendDuration, ResetDuration, UseHighestDuration }
+        public enum DurationApplicationBehavior { ExtendDuration, ResetDuration, UseHighestDuration, None }
 
         public string Name;
         [Multiline] public string Description;
@@ -30,6 +36,7 @@ namespace ActorSystem.StatusEffect
         [System.Serializable]
         public class SE_Preset_Settings
         {
+            public DurationApplicationBehavior DurationExtensionType = DurationApplicationBehavior.UseHighestDuration;
             public SE_Defaults Defaults = new SE_Defaults();
             public SE_Flags Flags;
             public SE_EffectSettings Effects;
@@ -110,6 +117,9 @@ namespace ActorSystem.StatusEffect
                         case DurationApplicationBehavior.UseHighestDuration:
                         case DurationApplicationBehavior.ResetDuration:
                             inst.RemainingDuration = Settings.Defaults.Duration;
+                            break;
+
+                        case DurationApplicationBehavior.None:
                             break;
 
                         default:

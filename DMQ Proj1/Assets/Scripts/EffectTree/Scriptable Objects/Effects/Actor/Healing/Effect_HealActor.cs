@@ -9,7 +9,7 @@ namespace EffectTree
     /// <summary>
     /// Applies damage to target actor, if one exists
     /// </summary>
-    [CreateAssetMenu(fileName = "AD_", menuName = "Effect Tree/Actor/Heal Actor", order = 2)]
+    [CreateAssetMenu(fileName = "HA_", menuName = "Effect Tree/Actor/Heal Actor", order = 2)]
     public class Effect_HealActor : Effect_Base
     {
         [Tooltip("Should modifier multiply use a percentage of max stat value? (default uses current value such as current hp)")]
@@ -24,11 +24,16 @@ namespace EffectTree
             )]
         public ActorStatsData Modifier = new ActorStatsData(0, 0);
 
+        public EffectContext.TargetOptions HealingTarget;
+
         public override bool Invoke(ref EffectContext ctx)
         {
             if( base.Invoke(ref ctx))
             {
-                var a = ctx.AttackData._TargetGameObject.GetComponent<Actor>();
+                GameObject hgo = ctx.RetrieveGameObject(HealingTarget);
+
+                Actor a = hgo.GetComponent<Actor>();
+
                 if(a != null)
                 {
                     a.Stats.ReceiveHealing(Modifier);

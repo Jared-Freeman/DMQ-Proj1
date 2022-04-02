@@ -16,6 +16,7 @@ namespace AbilitySystem
     {
         public Utils.CooldownTracker Cooldown;
         public AS_AbilCastSettings CastSettings;
+        public AS_AbilEffectTreeEvents EffectEvents;
         public EffectTree.Condition.ConditionList Conditions = new EffectTree.Condition.ConditionList();
         public Sprite IconImage; //TODO: Convert this into a UI element or something
 
@@ -36,7 +37,21 @@ namespace AbilitySystem
             public float Time_CastAbil;
 
         }
-        
+        [System.Serializable]
+        public struct AS_AbilEffectTreeEvents
+        {
+            /// <summary>
+            /// Invoked when the abilitiy comes back off-cooldown
+            /// </summary>
+            public EffectTree.Effect_Base Effect_CooldownAvailable;
+            /// <summary>
+            /// Invoked when the player attempts to cast while the Ability instance is on cooldown
+            /// </summary>
+            public EffectTree.Effect_Base Effect_CastWhileOnCooldown;
+
+            //public EffectTree.Effect_Base Effect_;
+        }
+
         /// <summary>
         /// Creates a NEW, component instance of this ability type and attaches it to the ability_owner
         /// </summary>

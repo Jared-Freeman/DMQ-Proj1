@@ -402,6 +402,7 @@ MonoBehaviour:
   FLAG_Debug: 0
   Preset: {fileID: 11400000, guid: 714096e6b0a1ff5438bb50f0cf5b10df, type: 2}
   InitialStatusEffects: []
+  _ListStatusEffects: []
   m_timeSinceLastHit: 0
   OnDeath:
     m_PersistentCalls:
@@ -517,6 +518,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FLAG_Debug: 1
   _Preset: {fileID: 11400000, guid: c457295c4a2b07d479f251b5bb8019e7, type: 2}
+  _FlockingPreset: {fileID: 11400000, guid: 8610ab2a257f29c49bde36a3d9d8867d, type: 2}
+  CurrentState: 0
   AttackCooldown:
     _Cooldown: 1
   AttackAction: {fileID: 11400000, guid: f3a09561fffe9e44299e077e4fa9f063, type: 2}
@@ -532,7 +535,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b02aca0fc6ddd48a0578f35027ce12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RB: {fileID: 0}
 --- !u!1 &7771197866118842696
 GameObject:
   m_ObjectHideFlags: 0

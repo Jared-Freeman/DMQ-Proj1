@@ -15,7 +15,7 @@ using ActorSystem.AI;
 public class AIMover : MonoBehaviour
 {
     public NavMeshAgent Agent { get; protected set; }
-    public Rigidbody RB;
+    public Rigidbody RB { get; protected set; }
     public ActorAI_Logic Logic { get; protected set; }
 
     protected Vector3 _DesiredVelocityLastFixedUpdate_Normalized { get; private set; }
@@ -74,7 +74,7 @@ public class AIMover : MonoBehaviour
         }
         else
         {
-            VelocityDecay(Agent.desiredVelocity, Mathf.Clamp(.08f, 0, 1));
+            VelocityDecay(Logic.DesiredVelocity, Mathf.Clamp(.08f, 0, 1));
             //_CurDesiredVelocity = Agent.desiredVelocity;
 
             //Debug.LogWarning(Agent.desiredVelocity);
@@ -83,7 +83,7 @@ public class AIMover : MonoBehaviour
             //currently the desired velocity polling rate is lower than fixed update... Could be causing issues at lower values
             //Utils.Physics.PerformFixedContinuousMovement(ref RB, _CurDesiredVelocity, ref Options);
             RB.AddForce((_CurDesiredVelocity - RB.velocity) * RB.mass / Time.fixedDeltaTime, ForceMode.Force);
-            Debug.DrawRay(transform.position, _CurDesiredVelocity * 2f, Color.green, Time.fixedDeltaTime);
+            Debug.DrawRay(transform.position, _CurDesiredVelocity, Color.green, Time.fixedDeltaTime);
 
         }
 

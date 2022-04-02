@@ -32,26 +32,30 @@ namespace EffectTree
                     }
 
 
-                    if(actor_cs.Count > 0)
+                    newContext.AttackData._TargetGameObject = null;
+                    if (actor_cs.Count > 0)
                     {
-                        Collider bestCollider = actor_cs[0];
+                        Collider bestCollider = null;
+                        if (TargetFilters.TargetIsAllowed(ctx.AttackData._Team, actor_cs[0].gameObject.GetComponent<Actor>()))
+                        {
+                            bestCollider = actor_cs[0];
+                        }
+
+
                         Vector3 origin = ctx.AttackData._InitialPosition;
                         foreach (Collider c in actor_cs)
                         {
-                            if ((bestCollider.gameObject.transform.position - origin).sqrMagnitude > (c.gameObject.transform.position - origin).sqrMagnitude)
+                            if (
+                                (bestCollider.gameObject.transform.position - origin).sqrMagnitude > (c.gameObject.transform.position - origin).sqrMagnitude
+                                && TargetFilters.TargetIsAllowed(ctx.AttackData._Team, bestCollider.gameObject.GetComponent<Actor>())
+                                )
                             {
                                 bestCollider = c;
                             }
                         }
 
-                        newContext.AttackData._TargetGameObject = bestCollider.gameObject;
+                        if(bestCollider != null) newContext.AttackData._TargetGameObject = bestCollider.gameObject;
                     }
-                    else
-                    {
-
-                        newContext.AttackData._TargetGameObject = null;
-                    }
-
 
                 }
 

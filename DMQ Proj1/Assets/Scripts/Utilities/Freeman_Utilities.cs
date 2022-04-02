@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
 
 //Author: Jared Freeman
 //Desc: This class implements some helpful utility methods for use in Unity game design
@@ -16,6 +17,52 @@ public static class Freeman_Utilities
 
 namespace Utils
 {
+    public static class ComponentFinder<T> where T : MonoBehaviour
+    {
+        /// <summary>
+        /// Acquires a list of Components that have a Collider attached as well.
+        /// </summary>
+        /// <param name="location">Location to perform spherecast check</param>
+        /// <param name="radius">Radius of spherecast check</param>
+        /// <param name="ignoredGameObjects">List of GameObjects that are ignored during the check.</param>
+        /// <param name="checkChildren">Do we traverse children of found objects to find components? EXPENSIVE!</param>
+        /// <returns>A list of all components of type within the specified radius IF THEY HAVE AN ATTACHED COLLIDER</returns>
+        public static List<T> GetComponentsWithColliderInRadius(Vector3 location, float radius, List<GameObject> ignoredGameObjects = null, bool checkChildren = false)
+        {
+            List<T> listComponents = new List<T>();
+
+            var cols = UnityEngine.Physics.OverlapSphere(location, radius);
+
+            List<GameObject> listIgnored = ignoredGameObjects;
+            if (listIgnored == null) listIgnored = new List<GameObject>();
+
+            T currentComponent;
+            foreach (var c in cols)
+            {
+                if(checkChildren)
+                {
+                    //somehow this space magic works...
+                    foreach(Transform child in c.gameObject.transform)
+                    {
+                        //duplicate code... Too bad!
+                        currentComponent = child.gameObject.GetComponent<T>();
+                        if (currentComponent != null && !listIgnored.Contains(c.gameObject))
+                        {
+                            listComponents.Add(currentComponent);
+                        }
+                    }
+                }
+
+                currentComponent = c.gameObject.GetComponent<T>();
+                if(currentComponent != null && !listIgnored.Contains(c.gameObject))
+                {
+                    listComponents.Add(currentComponent);
+                }
+            }
+
+            return listComponents;
+        }
+    }
 
     /// <summary>
     /// Specifies who will receive this message. For use with Team Scriptable Object
@@ -262,6 +309,29 @@ namespace Utils
 
         private float LastUsedTime;
 
+        /// <summary>
+        /// Fires when the Cooldown is available to use again.
+        /// </summary>
+        public event System.EventHandler<CooldownTrackerEventArgs> OnCooldownAvailable;
+        public event System.EventHandler<CooldownTrackerEventArgs> OnCooldownUsed;
+
+        #region Helpers
+
+        /// <summary>
+        /// Event args for cooldown events.
+        /// </summary>
+        public class CooldownTrackerEventArgs : System.EventArgs
+        {
+            public CooldownTracker cooldown;
+
+            public CooldownTrackerEventArgs(CooldownTracker cd)
+            {
+                cooldown = cd;
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region Properties
@@ -344,9 +414,22 @@ namespace Utils
             if(CanUseCooldown())
             {
                 LastUsedTime = Time.time;
+
+                System.Threading.Tasks.Task t = DelayedCooldownAvailableTask();
+
+                OnCooldownUsed?.Invoke(this, new CooldownTrackerEventArgs(this));
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Schedules a CooldownAvailable event to fire once the cooldown duration has finished.
+        /// </summary>
+        protected async System.Threading.Tasks.Task DelayedCooldownAvailableTask()
+        {
+            await System.Threading.Tasks.Task.Delay((int)(1000 * Cooldown) + 1);
+            OnCooldownAvailable?.Invoke(this, new CooldownTrackerEventArgs(this));
         }
 
         //Return true if _Cooldown CAN be used
@@ -431,6 +514,92 @@ namespace Utils
     {
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="go">The GameObject instance containing Colliders to perform overlap checks on.</param>
+        /// <returns>A list of gameobjects that are colliding with <paramref name="go"/>  </returns>
+        public static List<GameObject> GetOverlappingGameObjects(GameObject go)
+        {
+            List<GameObject> List_Return = new List<GameObject>();
+
+            var cs = go.GetComponentsInChildren<Collider>();
+
+            foreach (Collider c in cs)
+            {
+                if (c.enabled == true)
+                {
+                    //functionality branches based on Collider type
+                    if (c as BoxCollider != null)
+                    {
+                        var box = c as BoxCollider;
+
+                        Collider[] overlapColliders;
+
+                        overlapColliders = UnityEngine.Physics.OverlapBox(box.transform.position + box.center, box.size / 2, box.transform.rotation
+                            , PhysicsCollisionMatrixLayerMasks.MaskForLayer(box.gameObject.layer));
+
+                        foreach (var overlapC in overlapColliders)
+                        {
+                            if (
+                                overlapC.gameObject != go 
+                                && !overlapC.gameObject.transform.IsChildOf(go.transform)
+                                && !List_Return.Contains(overlapC.gameObject)
+                                )
+                            {
+                                List_Return.Add(overlapC.gameObject);
+                            }
+                        }
+
+                    }
+                    else if (c as SphereCollider != null)
+                    {
+                        var spr = c as SphereCollider;
+
+                        Collider[] overlapColliders;
+
+                        overlapColliders = UnityEngine.Physics.OverlapSphere(spr.transform.position + spr.center, spr.radius
+                            , PhysicsCollisionMatrixLayerMasks.MaskForLayer(spr.gameObject.layer));
+
+                        foreach (var overlapC in overlapColliders)
+                        {
+                            if (overlapC.gameObject != go 
+                                && !overlapC.gameObject.transform.IsChildOf(go.transform)
+                                && !List_Return.Contains(overlapC.gameObject))
+                            {
+                                List_Return.Add(overlapC.gameObject);
+                            }
+                        }
+                    }
+                    else if (c as CapsuleCollider != null)
+                    {
+                        var cap = c as CapsuleCollider;
+
+                        //why did they not follow the same convention for Collider's...
+                        Vector3 pointDir = cap.transform.up * (cap.height / 2 - cap.radius);
+
+                        Collider[] overlapColliders;
+
+                        overlapColliders = UnityEngine.Physics.OverlapCapsule(cap.transform.position + pointDir, cap.transform.position - pointDir, cap.radius
+                            , PhysicsCollisionMatrixLayerMasks.MaskForLayer(cap.gameObject.layer));
+
+                        foreach (var overlapC in overlapColliders)
+                        {
+                            if (overlapC.gameObject != go 
+                                && !overlapC.gameObject.transform.IsChildOf(go.transform)
+                                && !List_Return.Contains(overlapC.gameObject))
+                            {
+                                List_Return.Add(overlapC.gameObject);
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            return List_Return;
+        }
+
+        /// <summary>
         /// Uses dimensions of colliders in <paramref name="go"/> AND transform data to see if the gameobject would collide with anything.
         /// </summary>
         /// <param name="go">GameObject to check.</param>
@@ -462,7 +631,6 @@ namespace Utils
                         {
                             if (overlapC.gameObject != go && !overlapC.gameObject.transform.IsChildOf(go.transform))
                             {
-                                Debug.LogWarning(overlapC.gameObject);
                                 return true;
                             }
                         }
@@ -563,7 +731,7 @@ namespace Utils
         }
 
         /// <summary>
-        /// 
+        /// PROBABLY DEPRECATED. USE WITH CAUTION!
         /// </summary>
         /// <param name="RB"></param>
         /// <param name="DesiredVelocity"></param>
@@ -571,181 +739,24 @@ namespace Utils
         /// <returns>The resultant velocity inferred from <paramref name="DesiredVelocity"/> and <paramref name="RB"/>'s velocity</returns>
         public static Vector3 PerformFixedContinuousMovement(ref Rigidbody RB, Vector3 DesiredVelocity, ref CFC_MoveOptions RunOptions)
         {
-            {
-                float MaxSpeed = 5f;
-                Vector3 v = DesiredVelocity.normalized * MaxSpeed;
-                v = DesiredVelocity; //hehehe
+            float MaxSpeed = 5f;
+            Vector3 v = DesiredVelocity.normalized * MaxSpeed;
+            v = DesiredVelocity; //hehehe
 
-                //if ((v - RB.velocity).sqrMagnitude < v.sqrMagnitude) v = (v - RB.velocity);
-
-                //F = ma = mv/t
-                //Cache m/t (we compute v later)
-                float c = RB.mass / Time.fixedDeltaTime;
-
-                Vector3 result = v - RB.velocity;
-
-                RB.AddForce(result * c, ForceMode.Force);
-                //Debug.LogWarning(v);
-                Debug.DrawRay(RB.transform.position + Vector3.up * 2f, result * 2f, Color.cyan);
-                //Debug.DrawRay(RB.transform.position + Vector3.up * 2f, RB.velocity * 2f, Color.red);
-
-                return result;
-            }
-
+            //if ((v - RB.velocity).sqrMagnitude < v.sqrMagnitude) v = (v - RB.velocity);
 
             //F = ma = mv/t
             //Cache m/t (we compute v later)
-            float ForceCoefficient = RB.mass / Time.fixedDeltaTime;
+            float c = RB.mass / Time.fixedDeltaTime;
 
-            Vector3 FilteredRBVelocity = new Vector3(RB.velocity.x, 0, RB.velocity.z);
+            Vector3 result = v - RB.velocity;
 
-            //TODO: Improve: Clamp maximum allowable velocity gains based on some Acceleration
+            RB.AddForce(result * c, ForceMode.Force);
+            //Debug.LogWarning(v);
+            Debug.DrawRay(RB.transform.position + Vector3.up * 2f, result * 2f, Color.cyan);
+            //Debug.DrawRay(RB.transform.position + Vector3.up * 2f, RB.velocity * 2f, Color.red);
 
-            ////Create direction of movement desired by player
-            //Vector3 InputDirection = new Vector3(InputMap.x, 0, InputMap.y); //TODO: processing based on horizontal angle host
-            //{
-            //    float AngleDiff = Vector3.SignedAngle(FilteredRBVelocity.normalized, InputDirection, Vector3.up);
-
-            //    //TODO: Consider adding these to movement properties (global scope)
-            //    float MIN_ANGLE_TOLERANCE = 40.0f; //Very important. Controls the arc of player slide control when turning. Stay below 90!
-            //    float MAX_ANGLE_TOLERANCE = 158.4f; //Less important. Controls the angle tolerance for braking. Stay above 90, and stay above MIN!
-
-            //    //Preprocessing input. Clamp to within 180deg if we are going beyond standard movement speed
-            //    //TODO: verify angle computation is correct in all cases
-            //    if (
-            //        FilteredRBVelocity.sqrMagnitude != 0
-            //        && (FilteredRBVelocity.sqrMagnitude > RunOptions.MoveSpd * RunOptions.MoveSpd)
-            //        && Mathf.Abs(AngleDiff) > MIN_ANGLE_TOLERANCE
-            //        && Mathf.Abs(AngleDiff) < MAX_ANGLE_TOLERANCE
-            //        )
-            //    {
-            //        float AngleDelta = 0;
-            //        if (AngleDiff > 0) AngleDelta = -(MIN_ANGLE_TOLERANCE - Mathf.Abs(AngleDiff));
-            //        else AngleDelta = (MIN_ANGLE_TOLERANCE - Mathf.Abs(AngleDiff));
-
-            //        float SinD, CosD;
-            //        SinD = Mathf.Sin(Mathf.Deg2Rad * AngleDelta);
-            //        CosD = Mathf.Cos(Mathf.Deg2Rad * AngleDelta);
-
-            //        //reassign clamped value
-            //        InputDirection = new Vector3(
-            //            (CosD * InputDirection.x - SinD * InputDirection.z)
-            //            , InputDirection.y
-            //            , (SinD * InputDirection.x + CosD * InputDirection.z)
-            //            );
-
-            //    }
-            //}
-            //Naive model
-            //if(InputDirection.sqrMagnitude > 1) InputDirection = InputDirection.normalized;
-            //DesiredVelocity = Vector3.zero; if (InputDirection.sqrMagnitude > 0) DesiredVelocity = InputDirection * MoveSpd;
-
-            //If a direction exists, accelerate towards it. otherwise decelerate towards 0
-            //if (/*InputDirection.sqrMagnitude == 0*/ false)
-            //{
-            //    //apply the brakes
-
-            //    //for comparison to make sure we dont go in the opposite direction
-            //    Vector3 Temp = DesiredVelocity;
-
-            //    DesiredVelocity = DesiredVelocity - (DesiredVelocity.normalized * RunOptions.Acceleration * Time.fixedDeltaTime);
-
-            //    //clamp to 0
-            //    if (Vector3.Dot(DesiredVelocity, Temp) < 0) DesiredVelocity = Vector3.zero;
-            //}
-            //else
-            //{
-            //    //accel
-            //    DesiredVelocity = DesiredVelocity + InputDirection.normalized * RunOptions.Acceleration * Time.fixedDeltaTime;
-
-            //    //clamp desired velocity max to move speed max
-            //    if (DesiredVelocity.sqrMagnitude > RunOptions.MoveSpd * RunOptions.MoveSpd)
-            //        DesiredVelocity = DesiredVelocity.normalized * RunOptions.MoveSpd;
-
-            //}
-
-
-
-
-            Vector3 DesiredVelocityDiff = Vector3.zero;
-
-            //Filtered velocity represents the maximum velocity we can affect in this timestep (the rigidbody can exceed this by a LOT in normal gameplay)
-            Vector3 FilteredVelocity = FilteredRBVelocity;
-            //max is clamped to current player-desired velocity max.
-            if (FilteredVelocity.sqrMagnitude > DesiredVelocity.sqrMagnitude) FilteredVelocity = DesiredVelocity.magnitude * FilteredVelocity.normalized;
-
-            //compute parallel component of current velocity to desired velocity
-            if (DesiredVelocity.sqrMagnitude != 0) // parallel component of RB velocity to the intended velocity
-                DesiredVelocityDiff = (Vector3.Dot(DesiredVelocity, FilteredVelocity) / DesiredVelocity.magnitude) * DesiredVelocity.normalized;
-
-
-            //GENERATE ADDVELOCITY
-            Vector3 AddVelocity;
-
-            //Recall that we are comparing parallel vectors here
-            if (Vector3.Dot(DesiredVelocity, FilteredRBVelocity) < 0)
-            {
-                //decelerating. Parallel component of velocity can be at MOST Deceleration * Time.FixedDeltaTime            
-                Vector3 Parallel = Vector3.zero;
-                Vector3 Perpendicular = Vector3.zero;
-
-                Parallel = (Vector3.Dot(DesiredVelocity, FilteredVelocity) / FilteredVelocity.magnitude) * FilteredVelocity.normalized;
-                //Perpendicular = DesiredVelocity - Parallel;
-
-                AddVelocity = (Parallel.normalized * RunOptions.Deceleration * Time.fixedDeltaTime) + Perpendicular;
-                //AddVelocity = ((-Parallel.normalized * Deceleration * Time.fixedDeltaTime) + Perpendicular);
-
-
-                //AddVelocity = (DesiredVelocity - DesiredVelocityDiff);
-                //if (AddVelocity.sqrMagnitude > Deceleration * Deceleration * Time.fixedDeltaTime * Time.fixedDeltaTime) AddVelocity = AddVelocity.normalized * Deceleration * Time.fixedDeltaTime;
-            }
-            else
-            {
-                //sustaining velocity
-                AddVelocity = (DesiredVelocity - DesiredVelocityDiff);
-
-            }
-
-
-
-            //Damp (within standard movement speed control)
-            if (/*InputDirection.sqrMagnitude > 0 && */FilteredRBVelocity.sqrMagnitude <= RunOptions.MoveSpd * RunOptions.MoveSpd) //First check was causing sloppy deceleration within standard MoveSpd
-            {
-                RB.AddForce(AddVelocity * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
-
-                RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff) * ForceCoefficient, ForceMode.Force);
-
-
-
-                //old idea
-                //if ((AddVelocity).sqrMagnitude < (FilteredRBVelocity - DesiredVelocityDiff).sqrMagnitude)
-                //{
-                //    //RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff).normalized * AddVelocity.magnitude * ForceCoefficient, ForceMode.Force);
-                //    RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff) * ForceCoefficient, ForceMode.Force);
-                //}
-                //else
-                //{
-                //    RB.AddForce(-(FilteredRBVelocity - DesiredVelocityDiff) * ForceCoefficient, ForceMode.Force);
-                //}
-
-            }
-            //Damp (exceeding movement speed max)
-            else
-            {
-                //"Parachute" idea: Add the velocity * forceCoefficient, but pull "backward" on the rigidbody by the amount needed to maintain current velocity (a direction change, but not a velocity one)
-
-                Vector3 ModifiedVelocity = AddVelocity + FilteredRBVelocity;
-
-                Vector3 ParachuteVelocity = Vector3.zero;
-                //if (ModifiedVelocity.sqrMagnitude > FilteredRBVelocity.sqrMagnitude) ParachuteVelocity = -(FilteredRBVelocity - ModifiedVelocity).magnitude * ModifiedVelocity.normalized;
-                if (ModifiedVelocity.sqrMagnitude > FilteredRBVelocity.sqrMagnitude) ParachuteVelocity = Mathf.Abs(ModifiedVelocity.magnitude - FilteredRBVelocity.magnitude) * -ModifiedVelocity.normalized; //TODO: Optimize this!
-
-                RB.AddForce((AddVelocity + ParachuteVelocity) * ForceCoefficient, ForceMode.Force); //TODO: Consider projecting this onto surface normal of whatever we're standing on (for movement along slopes)
-
-            }
-
-            //uhh...
-            return Vector3.zero;
+            return result;
         }
     }
 }
