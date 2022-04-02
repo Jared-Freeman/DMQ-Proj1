@@ -15,12 +15,15 @@ MonoBehaviour:
   FLAG_Debug: 0
   Options:
     OverallFlockingStrength: 1
-    Separation:
-      Radius: 1.6
-      MaxStrength: 0.2
+    Avoidance:
+      Radius: 6
+      MaxStrength: 0
+      CurveSteepness: 2
     Cohesion:
       Radius: 0
-      MaxStrength: 3
+      MaxStrength: 1
+      CurveSteepness: 1
     Alignment:
-      Radius: 5
-      MaxStrength: 34.38
+      Radius: 6
+      MaxStrength: 1.6
+      CurveSteepness: 3

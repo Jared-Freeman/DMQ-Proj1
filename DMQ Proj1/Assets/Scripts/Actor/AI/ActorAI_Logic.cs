@@ -31,6 +31,10 @@ public class ActorAI_Logic : MonoBehaviour
     /// </summary>
     protected readonly static float _RoutineSleepDuration = .125f; //8 times / sec
     protected readonly static float s_MinimumRBSpeedToIntercept = 6;
+    /// <summary>
+    /// A property to introduce fuzziness to prevent P.F. priority fighting if we're close enough to our current destination
+    /// </summary>
+    protected readonly static float s_CloseEnoughToTarget = .5f;
 
     #region Members
 
@@ -82,11 +86,13 @@ public class ActorAI_Logic : MonoBehaviour
     {
         get
         {
+            //a bunch of conditions that preclude intercept computation lol
             if (!Preset.Base.InterceptCurrentTarget || CurrentTargetRigidbody == null) return CurrentTarget.transform.position;
             if (CurrentTargetRigidbody.velocity.sqrMagnitude < Mathf.Pow(s_MinimumRBSpeedToIntercept + NavAgent.radius, 2)) return CurrentTarget.transform.position;
+            if (CurrentTargetRigidbody.velocity.sqrMagnitude < Mathf.Pow(Preset.Base.InterceptCurrentTargetDisableDistance, 2)) return CurrentTarget.transform.position;
 
-            return CurrentTarget.transform.position + Info.CurrentMovementTargetIntercept_Fuzzy;
-
+            //iff all checks didn't return, NOW we do intercept logic
+            return CurrentTarget.transform.position + Info.PersonalInterceptPreference * Info.CurrentMovementTargetIntercept_Fuzzy;
         }
     }
     public Transform TurnTarget { get { return Info.TurnTarget; } protected set { Info.TurnTarget = value; } }
@@ -116,6 +122,11 @@ public class ActorAI_Logic : MonoBehaviour
     //internal helper
     protected class StateInfo
     {
+        /// <summary>
+        /// Acts as a kill switch do disable flocking movement influence should an AI need that behavior such as <see cref="AP2_GenericEnemyAI"/> charging routine.
+        /// </summary>
+        public bool FlockingEnabled = true;
+
         public float LungeStartTime = 0f; //TODO: move
         public bool CanTurn = false;
         public bool CanMove = true;
@@ -125,15 +136,33 @@ public class ActorAI_Logic : MonoBehaviour
         /// Aggro target. Usually an Actor but not necessarily
         /// </summary>
         public GameObject CurrentTarget;
+
+        /// <summary>
+        /// A dummy you can assign the CurrentTarget to, and freely manipulate
+        /// </summary>
+        public GameObject PersonalWaypoint;
         /// <summary>
         /// Transform this Actor AI wants to turn toward
         /// </summary>
         public Transform TurnTarget;
 
         /// <summary>
+        /// How much this INDIVIDUAL agent wishes to intercept it's target. Range [0,1]
+        /// </summary>
+        /// <remarks>
+        /// If the preset option is enabled, this field will inialize to a value between 0 and the Preset maximum.
+        /// </remarks>
+        public float PersonalInterceptPreference = 0f;
+
+        /// <summary>
         /// Interpolated velocity prediction
         /// </summary>
-        public Vector3 CurrentMovementTargetIntercept_Fuzzy = Vector3.zero;
+        public Vector3 CurrentMovementTargetIntercept_Fuzzy { get; set; } = Vector3.zero;
+
+        //these prevent redundant costly math operations, namely the sqrt needed for the vector magnitude computation.
+        //note these also preclude intercept computations... Sorry this will be confusing to others and my later self...
+        public Vector3 DistanceToCurrentTarget_AtLastPoll = Vector3.zero;
+        public float DistanceToCurrentTargetMagnitude_AtLastPoll = 0f;
     }
 
     /// <summary>
@@ -164,6 +193,13 @@ public class ActorAI_Logic : MonoBehaviour
         if (!Utils.Testing.ReferenceIsValid(NavAgent)) Destroy(gameObject);
         if (!Utils.Testing.ReferenceIsValid(_FlockingPreset)) Destroy(gameObject);
         if (!Utils.Testing.ReferenceIsValid(_Preset)) Destroy(gameObject);
+
+        Info.PersonalWaypoint = new GameObject("[AI] Personal Waypoint");
+        Info.CurrentTarget = Info.PersonalWaypoint;
+        Info.PersonalWaypoint.transform.position = transform.position;
+
+        //introduces crowd noise, making movement more unpredictable depending on settings. Ideally we search for a middle ground between stability and predictability.
+        Info.PersonalInterceptPreference = Mathf.Clamp(Random.Range(0,Preset.Base.InterceptCurrentTargetStrength), 0, 1);
 
         //Overrides of NavAgent properties
         NavAgent.updateRotation = false;
@@ -198,6 +234,17 @@ public class ActorAI_Logic : MonoBehaviour
     /// </summary>
     void FixedUpdate()
     {
+        if(CurrentTarget != null)
+        {
+            Info.DistanceToCurrentTarget_AtLastPoll = transform.position - CurrentTarget.transform.position;
+            Info.DistanceToCurrentTargetMagnitude_AtLastPoll = Info.DistanceToCurrentTarget_AtLastPoll.magnitude;
+        }
+        else
+        {
+            Info.DistanceToCurrentTarget_AtLastPoll = Vector3.zero;
+            Info.DistanceToCurrentTargetMagnitude_AtLastPoll = 0f;
+        }
+
         var RB = gameObject.GetComponent<Rigidbody>();
 
         if (RB != null && RB.isKinematic == false && Info.CanTurn && TurnTarget != null)
@@ -225,8 +272,17 @@ public class ActorAI_Logic : MonoBehaviour
             UpdateInterceptComputation(Mathf.Clamp(Time.fixedDeltaTime * 3.3f, 0, 1f));
         }
 
-        //can afford to do this here since we're using FixedTime for physic movement
-        UpdateFlocking();
+        if(Info.FlockingEnabled 
+            && Info.DistanceToCurrentTargetMagnitude_AtLastPoll <= s_CloseEnoughToTarget
+            && Info.DistanceToCurrentTargetMagnitude_AtLastPoll <= Preset.Base.InterceptCurrentTargetDisableDistance)
+        {
+            //can afford to do this here since we're using FixedTime for physic movement
+            UpdateFlocking();
+        }
+        else
+        {
+            DesiredVelocity = NavAgent.desiredVelocity;
+        }
     }
 
     protected virtual void Update()
@@ -240,14 +296,14 @@ public class ActorAI_Logic : MonoBehaviour
         List<GameObject> ignoredGOs = new List<GameObject>();
         ignoredGOs.Add(gameObject);
 
-        float searchRadius = 5f; //TODO: make this the max radius of the 3 params
+        float searchRadius = 8f; //TODO: make this the max radius of the 3 params
 
         List<Actor> List_ProximalActors = Utils.ComponentFinder<Actor>.GetComponentsWithColliderInRadius(transform.position, searchRadius, ignoredGOs);
 
         Flocking_Avoidance(List_ProximalActors);
 
         //assemble final velocity contributions
-        Vector3 v_desiredVelocity = NavAgent.desiredVelocity + FlockingInfo.Avoidance;
+        Vector3 v_desiredVelocity = NavAgent.desiredVelocity + _FlockingPreset.Options.OverallFlockingStrength * (FlockingInfo.Avoidance + FlockingInfo.Alignment);
         if(v_desiredVelocity.sqrMagnitude > Mathf.Pow(AttachedActor.Stats.MoveSpeedCurrent,2))
         {
             v_desiredVelocity = v_desiredVelocity.normalized * AttachedActor.Stats.MoveSpeedCurrent;
@@ -255,7 +311,7 @@ public class ActorAI_Logic : MonoBehaviour
 
         if (FLAG_Debug)
         {
-            Debug.DrawRay(transform.position + new Vector3(0, .5f, 0), v_desiredVelocity, Color.cyan, Time.fixedDeltaTime);
+            Debug.DrawRay(transform.position + new Vector3(0, .5f, 0), v_desiredVelocity, Color.white, Time.fixedDeltaTime);
         }
 
         //end goal, the NavAgent's desired movement is respected more as we get closer to target
@@ -266,28 +322,22 @@ public class ActorAI_Logic : MonoBehaviour
 
     private void Flocking_Avoidance(List<Actor> proximalActors)
     {
-        Vector3 distance;
-        float v_maxDistSquared = Mathf.Pow(_FlockingPreset.Options.Separation.Radius, 2);
-
         //filter out proximals that are too far away. Cheaper than doing multiple sphere overlaps.
-        List<Actor> allowedProxActors = new List<Actor>();
-        foreach(var a in proximalActors)
+        List<Actor> allowedProxActors = Flocking_GetSublistOfAllowableActors(proximalActors, _FlockingPreset.Options.Avoidance);
+
+        if (allowedProxActors == null || allowedProxActors.Count < 1)
         {
-            distance = a.transform.position - gameObject.transform.position;
-            if (distance.sqrMagnitude <= v_maxDistSquared)
-            {
-                allowedProxActors.Add(a);
-            }
+            FlockingInfo.Avoidance = Vector3.zero;
+            return;
         }
 
-
-
         //Here we use a reciprocal function to weight closer agents stronger than distant ones.
-        float maxStrength = _FlockingPreset.Options.Separation.MaxStrength; // Strength when distance == 0. Useful for determining the theoretical maximum contribution.
-        float steepness = .25f; // Steepness will make the strength taper more/less harshly.
+        float maxStrength = _FlockingPreset.Options.Avoidance.MaxStrength; // Strength when distance == 0. Useful for determining the theoretical maximum contribution.
+        float steepness = _FlockingPreset.Options.Avoidance.CurveSteepness; // Steepness will make the strength taper more/less harshly.
                               // Low values look like a square wave (e.g. 0 to maxStrength instantly). High values look like a horizontal line at y=maxStrength
 
         Vector3 totalVelocityDesired = Vector3.zero;
+        Vector3 curDistance;
 
         float v_denom_term2 = steepness * (1 / maxStrength); //term 2 in the denominator
         float aCount = allowedProxActors.Count; //normalizing term
@@ -301,9 +351,9 @@ public class ActorAI_Logic : MonoBehaviour
             //    Debug.DrawRay(a.transform.position, new Vector3(0, 8f, 0), Color.red, Time.fixedDeltaTime);
             //}
 
-            distance = a.transform.position - gameObject.transform.position;
+            curDistance = a.transform.position - gameObject.transform.position;
 
-            totalVelocityDesired += (v_numerator / (distance.magnitude + v_denom_term2)) * distance.normalized;
+            totalVelocityDesired += (v_numerator / (Info.DistanceToCurrentTargetMagnitude_AtLastPoll + v_denom_term2)) * curDistance.normalized;
         }
 
         totalVelocityDesired *= spd;
@@ -322,7 +372,96 @@ public class ActorAI_Logic : MonoBehaviour
     }
     private void Flocking_Alignment(List<Actor> proximalActors)
     {
+        //filter out proximals that are too far away. Cheaper than doing multiple sphere overlaps.
+        List<Actor> allowedProxActors = Flocking_GetSublistOfAllowableActors(proximalActors, _FlockingPreset.Options.Alignment);
 
+        if (allowedProxActors == null || allowedProxActors.Count < 1)
+        {
+            FlockingInfo.Alignment = Vector3.zero;
+            return;
+        }
+
+        Vector3 resultVector = Vector3.zero;
+
+
+        //determine an average velocity vector 
+
+        //Here we use a reciprocal function to weight closer agents stronger than distant ones.
+        float maxStrength = _FlockingPreset.Options.Alignment.MaxStrength; // Strength when distance == 0. Useful for determining the theoretical maximum contribution.
+        float steepness = _FlockingPreset.Options.Alignment.CurveSteepness; // Steepness will make the strength taper more/less harshly.
+                                // Low values look like a square wave (e.g. 0 to maxStrength instantly). High values look like a horizontal line at y=maxStrength
+
+        Vector3 curVelocity;
+        Vector3 curDistance;
+
+        Vector3 externalTotalVelocity = Vector3.zero;
+
+        float aCount = allowedProxActors.Count; //normalizing term
+
+        float currentMaxMoveSpeed = AttachedActor.Stats.MoveSpeedCurrent;
+
+        float v_numerator = steepness / aCount; //numerator
+        float v_denom_term = steepness * (1 / maxStrength); //term 2 in the denominator
+
+        Rigidbody curRB;
+        float curCoef;
+        float totalCoef = 1f;
+        //compute vector sum of all proximal actors using the avoidance function
+        foreach (var a in allowedProxActors)
+        {
+            //if (FLAG_Debug)
+            //{
+            //    Debug.DrawRay(a.transform.position, new Vector3(0, 8f, 0), Color.red, Time.fixedDeltaTime);
+            //}
+
+            curRB = a.GetComponent<Rigidbody>();
+
+            if(curRB != null)
+            {
+                curVelocity = curRB.velocity;
+                curDistance = a.transform.position - gameObject.transform.position;
+
+                curCoef = (v_numerator / (Info.DistanceToCurrentTargetMagnitude_AtLastPoll + v_denom_term));
+
+                externalTotalVelocity += curRB.velocity;
+                resultVector += curCoef * curVelocity.normalized; // TODO: optimize to remove magnitude computation
+                totalCoef *= curCoef;
+            }
+
+        }
+
+        externalTotalVelocity /= aCount;
+        //resultVector /= totalCoef;
+
+        if (FLAG_Debug)
+        {
+            Debug.DrawRay(transform.position + new Vector3(0, .5f, 0), resultVector, Color.cyan, Time.fixedDeltaTime);
+            //Debug.Log(resultVector);
+        }
+
+        FlockingInfo.Alignment = resultVector;
+    }
+    protected List<Actor> Flocking_GetSublistOfAllowableActors
+        (
+        List<Actor> list
+        , ActorSystem.AI.Flocking.ActorAI_FlockingParametersPreset.ActorAI_FlockingParametersPreset_FlockingParameter param
+        )
+    {
+        List<Actor> allowedActors = new List<Actor>();
+
+        Vector3 distance;
+        float v_maxDistSquared = Mathf.Pow(param.Radius, 2);
+
+        foreach (var a in list)
+        {
+            distance = a.transform.position - gameObject.transform.position;
+            if (distance.sqrMagnitude <= v_maxDistSquared)
+            {
+                allowedActors.Add(a);
+            }
+        }
+
+        return allowedActors;
     }
 
     #endregion
@@ -338,10 +477,11 @@ public class ActorAI_Logic : MonoBehaviour
     private void UpdateInterceptComputation(float t)
     {
         if (CurrentTarget == null) return;
+        if (CurrentTargetRigidbody == null) return;
 
         //compute a suitable intercept location
         // construct a parallel velocity vector to RB vel using this logic's standard speed.
-        float dist = (transform.position - CurrentTarget.transform.position).magnitude;
+        float dist = Info.DistanceToCurrentTargetMagnitude_AtLastPoll;
         float time =  dist / (Preset.Base.MovementSpeed - CurrentTargetRigidbody.velocity.magnitude);
 
         float certainty = 1 / Mathf.Log(Mathf.Clamp(dist / (Preset.Base.MovementSpeed * Time.fixedDeltaTime), 1, Mathf.Infinity));

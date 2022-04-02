@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Base:
     DrawDebugGizmos: 0
-    InterceptCurrentTarget: 0
+    InterceptCurrentTarget: 1
+    InterceptCurrentTargetStrength: 0.6
+    InterceptCurrentTargetDisableDistance: 2.5
     AttackWhileMoving: 0
     StationaryVelocityThreshold: 1.33
     AttackRange: 1.25
