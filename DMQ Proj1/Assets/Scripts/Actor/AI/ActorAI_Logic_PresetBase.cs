@@ -42,6 +42,13 @@ namespace ActorSystem.AI
             #endregion
 
             /// <summary>
+            /// Is the agent allowed to cancel its charging phase when its target leaves range? 
+            /// </summary>
+            /// <remarks>
+            /// This seems best to leave turned to false in most circumstances. When in doubt set to false.
+            /// </remarks>
+            public bool CanCancelAttackEarly = false;
+            /// <summary>
             /// Can this AI invoke attacks while moving? Partially NYI afaik... -Jared 4/1/2022
             /// </summary>
             public bool AttackWhileMoving = false;

@@ -219,7 +219,13 @@ namespace ActorSystem.AI
 
         private void PrepareAttack()
         {
-            if (CurrentTarget == null)
+            //Here we HAVE TO WAIT the full duration of charging regardless of any other circumstance.
+            if(!Preset.Base.CanCancelAttackEarly && Time.time - Info.LungeStartTime < S_Preset.Shambler_Options.AttackPause)
+            {
+                return;
+            }
+
+            else if (CurrentTarget == null)
             {
                 ChangeState(ActorAILogic_State.Idle);
             }

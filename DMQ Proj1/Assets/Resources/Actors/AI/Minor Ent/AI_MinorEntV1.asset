@@ -17,14 +17,15 @@ MonoBehaviour:
     InterceptCurrentTarget: 1
     InterceptCurrentTargetStrength: 0.08
     InterceptCurrentTargetDisableDistance: 4
+    CanCancelAttackEarly: 0
     AttackWhileMoving: 0
     StationaryVelocityThreshold: 2
     AttackRange: 5
     MovementSpeed: 8
-    StopSlideDistance: 0
+    StopSlideDistance: 1
     AggroRadius: 25
     MaxFacingAngle: 100
-    TurningRate: 90
+    TurningRate: 150
     GrowCurve:
       serializedVersion: 2
       m_Curve:
@@ -54,10 +55,10 @@ MonoBehaviour:
   Shambler_Options:
     UseIncreaseScale: 0
     AttackAbility: {fileID: 11400000, guid: 0cf78c9f260f1b44c8e822ce097c3efc, type: 2}
-    AttackPrepareDistance: 4
-    AttackLoseDistance: 6.25
-    AttackPause: 0.85
-    GrowDuration: 0.85
+    AttackPrepareDistance: 3
+    AttackLoseDistance: 4.5
+    AttackPause: 0.55
+    GrowDuration: 0.55
     GrowCurve:
       serializedVersion: 2
       m_Curve: []
