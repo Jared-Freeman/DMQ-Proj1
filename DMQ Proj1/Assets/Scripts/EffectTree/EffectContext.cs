@@ -183,7 +183,7 @@ namespace EffectTree
         /// </summary>
         public enum TargetOptions
         {
-            Caster, _InitialGameObject, _TargetGameObject
+            Caster, _InitialGameObject, _TargetGameObject, None
         }
 
 
@@ -363,6 +363,9 @@ namespace EffectTree
         {
             switch(option)
             {
+                case TargetOptions.None:
+                    return null;
+
                 case TargetOptions.Caster:
                     return AttackData._Owner.gameObject;
 
