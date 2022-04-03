@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: adb4e84686d3af64bb28ff41eb495811, type: 3}
-  m_Name: ActMove_BulwarkHeavyFlintlockBasic
+  m_Name: ActMove_BulwarkHeavyFlintlockBasicAttack
   m_EditorClassIdentifier: 
   Conditions:
     _Conditions: []
@@ -29,8 +29,8 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.023809524
     - serializedVersion: 3
-      time: 0.051113896
-      value: 0.99472564
+      time: 0.1
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -38,28 +38,10 @@ MonoBehaviour:
       inWeight: 0.33333334
       outWeight: 0.040127613
     - serializedVersion: 3
-      time: 0.7068797
-      value: 0.6989284
-      inSlope: -1.4538436
-      outSlope: -1.4538436
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.024795754
-      outWeight: 0.034518354
-    - serializedVersion: 3
-      time: 0.8411333
-      value: 0.16898608
-      inSlope: -3.7114837
-      outSlope: -3.7114837
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.086179964
-    - serializedVersion: 3
       time: 1
       value: 0
-      inSlope: 0
-      outSlope: 0
+      inSlope: -2.4655948
+      outSlope: -2.4655948
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.020258825
@@ -67,6 +49,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  Duration: 0.125
-  VelocityDefault: 26
+  Duration: 0.25
+  VelocityDefault: 15
   Deceleration: 10
