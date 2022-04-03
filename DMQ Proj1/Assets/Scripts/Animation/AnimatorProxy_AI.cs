@@ -26,11 +26,17 @@ public class AnimatorProxy_AI : AnimatorProxy
     {
         if(e.actor == actor)
         {
-            float velocity = e.velocity;
-            if(velocity > 0.1f)
-            {
-                animator.SetFloat("Speed", velocity);
-            }
+            //float velocity = e.velocity;
+
+            //this is a convoluted method of avoiding the expensive magnitude property accessor (it uses sqrt)
+            float percentageOfMaxSpeed = e.velocity.magnitude / actor.Stats.MoveSpeedCurrent;
+
+            animator.SetFloat("Speed", percentageOfMaxSpeed);
+
+            //if (velocity > 0.1f)
+            //{
+            //    animator.SetFloat("Speed", velocity);
+            //}
         }
     }
     private void AILogic_Shambler_OnAbilityCast(object sender, AILogic_ShamblerEventArgs e)

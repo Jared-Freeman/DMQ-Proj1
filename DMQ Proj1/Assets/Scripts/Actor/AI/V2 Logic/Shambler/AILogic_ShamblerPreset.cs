@@ -18,6 +18,8 @@ namespace ActorSystem.AI
         [System.Serializable]
         public class AIOptions_ShamblerPreset
         {
+            public bool UseIncreaseScale = false;
+
             public AS_Ability_Base AttackAbility;
 
             public float AttackPrepareDistance = 2.25f;

@@ -8,12 +8,17 @@ using ActorSystem.AI;
 
 public class AIMoverEventArgs : System.EventArgs
 {
-    public AIMoverEventArgs(float v, Actor a)
+    /// <summary>
+    /// AI Move messaging packet.
+    /// </summary>
+    /// <param name="vel">velocity</param>
+    /// <param name="act">actor ref</param>
+    public AIMoverEventArgs(Vector3 vel, Actor act)
     {
-        velocity = v;
-        actor = a;
+        velocity = vel;
+        actor = act;
     }
-    public float velocity;
+    public Vector3 velocity;
     public Actor actor;
 }
 
@@ -27,6 +32,10 @@ public class AIMoverEventArgs : System.EventArgs
 [RequireComponent(typeof(ActorAI_Logic))]
 public class AIMover : MonoBehaviour
 {
+    [Min(0f)]
+    [Header("If you dont know what this is, don't mess with it!")]
+    public float VelocityDecay_tParam = .08f;
+
     public NavMeshAgent Agent { get; protected set; }
     public Rigidbody RB { get; protected set; }
     public ActorAI_Logic Logic { get; protected set; }
@@ -120,7 +129,8 @@ public class AIMover : MonoBehaviour
         _DesiredVelocityLastFixedUpdate_Normalized = _CurDesiredVelocity / Time.fixedDeltaTime;
 
         //Dispatch event to AI animator proxy
-        OnVelocityUpdate?.Invoke(this, new AIMoverEventArgs(RB.velocity.magnitude, attachedActor));
+        //OnVelocityUpdate?.Invoke(this, new AIMoverEventArgs(RB.velocity.magnitude, attachedActor));
+        OnVelocityUpdate?.Invoke(this, new AIMoverEventArgs(RB.velocity, attachedActor));
     }
 
     void VelocityDecay(Vector3 vector, float t)

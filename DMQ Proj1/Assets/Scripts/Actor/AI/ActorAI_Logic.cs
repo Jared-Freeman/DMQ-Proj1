@@ -298,7 +298,17 @@ public class ActorAI_Logic : MonoBehaviour
 
         float searchRadius = 8f; //TODO: make this the max radius of the 3 params
 
-        List<Actor> List_ProximalActors = Utils.ComponentFinder<Actor>.GetComponentsWithColliderInRadius(transform.position, searchRadius, ignoredGOs);
+        //proximity list preprocessing
+        List<Actor> List_ProximalActorsUnfiltered = Utils.ComponentFinder<Actor>.GetComponentsWithColliderInRadius(transform.position, searchRadius, ignoredGOs);
+        List<Actor> List_ProximalActors = new List<Actor>();
+        //list filtering by target filters constraint
+        foreach (var a in List_ProximalActorsUnfiltered)
+        {
+            if(_FlockingPreset.Options.TargetFilters.TargetIsAllowed(AttachedActor._Team, a))
+            {
+                List_ProximalActors.Add(a);
+            }
+        }
 
         Flocking_Avoidance(List_ProximalActors);
 

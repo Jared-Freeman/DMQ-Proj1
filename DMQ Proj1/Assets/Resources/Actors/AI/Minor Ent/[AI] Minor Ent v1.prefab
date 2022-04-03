@@ -155,6 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b02aca0fc6ddd48a0578f35027ce12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  VelocityDecay_tParam: 0.08
 --- !u!54 &1067155110567542796
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -263,8 +264,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FLAG_Debug: 1
-  _Preset: {fileID: 11400000, guid: 53c5514d6b370c947bd716bc22f7b0ca, type: 2}
-  _FlockingPreset: {fileID: 11400000, guid: 8610ab2a257f29c49bde36a3d9d8867d, type: 2}
+  _Preset: {fileID: 11400000, guid: c620a2e692137e54996575bc1ec1f197, type: 2}
+  _FlockingPreset: {fileID: 11400000, guid: a9d9728e9b47be24e8cb840d22743633, type: 2}
   CurrentState: 0
 --- !u!95 &2256496668428570004
 Animator:

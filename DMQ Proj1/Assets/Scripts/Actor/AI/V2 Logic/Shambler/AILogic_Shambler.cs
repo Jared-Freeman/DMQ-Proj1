@@ -127,7 +127,7 @@ namespace ActorSystem.AI
                     Info.CanTurn = true;
                     NavAgent.SetDestination(transform.position + (transform.forward * Preset.Base.StopSlideDistance));
                     Info.LungeStartTime = Time.time;
-                    StartCoroutine(I_IncreaseScale());
+                    if(S_Preset.Shambler_Options.UseIncreaseScale) StartCoroutine(I_IncreaseScale());
                     break;
 
                     //This ActorAILogic_State is instantaneous, so we just do its thing and change ActorAILogic_State again.
@@ -200,7 +200,8 @@ namespace ActorSystem.AI
 
                 if (FLAG_Debug)
                 {
-                    Debug.DrawRay(NavAgent.destination, Vector3.up * 7f, Color.red, _RoutineSleepDuration);
+                    Debug.DrawRay(CurrentTargetPosition, Vector3.up * 7f, Color.red, _RoutineSleepDuration);
+                    //Debug.DrawRay(NavAgent.destination, Vector3.up * 7f, Color.red, _RoutineSleepDuration);
                     //Debug.DrawRay(transform.position + new Vector3(0, 1.5f, 0), NavAgent.desiredVelocity * 2f, Color.black, _RoutineSleepDuration);
                 }
 

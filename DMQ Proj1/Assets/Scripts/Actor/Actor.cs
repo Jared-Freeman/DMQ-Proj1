@@ -22,6 +22,7 @@ public class Actor : MonoBehaviour
 
     public static event System.EventHandler<CSEventArgs.ActorEventArgs> OnActorCreated;
     public static event System.EventHandler<CSEventArgs.ActorEventArgs> OnActorDestroyed;
+    public static event System.EventHandler<CSEventArgs.ActorEventArgs> OnActorDead;
 
     #endregion
 
@@ -56,7 +57,10 @@ public class Actor : MonoBehaviour
     private void OnDestroy()
     {
         OnActorDestroyed?.Invoke(this, new CSEventArgs.ActorEventArgs(this));
-        StartCoroutine(DestroyAfterSeconds(2.0f)); //2 seconds for now?
+
+        // This doesnt work! OnDestroy() is invoked IMMEDIATELY BEFORE the game object is destroyed as essentially an event handler. 
+        // You may want to invoke DestroyAfterSeconds in ActorDead() instead - Jared
+        //StartCoroutine(DestroyAfterSeconds(2.0f)); //2 seconds for now?
     }
 
     protected void Update()
@@ -76,9 +80,11 @@ public class Actor : MonoBehaviour
         //TODO: Consider how to handle this!
 
         //Dispatch an event to AI animator proxy and destroy gameobject after a few seconds
-        OnDestroy();
+        //OnDestroy();
 
-        //Destroy(gameObject);
+        OnActorDead?.Invoke(this, new CSEventArgs.ActorEventArgs(this));
+        Destroy(gameObject); // could delay using coroutine here if we wanted.
+
         //gameObject.SetActive(false);
     }
     protected IEnumerator DestroyAfterSeconds(float time)
