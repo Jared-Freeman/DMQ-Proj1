@@ -54,7 +54,7 @@ public class Actor : MonoBehaviour
     }
 
 
-    private void OnDestroy()
+    protected virtual void OnDestroy()
     {
         OnActorDestroyed?.Invoke(this, new CSEventArgs.ActorEventArgs(this));
 
@@ -72,7 +72,7 @@ public class Actor : MonoBehaviour
             Stats.isInvulnerable = false;
         }
     }
-    public void ActorDead()
+    public virtual void ActorDead()
     {
         // Actor has run out of HP. Probably want to have an action for handling this later.
         if(Flag_ActorDebug) Debug.Log(gameObject.name + " is dead");
