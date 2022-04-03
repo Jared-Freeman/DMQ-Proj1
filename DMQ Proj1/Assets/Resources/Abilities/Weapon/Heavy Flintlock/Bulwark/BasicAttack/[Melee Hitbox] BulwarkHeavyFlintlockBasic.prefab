@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5986109329627871433}
   - component: {fileID: 604460106993513507}
   - component: {fileID: 4880114217901825010}
-  - component: {fileID: 4086348090856947847}
+  - component: {fileID: 6186991230880975639}
   m_Layer: 0
   m_Name: '[Melee Hitbox] BulwarkHeavyFlintlockBasic'
   m_TagString: Untagged
@@ -47,8 +47,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.58441913, y: 1, z: 0.107477665}
-  m_Center: {x: 0, y: 0, z: 0.07710627}
+  m_Size: {x: 0.58441913, y: 1, z: 0.23}
+  m_Center: {x: 0, y: 0, z: 0.05}
 --- !u!114 &604460106993513507
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,9 +73,9 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.33378953, y: 1, z: 0.08125504}
-  m_Center: {x: -0.33310533, y: 0, z: 0.04088652}
---- !u!65 &4086348090856947847
+  m_Size: {x: 0.51, y: 1, z: 0.36}
+  m_Center: {x: -0.33310533, y: 0, z: -0.11}
+--- !u!65 &6186991230880975639
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -86,8 +86,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.33378953, y: 1, z: 0.08125504}
-  m_Center: {x: 0.3331053, y: 0, z: 0.04088652}
+  m_Size: {x: 0.51, y: 1, z: 0.36}
+  m_Center: {x: 0.3331053, y: 0, z: -0.11}
 --- !u!1 &2783826348857276935
 GameObject:
   m_ObjectHideFlags: 0
