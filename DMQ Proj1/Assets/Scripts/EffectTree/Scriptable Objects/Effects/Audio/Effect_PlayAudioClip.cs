@@ -19,6 +19,7 @@ namespace EffectTree
         public float SourceVolume = 1.0f;
         public float MinDistance = 25.0f;
         public float MaxDistance = 50.0f;
+        public float clipStartTime = 0.0f;
         public override bool Invoke(ref EffectContext ctx)
         {
             if(base.Invoke(ref ctx))
@@ -46,6 +47,7 @@ namespace EffectTree
                     source.clip = clip;
                     source.loop = false;
                     source.volume = SourceVolume;
+                    source.time = clipStartTime;
                     source.Play();
                 }
                 else
