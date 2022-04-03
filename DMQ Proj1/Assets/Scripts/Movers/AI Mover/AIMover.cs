@@ -5,6 +5,19 @@ using UnityEngine.AI;
 
 using ActorSystem.AI;
 
+
+public class AIMoverEventArgs : System.EventArgs
+{
+    public AIMoverEventArgs(float v, Actor a)
+    {
+        velocity = v;
+        actor = a;
+    }
+    public float velocity;
+    public Actor actor;
+}
+
+
 /// <summary>
 /// Intercepts NavmeshAgent's desiredVelocity and implements movement model
 /// </summary>
@@ -18,10 +31,17 @@ public class AIMover : MonoBehaviour
     public Rigidbody RB { get; protected set; }
     public ActorAI_Logic Logic { get; protected set; }
 
+    public Actor attachedActor { get; protected set; }
+
     protected Vector3 _DesiredVelocityLastFixedUpdate_Normalized { get; private set; }
     protected Vector3 _CurDesiredVelocity { get; private set; }
 
     protected Vector3 _ExternalContribution { get; private set; }
+
+
+    //Events
+    public static event System.EventHandler<AIMoverEventArgs> OnVelocityUpdate;
+
 
     protected virtual void Awake()
     {
@@ -45,6 +65,11 @@ public class AIMover : MonoBehaviour
         }
 
         _DesiredVelocityLastFixedUpdate_Normalized = Vector3.zero;
+
+
+        attachedActor = GetComponent<Actor>();
+        if (!attachedActor)
+            Debug.Log("No attached actor.");
     }
 
     protected virtual void Start()
@@ -93,6 +118,9 @@ public class AIMover : MonoBehaviour
 
         Agent.nextPosition = RB.position; //Update the NavmeshAgent's internal simulation
         _DesiredVelocityLastFixedUpdate_Normalized = _CurDesiredVelocity / Time.fixedDeltaTime;
+
+        //Dispatch event to AI animator proxy
+        OnVelocityUpdate?.Invoke(this, new AIMoverEventArgs(RB.velocity.magnitude, attachedActor));
     }
 
     void VelocityDecay(Vector3 vector, float t)

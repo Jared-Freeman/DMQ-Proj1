@@ -56,6 +56,7 @@ public class Actor : MonoBehaviour
     private void OnDestroy()
     {
         OnActorDestroyed?.Invoke(this, new CSEventArgs.ActorEventArgs(this));
+        StartCoroutine(DestroyAfterSeconds(2.0f)); //2 seconds for now?
     }
 
     protected void Update()
@@ -73,10 +74,18 @@ public class Actor : MonoBehaviour
         if(Flag_ActorDebug) Debug.Log(gameObject.name + " is dead");
 
         //TODO: Consider how to handle this!
-        Destroy(gameObject);
+
+        //Dispatch an event to AI animator proxy and destroy gameobject after a few seconds
+        OnDestroy();
+
+        //Destroy(gameObject);
         //gameObject.SetActive(false);
     }
-
+    protected IEnumerator DestroyAfterSeconds(float time)
+    {
+        yield return new WaitForSeconds(time);
+        Destroy(gameObject);
+    }
 
     //Wasn't sure where else to put this but I figure every actor will need this function. 
     // This functionality is added in ActorStats.cs ! ~Jared

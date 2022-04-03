@@ -36,7 +36,7 @@ public class AnimatorProxy : MonoBehaviour
             animator.ResetTrigger("AttackTrigger");
         }
     }
-    void EventSubscribe()
+    protected virtual void EventSubscribe()
     {
         //Movement updates
         PlayerMovementV3.OnVelocityUpdate += PlayerMovementV3_OnVelocityUpdate;
@@ -48,7 +48,7 @@ public class AnimatorProxy : MonoBehaviour
         //Ability inputs
 
     }
-    void EventUnsubscribe()
+    protected virtual void EventUnsubscribe()
     {
         PlayerMovementV3.OnVelocityUpdate -= PlayerMovementV3_OnVelocityUpdate;
         PlayerMovementV3.OnDash -= PlayerMovementV3_OnDash;

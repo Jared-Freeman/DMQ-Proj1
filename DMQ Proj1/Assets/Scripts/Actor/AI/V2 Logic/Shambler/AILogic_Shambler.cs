@@ -6,6 +6,17 @@ using AbilitySystem;
 using EffectTree;
 using System;
 
+public class AILogic_ShamblerEventArgs : System.EventArgs
+{
+    public AILogic_ShamblerEventArgs(Actor a, int i)
+    {
+        actor = a;
+        abilityIndex = i;
+    }
+    public Actor actor;
+    public int abilityIndex;
+}
+
 namespace ActorSystem.AI 
 {
     /// <summary>
@@ -26,6 +37,8 @@ namespace ActorSystem.AI
             set => base.Preset = value as AILogic_ShamblerPreset; 
         }
         public AILogic_ShamblerPreset S_Preset { get => Preset as AILogic_ShamblerPreset; set => Preset = value as AILogic_ShamblerPreset; }
+
+        public static event System.EventHandler<AILogic_ShamblerEventArgs> OnAbilityCast;
 
         #endregion
 
@@ -60,6 +73,7 @@ namespace ActorSystem.AI
             StartCoroutine(UpdateAI());
         }
 
+
         #endregion
 
 
@@ -83,7 +97,6 @@ namespace ActorSystem.AI
 
                 case ActorAILogic_State.Attacking:
                     break;
-
                 default:
                     Debug.LogError(ToString() + ": Unrecognized AI ActorAILogic_State!");
                     break;
@@ -139,6 +152,9 @@ namespace ActorSystem.AI
 
                     ChangeState(ActorAILogic_State.Chasing);
 
+                    //Dispatch event to AI animator proxy
+                    OnAbilityCast?.Invoke(this, new AILogic_ShamblerEventArgs(AttachedActor, 1)); //Using index 1 for now
+
                     break;
 
                 default:
@@ -177,7 +193,6 @@ namespace ActorSystem.AI
                     case ActorAILogic_State.Attacking:
                         //Attack the target
                         break;
-
                     default:
                         Debug.LogError("AP2_GenericEnemyAI: Unrecognized AI ActorAILogic_State!");
                         break;
