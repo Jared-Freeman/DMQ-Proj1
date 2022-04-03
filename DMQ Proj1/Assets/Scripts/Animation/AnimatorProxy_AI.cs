@@ -8,10 +8,6 @@ public class AnimatorProxy_AI : AnimatorProxy
     {
         EventSubscribe();
     }
-    void Update()
-    {
-        Debug.Log("Hello, tick?");
-    }
 
     protected override void EventSubscribe()
     {
