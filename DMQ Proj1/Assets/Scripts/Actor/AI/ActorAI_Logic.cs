@@ -529,8 +529,8 @@ public class ActorAI_Logic : MonoBehaviour
         {
             Debug.Log("State Change: " + nextState.ToString());
         }
-        StateEnd(CurrentState);
         CurrentState = nextState;
+        StateEnd(CurrentState);
         StateBegin(CurrentState);
     }
     /// <summary>

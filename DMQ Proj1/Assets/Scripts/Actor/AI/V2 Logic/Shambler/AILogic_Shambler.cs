@@ -39,6 +39,8 @@ namespace ActorSystem.AI
         public AILogic_ShamblerPreset S_Preset { get => Preset as AILogic_ShamblerPreset; set => Preset = value as AILogic_ShamblerPreset; }
 
         public static event System.EventHandler<AILogic_ShamblerEventArgs> OnAbilityCast;
+        public static event System.EventHandler<AILogic_ShamblerEventArgs> OnAttackChargeBegin;
+        public static event System.EventHandler<AILogic_ShamblerEventArgs> OnAttackChargeCancel;
 
         #endregion
 
@@ -93,6 +95,10 @@ namespace ActorSystem.AI
                     break;
 
                 case ActorAILogic_State.ChargingAttack:
+                    if(CurrentState != ActorAILogic_State.Attacking)
+                    {
+                        OnAttackChargeCancel?.Invoke(this, new AILogic_ShamblerEventArgs(AttachedActor, 1));
+                    }
                     break;
 
                 case ActorAILogic_State.Attacking:
@@ -128,6 +134,8 @@ namespace ActorSystem.AI
                     NavAgent.SetDestination(transform.position + (transform.forward * Preset.Base.StopSlideDistance));
                     Info.LungeStartTime = Time.time;
                     if(S_Preset.Shambler_Options.UseIncreaseScale) StartCoroutine(I_IncreaseScale());
+
+                    OnAttackChargeBegin?.Invoke(this, new AILogic_ShamblerEventArgs(AttachedActor, 1));
                     break;
 
                     //This ActorAILogic_State is instantaneous, so we just do its thing and change ActorAILogic_State again.
