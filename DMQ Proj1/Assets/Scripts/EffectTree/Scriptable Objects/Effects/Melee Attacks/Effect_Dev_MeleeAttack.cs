@@ -80,7 +80,14 @@ namespace EffectTree
 
                 if (AdjustRotationToFaceContextDirection) w.transform.forward = direction;
 
-                if (AttachAttackToCaster) w.transform.parent = ctx.AttackData._Owner.gameObject.transform;
+                if (AttachAttackToCaster)
+                {
+                    Mover_MatchTransformPosition mtp = w.AddComponent<Mover_MatchTransformPosition>();
+
+                    mtp.ReferenceTransform = ctx.AttackData._Owner.gameObject.transform;
+
+                    //w.transform.parent = ctx.AttackData._Owner.gameObject.transform;
+                }
 
                 MeleeEvent m = w.GetComponent<MeleeEvent>();
 
