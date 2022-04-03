@@ -5,8 +5,8 @@ using ItemSystem.Weapons;
 using EffectTree;
 public class AnimatorProxy : MonoBehaviour
 {
-    public Animator animator;
-    public Actor actor;
+    public Animator animator { get; set; }
+    public Actor actor { get; set; }
     public GameObject[] weapons;
     public Transform[] handpositions = new Transform[2];
     public GameObject equippedWeapon;
