@@ -194,6 +194,8 @@ public class ActorAI_Logic : MonoBehaviour
         if (!Utils.Testing.ReferenceIsValid(_FlockingPreset)) Destroy(gameObject);
         if (!Utils.Testing.ReferenceIsValid(_Preset)) Destroy(gameObject);
 
+        NavAgent.speed = Preset.Base.MovementSpeed;
+
         Info.PersonalWaypoint = new GameObject("[AI] Personal Waypoint");
         Info.CurrentTarget = Info.PersonalWaypoint;
         Info.PersonalWaypoint.transform.position = transform.position;
@@ -211,6 +213,7 @@ public class ActorAI_Logic : MonoBehaviour
         if (gameObject.GetComponent<Rigidbody>() == null) StartCoroutine(I_TurnInterpolate());
         else if (gameObject.GetComponent<Rigidbody>()?.isKinematic == true) StartCoroutine(I_TurnInterpolate());
 
+        StartCoroutine(ContinueUpdateAI());
     }
 
     protected virtual void OnEnable()
@@ -224,6 +227,26 @@ public class ActorAI_Logic : MonoBehaviour
         yield return new WaitForEndOfFrame(); //This hack delays the execution until the mesh is created
         NavAgent.enabled = true;
     }
+
+    /// <summary>
+    /// The main AI loop. Invokes UpdateAI method for subclassing impl of state machine.
+    /// </summary>
+    private IEnumerator ContinueUpdateAI() 
+    {
+        while(true)
+        {
+            UpdateAI();
+            yield return new WaitForSeconds(_RoutineSleepDuration);
+        }
+    }
+    /// <summary>
+    /// This is the base method is where AI Logic updates should be placed.
+    /// </summary>
+    /// <remarks>
+    /// <para> Write an override function for this method! </para>
+    /// <para> Recommended: Hook up a switch statement to the current state and then dispatch to helper methods. </para>
+    /// </remarks>
+    protected virtual void UpdateAI() { }
 
     #endregion
 

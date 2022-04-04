@@ -95,7 +95,7 @@ namespace ActorSystem.AI
         }
 
 
-        private IEnumerator UpdateAI()
+        new private IEnumerator UpdateAI()
         {
             while (true)
             {
