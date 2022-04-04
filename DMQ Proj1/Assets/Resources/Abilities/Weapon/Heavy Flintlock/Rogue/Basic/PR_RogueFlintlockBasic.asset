@@ -20,6 +20,7 @@ MonoBehaviour:
     CollisionEnterProjectileEffects:
       EffectList:
       - {fileID: 11400000, guid: 436ff23d0dd90ab4abfd6d9dc857f8bd, type: 2}
+      - {fileID: 11400000, guid: 038ce7d3339424146b69b14c3d9d256c, type: 2}
       ProjectileFXList: []
     CollisionStayProjectileEffects:
       EffectList: []
@@ -39,10 +40,10 @@ MonoBehaviour:
     CollisionStayDuration: 0
   MoveOptions:
     FLAG_FaceRigidbodyVelocity: 1
-    MovementType: 3
+    MovementType: 1
     MovementTypeOptions:
       LinearSimpleOptions:
-        Speed: 100
+        Speed: 50
       ParabolicSimpleOptions:
         TravelTime: 0
         HeightOverTime:

@@ -34,7 +34,13 @@ public class DamageNumberEventHandler : MonoBehaviour
         bPos.y += 5f;
 
         bubble.gameObject.transform.position = bPos;
+
+        bubble.text_mesh_pro.fontSize = Preset.FontSizeMax;
+
+        var instProjectile = CreateProjectileInstanceFromPrefab(bPos);
+        if (instProjectile != null) bubble.transform.parent = instProjectile.gameObject.transform;
     }
+
 
     private void ActorStats_OnDamageTaken(object sender, ActorSystem.EventArgs.ActorDamageTakenEventArgs e)
     {
@@ -46,5 +52,45 @@ public class DamageNumberEventHandler : MonoBehaviour
         bPos.y += 5f;
 
         bubble.gameObject.transform.position = bPos;
+
+        bubble.text_mesh_pro.fontSize = Preset.FontSizeMax;
+
+        var instProjectile = CreateProjectileInstanceFromPrefab(bPos);
+        if (instProjectile != null) bubble.transform.parent = instProjectile.gameObject.transform;
+    }
+    protected GenericProjectile CreateProjectileInstanceFromPrefab(Vector3 initialPosition)
+    {
+        if (Preset.BubbleParentPrefab != null)
+        {
+            GenericProjectile gp = Preset.BubbleParentPrefab.GetComponent<GenericProjectile>();
+            if (gp != null)
+            {
+                var ctx = new EffectTree.EffectContext()
+                {
+                    AttackData = new Utils.AttackContext()
+                    {
+                        _InitialDirection = Vector3.up,
+                        _InitialPosition = initialPosition,
+                        _InitialGameObject = null
+                    }
+                };
+
+                var instProjectile = Utils.Projectile.CreateProjectileFromEffectContext(gp, ctx, EffectTree.Effect_LaunchProjectile.SpawnContextOptions.InitialDirection);
+
+                var rb = instProjectile.GetComponent<Rigidbody>();
+                if(rb != null && Preset.RandomXZForceMax > 0)
+                {
+                    Vector2 xzRand = Random.insideUnitCircle;
+                    rb.AddForce(xzRand * Preset.RandomXZForceMax, ForceMode.Impulse);
+                }
+
+                // change layer to nocollide?
+                //Utils.TransformUtils.ChangeLayerOfGameObjectAndChildren(instProjectile.gameObject, 30);
+
+                return instProjectile;
+            }
+        }
+        return null;
+
     }
 }

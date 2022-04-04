@@ -15,6 +15,9 @@ MonoBehaviour:
   Conditions:
     _Conditions: []
   AttachAttackToCaster: 1
+  AdjustRotationToFaceContextDirection: 1
+  Distance: 2
+  Direction: 2
   TargetFilters:
     Enemy: 1
     Ally: 0
@@ -25,4 +28,4 @@ MonoBehaviour:
   EffectList:
   - {fileID: 11400000, guid: 15530197c63decf43b6062720e2bef8e, type: 2}
   - {fileID: 11400000, guid: b6a1510f93d329548933da9101a8eb40, type: 2}
-  EffectDuration: 0.2
+  EffectDuration: 0.125

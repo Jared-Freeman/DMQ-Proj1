@@ -8,8 +8,7 @@ namespace EffectTree
     {
         public Effect_Dev_MeleeAttack Preset;
 
-
-        public EffectContext ctx;
+        public EffectContext ctx { get; set; }
         private List<GameObject> List_TargetsHit = new List<GameObject>();
 
         void Start()
@@ -40,7 +39,7 @@ namespace EffectTree
                 foreach (Effect_Base effect in Preset.EffectList)
                     effect.Invoke(ref newContext);
             }
-            else if(a == null)
+            else if(a == null && !List_TargetsHit.Contains(col.gameObject))
             {
                 List_TargetsHit.Add(col.gameObject);
 

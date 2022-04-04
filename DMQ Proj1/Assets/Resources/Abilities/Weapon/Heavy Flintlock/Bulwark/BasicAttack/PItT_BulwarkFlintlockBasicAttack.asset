@@ -14,12 +14,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Conditions:
     _Conditions: []
+  Target: 2
+  SpeedByMassCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.09356783
+    - serializedVersion: 3
+      time: 50
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.039785385
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   Direction: 1
-  ForceStyle: 0
+  ForceStyle: 3
   Options:
     TargetActorsOnly: 0
     DontTargetActors: 0
-    Amount: 25
+    Amount: 20
     TargetFilters:
       Enemy: 1
       Ally: 0

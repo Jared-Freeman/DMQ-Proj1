@@ -6,6 +6,6 @@ namespace EffectTree
 {
     public static class Globals
     {
-        public static bool s_LogEffectTree = true;
+        public static bool s_LogEffectTree = false;
     }
 }

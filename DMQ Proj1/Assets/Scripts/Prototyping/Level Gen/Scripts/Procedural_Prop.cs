@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Procedural_Prop : MonoBehaviour
 {
+    public int collectionIndex;
     public static bool FLAG_DrawGizmos = true;
     public float VolumeSize;
 
@@ -13,6 +14,7 @@ public class Procedural_Prop : MonoBehaviour
     public float MaxYaw = 0f;
 
     public LGP_PROP_COLLECTION preset;
+    public List<LGP_PROP_COLLECTION> presetList;
 
     /// <summary>
     /// Represents the Maximum distance from the origin that a procedural prop can be moved randomly
@@ -22,6 +24,19 @@ public class Procedural_Prop : MonoBehaviour
 
     void Awake()
     {
+        /*
+        if (preset == null)
+        {
+            Debug.LogError("Cant fine me props");
+            Destroy(this);
+        }
+        */
+    }
+
+    void Start()
+    {
+        collectionIndex = gameObject.GetComponentInParent<Prop_Point_Parent>().index;
+        preset = (LGP_PROP_COLLECTION)presetList[collectionIndex];
         RandomDistance = Mathf.Clamp(RandomDistance, 0, VolumeSize);
         Vector3 offsetVector = Vector3.zero;
         offsetVector.x += Random.Range(-RandomDistance, RandomDistance);
@@ -29,17 +44,12 @@ public class Procedural_Prop : MonoBehaviour
 
         float randomRotation = Random.Range(MinYaw, MaxYaw);
 
-        if (preset == null)
-        {
-            Debug.LogError("Cant fine me props");
-            Destroy(this);
-        }
 
-        int index = Random.Range(0, preset.PreFabProps.Count);
-        if (preset.PreFabProps[index] != null)
+        int index = Random.Range(0, preset.List_Props.Count);
+        if (preset.List_Props[index] != null)
         {
-            var go = Instantiate(preset.PreFabProps[index]);
-            go.transform.position  = transform.position;
+            var go = Instantiate(preset.List_Props[index]);
+            go.transform.position = transform.position;
             go.transform.position += go.transform.forward * offsetVector.z;
             go.transform.position += go.transform.right * offsetVector.x;
             go.transform.rotation = transform.rotation;

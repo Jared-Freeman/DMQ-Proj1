@@ -11,12 +11,23 @@ using UnityEngine;
 public class Text_Bubble : MonoBehaviour
 {
     #region MEMBERS
+
     public static float text_move_speed = 3f;
     public static float text_font_default_size = 20f;
+
     private string display_message;
     //private TextMesh text_mesh_pro;
     public TMPro.TextMeshPro text_mesh_pro;
     private static Color default_color = Color.white;
+
+    /// <summary>
+    /// Use the very basic mover onboard this component?
+    /// </summary>
+    /// <remarks>
+    /// Leave off if you plan to move this some other way.
+    /// </remarks>
+    public bool UseTextBubbleMover = false;
+
     #endregion
     #region EVENTS
     public static event System.EventHandler<MonobehaviourEventArgs> RequestAlignToCameraAnglesEvent;
@@ -132,15 +143,20 @@ public class Text_Bubble : MonoBehaviour
 
     IEnumerator ContinueRemoveAfterSeconds(float duration)
     {
-        float start_time = Time.time;
-        float cur_time = Time.time;
 
-        while(Mathf.Abs((cur_time - start_time)) < duration)
+        if (UseTextBubbleMover)
         {
-            gameObject.transform.position += Vector3.up * text_move_speed * Time.deltaTime;
-            cur_time = Time.time;
-            yield return null;
+            float start_time = Time.time;
+            float cur_time = Time.time;
+            while (Mathf.Abs((cur_time - start_time)) < duration)
+            {
+                gameObject.transform.position += Vector3.up * text_move_speed * Time.deltaTime;
+                cur_time = Time.time;
+                yield return null;
+            }
         }
+        else yield return new WaitForSeconds(duration);
+
 
         KillBubble();
     }

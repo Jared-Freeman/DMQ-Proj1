@@ -8,7 +8,7 @@ namespace EffectTree
     public class Effect_ApplyRadialForce : Effect_Base
     {
         public float BaseForce;
-
+        public float radius;
         public override bool Invoke(ref EffectContext ctx)
         {
             if (base.Invoke(ref ctx))
@@ -24,7 +24,7 @@ namespace EffectTree
                             ActualForce = 1.5f * BaseForce; //This way the force actually pushes other actors around but doesn't obliterate cubes lol
                         }
                         Vector3 attackerDirection = ctx.AttackData._InitialPosition + otherRb.gameObject.transform.position;
-                        otherRb.AddExplosionForce(ActualForce, ctx.AttackData._InitialPosition, 5.0f);
+                        otherRb.AddExplosionForce(ActualForce, ctx.AttackData._InitialPosition, radius);
                     }
                 }
                 return true;

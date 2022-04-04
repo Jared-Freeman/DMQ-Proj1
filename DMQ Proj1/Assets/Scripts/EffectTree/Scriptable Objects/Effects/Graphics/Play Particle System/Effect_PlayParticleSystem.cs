@@ -25,6 +25,21 @@ namespace EffectTree
         public bool FlipDirection = false;
 
         /// <summary>
+        /// Positional offset to fine-tune the pfx position
+        /// </summary>
+        public Vector3 RelativeOffset = Vector3.zero;
+
+        /// <summary>
+        /// Should this PFX attach to a host?
+        /// </summary>
+        public EffectContext.TargetOptions AttachToTarget = EffectContext.TargetOptions.None;
+
+        /// <summary>
+        /// If true, attach to target will instead just match the position instead of other info like scaling and rotation.
+        /// </summary>
+        public bool AttachToTarget_UseOnlyParentPosition = true;
+
+        /// <summary>
         /// Where the ParticleSystem will spawn. 
         /// </summary>
         /// <remarks>
@@ -71,12 +86,27 @@ namespace EffectTree
                     }
                 }
                 //assign pos
-                g.transform.position = startPos;
+                g.transform.position = startPos + RelativeOffset;
 
                 //attach a helper, or retrieve it if it already exists.
                 Effect_PlayParticleSystem_Helper h = g.GetComponent<Effect_PlayParticleSystem_Helper>();
                 if (h == null) h = g.AddComponent<Effect_PlayParticleSystem_Helper>();
                 h.Preset = this;
+
+                var host = ctx.RetrieveGameObject(AttachToTarget);
+                if (host != null)
+                {
+                    if(AttachToTarget_UseOnlyParentPosition)
+                    {
+                        Mover_MatchTransformPosition mover = g.AddComponent<Mover_MatchTransformPosition>();
+                        mover.ReferenceTransform = host.transform;
+                        mover.RelativeOffset = RelativeOffset;
+                    }
+                    else
+                    {
+                        g.transform.parent = host.transform;
+                    }
+                }
 
                 return true;
             }
