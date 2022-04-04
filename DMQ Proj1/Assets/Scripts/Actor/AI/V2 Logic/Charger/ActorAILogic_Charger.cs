@@ -150,14 +150,15 @@ namespace ActorSystem.AI
             {
                 ChangeState(ActorAILogic_State.ChargingAttack);
             }
-            else if (Vector3.Angle(gameObject.transform.forward, -Info.DistanceToCurrentTarget_AtLastPoll.normalized) <= Preset.Base.MaxFacingAngle / 2)
+
+
+            else if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= Preset.Base.MaxFacingAngle / 2)
             {
-                Debug.LogWarning("facing. No need to turn. Target: " + CurrentTarget.ToString());
-                NavAgent.SetDestination(CurrentTarget.transform.position);
+                NavAgent.SetDestination(CurrentTargetPosition);
+                //if (NavAgent.path.corners.Length > 3) NavAgent.SetDestination(CurrentTarget.transform.position);
             }
             else
             {
-                Debug.LogWarning("not facing. Need to turn");
                 NavAgent.SetDestination(transform.position);
             }
 
@@ -196,11 +197,12 @@ namespace ActorSystem.AI
             //exit conditions
             if (Mathf.Abs(Time.time - Info.LungeStartTime) > C_Preset.LungeOptions.LungeTimeout)
             {
-                ChangeState(ActorAILogic_State.Chasing);
+                ChangeState(ActorAILogic_State.Idle);
             }
             else
             {
-                NavAgent.SetDestination(transform.position); //continue sync of navagent destination polling. may be removeable...
+                //DesiredVelocity = Vector3.zero;
+                //NavAgent.SetDestination(transform.position); //continue sync of navagent destination polling. may be removeable...
             }
         }
 
@@ -217,11 +219,13 @@ namespace ActorSystem.AI
             switch (stateToStart)
             {
                 case ActorAILogic_State.Idle:
-                    Info.CanTurn = true;
+                    CanMove = true;
+                    CanTurn = true;
                     break;
 
                 case ActorAILogic_State.Chasing:
                     Info.CanTurn = true;
+                    Info.CanMove = true;
                     break;
 
                 case ActorAILogic_State.ChargingAttack:
@@ -302,8 +306,6 @@ namespace ActorSystem.AI
 
                     //NavAgent.SetDestination(transform.position);
                     //NavAgent.speed = Preset.Base.MovementSpeed;
-
-                    CanMove = true;
                     break;
 
                 //no Attacking state on this logic... kinda interesting! Lunging replaces it.

@@ -82,32 +82,10 @@ namespace EffectTree
                     return false;
                 }
 
-                Vector3 forceDir;
+                Vector3 forceDir = Vector3.zero;
+                forceDir = ctx.RetrieveDirectionVector(Direction);
 
-                switch(Direction)
-                {
-                    case ImpulseTargetStyles.ctxInitialDirection:
-                        forceDir = ctx.AttackData._InitialDirection;
-                        break;
-                    case ImpulseTargetStyles.ctxTargetDirection:
-                        forceDir = ctx.AttackData._TargetDirection;
-                        break;
-                    case ImpulseTargetStyles.FromCasterToTarget:
-                        if(ctx.AttackData._TargetGameObject != null  && ctx.AttackData._InitialGameObject != null)
-                        {
-                            forceDir = (ctx.AttackData._InitialGameObject.transform.position - ctx.AttackData._TargetGameObject.transform.position);
-                        }
-                        else
-                        {
-                            forceDir = ctx.AttackData._InitialDirection;
-                        }
-                        break;
-
-                    default:
-                        Debug.LogError("Unrecognized Direction. Does an impl exist?");
-                        return false;
-                }
-
+                if (forceDir.sqrMagnitude <= 0) return false;
                 
                 switch(ForceStyle)
                 {

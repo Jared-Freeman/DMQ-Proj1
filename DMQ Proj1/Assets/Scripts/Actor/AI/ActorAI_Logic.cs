@@ -410,6 +410,10 @@ public class ActorAI_Logic : MonoBehaviour
         if (FLAG_Debug)
         {
             Debug.DrawRay(transform.position + new Vector3(0, .5f, 0), v_desiredVelocity, Color.white, Time.fixedDeltaTime);
+            if(CurrentTarget != null)
+            {
+                Debug.DrawRay(CurrentTarget.transform.position + new Vector3(0, 2f, 0), Vector3.up * 4f, Color.red, Time.fixedDeltaTime);
+            }
         }
 
         //end goal, the NavAgent's desired movement is respected more as we get closer to target

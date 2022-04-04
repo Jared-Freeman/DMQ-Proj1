@@ -38,7 +38,16 @@ public class DamageNumberEventHandler : MonoBehaviour
         bubble.text_mesh_pro.fontSize = Preset.FontSizeMax;
 
         var instProjectile = CreateProjectileInstanceFromPrefab(bPos);
-        if (instProjectile != null) bubble.transform.parent = instProjectile.gameObject.transform;
+
+        if (instProjectile != null)
+        {
+            var rectTransform = bubble.transform as RectTransform;
+            if (rectTransform != null)
+            {
+                bubble.transform.SetParent(instProjectile.gameObject.transform, false);
+            }
+            else bubble.transform.parent = instProjectile.gameObject.transform;
+        }
     }
 
 
@@ -56,7 +65,16 @@ public class DamageNumberEventHandler : MonoBehaviour
         bubble.text_mesh_pro.fontSize = Preset.FontSizeMax;
 
         var instProjectile = CreateProjectileInstanceFromPrefab(bPos);
-        if (instProjectile != null) bubble.transform.parent = instProjectile.gameObject.transform;
+
+        if (instProjectile != null)
+        {
+            var rectTransform = bubble.transform as RectTransform;
+            if (rectTransform != null)
+            {
+                bubble.transform.SetParent(instProjectile.gameObject.transform, false);
+            }
+            else bubble.transform.parent = instProjectile.gameObject.transform;
+        }
     }
     protected GenericProjectile CreateProjectileInstanceFromPrefab(Vector3 initialPosition)
     {
