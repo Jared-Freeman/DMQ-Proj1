@@ -1816,10 +1816,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8651123600478929924}
+  - component: {fileID: 8651123600478929932}
   - component: {fileID: 8651123600478929931}
   - component: {fileID: 8651123600478929928}
   - component: {fileID: 8651123600478929929}
-  - component: {fileID: 8651123600478929932}
   - component: {fileID: 8651123600478929935}
   - component: {fileID: 8651123600478929977}
   - component: {fileID: 8651123600478929976}
@@ -1848,6 +1848,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8651123600478929932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8651123600478929927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba43020ced6708040b6e95e4725cf605, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Flag_ActorDebug: 0
+  _Team: {fileID: 11400000, guid: 01f82bdc72b2c5c4aa8ec5c7ec4188ba, type: 2}
+  Ragdoll: {fileID: 0}
 --- !u!114 &8651123600478929931
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1890,10 +1905,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
+  m_Radius: 1.06
+  m_Height: 5
   m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 2.5, z: 0}
 --- !u!54 &8651123600478929929
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1902,31 +1917,14 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8651123600478929927}
   serializedVersion: 2
-  m_Mass: 35
-  m_Drag: 0
+  m_Mass: 60
+  m_Drag: 1.25
   m_AngularDrag: 0
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 116
   m_CollisionDetection: 0
---- !u!114 &8651123600478929932
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8651123600478929927}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba43020ced6708040b6e95e4725cf605, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Flag_ActorDebug: 0
-  _Team: {fileID: 11400000, guid: 01f82bdc72b2c5c4aa8ec5c7ec4188ba, type: 2}
-  Stats: {fileID: 0}
-  Actions: []
-  Ragdoll: {fileID: 0}
 --- !u!195 &8651123600478929935
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1936,7 +1934,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 8651123600478929927}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 1.05
   m_Speed: 5
   m_Acceleration: 2
   avoidancePriority: 40
@@ -1945,7 +1943,7 @@ NavMeshAgent:
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 2
+  m_Height: 5
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4

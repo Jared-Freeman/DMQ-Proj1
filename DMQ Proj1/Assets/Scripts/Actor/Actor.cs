@@ -35,8 +35,10 @@ public class Actor : MonoBehaviour
     public bool Flag_ActorDebug = false;
 
     public Team _Team;
-    public ActorStats Stats;
-    public List<ActorAction> Actions;
+    public ActorStats Stats { get; private set; }
+
+    //DEPRECATED. DO NOT USE
+    public List<ActorAction> Actions { get; private set; }
     //public List<ActorStatusEffect> StatusEffects; //deprecated
 
     #endregion

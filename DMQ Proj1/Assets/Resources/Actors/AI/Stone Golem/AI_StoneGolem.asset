@@ -15,17 +15,17 @@ MonoBehaviour:
   Base:
     DrawDebugGizmos: 0
     InterceptCurrentTarget: 1
-    InterceptCurrentTargetStrength: 0.25
-    InterceptCurrentTargetDisableDistance: 6
+    InterceptCurrentTargetStrength: 0.099
+    InterceptCurrentTargetDisableDistance: 8.5
     CanCancelAttackEarly: 0
     AttackWhileMoving: 0
     StationaryVelocityThreshold: 0.05
-    AttackRange: 1.25
-    MovementSpeed: 2
+    AttackRange: 11
+    MovementSpeed: 5
     StopSlideDistance: 0.5
-    AggroRadius: 20
-    MaxFacingAngle: 60
-    TurningRate: 240
+    AggroRadius: 50
+    MaxFacingAngle: 100
+    TurningRate: 80
     GrowCurve:
       serializedVersion: 2
       m_Curve: []

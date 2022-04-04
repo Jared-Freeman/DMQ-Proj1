@@ -8,7 +8,7 @@ public class ActorAI : Actor
 {
     #region members
 
-    ActorAI_Logic Logic;
+    protected ActorAI_Logic Logic { get; private set; }
 
     /// <summary>
     /// Reference to the ragdoll this actor will use. Can be left null for no ragdoll

@@ -204,21 +204,31 @@ namespace ActorSystem.AI
             switch (stateToStart)
             {
                 case ActorAILogic_State.Idle:
+                    Info.CanTurn = true;
                     break;
 
                 case ActorAILogic_State.Chasing:
+                    Info.CanTurn = true;
                     break;
 
                 case ActorAILogic_State.ChargingAttack:
+                    Info.CanTurn = true;
+                    //NavAgent.SetDestination(transform.position + (transform.forward * Preset.Base.StopSlideDistance));
+                    Info.LungeStartTime = Time.time;
+                    if(Preset.Base.GrowDuration > 0 && Preset.Base.GrowCurve != null) StartCoroutine(I_IncreaseScale());
                     break;
 
                 case ActorAILogic_State.Lunging:
+                    //new attack
+                    Info.CurrentAttacksInvoked = 0;
+                    //disable turning
+                    Info.CanTurn = false;
+                    //NavAgent.speed = C_Preset.LungeSpeed;
+                    //NavAgent.SetDestination(transform.position + (transform.forward * (GEAI_Preset.GEAI_Options.LungeDistance + GEAI_Preset.Base.StopSlideDistance)));
                     break;
 
-                //no Attacking state on this logic... kinda interesting! Lunging replaces it.
-
                 default:
-                    Debug.LogError(ToString() + ": Unrecognized AI State!");
+                    Debug.LogError("AP2_GenericEnemyAI: Unrecognized AI State!");
                     break;
             }
         }
