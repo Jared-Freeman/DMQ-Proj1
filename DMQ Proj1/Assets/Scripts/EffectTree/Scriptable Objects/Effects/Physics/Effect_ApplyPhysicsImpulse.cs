@@ -14,7 +14,12 @@ namespace EffectTree
     {
         public EffectContext.TargetOptions Target = EffectContext.TargetOptions._TargetGameObject;
         public enum ImpulseTargetStyles { FromCasterToTarget, ctxInitialDirection, ctxTargetDirection }
-        public enum ImpulseForceStyles { Speed, ImpulseForce, ImpulseForceScaledByMass }
+        public enum ImpulseForceStyles { Speed, ImpulseForce, ImpulseForceScaledByMass, UseSpeedByMassCurve }
+
+        /// <summary>
+        /// Impulse force style that allows the designer to specify the speed applied to objects of various Rigidbody masses
+        /// </summary>
+        public AnimationCurve SpeedByMassCurve = new AnimationCurve();
 
         /// <summary>
         /// How the direction is inferred from EffectContext
@@ -57,12 +62,17 @@ namespace EffectTree
                 Rigidbody targetRB = goTarget.GetComponentInChildren<Rigidbody>();
                 Actor targetActor = goTarget.GetComponentInChildren<Actor>();
 
+
                 if (targetRB == null)
                 {
                     return false;
                 }
+
+                Debug.Log("we got here");
+
                 //Actor validation based on flags
                 if ((Options.TargetActorsOnly && targetActor == null) || (Options.DontTargetActors && targetActor != null)) return false;
+
 
                 //target filter checks
                 //We allow targets that do NOT have an Actor component
@@ -100,6 +110,7 @@ namespace EffectTree
                         Debug.LogError("Unrecognized Direction. Does an impl exist?");
                         return false;
                 }
+
                 
                 switch(ForceStyle)
                 {
@@ -111,6 +122,11 @@ namespace EffectTree
                         break;
                     case ImpulseForceStyles.Speed:
                         targetRB.AddForce(forceDir.normalized * Options.Amount, ForceMode.VelocityChange);
+                        break;
+
+                    case ImpulseForceStyles.UseSpeedByMassCurve:
+                        targetRB.AddForce(forceDir.normalized * Options.Amount * SpeedByMassCurve.Evaluate(targetRB.mass), ForceMode.VelocityChange);
+
                         break;
 
                     default:

@@ -2948,7 +2948,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FLAG_Debug: 0
   AttackContextInitialPosition: {fileID: 4995929452893489070}
-  AttackContextInitialPositionForwardOffset: 2
+  AttackContextInitialPositionForwardOffset: 1
 --- !u!114 &9016195848402252287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2961,8 +2961,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed2b59a717b418e4d860744a87f861ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 4995929453615511405}
-  actor: {fileID: 4995929453615511406}
   weapons:
   - {fileID: 4456945836124224068, guid: 3c69fa93618176a43962f23c5526778b, type: 3}
   - {fileID: 1092708326585483430, guid: ee50c49e39dc0e74d918ab0f5eed138c, type: 3}

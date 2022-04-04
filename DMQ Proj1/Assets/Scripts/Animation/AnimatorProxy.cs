@@ -5,8 +5,8 @@ using ItemSystem.Weapons;
 using EffectTree;
 public class AnimatorProxy : MonoBehaviour
 {
-    public Animator animator;
-    public Actor actor;
+    public Animator animator { get; set; }
+    public Actor actor { get; set; }
     public GameObject[] weapons;
     public Transform[] handpositions = new Transform[2];
     public GameObject equippedWeapon;
@@ -36,7 +36,7 @@ public class AnimatorProxy : MonoBehaviour
             animator.ResetTrigger("AttackTrigger");
         }
     }
-    void EventSubscribe()
+    protected virtual void EventSubscribe()
     {
         //Movement updates
         PlayerMovementV3.OnVelocityUpdate += PlayerMovementV3_OnVelocityUpdate;
@@ -48,7 +48,7 @@ public class AnimatorProxy : MonoBehaviour
         //Ability inputs
 
     }
-    void EventUnsubscribe()
+    protected virtual void EventUnsubscribe()
     {
         PlayerMovementV3.OnVelocityUpdate -= PlayerMovementV3_OnVelocityUpdate;
         PlayerMovementV3.OnDash -= PlayerMovementV3_OnDash;

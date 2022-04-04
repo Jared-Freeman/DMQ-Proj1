@@ -22,6 +22,7 @@ public class Actor : MonoBehaviour
 
     public static event System.EventHandler<CSEventArgs.ActorEventArgs> OnActorCreated;
     public static event System.EventHandler<CSEventArgs.ActorEventArgs> OnActorDestroyed;
+    public static event System.EventHandler<CSEventArgs.ActorEventArgs> OnActorDead;
 
     #endregion
 
@@ -53,9 +54,13 @@ public class Actor : MonoBehaviour
     }
 
 
-    private void OnDestroy()
+    protected virtual void OnDestroy()
     {
         OnActorDestroyed?.Invoke(this, new CSEventArgs.ActorEventArgs(this));
+
+        // This doesnt work! OnDestroy() is invoked IMMEDIATELY BEFORE the game object is destroyed as essentially an event handler. 
+        // You may want to invoke DestroyAfterSeconds in ActorDead() instead - Jared
+        //StartCoroutine(DestroyAfterSeconds(2.0f)); //2 seconds for now?
     }
 
     protected void Update()
@@ -67,16 +72,26 @@ public class Actor : MonoBehaviour
             Stats.isInvulnerable = false;
         }
     }
-    public void ActorDead()
+    public virtual void ActorDead()
     {
         // Actor has run out of HP. Probably want to have an action for handling this later.
         if(Flag_ActorDebug) Debug.Log(gameObject.name + " is dead");
 
         //TODO: Consider how to handle this!
-        Destroy(gameObject);
+
+        //Dispatch an event to AI animator proxy and destroy gameobject after a few seconds
+        //OnDestroy();
+
+        OnActorDead?.Invoke(this, new CSEventArgs.ActorEventArgs(this));
+        Destroy(gameObject); // could delay using coroutine here if we wanted.
+
         //gameObject.SetActive(false);
     }
-
+    protected IEnumerator DestroyAfterSeconds(float time)
+    {
+        yield return new WaitForSeconds(time);
+        Destroy(gameObject);
+    }
 
     //Wasn't sure where else to put this but I figure every actor will need this function. 
     // This functionality is added in ActorStats.cs ! ~Jared
