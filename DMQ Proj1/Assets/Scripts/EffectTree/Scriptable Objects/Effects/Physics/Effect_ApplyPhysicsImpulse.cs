@@ -68,8 +68,6 @@ namespace EffectTree
                     return false;
                 }
 
-                Debug.Log("we got here");
-
                 //Actor validation based on flags
                 if ((Options.TargetActorsOnly && targetActor == null) || (Options.DontTargetActors && targetActor != null)) return false;
 
