@@ -91,7 +91,11 @@ public class AIMover : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-        if (!Logic.CanMove) return;
+        if (!Logic.CanMove)
+        {
+            Agent.nextPosition = RB.position; //Update the NavmeshAgent's internal simulation
+            return;
+        }
 
         //ignore friction contribution to external
         _ExternalContribution = new Vector3(RB.velocity.x, 0, RB.velocity.z) - _DesiredVelocityLastFixedUpdate_Normalized * Time.fixedDeltaTime;

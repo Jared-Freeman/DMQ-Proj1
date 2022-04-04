@@ -39,9 +39,10 @@ public class AnimatorProxy_AI : AnimatorProxy
     {
         if (e._Actor == actor)
         {
-            animator.ResetTrigger("Ability");
             // is this needed here?
-            //animator.SetInteger("AbilityNum", e.abilityIndex); 
+            animator.SetInteger("AbilityNum", e._AbilityIndex);
+
+            animator.ResetTrigger("Ability");
         }
     }
 

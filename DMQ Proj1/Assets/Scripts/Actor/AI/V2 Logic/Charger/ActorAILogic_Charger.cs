@@ -152,29 +152,23 @@ namespace ActorSystem.AI
 
         private void WaitToLunge()
         {
-            UnityEngine.AI.NavMeshPath NavPath = new UnityEngine.AI.NavMeshPath();
-
             if (CurrentTarget == null)
             {
                 ChangeState(ActorAILogic_State.Idle);
             }
 
             //Target exceeds Lunge Loss distance
-            else if ((CurrentTarget.transform.position - transform.position).sqrMagnitude >= Mathf.Pow(C_Preset.LungeOptions.LungeLosePrepareDistance, 2))
+            else if (Preset.Base.CanCancelAttackEarly)
             {
-                ChangeState(ActorAILogic_State.Chasing);
-            }
-
-            //Target is outside of Max Facing Angle
-            else if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) > Preset.Base.MaxFacingAngle / 2)
-            {
-                ChangeState(ActorAILogic_State.Chasing);
-            }
-
-            //Target is around some form of corner
-            else if (NavAgent.CalculatePath(CurrentTarget.transform.position, NavPath) && !(NavAgent.path.corners.Length < 3))
-            {
-                ChangeState(ActorAILogic_State.Chasing);
+                if(Info.DistanceToCurrentTargetMagnitude_AtLastPoll >= C_Preset.LungeOptions.LungeLosePrepareDistance)
+                {
+                    ChangeState(ActorAILogic_State.Chasing);
+                }
+                //Target is outside of Max Facing Angle
+                else if (Vector3.Angle(gameObject.transform.forward, Info.DistanceToCurrentTarget_AtLastPoll.normalized) > Preset.Base.MaxFacingAngle / 2)
+                {
+                    ChangeState(ActorAILogic_State.Chasing);
+                }
             }
 
             //If we've waited long enough, change state to Lunging
@@ -190,6 +184,10 @@ namespace ActorSystem.AI
             if (Mathf.Abs(Time.time - Info.LungeStartTime) > C_Preset.LungeOptions.LungeTimeout)
             {
                 ChangeState(ActorAILogic_State.Chasing);
+            }
+            else
+            {
+                NavAgent.SetDestination(transform.position); //continue sync of navagent destination polling. may be removeable...
             }
         }
 
@@ -216,7 +214,7 @@ namespace ActorSystem.AI
                 case ActorAILogic_State.ChargingAttack:
                     Info.CanTurn = true;
                     CanMove = false;
-                    //NavAgent.SetDestination(transform.position + (transform.forward * Preset.Base.StopSlideDistance));
+                    NavAgent.SetDestination(transform.position);
                     Info.LungeStartTime = Time.time;
                     if(Preset.Base.GrowDuration > 0 && Preset.Base.GrowCurve != null) StartCoroutine(I_IncreaseScale());
 
@@ -224,6 +222,9 @@ namespace ActorSystem.AI
                     break;
 
                 case ActorAILogic_State.Lunging:
+
+                    NavAgent.SetDestination(transform.position);
+
                     //new attack
                     Info.CurrentAttacksInvoked = 0;
                     //disable turning and AI mover
