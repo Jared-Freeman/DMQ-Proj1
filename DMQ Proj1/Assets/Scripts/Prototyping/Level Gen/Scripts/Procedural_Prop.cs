@@ -54,13 +54,14 @@ public class Procedural_Prop : MonoBehaviour
             go.transform.position += go.transform.right * offsetVector.x;
             go.transform.rotation = transform.rotation;
             go.transform.Rotate(Vector3.up, randomRotation);
+            go.transform.localScale = transform.localScale;
         }
     }
 
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireCube(transform.position + new Vector3(0, VolumeSize / 2, 0), new Vector3(VolumeSize, VolumeSize, VolumeSize));
+        Gizmos.DrawWireCube(transform.position + new Vector3(0, VolumeSize / 2, 0), transform.localScale * VolumeSize);
 
         //Draw RandomDistance extents icons
         GUIStyle G = new GUIStyle();

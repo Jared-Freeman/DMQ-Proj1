@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 1333073624968673966}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -44,12 +44,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collectionIndex: 0
-  VolumeSize: 0
-  MinYaw: 0
-  MaxYaw: 0
+  VolumeSize: 4
+  MinYaw: -7
+  MaxYaw: 7
   preset: {fileID: 0}
   presetList:
   - {fileID: 11400000, guid: eecb898963b446a469405a8ed6a62aae, type: 2}
   - {fileID: 11400000, guid: f4f01909bd375b64a8138b85087d4b18, type: 2}
   - {fileID: 11400000, guid: e5905c7855a4b5649bd7ec9137266297, type: 2}
-  RandomDistance: 0
+  RandomDistance: 0.5
