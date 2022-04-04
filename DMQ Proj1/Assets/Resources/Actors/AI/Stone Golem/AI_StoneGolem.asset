@@ -35,6 +35,8 @@ MonoBehaviour:
       m_RotationOrder: 4
     GrowDuration: 0
     _TargetPriority: 1
+  Ability_BasicAttack: {fileID: 11400000, guid: 89de41040454d974c98b534a722e44ea,
+    type: 2}
   Ability_OnChargeCollision: {fileID: 11400000, guid: c003863ff6f72d3458b07bc92420cf8f,
     type: 2}
   Ability_OnLungeBegin: {fileID: 11400000, guid: 951ea223c6c2daa4491ecc8185d3c54b,
@@ -46,3 +48,9 @@ MonoBehaviour:
     MinimumSpeedToContinueLungeBehavior: 9
     LungePause: 2
     LungeTimeout: 2
+  BasicAttackOptions:
+    AnimationClipLength: 0.833
+    AttackPause: 1
+    NeedLineOfSightToAttack: 0
+    PrepareDistance: 5
+    LosePrepareDistance: 8

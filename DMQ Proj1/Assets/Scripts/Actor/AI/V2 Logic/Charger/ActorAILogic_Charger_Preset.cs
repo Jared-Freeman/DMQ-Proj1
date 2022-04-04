@@ -14,6 +14,10 @@ namespace ActorSystem.AI
     public class ActorAILogic_Charger_Preset : ActorAI_Logic_PresetBase
     {
         /// <summary>
+        /// Ability invoked when the charger cannot use its Charge ability, and is in range to deliver an attack.
+        /// </summary>
+        public AbilitySystem.AS_Ability_Base Ability_BasicAttack;
+        /// <summary>
         /// Ability invoked when the charger collides with something during its charge state.
         /// </summary>
         public AbilitySystem.AS_Ability_Base Ability_OnChargeCollision;
@@ -26,8 +30,21 @@ namespace ActorSystem.AI
         public AbilitySystem.AS_Ability_Base Ability_OnLungeBegin;
 
         public C_LungeOptions LungeOptions = new C_LungeOptions();
+        public C_BasicAttackOptions BasicAttackOptions = new C_BasicAttackOptions();
 
         #region Helpers
+
+        [System.Serializable]
+        public class C_BasicAttackOptions
+        {
+            public float AnimationClipLength = 1f;
+            public float AttackPause = 1f;
+
+            public bool NeedLineOfSightToAttack = true;
+
+            public float PrepareDistance = 5f;
+            public float LosePrepareDistance = 8f;
+        }
 
         [System.Serializable]
         public class C_LungeOptions

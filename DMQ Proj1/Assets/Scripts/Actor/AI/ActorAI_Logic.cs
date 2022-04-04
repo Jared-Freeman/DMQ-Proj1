@@ -79,7 +79,10 @@ public class ActorAI_Logic : MonoBehaviour
     ///     Not every state should be implemented in every AI Logic. 
     ///     </para>
     /// </remarks>
-    public enum ActorAILogic_State { Idle, Repositioning, TurningToFaceTarget, ChargingAttack, Attacking, Chasing, PreparingToLunge, Lunging }
+    public enum ActorAILogic_State { 
+        Idle, Repositioning, TurningToFaceTarget, ChargingAttack
+            , Attacking, Chasing, PreparingToLunge, Lunging, ChargingAttack2
+            , Attacking2 }
 
     /// <summary>
     /// For Logic subroutines (minimize cost-per-frame)
@@ -177,6 +180,8 @@ public class ActorAI_Logic : MonoBehaviour
     //internal helper
     protected class StateInfo
     {
+        public Rigidbody AttachedRigidbody;
+
         /// <summary>
         /// Acts as a kill switch do disable flocking movement influence should an AI need that behavior such as <see cref="AP2_GenericEnemyAI"/> charging routine.
         /// </summary>
@@ -248,8 +253,11 @@ public class ActorAI_Logic : MonoBehaviour
     {
         AttachedActor = GetComponent<ActorAI>();
         NavAgent = GetComponent<NavMeshAgent>();
+        Info.AttachedRigidbody = GetComponent<Rigidbody>();
 
         //Ref Tests
+        if (!Utils.Testing.ReferenceIsValid(Info)) Destroy(gameObject);
+        if (!Utils.Testing.ReferenceIsValid(Info.AttachedRigidbody)) Destroy(gameObject);
         if (!Utils.Testing.ReferenceIsValid(AttachedActor)) Destroy(gameObject);
         if (!Utils.Testing.ReferenceIsValid(NavAgent)) Destroy(gameObject);
         if (!Utils.Testing.ReferenceIsValid(_FlockingPreset)) Destroy(gameObject);

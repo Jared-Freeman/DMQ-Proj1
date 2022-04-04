@@ -27,6 +27,7 @@ namespace ActorSystem.AI
         //public Utils.CooldownTracker AttackCooldown;
         //public AP2_ActorAction_AttackTarget AttackAction; //TODO: Change to ability
 
+        protected AS_Ability_Instance_Base _AbilityInstance_BasicAttack;
         protected AS_Ability_Instance_Base _AbilityInstance_OnCollideEnter;
         protected AS_Ability_Instance_Base _AbilityInstance_OnLungeBegin;
 
@@ -65,6 +66,9 @@ namespace ActorSystem.AI
         public class ChargerStateInfo
         {
             public float ChargeAttackAnimationSpeedMultiplier { get; set; } = 1f;
+            public float ChargeBasicAttackAnimationSpeedMultiplier { get; set; } = 1f;
+
+            public float BasicAttackStartTime = 0f;
         }
 
 
@@ -78,11 +82,13 @@ namespace ActorSystem.AI
         {
             base.Awake();
 
+            _AbilityInstance_BasicAttack = C_Preset.Ability_BasicAttack.GetInstance(gameObject);
             _AbilityInstance_OnCollideEnter = C_Preset.Ability_OnChargeCollision.GetInstance(gameObject);
             _AbilityInstance_OnLungeBegin = C_Preset.Ability_OnLungeBegin.GetInstance(gameObject);
             //no test here because there may be use case for leaving _AbilityInstance's null
 
             C_StateInfo.ChargeAttackAnimationSpeedMultiplier = C_Preset.LungeOptions.LungeAnimationClipLength / C_Preset.LungeOptions.LungePause;
+            C_StateInfo.ChargeBasicAttackAnimationSpeedMultiplier = C_Preset.BasicAttackOptions.AnimationClipLength / C_Preset.BasicAttackOptions.AttackPause;
         }
 
         #endregion
@@ -112,7 +118,11 @@ namespace ActorSystem.AI
                     Lunge();
                     break;
 
-                    //no Attacking state on this logic... kinda interesting! Lunging replaces it.
+                case ActorAILogic_State.ChargingAttack2:
+                    PrepareBasicAttack();
+                    break;
+                case ActorAILogic_State.Attacking2:
+                    break;
 
                 default:
                     Debug.LogError(ToString() + ": Unrecognized AI State!");
@@ -151,6 +161,44 @@ namespace ActorSystem.AI
                 ChangeState(ActorAILogic_State.ChargingAttack);
             }
 
+
+
+
+            else if 
+                (
+                Info.DistanceToCurrentTargetMagnitude_AtLastPoll <= C_Preset.BasicAttackOptions.PrepareDistance
+                //&& (NavAgent.path.corners.Length < 3) //straight shot. Still relevant to help enforce LOS on this shambler
+                )
+            {
+                Vector3 dir2D = transform.position - CurrentTarget.transform.position;
+                dir2D.y = 0;
+
+                if(C_Preset.BasicAttackOptions.NeedLineOfSightToAttack)
+                {
+                    //here we do a raycast to see if anything occludes LOS. Slightly looser than Navagent corners method from earlier in dev't.
+                    RaycastHit hit;
+                    if (Physics.Raycast(
+                        transform.position + new Vector3(0, .25f, 0) //TODO: Base this on some hitbox height -- we're currently using a magic number...
+                        , -dir2D
+                        , out hit
+                        , C_Preset.BasicAttackOptions.LosePrepareDistance))
+                    {
+                        //if (hit.collider.gameObject == gameObject) Debug.LogError("Need filtering!!! SELF!!!");
+                        //else Debug.LogError("HIT: " + hit.collider.gameObject.name);
+
+                        if (hit.collider.gameObject == CurrentTarget)
+                        {
+                            ChangeState(ActorAILogic_State.ChargingAttack2);
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    ChangeState(ActorAILogic_State.ChargingAttack2);
+                    return;
+                }
+            }
 
             else if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= Preset.Base.MaxFacingAngle / 2)
             {
@@ -203,6 +251,50 @@ namespace ActorSystem.AI
             {
                 //DesiredVelocity = Vector3.zero;
                 //NavAgent.SetDestination(transform.position); //continue sync of navagent destination polling. may be removeable...
+            }
+        }
+
+
+        private void PrepareBasicAttack()
+        {
+            //Here we HAVE TO WAIT the full duration of charging regardless of any other circumstance.
+            if (!Preset.Base.CanCancelAttackEarly && Time.time - Info.LungeStartTime < C_Preset.BasicAttackOptions.AttackPause)
+            {
+                return;
+            }
+
+            else if (CurrentTarget == null)
+            {
+                ChangeState(ActorAILogic_State.Idle);
+            }
+
+            //Velocity Exceeds tolerance (if Preset flag is enabled)
+            else if (!Preset.Base.AttackWhileMoving && Info.AttachedRigidbody.velocity.sqrMagnitude > Mathf.Pow(Preset.Base.StationaryVelocityThreshold, 2))
+            {
+                ChangeState(ActorAILogic_State.Chasing);
+            }
+
+            //Target exceeds Attack Loss distance
+            else if ((CurrentTarget.transform.position - transform.position).sqrMagnitude >= Mathf.Pow(C_Preset.BasicAttackOptions.LosePrepareDistance, 2))
+            {
+                ChangeState(ActorAILogic_State.Chasing);
+            }
+
+            //Target is around some form of corner
+            else if (!(NavAgent.path.corners.Length < 3))
+            {
+                ChangeState(ActorAILogic_State.Chasing);
+            }
+
+            else if (!IsFacingTarget)
+            {
+                ChangeState(ActorAILogic_State.Chasing);
+            }
+
+            //If we've waited long enough, change ActorAILogic_State to Attacking. Ability must also be castable. Also must be facing target
+            else if (Time.time - Info.LungeStartTime > C_Preset.BasicAttackOptions.AttackPause && _AbilityInstance_BasicAttack.CanCastAbility)
+            {
+                ChangeState(ActorAILogic_State.Attacking2);
             }
         }
 
@@ -265,12 +357,46 @@ namespace ActorSystem.AI
                             _Team = AttachedActor._Team
                         };
 
-                        EffectContext ec = new EffectContext(ac);
+                        EffectContext effectC = new EffectContext(ac);
 
-                        _AbilityInstance_OnLungeBegin.ExecuteAbility(ref ec);
+                        _AbilityInstance_OnLungeBegin.ExecuteAbility(ref effectC);
                     }
 
                     break;
+
+
+                case ActorAILogic_State.ChargingAttack2:
+                    C_StateInfo.BasicAttackStartTime = Time.time;
+                    break;
+
+                case ActorAILogic_State.Attacking2:
+
+                    Utils.AttackContext a = new Utils.AttackContext();
+
+                    a._InitialDirection = gameObject.transform.forward;
+                    a._InitialGameObject = gameObject;
+                    a._InitialPosition = transform.position;
+
+                    a._Owner = AttachedActor;
+                    a._Team = AttachedActor._Team;
+
+                    a._TargetDirection = (transform.position - CurrentTarget.transform.position).normalized;
+                    a._TargetPosition = CurrentTarget.transform.position;
+                    a._TargetGameObject = CurrentTarget;
+
+                    EffectContext ec = new EffectContext(a);
+
+                    _AbilityInstance_BasicAttack?.ExecuteAbility(ref ec);
+
+                    Invoke_OnAttackChargeBegin(new ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs(AttachedActor, 3));
+
+                    ChangeState(ActorAILogic_State.Chasing);
+
+                    //Dispatch event to AI animator proxy
+                    //OnAbilityCast?.Invoke(this, new AILogic_ShamblerEventArgs(AttachedActor, 1)); //Using index 1 for now
+
+                    break;
+
 
                 default:
                     Debug.LogError("AP2_GenericEnemyAI: Unrecognized AI State!");
@@ -308,7 +434,20 @@ namespace ActorSystem.AI
                     //NavAgent.speed = Preset.Base.MovementSpeed;
                     break;
 
-                //no Attacking state on this logic... kinda interesting! Lunging replaces it.
+
+                case ActorAILogic_State.ChargingAttack2:
+                    if (CurrentState != ActorAILogic_State.Attacking2)
+                    {
+                        Invoke_OnAttackChargeCancel(new ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs(AttachedActor, 3));
+
+                        //old
+                        //OnAttackChargeCancel?.Invoke(this, new AILogic_ShamblerEventArgs(AttachedActor, 1));
+                    }
+                    break;
+
+                case ActorAILogic_State.Attacking2:
+                    break;
+
 
                 default:
                     Debug.LogError(ToString() + ": Unrecognized AI State!");
