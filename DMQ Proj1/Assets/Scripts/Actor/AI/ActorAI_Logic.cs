@@ -7,11 +7,47 @@ using UnityEngine.AI;
 
 using ActorSystem.AI;
 
+namespace ActorSystem.AI.EventArgs
+{
+    public class ActorAI_Logic_EventArgs : System.EventArgs
+    {
+        //ctor
+        public ActorAI_Logic_EventArgs(ActorAI actor, int abilityIndex)
+        {
+            _Actor = actor;
+            _AbilityIndex = abilityIndex;
+        }
+
+        public Actor _Actor;
+        public int _AbilityIndex;
+    }
+}
+
 //This class holds the reigns of any AI. Its goal is to take the ActorAI data structure and drive it during game simulation.
 [RequireComponent(typeof(ActorAI))]
 [RequireComponent(typeof(NavMeshAgent))]
 public class ActorAI_Logic : MonoBehaviour
 {
+    #region Events
+
+
+    // Local events are used here for optimization purposes. The animator proxy should be on the same gameobject so you can just subscribe that way.
+    // As scale increases, we can cut down on potentially hundreds of calls using a method like this.
+    public event System.EventHandler<ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs> OnAttackChargeBegin;
+    protected virtual void Invoke_OnAttackChargeBegin(ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs e) //for subclasses to invoke
+    {
+        OnAttackChargeBegin?.Invoke(this, e);
+    }
+
+
+    public event System.EventHandler<ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs> OnAttackChargeCancel;
+    protected virtual void Invoke_OnAttackChargeCancel(ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs e)
+    {
+        OnAttackChargeCancel?.Invoke(this, e);
+    }
+
+    #endregion
+
     public enum TargetPriority { None, Proximity }
     /// <summary>
     /// Enum containing all possible states for every AI, ever. 
@@ -99,8 +135,8 @@ public class ActorAI_Logic : MonoBehaviour
     public ActorAI AttachedActor { get; protected set; }
     public NavMeshAgent NavAgent { get; protected set; }
     public Animator Animator { get; protected set; }
-    public bool CanMove { get { return Info.CanMove; } }
-    public bool CanTurn { get { return Info.CanTurn; } }
+    public bool CanMove { get { return Info.CanMove; } protected set { Info.CanMove = value; } }
+    public bool CanTurn { get { return Info.CanTurn; } protected set { Info.CanTurn = value; } }
     /// <summary>
     /// Returns true when Actor is within the facing tolerances specified by the Preset
     /// </summary>

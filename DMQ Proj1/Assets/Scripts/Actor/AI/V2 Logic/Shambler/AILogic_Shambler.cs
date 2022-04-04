@@ -39,8 +39,10 @@ namespace ActorSystem.AI
         public AILogic_ShamblerPreset S_Preset { get => Preset as AILogic_ShamblerPreset; set => Preset = value as AILogic_ShamblerPreset; }
 
         public static event System.EventHandler<AILogic_ShamblerEventArgs> OnAbilityCast;
-        public static event System.EventHandler<AILogic_ShamblerEventArgs> OnAttackChargeBegin;
-        public static event System.EventHandler<AILogic_ShamblerEventArgs> OnAttackChargeCancel;
+
+        /// removed and placed as static methods on <see cref="ActorAI_Logic"/>
+        //public static event System.EventHandler<AILogic_ShamblerEventArgs> OnAttackChargeBegin;
+        //public static event System.EventHandler<AILogic_ShamblerEventArgs> OnAttackChargeCancel;
 
         #endregion
 
@@ -95,9 +97,12 @@ namespace ActorSystem.AI
                     break;
 
                 case ActorAILogic_State.ChargingAttack:
-                    if(CurrentState != ActorAILogic_State.Attacking)
+                    if (CurrentState != ActorAILogic_State.Attacking)
                     {
-                        OnAttackChargeCancel?.Invoke(this, new AILogic_ShamblerEventArgs(AttachedActor, 1));
+                        Invoke_OnAttackChargeCancel(new ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs(AttachedActor, 1));
+
+                        //old
+                        //OnAttackChargeCancel?.Invoke(this, new AILogic_ShamblerEventArgs(AttachedActor, 1));
                     }
                     break;
 
@@ -135,7 +140,8 @@ namespace ActorSystem.AI
                     Info.LungeStartTime = Time.time;
                     if(S_Preset.Shambler_Options.UseIncreaseScale) StartCoroutine(I_IncreaseScale());
 
-                    OnAttackChargeBegin?.Invoke(this, new AILogic_ShamblerEventArgs(AttachedActor, 1));
+                    Invoke_OnAttackChargeBegin(new ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs(AttachedActor, 1));
+                    //OnAttackChargeBegin?.Invoke(this, new AILogic_ShamblerEventArgs(AttachedActor, 1));
                     break;
 
                     //This ActorAILogic_State is instantaneous, so we just do its thing and change ActorAILogic_State again.

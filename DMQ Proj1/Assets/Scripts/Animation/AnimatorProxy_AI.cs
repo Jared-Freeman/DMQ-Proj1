@@ -4,28 +4,40 @@ using UnityEngine;
 using ActorSystem.AI;
 public class AnimatorProxy_AI : AnimatorProxy
 {
-    void Start()
+    protected ActorAI_Logic AttachedAILogic;
+
+    protected override void Awake()
     {
-        EventSubscribe();
+        base.Awake();
+
+        AttachedAILogic = GetComponent<ActorAI_Logic>();
+        if (!Utils.Testing.ReferenceIsValid(AttachedAILogic)) Destroy(this);
+    }
+
+    protected override void Start()
+    {
+        base.Start();
     }
 
     protected override void EventSubscribe()
     {
+        base.EventSubscribe();
+
         //OnVelocityUpdate
         AIMover.OnVelocityUpdate += AIMover_OnVelocityUpdate;
         //OnAttack
         //AILogic_Shambler.OnAbilityCast += AILogic_Shambler_OnAbilityCast;
-        AILogic_Shambler.OnAttackChargeBegin += AILogic_Shambler_OnAttackChargeBegin; //new handler since swing animation works well for "charging" style attack delay -Jared
-        AILogic_Shambler.OnAttackChargeCancel += AILogic_Shambler_OnAttackChargeCancel;
+        AttachedAILogic.OnAttackChargeBegin += AttachedAILogic_OnAttackChargeBegin;
+        AttachedAILogic.OnAttackChargeCancel += AttachedAILogic_OnAttackChargeCancel;
         //On Hit
         ActorStats.OnDamageTaken += ActorStats_OnDamageTaken;
         //On Death
         Actor.OnActorDestroyed += Actor_OnActorDestroyed;
     }
 
-    private void AILogic_Shambler_OnAttackChargeCancel(object sender, AILogic_ShamblerEventArgs e)
+    private void AttachedAILogic_OnAttackChargeCancel(object sender, ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs e)
     {
-        if (e.actor == actor)
+        if (e._Actor == actor)
         {
             animator.ResetTrigger("Ability");
             // is this needed here?
@@ -33,12 +45,12 @@ public class AnimatorProxy_AI : AnimatorProxy
         }
     }
 
-    private void AILogic_Shambler_OnAttackChargeBegin(object sender, AILogic_ShamblerEventArgs e)
+    private void AttachedAILogic_OnAttackChargeBegin(object sender, ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs e)
     {
-        if (e.actor == actor)
+        if (e._Actor == actor)
         {
             animator.SetTrigger("Ability");
-            animator.SetInteger("AbilityNum", e.abilityIndex);
+            animator.SetInteger("AbilityNum", e._AbilityIndex);
         }
     }
 
@@ -86,6 +98,8 @@ public class AnimatorProxy_AI : AnimatorProxy
 
     protected override void EventUnsubscribe()
     {
+        base.EventUnsubscribe();
+
         //OnVelocityUpdate
         AIMover.OnVelocityUpdate -= AIMover_OnVelocityUpdate;
         //OnAttack

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using AbilitySystem;
+using EffectTree;
 
 namespace ActorSystem.AI
 {
@@ -185,7 +186,8 @@ namespace ActorSystem.AI
 
         private void Lunge()
         {
-            if ((Time.time - Info.LungeStartTime) > C_Preset.LungeOptions.LungeTimeout)
+            //exit conditions
+            if (Mathf.Abs(Time.time - Info.LungeStartTime) > C_Preset.LungeOptions.LungeTimeout)
             {
                 ChangeState(ActorAILogic_State.Chasing);
             }
@@ -213,18 +215,40 @@ namespace ActorSystem.AI
 
                 case ActorAILogic_State.ChargingAttack:
                     Info.CanTurn = true;
+                    CanMove = false;
                     //NavAgent.SetDestination(transform.position + (transform.forward * Preset.Base.StopSlideDistance));
                     Info.LungeStartTime = Time.time;
                     if(Preset.Base.GrowDuration > 0 && Preset.Base.GrowCurve != null) StartCoroutine(I_IncreaseScale());
+
+                    Invoke_OnAttackChargeBegin(new EventArgs.ActorAI_Logic_EventArgs(AttachedActor, 1));
                     break;
 
                 case ActorAILogic_State.Lunging:
                     //new attack
                     Info.CurrentAttacksInvoked = 0;
-                    //disable turning
+                    //disable turning and AI mover
                     Info.CanTurn = false;
-                    //NavAgent.speed = C_Preset.LungeSpeed;
-                    //NavAgent.SetDestination(transform.position + (transform.forward * (GEAI_Preset.GEAI_Options.LungeDistance + GEAI_Preset.Base.StopSlideDistance)));
+                    CanMove = false;
+
+                    if(CurrentTarget != null)
+                    {
+                        Utils.AttackContext ac = new Utils.AttackContext()
+                        {
+                            _InitialDirection = transform.forward,
+                            _InitialGameObject = gameObject,
+                            _InitialPosition = transform.position,
+                            _Owner = AttachedActor,
+                            _TargetDirection = CurrentTarget.gameObject.transform.position - gameObject.transform.position,
+                            _TargetGameObject = CurrentTarget.gameObject,
+                            _TargetPosition = CurrentTarget.gameObject.transform.position,
+                            _Team = AttachedActor._Team
+                        };
+
+                        EffectContext ec = new EffectContext(ac);
+
+                        _AbilityInstance_OnLungeBegin.ExecuteAbility(ref ec);
+                    }
+
                     break;
 
                 default:
@@ -246,11 +270,18 @@ namespace ActorSystem.AI
                     break;
 
                 case ActorAILogic_State.ChargingAttack:
+                    CanMove = true;
+                    if(CurrentState != ActorAILogic_State.Lunging)
+                    {
+                        Invoke_OnAttackChargeCancel(new EventArgs.ActorAI_Logic_EventArgs(AttachedActor, 1));
+                    }
                     break;
 
                 case ActorAILogic_State.Lunging:
                     //NavAgent.SetDestination(transform.position);
                     NavAgent.speed = Preset.Base.MovementSpeed;
+
+                    CanMove = true;
                     break;
 
                 //no Attacking state on this logic... kinda interesting! Lunging replaces it.
@@ -258,6 +289,53 @@ namespace ActorSystem.AI
                 default:
                     Debug.LogError(ToString() + ": Unrecognized AI State!");
                     break;
+            }
+        }
+
+        #endregion
+
+        #region Collision Event(s)
+
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (CurrentState == ActorAILogic_State.Lunging)
+            {
+                //TODO: Check this logic and refactor. For now the branch is just turned on.
+                if (true ||
+                    CurrentTarget != null
+                    && Info.CurrentAttacksInvoked < 1
+                    && collision.gameObject == CurrentTarget
+                    //&& (CurrentTarget.transform.position - transform.position).sqrMagnitude < GEAI_Preset.Base.AttackRange * GEAI_Preset.Base.AttackRange //can probably remove w new syst
+                    )
+                {
+                    if (FLAG_Debug) Debug.Log(ToString() + ": ATTACKING " + CurrentTarget.name);
+
+                    Info.CurrentAttacksInvoked++;
+
+                    //invoke ability
+                    if (_AbilityInstance_OnCollideEnter != null && _AbilityInstance_OnCollideEnter.CanCastAbility)
+                    {
+                        EffectContext.EffectContextInfo cData = EffectContext.CreateContextDataFromCollision(collision);
+
+                        Utils.AttackContext ac = new Utils.AttackContext()
+                        {
+                            _InitialDirection = transform.forward,
+                            _InitialGameObject = gameObject,
+                            _InitialPosition = transform.position,
+                            _Owner = AttachedActor,
+                            _TargetDirection = collision.gameObject.transform.position - gameObject.transform.position,
+                            _TargetGameObject = collision.gameObject,
+                            _TargetPosition = collision.gameObject.transform.position,
+                            _Team = AttachedActor._Team
+                        };
+
+                        EffectContext ec = new EffectContext(ac, cData);
+
+                        _AbilityInstance_OnCollideEnter.ExecuteAbility(ref ec);
+                    }
+                }
+
             }
         }
 
