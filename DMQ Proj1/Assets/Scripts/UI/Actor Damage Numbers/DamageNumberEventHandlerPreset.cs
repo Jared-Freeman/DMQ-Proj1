@@ -14,5 +14,10 @@ public class DamageNumberEventHandlerPreset : ScriptableObject
     public float TextDurationMin = 1f;
     public float TextDurationMax = 3f;
 
+    public float FontSizeMax = 1f;
+    public float FontSizeMin = 1f;
 
+    public GameObject BubbleParentPrefab;
+
+    public float RandomXZForceMax = 15f;
 }

@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 3891148129048341960}
   - component: {fileID: 3891148129048341975}
   - component: {fileID: 3891148129048341974}
-  - component: {fileID: 3891148129048341961}
   m_Layer: 0
   m_Name: model
   m_TagString: Untagged
@@ -27,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3891148129048341963}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.25, z: 0}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 3891148129193017393}
@@ -80,19 +79,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &3891148129048341961
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3891148129048341963}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 2, z: 1}
-  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1 &3891148129193017392
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,6 +92,7 @@ GameObject:
   - component: {fileID: 3891148129193017406}
   - component: {fileID: 1062382651036412388}
   - component: {fileID: 7859543769775565974}
+  - component: {fileID: 5865222582684491842}
   m_Layer: 0
   m_Name: Dev RB Cube Medium
   m_TagString: Untagged
@@ -156,7 +143,7 @@ NavMeshObstacle:
   m_Shape: 1
   m_Extents: {x: 1.25, y: 1.25, z: 1.25}
   m_MoveThreshold: 0.1
-  m_Carve: 1
+  m_Carve: 0
   m_CarveOnlyStationary: 0
   m_Center: {x: 0, y: 1.25, z: 0}
   m_TimeToStationary: 0.5
@@ -185,3 +172,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 045c1cc5b8cb1b64ab39f3bb242e8bc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &5865222582684491842
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3891148129193017392}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3, y: 6, z: 3}
+  m_Center: {x: 0, y: 3, z: 0}

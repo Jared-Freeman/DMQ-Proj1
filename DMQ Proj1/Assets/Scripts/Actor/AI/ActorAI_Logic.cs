@@ -89,7 +89,7 @@ public class ActorAI_Logic : MonoBehaviour
             //a bunch of conditions that preclude intercept computation lol
             if (!Preset.Base.InterceptCurrentTarget || CurrentTargetRigidbody == null) return CurrentTarget.transform.position;
             if (CurrentTargetRigidbody.velocity.sqrMagnitude < Mathf.Pow(s_MinimumRBSpeedToIntercept + NavAgent.radius, 2)) return CurrentTarget.transform.position;
-            if (CurrentTargetRigidbody.velocity.sqrMagnitude < Mathf.Pow(Preset.Base.InterceptCurrentTargetDisableDistance, 2)) return CurrentTarget.transform.position;
+            if (Info.DistanceToCurrentTargetMagnitude_AtLastPoll < Preset.Base.InterceptCurrentTargetDisableDistance) return CurrentTarget.transform.position;
 
             //iff all checks didn't return, NOW we do intercept logic
             return CurrentTarget.transform.position + Info.PersonalInterceptPreference * Info.CurrentMovementTargetIntercept_Fuzzy;
@@ -298,7 +298,21 @@ public class ActorAI_Logic : MonoBehaviour
 
         float searchRadius = 8f; //TODO: make this the max radius of the 3 params
 
-        List<Actor> List_ProximalActors = Utils.ComponentFinder<Actor>.GetComponentsWithColliderInRadius(transform.position, searchRadius, ignoredGOs);
+        //proximity list preprocessing
+        List<Actor> List_ProximalActorsUnfiltered = Utils.ComponentFinder<Actor>.GetComponentsWithColliderInRadius(transform.position, searchRadius, ignoredGOs);
+        List<Actor> List_ProximalActors = new List<Actor>();
+        //list filtering by target filters constraint
+        foreach (var a in List_ProximalActorsUnfiltered)
+        {
+            if(_FlockingPreset.Options.TargetFilters.TargetIsAllowed(AttachedActor._Team, a))
+            {
+                List_ProximalActors.Add(a);
+            }
+            //else
+            //{
+            //    Debug.Log("Filtered out: " + a.name);
+            //}
+        }
 
         Flocking_Avoidance(List_ProximalActors);
 
@@ -519,8 +533,8 @@ public class ActorAI_Logic : MonoBehaviour
         {
             Debug.Log("State Change: " + nextState.ToString());
         }
-        StateEnd(CurrentState);
         CurrentState = nextState;
+        StateEnd(CurrentState);
         StateBegin(CurrentState);
     }
     /// <summary>

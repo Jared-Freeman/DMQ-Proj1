@@ -5,6 +5,24 @@ using UnityEngine.AI;
 
 using ActorSystem.AI;
 
+
+public class AIMoverEventArgs : System.EventArgs
+{
+    /// <summary>
+    /// AI Move messaging packet.
+    /// </summary>
+    /// <param name="vel">velocity</param>
+    /// <param name="act">actor ref</param>
+    public AIMoverEventArgs(Vector3 vel, Actor act)
+    {
+        velocity = vel;
+        actor = act;
+    }
+    public Vector3 velocity;
+    public Actor actor;
+}
+
+
 /// <summary>
 /// Intercepts NavmeshAgent's desiredVelocity and implements movement model
 /// </summary>
@@ -14,14 +32,25 @@ using ActorSystem.AI;
 [RequireComponent(typeof(ActorAI_Logic))]
 public class AIMover : MonoBehaviour
 {
+    [Min(0f)]
+    [Header("If you dont know what this is, don't mess with it!")]
+    public float VelocityDecay_tParam = .08f;
+
     public NavMeshAgent Agent { get; protected set; }
     public Rigidbody RB { get; protected set; }
     public ActorAI_Logic Logic { get; protected set; }
+
+    public Actor attachedActor { get; protected set; }
 
     protected Vector3 _DesiredVelocityLastFixedUpdate_Normalized { get; private set; }
     protected Vector3 _CurDesiredVelocity { get; private set; }
 
     protected Vector3 _ExternalContribution { get; private set; }
+
+
+    //Events
+    public static event System.EventHandler<AIMoverEventArgs> OnVelocityUpdate;
+
 
     protected virtual void Awake()
     {
@@ -45,6 +74,11 @@ public class AIMover : MonoBehaviour
         }
 
         _DesiredVelocityLastFixedUpdate_Normalized = Vector3.zero;
+
+
+        attachedActor = GetComponent<Actor>();
+        if (!attachedActor)
+            Debug.Log("No attached actor.");
     }
 
     protected virtual void Start()
@@ -93,6 +127,10 @@ public class AIMover : MonoBehaviour
 
         Agent.nextPosition = RB.position; //Update the NavmeshAgent's internal simulation
         _DesiredVelocityLastFixedUpdate_Normalized = _CurDesiredVelocity / Time.fixedDeltaTime;
+
+        //Dispatch event to AI animator proxy
+        //OnVelocityUpdate?.Invoke(this, new AIMoverEventArgs(RB.velocity.magnitude, attachedActor));
+        OnVelocityUpdate?.Invoke(this, new AIMoverEventArgs(RB.velocity, attachedActor));
     }
 
     void VelocityDecay(Vector3 vector, float t)

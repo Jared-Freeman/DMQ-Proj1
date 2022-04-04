@@ -29,6 +29,8 @@ namespace ActorSystem.AI.Flocking
         [System.Serializable]
         public class ActorAI_FlockingParametersPreset_Options
         {
+            public Utils.TargetFilterOptions TargetFilters = new Utils.TargetFilterOptions();
+
             [Range(0,1)]
             public float OverallFlockingStrength = 1;
 
