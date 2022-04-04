@@ -9,7 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4078139061815898112}
-  m_Layer: 0
+  - component: {fileID: 1341321138849195196}
+  m_Layer: 31
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34,6 +35,19 @@ Transform:
   m_Father: {fileID: 6353354546729754946}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1341321138849195196
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 489208413661354522}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.7112749, y: 0.32813442, z: 0.8155956}
+  m_Center: {x: 0.06585884, y: 0, z: -0.14112568}
 --- !u!1 &1372435914336779987
 GameObject:
   m_ObjectHideFlags: 0
@@ -46,7 +60,7 @@ GameObject:
   - component: {fileID: 7504284278001306665}
   - component: {fileID: 2009740982753442082}
   - component: {fileID: 8429063697562611110}
-  m_Layer: 0
+  m_Layer: 31
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139,7 +153,7 @@ GameObject:
   - component: {fileID: 3464458332960736358}
   - component: {fileID: 2416215943193069336}
   - component: {fileID: 9001250820334357235}
-  m_Layer: 0
+  m_Layer: 31
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -232,7 +246,7 @@ GameObject:
   - component: {fileID: 8797348859660748327}
   - component: {fileID: 9196618092490144653}
   - component: {fileID: 2315025614715125978}
-  m_Layer: 0
+  m_Layer: 31
   m_Name: Cube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -324,8 +338,7 @@ GameObject:
   - component: {fileID: 6353354546729754946}
   - component: {fileID: 8008435618622057929}
   - component: {fileID: 5871271947024730981}
-  - component: {fileID: 7147898851302753859}
-  m_Layer: 0
+  m_Layer: 31
   m_Name: Item_Dev Gun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -376,19 +389,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _PresetData: {fileID: 11400000, guid: a356e7cd9a6ab524a8375742aca13e2b, type: 2}
---- !u!65 &7147898851302753859
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7685263435890885400}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.7112749, y: 0.32813442, z: 0.8155956}
-  m_Center: {x: 0.06585884, y: 0.17761475, z: -0.14112568}
 --- !u!1 &9131321629986253758
 GameObject:
   m_ObjectHideFlags: 0
@@ -401,7 +401,7 @@ GameObject:
   - component: {fileID: 1392669350212298040}
   - component: {fileID: 2007676120901320606}
   - component: {fileID: 6348551859676590155}
-  m_Layer: 0
+  m_Layer: 31
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
