@@ -7,7 +7,7 @@ namespace ActorSystem.AI
     /// <summary>
     /// Applies damage to Target if within range
     /// </summary>
-    //[CreateAssetMenu(fileName = "ActorAction", menuName = "ScriptableObjects/Actor Actions/Attack/Attack Target/Damage Target if in Range", order = 1)]
+    [CreateAssetMenu(fileName = "ActorAction", menuName = "ScriptableObjects/Actor Actions/Attack/Attack Target/Damage Target if in Range", order = 1)]
     public class AttackTarget_DamageIfInRange : AP2_ActorAction_AttackTarget
     {
         [System.Serializable]

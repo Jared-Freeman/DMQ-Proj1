@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace EffectTree
 {
-    [CreateAssetMenu(fileName = "E_", menuName = "Effect Tree/Physics/[Experimental] Apply Radial Force", order = 1)]
+    [CreateAssetMenu(fileName = "E_", menuName = "Effect Tree/Apply Radial Force", order = 1)]
     public class Effect_ApplyRadialForce : Effect_Base
     {
         public float BaseForce;

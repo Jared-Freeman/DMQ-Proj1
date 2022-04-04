@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace EffectTree
 {
-    [CreateAssetMenu(fileName = "LP_", menuName = "Effect Tree/Projectile/Set Homing Target to Owned Actor", order = 1)]
+    [CreateAssetMenu(fileName = "LP_", menuName = "Effect Tree/Set Homing Target to Owned Actor", order = 1)]
     public class Effect_SetHomingProjectileTargetToOwnedActor : Effect_Base
     {
         public GameObject ProjectilePrefab;

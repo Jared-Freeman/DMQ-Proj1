@@ -39,9 +39,8 @@ public class Actor : MonoBehaviour
     //public List<ActorStatusEffect> StatusEffects; //deprecated
 
     #endregion
-    protected virtual void Awake() { }
 
-    protected virtual void Start()
+    protected void Start()
     {
         if (Flag_ActorDebug) Debug.Log("Base Actor Start()");
         if (Flag_ActorDebug) Debug.Log("Base Actor ID: " + ActorID);

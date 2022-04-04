@@ -85,6 +85,8 @@ public class PlayerMovementV3_DashTrail : MonoBehaviour
 
     private void PlayerMovementV3_OnBeginExceedingCurrentMaxMovementSpeed(object sender, PlayerMovementV3EventArgs e)
     {
+        Debug.LogWarning("BLALBALBLABL");
+
         if (e.Mover == AttachedMovementSystem)
         {
             var go = Instantiate(Preset.ParticleSystemPrefab);

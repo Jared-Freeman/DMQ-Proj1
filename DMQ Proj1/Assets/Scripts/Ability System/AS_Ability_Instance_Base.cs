@@ -62,10 +62,6 @@ namespace AbilitySystem
 
         #region Virtual Methods
 
-        protected virtual void Awake()
-        {
-        }
-
         public virtual void Start()
         {
             if (Settings == null)
@@ -85,23 +81,7 @@ namespace AbilitySystem
         /// <returns>true if ability executed successfully</returns>
         public virtual bool ExecuteAbility(ref EffectTree.EffectContext ctx)
         {
-            if(ctx == null)
-            {
-                Debug.LogWarning("null ctx caught. There is a messaging error somewhere...");
-                return false;
-            }
-            if (Settings.Conditions == null)
-            {
-                Debug.LogWarning("Ability Conditions are null. Could be an init race condition...");
-                return false;
-            }
-            if (Cooldown == null)
-            {
-                Debug.LogWarning("Cooldown is null. Could be an init race condition...");
-                return false;
-            }
-
-            if (Settings.Conditions.Evaluate(ref ctx) && Cooldown.ConsumeCooldown())
+            if(Settings.Conditions.Evaluate(ref ctx) && Cooldown.ConsumeCooldown())
             {
                 Settings.Effect?.Invoke(ref ctx);
                 OnAbilityUsed?.Invoke(this, new EventArgs.AS_Ability_Instance_Base_EventArgs(this));

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ImpactFX
 {
-    //[CreateAssetMenu(fileName = "IFX", menuName = "ScriptableObjects/Impact FX/Particle System", order = 1)]
+    [CreateAssetMenu(fileName = "IFX", menuName = "ScriptableObjects/Impact FX/Particle System", order = 1)]
     public class IFX_ParticleSystem : ImpactEffect
     {
         [System.Serializable]

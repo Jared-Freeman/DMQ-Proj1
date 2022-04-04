@@ -6,7 +6,7 @@ using Utils;
 /// <summary>
 /// Data structure for specifying checks on collisions
 /// </summary>
-//[CreateAssetMenu(fileName = "CF_", menuName = "ScriptableObjects/Collsion Filter", order = 1)]
+[CreateAssetMenu(fileName = "CF_", menuName = "ScriptableObjects/Collsion Filter", order = 1)]
 public class CollisionFilter : ScriptableObject
 {
     public TargetFilterOptions TargetFilters = new TargetFilterOptions();

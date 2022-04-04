@@ -8,7 +8,7 @@ namespace EffectTree
     /// <summary>
     /// Finds the nearest Actor in the specified radius (from InitialPosition)
     /// </summary>
-    [CreateAssetMenu(fileName = "CPMT_", menuName = "Effect Tree/Control Flow/Persistent Effect", order = 1)]
+    [CreateAssetMenu(fileName = "CPMT_", menuName = "Effect Tree/Persistent Effect", order = 1)]
     public class Effect_Persistent : Effect_Base
     {
         public float Duration;

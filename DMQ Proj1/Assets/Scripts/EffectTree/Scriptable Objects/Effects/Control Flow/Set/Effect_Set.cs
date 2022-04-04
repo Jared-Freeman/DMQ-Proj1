@@ -7,7 +7,7 @@ namespace EffectTree
     /// <summary>
     /// Dispatches a list of effects
     /// </summary>
-    [CreateAssetMenu(fileName = "SET_", menuName = "Effect Tree/Control Flow/Relay to More Effect(s)", order = 1)]
+    [CreateAssetMenu(fileName = "SET_", menuName = "Effect Tree/Set", order = 1)]
     public class Effect_Set : Effect_Base
     {
         public List<Effect_Base> Effects = new List<Effect_Base>();

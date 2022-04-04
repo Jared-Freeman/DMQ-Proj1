@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "PropCollection_", menuName ="Prop/Prop Collection", order = 2)]
+[CreateAssetMenu(fileName = "PropCollection_", menuName ="DungeonGeneration/Prop Collections", order = 2)]
 public class LGP_PROP_COLLECTION : ScriptableObject
 {
-    public List<GameObject> List_Props = new List<GameObject>();
+    public List<GameObject> PreFabProps = new List<GameObject>();
 
 
 }

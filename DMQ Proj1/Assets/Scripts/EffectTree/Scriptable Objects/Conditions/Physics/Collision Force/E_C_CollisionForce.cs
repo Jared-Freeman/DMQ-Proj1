@@ -13,7 +13,7 @@ namespace EffectTree.Condition
     [CreateAssetMenu(fileName = "Cond_PC_", menuName = "Effect Tree/Conditions/Collision Force", order = 2)]
     public class E_C_CollisionForce : E_Condition_Base
     {
-        private static bool s_FLAG_DEBUG = false;
+        private static bool s_FLAG_DEBUG = true;
 
         /// <summary>
         /// We compare the sqr magnitude of contact force to this amount^2

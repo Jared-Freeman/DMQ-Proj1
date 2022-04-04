@@ -8,7 +8,7 @@ namespace EffectTree
     /// <summary>
     /// 
     /// </summary>
-    [CreateAssetMenu(fileName = "CPMT_", menuName = "Effect Tree/Projectile/Change Projectile Movement Type", order = 1)]
+    [CreateAssetMenu(fileName = "CPMT_", menuName = "Effect Tree/Change Projectile Movement Type", order = 1)]
     public class Effect_ChangeProjectileMovementType : Effect_Base
     {
         public ProjectileMoveStyle NewMovementStyle;

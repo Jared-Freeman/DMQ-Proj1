@@ -13,18 +13,6 @@ using ActorSystem.AI;
 public class ActorAI_Logic : MonoBehaviour
 {
     public enum TargetPriority { None, Proximity }
-    /// <summary>
-    /// Enum containing all possible states for every AI, ever. 
-    /// </summary>
-    /// <remarks>
-    ///     <para>
-    ///     Add to the end of this enum to append new states.
-    ///     </para>
-    ///     <para>
-    ///     Not every state should be implemented in every AI Logic. 
-    ///     </para>
-    /// </remarks>
-    public enum ActorAILogic_State { Idle, Repositioning, TurningToFaceTarget, ChargingAttack, Attacking, Chasing, PreparingToLunge, Lunging }
 
     /// <summary>
     /// For Logic subroutines (minimize cost-per-frame)
@@ -41,15 +29,9 @@ public class ActorAI_Logic : MonoBehaviour
     protected StateInfo Info = new StateInfo();
     [SerializeField]
     private ActorAI_Logic_PresetBase _Preset;
-    [SerializeField]
-    private ActorSystem.AI.Flocking.ActorAI_FlockingParametersPreset _FlockingPreset;
 
     #region Properties
 
-    /// <summary>
-    /// The current state in this AI Logic's internal state machine.
-    /// </summary>
-    public ActorAILogic_State CurrentState { get; protected set; }
     /// <summary>
     /// Virtual Property that can be overwritten to enforce subclassing
     /// </summary>
@@ -144,12 +126,10 @@ public class ActorAI_Logic : MonoBehaviour
     {
         AttachedActor = GetComponent<ActorAI>();
         NavAgent = GetComponent<NavMeshAgent>();
+        if (NavAgent == null) Debug.LogError("Navmesh Agent not discovered!");
 
-        //Ref Tests
-        if (!Utils.Testing.ReferenceIsValid(AttachedActor)) Destroy(gameObject);
-        if (!Utils.Testing.ReferenceIsValid(NavAgent)) Destroy(gameObject);
-        if (!Utils.Testing.ReferenceIsValid(_FlockingPreset)) Destroy(gameObject);
-        if (!Utils.Testing.ReferenceIsValid(_Preset)) Destroy(gameObject);
+        if (Preset == null) Debug.LogError("Preset is null ref! Is it the correct SO subclass?");
+
 
         //Overrides of NavAgent properties
         NavAgent.updateRotation = false;
@@ -176,8 +156,6 @@ public class ActorAI_Logic : MonoBehaviour
     }
 
     #endregion
-
-    #region Update
 
     /// <summary>
     /// Rigidbody compliant turn interpolation... This solves stutter issue from the coroutine method
@@ -213,13 +191,9 @@ public class ActorAI_Logic : MonoBehaviour
 
     }
 
-
     /// <summary>
-    /// This computation attempts to use the target's velocity to predict where it will be when the AI agent arrives. 
+    /// 
     /// </summary>
-    /// <remarks>
-    /// Useful for intercepting a moving target, as implied. Functionality is currently too rough for final product imo. ~Jared Freeman
-    /// </remarks>
     /// <param name="t">How much contribution the new computation will have to the current value</param>
     private void UpdateInterceptComputation(float t)
     {
@@ -239,66 +213,6 @@ public class ActorAI_Logic : MonoBehaviour
 
         //if (FLAG_Debug) Debug.Log(Info.CurrentMovementTargetIntercept_Fuzzy);
     }
-
-    #endregion
-
-    #region State Change
-
-    /// <summary>
-    /// Fires when the AI Logic triggers a state change.
-    /// </summary>
-    /// <remarks>
-    ///     <para>
-    ///     PLEASE use StateEnd and StateBegin unless you have a good reason for overriding this.
-    ///     </para>
-    ///     <para>
-    ///     To override: invoke base, then hook up a switch statement and you should be good to go.
-    ///     </para>
-    ///     <para>
-    ///     This base class fires State End and State Begin methods.
-    ///     </para>
-    /// </remarks>
-    /// <param name="nextState">The new state to change to.</param>
-    protected virtual void ChangeState(ActorAILogic_State nextState)
-    {
-        if (FLAG_Debug)
-        {
-            Debug.Log("State Change: " + nextState.ToString());
-        }
-        StateEnd(CurrentState);
-        CurrentState = nextState;
-        StateBegin(CurrentState);
-    }
-    /// <summary>
-    /// Fires when a state ends. Useful for cleaning up temporary mutations in a given state.
-    /// </summary>
-    ///     <remarks>
-    ///     To override: invoke base, then hook up a switch statement and you should be good to go.
-    ///     </remarks>
-    /// <param name="stateToEnd">The state that is ending currently.</param>
-    protected virtual void StateEnd(ActorAILogic_State stateToEnd)
-    {
-        if(FLAG_Debug)
-        {
-            Debug.Log("State End: " + stateToEnd.ToString());
-        }
-    }
-    /// <summary>
-    /// Fires when a new state begins. Useful for initializing status mutations for a given state.
-    /// </summary>
-    ///     <remarks>
-    ///     To override: invoke base, then hook up a switch statement and you should be good to go.
-    ///     </remarks>
-    /// <param name="stateToStart">The state that is starting.</param>
-    protected virtual void StateBegin(ActorAILogic_State stateToStart)
-    {
-        if (FLAG_Debug)
-        {
-            Debug.Log("State Start: " + stateToStart.ToString());
-        }
-    }
-
-    #endregion
 
     #region Utility Methods
 
@@ -402,26 +316,6 @@ public class ActorAI_Logic : MonoBehaviour
 
             yield return null;
         }
-    }
-
-    /// <summary>
-    /// Rudimentary utility method that causes the Agent to grow over a period of time equal to Preset.Base.GrowDuration, then return back to original scale.
-    /// </summary>
-    /// <remarks>
-    /// Other scale affecting methods can be disrupted by this routine!
-    /// </remarks>
-    protected IEnumerator I_IncreaseScale()
-    {
-        var DefaultScale = transform.localScale;
-
-        float StartTime = Time.time;
-        while (Time.time - StartTime < Preset.Base.GrowDuration)
-        {
-            transform.localScale = DefaultScale * Preset.Base.GrowCurve.Evaluate((Time.time - StartTime) / Preset.Base.GrowDuration);
-            yield return null;
-        }
-
-        transform.localScale = DefaultScale;
     }
 
     #endregion
