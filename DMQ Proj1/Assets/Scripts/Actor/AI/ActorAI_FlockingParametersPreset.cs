@@ -30,10 +30,10 @@ namespace ActorSystem.AI.Flocking
         public class ActorAI_FlockingParametersPreset_Options
         {
             [Range(0,1)]
-            public float OverallFlockingStrength = .25f;
+            public float OverallFlockingStrength = 1;
 
             // The 3 flocking contributors. These weights will be normalized during computation.
-            public ActorAI_FlockingParametersPreset_FlockingParameter Separation = new ActorAI_FlockingParametersPreset_FlockingParameter();
+            public ActorAI_FlockingParametersPreset_FlockingParameter Avoidance = new ActorAI_FlockingParametersPreset_FlockingParameter();
             public ActorAI_FlockingParametersPreset_FlockingParameter Cohesion = new ActorAI_FlockingParametersPreset_FlockingParameter();
             public ActorAI_FlockingParametersPreset_FlockingParameter Alignment = new ActorAI_FlockingParametersPreset_FlockingParameter();
         }
@@ -46,9 +46,21 @@ namespace ActorSystem.AI.Flocking
             /// </summary>
             public float Radius = 0f;
             /// <summary>
-            /// How much weight this parameter is given.
+            /// The Distance that this weight will begin to taper off from "1."
             /// </summary>
-            public float Strength = 0f;
+            public float MaxStrength = 3f;
+            /// <summary>
+            /// Steepness will make the strength taper more/less harshly.
+            /// </summary>
+            /// <remarks>
+            ///     <para>
+            ///     Low values look like a square wave (e.g. 0 to maxStrength instantly). High values look like a horizontal line at y=maxStrength.
+            ///     </para>
+            ///     <para>
+            ///     Likely requires some playing with to get right, as it is influenced by other Flocking settings.
+            ///     </para>
+            /// </remarks>
+            public float CurveSteepness = .25f;
         }
 
         #endregion

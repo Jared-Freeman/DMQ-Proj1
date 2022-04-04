@@ -17,7 +17,9 @@ MonoBehaviour:
       EffectList: []
       ProjectileFXList: []
     CollisionEnterProjectileEffects:
-      EffectList: []
+      EffectList:
+      - {fileID: 11400000, guid: 33398f0b35849a14291b79653d1bf209, type: 2}
+      - {fileID: 11400000, guid: 7d9a9275cc132ee4ca18055c147859bf, type: 2}
       ProjectileFXList: []
     CollisionStayProjectileEffects:
       EffectList: []
@@ -32,7 +34,7 @@ MonoBehaviour:
   DestroyOptions:
     FLAG_UseDuration: 1
     Duration: 8
-    FLAG_UseCollisionEnters: 0
+    FLAG_UseCollisionEnters: 1
     CollisionEnters: 1
     FLAG_UseCollisionStayDuration: 0
     CollisionStayDuration: 0

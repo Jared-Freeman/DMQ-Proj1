@@ -17,6 +17,52 @@ public static class Freeman_Utilities
 
 namespace Utils
 {
+    public static class ComponentFinder<T> where T : MonoBehaviour
+    {
+        /// <summary>
+        /// Acquires a list of Components that have a Collider attached as well.
+        /// </summary>
+        /// <param name="location">Location to perform spherecast check</param>
+        /// <param name="radius">Radius of spherecast check</param>
+        /// <param name="ignoredGameObjects">List of GameObjects that are ignored during the check.</param>
+        /// <param name="checkChildren">Do we traverse children of found objects to find components? EXPENSIVE!</param>
+        /// <returns>A list of all components of type within the specified radius IF THEY HAVE AN ATTACHED COLLIDER</returns>
+        public static List<T> GetComponentsWithColliderInRadius(Vector3 location, float radius, List<GameObject> ignoredGameObjects = null, bool checkChildren = false)
+        {
+            List<T> listComponents = new List<T>();
+
+            var cols = UnityEngine.Physics.OverlapSphere(location, radius);
+
+            List<GameObject> listIgnored = ignoredGameObjects;
+            if (listIgnored == null) listIgnored = new List<GameObject>();
+
+            T currentComponent;
+            foreach (var c in cols)
+            {
+                if(checkChildren)
+                {
+                    //somehow this space magic works...
+                    foreach(Transform child in c.gameObject.transform)
+                    {
+                        //duplicate code... Too bad!
+                        currentComponent = child.gameObject.GetComponent<T>();
+                        if (currentComponent != null && !listIgnored.Contains(c.gameObject))
+                        {
+                            listComponents.Add(currentComponent);
+                        }
+                    }
+                }
+
+                currentComponent = c.gameObject.GetComponent<T>();
+                if(currentComponent != null && !listIgnored.Contains(c.gameObject))
+                {
+                    listComponents.Add(currentComponent);
+                }
+            }
+
+            return listComponents;
+        }
+    }
 
     /// <summary>
     /// Specifies who will receive this message. For use with Team Scriptable Object
