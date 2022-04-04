@@ -13,6 +13,10 @@ namespace EffectTree
     public class Effect_ApplyPhysicsImpulse : Effect_Base
     {
         public EffectContext.TargetOptions Target = EffectContext.TargetOptions._TargetGameObject;
+        /// <summary>
+        /// How the direction is inferred from EffectContext
+        /// </summary>
+        public EffectContext.FacingOptions Direction = EffectContext.FacingOptions._InitialDirection;
         public enum ImpulseTargetStyles { FromCasterToTarget, ctxInitialDirection, ctxTargetDirection }
         public enum ImpulseForceStyles { Speed, ImpulseForce, ImpulseForceScaledByMass, UseSpeedByMassCurve }
 
@@ -21,11 +25,6 @@ namespace EffectTree
         /// </summary>
         public AnimationCurve SpeedByMassCurve = new AnimationCurve();
 
-        /// <summary>
-        /// How the direction is inferred from EffectContext
-        /// </summary>
-        [Tooltip("How the direction is inferred from EffectContext")]
-        public ImpulseTargetStyles Direction = ImpulseTargetStyles.ctxInitialDirection;
         /// <summary>
         /// How force is calculated
         /// </summary>

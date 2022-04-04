@@ -32,6 +32,14 @@ namespace ActorSystem.AI
         [System.Serializable]
         public class C_LungeOptions
         {
+            /// <summary>
+            /// The length of the animation clip asset for lunging.
+            /// </summary>
+            /// <remarks>
+            /// This info is needed in order to rescale the clip to match LungePause duration.
+            /// </remarks>
+            public float LungeAnimationClipLength = 1f;
+
             public float LungePrepareDistance = 8f;
             public float LungeLosePrepareDistance = 11f;
 

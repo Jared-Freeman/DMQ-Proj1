@@ -30,6 +30,7 @@ namespace ActorSystem.AI
         protected AS_Ability_Instance_Base _AbilityInstance_OnCollideEnter;
         protected AS_Ability_Instance_Base _AbilityInstance_OnLungeBegin;
 
+        public ChargerStateInfo C_StateInfo { get; protected set; } = new ChargerStateInfo();
 
         protected override void ChooseNewTarget()
         {
@@ -61,6 +62,11 @@ namespace ActorSystem.AI
             protected set { Preset = value; }
         }
 
+        public class ChargerStateInfo
+        {
+            public float ChargeAttackAnimationSpeedMultiplier { get; set; } = 1f;
+        }
+
 
         #endregion
 
@@ -75,6 +81,8 @@ namespace ActorSystem.AI
             _AbilityInstance_OnCollideEnter = C_Preset.Ability_OnChargeCollision.GetInstance(gameObject);
             _AbilityInstance_OnLungeBegin = C_Preset.Ability_OnLungeBegin.GetInstance(gameObject);
             //no test here because there may be use case for leaving _AbilityInstance's null
+
+            C_StateInfo.ChargeAttackAnimationSpeedMultiplier = C_Preset.LungeOptions.LungeAnimationClipLength / C_Preset.LungeOptions.LungePause;
         }
 
         #endregion
@@ -132,19 +140,24 @@ namespace ActorSystem.AI
             {
                 ChangeState(ActorAILogic_State.Idle);
             }
+            // TODO: write some OPTIONAL logic here to see if there are obstacles in the way to prevent charging behavior
             else if (
-                (CurrentTarget.transform.position - transform.position).sqrMagnitude <= Mathf.Pow(C_Preset.LungeOptions.LungePrepareDistance,2)
-                && (NavAgent.path.corners.Length < 3) //straight shot
+                _AbilityInstance_OnLungeBegin.CanCastAbility
+                && Info.DistanceToCurrentTargetMagnitude_AtLastPoll <= C_Preset.LungeOptions.LungePrepareDistance
+                //&& (CurrentTarget.transform.position - transform.position).sqrMagnitude <= Mathf.Pow(C_Preset.LungeOptions.LungePrepareDistance,2)
+                //&& (NavAgent.path.corners.Length < 3) //straight shot
                 )
             {
                 ChangeState(ActorAILogic_State.ChargingAttack);
             }
-            else if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= Preset.Base.MaxFacingAngle / 2)
+            else if (Vector3.Angle(gameObject.transform.forward, -Info.DistanceToCurrentTarget_AtLastPoll.normalized) <= Preset.Base.MaxFacingAngle / 2)
             {
+                Debug.LogWarning("facing. No need to turn. Target: " + CurrentTarget.ToString());
                 NavAgent.SetDestination(CurrentTarget.transform.position);
             }
             else
             {
+                Debug.LogWarning("not facing. Need to turn");
                 NavAgent.SetDestination(transform.position);
             }
 
@@ -172,7 +185,7 @@ namespace ActorSystem.AI
             }
 
             //If we've waited long enough, change state to Lunging
-            else if (Time.time - Info.LungeStartTime > C_Preset.LungeOptions.LungePause)
+            else if (Mathf.Abs(Time.time - Info.LungeStartTime) > C_Preset.LungeOptions.LungePause)
             {
                 ChangeState(ActorAILogic_State.Lunging);
             }
@@ -216,12 +229,15 @@ namespace ActorSystem.AI
                     CanMove = false;
                     NavAgent.SetDestination(transform.position);
                     Info.LungeStartTime = Time.time;
-                    if(Preset.Base.GrowDuration > 0 && Preset.Base.GrowCurve != null) StartCoroutine(I_IncreaseScale());
+                    if(Preset.Base.UseGrowCurve && Preset.Base.GrowDuration > 0 && Preset.Base.GrowCurve != null) StartCoroutine(I_IncreaseScale());
 
-                    Invoke_OnAttackChargeBegin(new EventArgs.ActorAI_Logic_EventArgs(AttachedActor, 1));
+                    Invoke_OnAttackChargeBegin(new EventArgs.ActorAI_Logic_EventArgs(AttachedActor, 1, C_StateInfo.ChargeAttackAnimationSpeedMultiplier));
                     break;
 
                 case ActorAILogic_State.Lunging:
+                    Info.LungeStartTime = Time.time;
+
+                    Invoke_OnAttackStart(new EventArgs.ActorAI_Logic_EventArgs(AttachedActor, 2));
 
                     NavAgent.SetDestination(transform.position);
 
@@ -279,8 +295,13 @@ namespace ActorSystem.AI
                     break;
 
                 case ActorAILogic_State.Lunging:
+                    CanMove = true;
+                    CanTurn = true;
+
+                    Invoke_OnAttackEnd(new EventArgs.ActorAI_Logic_EventArgs(AttachedActor, 2));
+
                     //NavAgent.SetDestination(transform.position);
-                    NavAgent.speed = Preset.Base.MovementSpeed;
+                    //NavAgent.speed = Preset.Base.MovementSpeed;
 
                     CanMove = true;
                     break;

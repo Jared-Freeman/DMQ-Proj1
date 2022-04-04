@@ -20,27 +20,29 @@ MonoBehaviour:
     CanCancelAttackEarly: 0
     AttackWhileMoving: 0
     StationaryVelocityThreshold: 0.05
-    AttackRange: 11
+    AttackRange: 18
     MovementSpeed: 5
     StopSlideDistance: 0.5
     AggroRadius: 50
     MaxFacingAngle: 100
     TurningRate: 80
+    UseGrowCurve: 0
     GrowCurve:
       serializedVersion: 2
       m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    GrowDuration: 1
+    GrowDuration: 0
     _TargetPriority: 1
   Ability_OnChargeCollision: {fileID: 11400000, guid: c003863ff6f72d3458b07bc92420cf8f,
     type: 2}
   Ability_OnLungeBegin: {fileID: 11400000, guid: 951ea223c6c2daa4491ecc8185d3c54b,
     type: 2}
   LungeOptions:
-    LungePrepareDistance: 8
-    LungeLosePrepareDistance: 11
+    LungeAnimationClipLength: 2.708
+    LungePrepareDistance: 14
+    LungeLosePrepareDistance: 18
     MinimumSpeedToContinueLungeBehavior: 9
-    LungePause: 1
+    LungePause: 2
     LungeTimeout: 2

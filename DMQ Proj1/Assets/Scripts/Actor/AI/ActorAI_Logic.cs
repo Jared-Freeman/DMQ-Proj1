@@ -12,14 +12,19 @@ namespace ActorSystem.AI.EventArgs
     public class ActorAI_Logic_EventArgs : System.EventArgs
     {
         //ctor
-        public ActorAI_Logic_EventArgs(ActorAI actor, int abilityIndex)
+        public ActorAI_Logic_EventArgs(ActorAI actor, int abilityIndex, float desiredAnimationMultiplier = 1)
         {
             _Actor = actor;
             _AbilityIndex = abilityIndex;
+            _DesiredAnimationMultiplier = desiredAnimationMultiplier;
         }
 
         public Actor _Actor;
         public int _AbilityIndex;
+        /// <summary>
+        /// Used to rescale the animation clip speed in order to achieve the desired duration of play.
+        /// </summary>
+        public float _DesiredAnimationMultiplier = 1f;
     }
 }
 
@@ -44,6 +49,20 @@ public class ActorAI_Logic : MonoBehaviour
     protected virtual void Invoke_OnAttackChargeCancel(ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs e)
     {
         OnAttackChargeCancel?.Invoke(this, e);
+    }
+
+
+    public event System.EventHandler<ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs> OnAttackStart;
+    protected virtual void Invoke_OnAttackStart(ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs e)
+    {
+        OnAttackStart?.Invoke(this, e);
+    }
+
+
+    public event System.EventHandler<ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs> OnAttackEnd;
+    protected virtual void Invoke_OnAttackEnd(ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs e)
+    {
+        OnAttackEnd?.Invoke(this, e);
     }
 
     #endregion
@@ -197,6 +216,12 @@ public class ActorAI_Logic : MonoBehaviour
 
         //these prevent redundant costly math operations, namely the sqrt needed for the vector magnitude computation.
         //note these also preclude intercept computations... Sorry this will be confusing to others and my later self...
+        /// <summary>
+        /// A Vector3 ray FROM CurrentTarget TO transform.position
+        /// </summary>
+        /// <remarks>
+        /// You may need to invert to get the correct directionality. Just multiply by (-1) for that.
+        /// </remarks>
         public Vector3 DistanceToCurrentTarget_AtLastPoll = Vector3.zero;
         public float DistanceToCurrentTargetMagnitude_AtLastPoll = 0f;
     }
