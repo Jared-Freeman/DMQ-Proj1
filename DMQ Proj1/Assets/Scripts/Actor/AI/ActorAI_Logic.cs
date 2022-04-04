@@ -585,7 +585,7 @@ public class ActorAI_Logic : MonoBehaviour
     {
         if (FLAG_Debug)
         {
-            Debug.Log("State Start: " + stateToStart.ToString());
+            Debug.Log("State Begin: " + stateToStart.ToString());
         }
     }
 
