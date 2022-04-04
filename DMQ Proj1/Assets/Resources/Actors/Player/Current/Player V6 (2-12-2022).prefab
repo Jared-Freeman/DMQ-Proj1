@@ -365,7 +365,7 @@ Transform:
   m_GameObject: {fileID: 2730663037202936869}
   m_LocalRotation: {x: 0.000000059604616, y: -0.000000029569478, z: -0.00000010407525,
     w: 1}
-  m_LocalPosition: {x: 0, y: 0.04, z: -0}
+  m_LocalPosition: {x: 0, y: 0.04, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2730663037300967914}
@@ -378,7 +378,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2730663037202936869}
-  m_Mesh: {fileID: 4300024, guid: 8b331f7b82097114d99b13274da53c28, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 1919e27accf3f7e44a47834f9d9bda49, type: 3}
 --- !u!23 &2730663037202937307
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2243,6 +2243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 715ede63acf50414688da027cd7deeb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _curPlayerInput: {fileID: 0}
 --- !u!114 &2730663038165717402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2385,6 +2386,7 @@ MonoBehaviour:
   FLAG_Debug: 1
   Preset: {fileID: 11400000, guid: 70225ed50b8cae2489215708e963dde7, type: 2}
   InitialStatusEffects: []
+  _ListStatusEffects: []
   m_timeSinceLastHit: 0
   OnDeath:
     m_PersistentCalls:
@@ -2492,14 +2494,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed2b59a717b418e4d860744a87f861ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 2730663038165717473}
-  actor: {fileID: 2730663038165717474}
   weapons:
-  - {fileID: 4456945836124224068, guid: 3c69fa93618176a43962f23c5526778b, type: 3}
-  - {fileID: 1092708326585483430, guid: ee50c49e39dc0e74d918ab0f5eed138c, type: 3}
+  - {fileID: 1265015242748936856, guid: 84b40e9f3a062bc4cb8120cd4d9bc07a, type: 3}
+  - {fileID: 918221589285383807, guid: af5f3195cc7e9fe4c88f03f55a13827d, type: 3}
   handpositions:
   - {fileID: 2730663037300967914}
   - {fileID: 2730663039089730603}
+  equippedWeapon: {fileID: 0}
 --- !u!114 &6081834268718954789
 MonoBehaviour:
   m_ObjectHideFlags: 0
