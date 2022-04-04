@@ -10,6 +10,14 @@ public class AnimatorProxy : MonoBehaviour
     public GameObject[] weapons;
     public Transform[] handpositions = new Transform[2];
     public GameObject equippedWeapon;
+    public weaponLocalTransform[] weaponLocalTransforms;
+    [System.Serializable]
+    public struct weaponLocalTransform
+    {
+        public Vector3 position;
+        public Vector3 rotation;
+        public Vector3 scale;
+    }
 
     void Awake()
     {
@@ -72,7 +80,7 @@ public class AnimatorProxy : MonoBehaviour
         Actor a = g.GetComponent<Actor>();
         if (a == actor)
         {
-            if(equippedWeapon)
+            if (equippedWeapon)
                 Destroy(equippedWeapon);
             int i = e.weaponSlot;
             int animIndex = e.weapon.BaseWeaponPreset.BaseWeaponOptions.AnimatorIndex;
@@ -80,6 +88,9 @@ public class AnimatorProxy : MonoBehaviour
             animator.SetInteger("Weapon", animIndex);
             equippedWeapon = Instantiate(weapons[animIndex], handpositions[0].position, handpositions[0].rotation);
             equippedWeapon.transform.parent = handpositions[0]; //For now, all weapons go in right hand.
+            equippedWeapon.transform.localRotation = Quaternion.Euler(weaponLocalTransforms[animIndex].rotation);
+            equippedWeapon.transform.localPosition = weaponLocalTransforms[animIndex].position;
+            equippedWeapon.transform.localScale = weaponLocalTransforms[animIndex].scale;
         }
     }
 
