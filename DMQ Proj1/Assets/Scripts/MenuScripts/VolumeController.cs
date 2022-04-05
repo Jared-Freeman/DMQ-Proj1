@@ -10,14 +10,14 @@ public class VolumeController : MonoBehaviour
     public AudioMixer mixerSFX;
     public void SetMasterVolumeLevel(float masterSliderValue)
     {
-        mixerMaster.SetFloat("MasterVolume", Mathf.Log10(masterSliderValue) * 20);
+        mixerMaster.SetFloat("MasterVolume", Mathf.Log10(masterSliderValue) * 25);
     }
     public void setMusicVolumeLevel(float musicSliderValue)
     {
-        mixerMusic.SetFloat("MusicVolume", Mathf.Log10(musicSliderValue) * 20);
+        mixerMusic.SetFloat("MusicVolume", Mathf.Log10(musicSliderValue) * 25);
     }
     public void setSFXVolumeLevel(float SFXSliderValue)
     {
-        mixerSFX.SetFloat("SFXVolume", Mathf.Log10(SFXSliderValue) * 20);
+        mixerSFX.SetFloat("SFXVolume", Mathf.Log10(SFXSliderValue) * 25);
     }
 }
