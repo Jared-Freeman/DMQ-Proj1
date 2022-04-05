@@ -57,6 +57,10 @@ namespace ActorSystem.AI
             /// </remarks>
             public float LungeAnimationClipLength = 1f;
 
+            /// <summary>
+            /// Distance at which standard basic attacks will instead be used.
+            /// </summary>
+            public float LungeTooCloseDistance = 6f;
             public float LungePrepareDistance = 8f;
             public float LungeLosePrepareDistance = 11f;
 

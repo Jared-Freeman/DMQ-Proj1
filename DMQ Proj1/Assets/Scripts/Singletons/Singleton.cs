@@ -6,7 +6,16 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T m_instance;
 
-    public static T Instance
+    public static bool InstanceExists
+    {
+        get
+        {
+            if (m_instance != null) return true;
+            return false;
+        }
+    }
+
+public static T Instance
     {
         get
         {

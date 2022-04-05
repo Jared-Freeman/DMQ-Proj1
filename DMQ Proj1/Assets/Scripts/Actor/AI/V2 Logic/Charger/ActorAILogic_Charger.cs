@@ -154,6 +154,7 @@ namespace ActorSystem.AI
             else if (
                 _AbilityInstance_OnLungeBegin.CanCastAbility
                 && Info.DistanceToCurrentTargetMagnitude_AtLastPoll <= C_Preset.LungeOptions.LungePrepareDistance
+                && Info.DistanceToCurrentTargetMagnitude_AtLastPoll > C_Preset.LungeOptions.LungeTooCloseDistance
                 //&& (CurrentTarget.transform.position - transform.position).sqrMagnitude <= Mathf.Pow(C_Preset.LungeOptions.LungePrepareDistance,2)
                 //&& (NavAgent.path.corners.Length < 3) //straight shot
                 )
@@ -166,7 +167,9 @@ namespace ActorSystem.AI
 
             else if 
                 (
-                Info.DistanceToCurrentTargetMagnitude_AtLastPoll <= C_Preset.BasicAttackOptions.PrepareDistance
+                _AbilityInstance_BasicAttack.CanCastAbility
+                && Info.DistanceToCurrentTargetMagnitude_AtLastPoll <= C_Preset.BasicAttackOptions.PrepareDistance
+                && Info.AttachedRigidbody.velocity.sqrMagnitude <= Mathf.Pow(Preset.Base.StationaryVelocityThreshold,2)
                 //&& (NavAgent.path.corners.Length < 3) //straight shot. Still relevant to help enforce LOS on this shambler
                 )
             {
@@ -200,7 +203,12 @@ namespace ActorSystem.AI
                 }
             }
 
-            else if (Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= Preset.Base.MaxFacingAngle / 2)
+
+            else if (
+                //we're not in attack range and dont need to turn
+                Info.DistanceToCurrentTargetMagnitude_AtLastPoll > C_Preset.BasicAttackOptions.PrepareDistance
+                && Vector3.Angle(gameObject.transform.forward, (CurrentTarget.transform.position - gameObject.transform.position).normalized) <= Preset.Base.MaxFacingAngle / 2
+                )
             {
                 NavAgent.SetDestination(CurrentTargetPosition);
                 //if (NavAgent.path.corners.Length > 3) NavAgent.SetDestination(CurrentTarget.transform.position);
@@ -258,7 +266,7 @@ namespace ActorSystem.AI
         private void PrepareBasicAttack()
         {
             //Here we HAVE TO WAIT the full duration of charging regardless of any other circumstance.
-            if (!Preset.Base.CanCancelAttackEarly && Time.time - Info.LungeStartTime < C_Preset.BasicAttackOptions.AttackPause)
+            if (!Preset.Base.CanCancelAttackEarly && Time.time - C_StateInfo.BasicAttackStartTime < C_Preset.BasicAttackOptions.AttackPause)
             {
                 return;
             }
@@ -292,7 +300,7 @@ namespace ActorSystem.AI
             }
 
             //If we've waited long enough, change ActorAILogic_State to Attacking. Ability must also be castable. Also must be facing target
-            else if (Time.time - Info.LungeStartTime > C_Preset.BasicAttackOptions.AttackPause && _AbilityInstance_BasicAttack.CanCastAbility)
+            else if (Time.time - C_StateInfo.BasicAttackStartTime > C_Preset.BasicAttackOptions.AttackPause && _AbilityInstance_BasicAttack.CanCastAbility)
             {
                 ChangeState(ActorAILogic_State.Attacking2);
             }
@@ -367,6 +375,8 @@ namespace ActorSystem.AI
 
                 case ActorAILogic_State.ChargingAttack2:
                     C_StateInfo.BasicAttackStartTime = Time.time;
+
+                    Invoke_OnAttackChargeBegin(new ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs(AttachedActor, 3, C_StateInfo.ChargeBasicAttackAnimationSpeedMultiplier));
                     break;
 
                 case ActorAILogic_State.Attacking2:
@@ -388,7 +398,6 @@ namespace ActorSystem.AI
 
                     _AbilityInstance_BasicAttack?.ExecuteAbility(ref ec);
 
-                    Invoke_OnAttackChargeBegin(new ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs(AttachedActor, 3));
 
                     ChangeState(ActorAILogic_State.Chasing);
 
@@ -446,6 +455,8 @@ namespace ActorSystem.AI
                     break;
 
                 case ActorAILogic_State.Attacking2:
+                    
+                    Invoke_OnAttackEnd(new EventArgs.ActorAI_Logic_EventArgs(AttachedActor, 3));
                     break;
 
 

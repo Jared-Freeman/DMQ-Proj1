@@ -118,6 +118,42 @@ public class PlayerSession_IO_Listener : MonoBehaviour
         _Controls = new PlayerControls();
     }
 
+    protected void Start()
+    {
+        InitializeExistingJoinedPlayers();
+    }
+
+    private void InitializeExistingJoinedPlayers()
+    {
+        foreach(var session in Singleton<PlayerDataManager>.Instance.ActivatedPlayerSessions)
+        {
+            PlayerInputDataRecord record = new PlayerInputDataRecord();
+
+
+            record._PlayerInput = session.Info._Input;
+            record._Controls = _Controls;
+            _JoinedPlayers.Add(record);
+
+            var obj = record._PlayerInput;
+
+            //set up action map
+            if (obj.currentControlScheme == _Controls.MouseAndKeyboardScheme.name)
+            {
+                obj.SwitchCurrentActionMap(_Controls.MouseAndKeyboardScheme.name);
+            }
+            else if (obj.currentControlScheme == _Controls.GamepadScheme.name)
+            {
+                obj.SwitchCurrentActionMap(_Controls.GamepadScheme.name);
+            }
+
+            //event subscriptions
+            obj.onActionTriggered += record.Obj_onActionTriggered;
+            record.OnPlayerActivate += Record_OnPlayerActivate;
+
+            if (s_FLAG_DEBUG) Debug.Log("Linked player successfully.");
+        }
+    }
+
     #endregion
 
     #region Init Event Subscriptions

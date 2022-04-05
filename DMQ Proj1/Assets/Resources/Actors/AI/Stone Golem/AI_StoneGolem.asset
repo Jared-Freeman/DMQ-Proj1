@@ -19,13 +19,13 @@ MonoBehaviour:
     InterceptCurrentTargetDisableDistance: 8.5
     CanCancelAttackEarly: 0
     AttackWhileMoving: 0
-    StationaryVelocityThreshold: 0.05
+    StationaryVelocityThreshold: 1
     AttackRange: 18
     MovementSpeed: 5
     StopSlideDistance: 0.5
     AggroRadius: 50
-    MaxFacingAngle: 100
-    TurningRate: 80
+    MaxFacingAngle: 60
+    TurningRate: 95
     UseGrowCurve: 0
     GrowCurve:
       serializedVersion: 2
@@ -43,14 +43,15 @@ MonoBehaviour:
     type: 2}
   LungeOptions:
     LungeAnimationClipLength: 2.708
-    LungePrepareDistance: 14
-    LungeLosePrepareDistance: 18
+    LungeTooCloseDistance: 8
+    LungePrepareDistance: 21
+    LungeLosePrepareDistance: 27
     MinimumSpeedToContinueLungeBehavior: 9
-    LungePause: 2
+    LungePause: 1.7
     LungeTimeout: 2
   BasicAttackOptions:
-    AnimationClipLength: 0.833
-    AttackPause: 1
+    AnimationClipLength: 0.45
+    AttackPause: 0.8
     NeedLineOfSightToAttack: 0
-    PrepareDistance: 5
+    PrepareDistance: 6
     LosePrepareDistance: 8

@@ -15,6 +15,7 @@ public class UIActivePlayerPanel : MonoBehaviour
     #region Members
     //fields go here
     private int currentPlayerCount = 0;
+    private int maxPlayerCount = 4;
 
     //properties are fancy Fields
     #region Properties 
@@ -74,14 +75,19 @@ public class UIActivePlayerPanel : MonoBehaviour
 
     private void HandlePlayerAgentInstantiation(object sender, GameObjectListEventArgs e)
     {
-        activateNewPlayerPanel(currentPlayerCount - 1);
+        //Need to init for ALL incoming gameobjects
+        for(int i = currentPlayerCount; (i < maxPlayerCount) && i < e.gameObjects.Count; i++)
+        {
+            activateNewPlayerPanel(i);
+            currentPlayerCount++;
+            ListPlayerPanels[i].swapWeapon();
+            Debug.Log("Event received");
+        }
+
         foreach (var p in e.gameObjects)
         {
             Listplayers.Add(new UIPlayerInfo(p));
         }
-        currentPlayerCount++;
-        ListPlayerPanels[0].swapWeapon();
-        Debug.Log("Event received");
     }
 
     // Update is called once per frame

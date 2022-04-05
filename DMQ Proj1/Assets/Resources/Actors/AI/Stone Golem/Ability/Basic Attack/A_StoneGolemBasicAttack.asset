@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: A_StoneGolemBasicAttack
   m_EditorClassIdentifier: 
   Cooldown:
-    _Cooldown: 1
+    _Cooldown: 2.5
   CastSettings:
     CanMoveWhileCasting: 0
     CanCancelCast: 0
@@ -24,5 +24,5 @@ MonoBehaviour:
     Effect_CastWhileOnCooldown: {fileID: 0}
   Conditions:
     _Conditions: []
-  IconImage: {fileID: 0}
+  IconImage: {fileID: 21300000, guid: ab71bdc1f24961245841c1a473a70918, type: 3}
   Effect: {fileID: 11400000, guid: d0b0f03f39919a54c8842cf6b4d8abac, type: 2}
