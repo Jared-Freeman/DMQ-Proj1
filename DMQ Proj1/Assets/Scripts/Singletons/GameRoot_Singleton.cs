@@ -8,5 +8,15 @@ using UnityEngine;
 /// </summary>
 public class GameRoot_Singleton : Singleton<GameRoot_Singleton>
 {
-
+    protected override void Awake()
+    {
+        if (Singleton<GameRoot_Singleton>.InstanceExists)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            base.Awake();
+        }
+    }
 }

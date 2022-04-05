@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26ad005a3a203f843806864ba9f3663f, type: 3}
+  m_Name: AI_StoneGolem
+  m_EditorClassIdentifier: 
+  Base:
+    DrawDebugGizmos: 0
+    InterceptCurrentTarget: 1
+    InterceptCurrentTargetStrength: 0.099
+    InterceptCurrentTargetDisableDistance: 8.5
+    CanCancelAttackEarly: 0
+    AttackWhileMoving: 0
+    StationaryVelocityThreshold: 1
+    AttackRange: 18
+    MovementSpeed: 5
+    StopSlideDistance: 0.5
+    AggroRadius: 50
+    MaxFacingAngle: 60
+    TurningRate: 95
+    UseGrowCurve: 0
+    GrowCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    GrowDuration: 0
+    _TargetPriority: 1
+  Ability_BasicAttack: {fileID: 11400000, guid: 89de41040454d974c98b534a722e44ea,
+    type: 2}
+  Ability_OnChargeCollision: {fileID: 11400000, guid: c003863ff6f72d3458b07bc92420cf8f,
+    type: 2}
+  Ability_OnLungeBegin: {fileID: 11400000, guid: 951ea223c6c2daa4491ecc8185d3c54b,
+    type: 2}
+  LungeOptions:
+    LungeAnimationClipLength: 2.708
+    LungeTooCloseDistance: 8
+    LungePrepareDistance: 21
+    LungeLosePrepareDistance: 27
+    MinimumSpeedToContinueLungeBehavior: 9
+    LungePause: 1.7
+    LungeTimeout: 2
+  BasicAttackOptions:
+    AnimationClipLength: 0.45
+    AttackPause: 0.8
+    NeedLineOfSightToAttack: 0
+    PrepareDistance: 6
+    LosePrepareDistance: 8

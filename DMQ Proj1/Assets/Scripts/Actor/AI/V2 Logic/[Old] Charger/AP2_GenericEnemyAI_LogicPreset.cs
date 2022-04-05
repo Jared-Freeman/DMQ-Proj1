@@ -6,7 +6,7 @@ using AbilitySystem;
 
 namespace ActorSystem.AI
 {
-    [CreateAssetMenu(fileName = "AI_", menuName = "Actor/AI Logic/Charger", order = 2)]
+    [CreateAssetMenu(fileName = "AI_", menuName = "Actor/AI Logic/[DEPRECATED] Charger", order = 2)]
     public class AP2_GenericEnemyAI_LogicPreset : ActorAI_Logic_PresetBase
     {
         //TODO: What goes here versus the base preset?

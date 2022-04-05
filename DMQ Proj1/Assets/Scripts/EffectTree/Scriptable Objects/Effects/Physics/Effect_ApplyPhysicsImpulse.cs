@@ -13,6 +13,10 @@ namespace EffectTree
     public class Effect_ApplyPhysicsImpulse : Effect_Base
     {
         public EffectContext.TargetOptions Target = EffectContext.TargetOptions._TargetGameObject;
+        /// <summary>
+        /// How the direction is inferred from EffectContext
+        /// </summary>
+        public EffectContext.FacingOptions Direction = EffectContext.FacingOptions._InitialDirection;
         public enum ImpulseTargetStyles { FromCasterToTarget, ctxInitialDirection, ctxTargetDirection }
         public enum ImpulseForceStyles { Speed, ImpulseForce, ImpulseForceScaledByMass, UseSpeedByMassCurve }
 
@@ -21,11 +25,6 @@ namespace EffectTree
         /// </summary>
         public AnimationCurve SpeedByMassCurve = new AnimationCurve();
 
-        /// <summary>
-        /// How the direction is inferred from EffectContext
-        /// </summary>
-        [Tooltip("How the direction is inferred from EffectContext")]
-        public ImpulseTargetStyles Direction = ImpulseTargetStyles.ctxInitialDirection;
         /// <summary>
         /// How force is calculated
         /// </summary>
@@ -68,8 +67,6 @@ namespace EffectTree
                     return false;
                 }
 
-                Debug.Log("we got here");
-
                 //Actor validation based on flags
                 if ((Options.TargetActorsOnly && targetActor == null) || (Options.DontTargetActors && targetActor != null)) return false;
 
@@ -85,32 +82,10 @@ namespace EffectTree
                     return false;
                 }
 
-                Vector3 forceDir;
+                Vector3 forceDir = Vector3.zero;
+                forceDir = ctx.RetrieveDirectionVector(Direction);
 
-                switch(Direction)
-                {
-                    case ImpulseTargetStyles.ctxInitialDirection:
-                        forceDir = ctx.AttackData._InitialDirection;
-                        break;
-                    case ImpulseTargetStyles.ctxTargetDirection:
-                        forceDir = ctx.AttackData._TargetDirection;
-                        break;
-                    case ImpulseTargetStyles.FromCasterToTarget:
-                        if(ctx.AttackData._TargetGameObject != null  && ctx.AttackData._InitialGameObject != null)
-                        {
-                            forceDir = (ctx.AttackData._InitialGameObject.transform.position - ctx.AttackData._TargetGameObject.transform.position);
-                        }
-                        else
-                        {
-                            forceDir = ctx.AttackData._InitialDirection;
-                        }
-                        break;
-
-                    default:
-                        Debug.LogError("Unrecognized Direction. Does an impl exist?");
-                        return false;
-                }
-
+                if (forceDir.sqrMagnitude <= 0) return false;
                 
                 switch(ForceStyle)
                 {

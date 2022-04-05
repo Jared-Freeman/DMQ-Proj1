@@ -4,43 +4,111 @@ using UnityEngine;
 using ActorSystem.AI;
 public class AnimatorProxy_AI : AnimatorProxy
 {
-    void Start()
+    protected ActorAI_Logic AttachedAILogic;
+
+    #region Initialization
+
+    protected override void Awake()
     {
-        EventSubscribe();
+        base.Awake();
+
+        AttachedAILogic = GetComponent<ActorAI_Logic>();
+        if (!Utils.Testing.ReferenceIsValid(AttachedAILogic)) Destroy(this);
     }
+
+    protected override void Start()
+    {
+        base.Start();
+    }
+
+    #endregion
+
 
     protected override void EventSubscribe()
     {
+        base.EventSubscribe();
+
         //OnVelocityUpdate
         AIMover.OnVelocityUpdate += AIMover_OnVelocityUpdate;
+
+
         //OnAttack
         //AILogic_Shambler.OnAbilityCast += AILogic_Shambler_OnAbilityCast;
-        AILogic_Shambler.OnAttackChargeBegin += AILogic_Shambler_OnAttackChargeBegin; //new handler since swing animation works well for "charging" style attack delay -Jared
-        AILogic_Shambler.OnAttackChargeCancel += AILogic_Shambler_OnAttackChargeCancel;
+        AttachedAILogic.OnAttackChargeBegin += AttachedAILogic_OnAttackChargeBegin;
+        AttachedAILogic.OnAttackChargeCancel += AttachedAILogic_OnAttackChargeCancel;
+        AttachedAILogic.OnAttackStart += AttachedAILogic_OnAttackStart;
+        AttachedAILogic.OnAttackEnd += AttachedAILogic_OnAttackEnd;
+
         //On Hit
         ActorStats.OnDamageTaken += ActorStats_OnDamageTaken;
         //On Death
         Actor.OnActorDestroyed += Actor_OnActorDestroyed;
     }
-
-    private void AILogic_Shambler_OnAttackChargeCancel(object sender, AILogic_ShamblerEventArgs e)
+    protected override void EventUnsubscribe()
     {
-        if (e.actor == actor)
+        base.EventUnsubscribe();
+
+        //OnVelocityUpdate
+        AIMover.OnVelocityUpdate -= AIMover_OnVelocityUpdate;
+        //OnAttack
+        AILogic_Shambler.OnAbilityCast -= AILogic_Shambler_OnAbilityCast;
+        //On Hit
+        ActorStats.OnDamageTaken -= ActorStats_OnDamageTaken;
+        //On Death
+        Actor.OnActorDestroyed -= Actor_OnActorDestroyed;
+    }
+
+    #region Event Handlers
+
+    #region AttachedAILogic Event Handlers
+
+    private void AttachedAILogic_OnAttackEnd(object sender, ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs e)
+    {
+        if (e._Actor == actor)
         {
-            animator.ResetTrigger("Ability");
             // is this needed here?
-            //animator.SetInteger("AbilityNum", e.abilityIndex); 
+            animator.SetFloat("AnimationSpeedMultiplier", e._DesiredAnimationMultiplier);
+            animator.SetInteger("AbilityNum", e._AbilityIndex);
+
+            animator.ResetTrigger("Ability");
         }
     }
 
-    private void AILogic_Shambler_OnAttackChargeBegin(object sender, AILogic_ShamblerEventArgs e)
+    private void AttachedAILogic_OnAttackStart(object sender, ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs e)
     {
-        if (e.actor == actor)
+        if (e._Actor == actor)
         {
+            animator.SetFloat("AnimationSpeedMultiplier", e._DesiredAnimationMultiplier);
+            animator.SetInteger("AbilityNum", e._AbilityIndex);
+
             animator.SetTrigger("Ability");
-            animator.SetInteger("AbilityNum", e.abilityIndex);
         }
     }
+
+    private void AttachedAILogic_OnAttackChargeCancel(object sender, ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs e)
+    {
+        if (e._Actor == actor)
+        {
+            // is this needed here?
+            animator.SetFloat("AnimationSpeedMultiplier", e._DesiredAnimationMultiplier);
+            animator.SetInteger("AbilityNum", e._AbilityIndex);
+
+            animator.ResetTrigger("Ability");
+        }
+    }
+
+    private void AttachedAILogic_OnAttackChargeBegin(object sender, ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs e)
+    {
+        if (e._Actor == actor)
+        {
+            animator.SetFloat("AnimationSpeedMultiplier", e._DesiredAnimationMultiplier);
+            animator.SetInteger("AbilityNum", e._AbilityIndex);
+
+            animator.SetTrigger("Ability");
+        }
+    }
+
+    #endregion
 
     private void AIMover_OnVelocityUpdate(object sender, AIMoverEventArgs e)
     {
@@ -84,15 +152,6 @@ public class AnimatorProxy_AI : AnimatorProxy
         }
     }
 
-    protected override void EventUnsubscribe()
-    {
-        //OnVelocityUpdate
-        AIMover.OnVelocityUpdate -= AIMover_OnVelocityUpdate;
-        //OnAttack
-        AILogic_Shambler.OnAbilityCast -= AILogic_Shambler_OnAbilityCast;
-        //On Hit
-        ActorStats.OnDamageTaken -= ActorStats_OnDamageTaken;
-        //On Death
-        Actor.OnActorDestroyed -= Actor_OnActorDestroyed;
-    }
+    #endregion
+
 }

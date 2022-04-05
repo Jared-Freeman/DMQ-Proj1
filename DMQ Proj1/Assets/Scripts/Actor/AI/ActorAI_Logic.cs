@@ -7,11 +7,66 @@ using UnityEngine.AI;
 
 using ActorSystem.AI;
 
+namespace ActorSystem.AI.EventArgs
+{
+    public class ActorAI_Logic_EventArgs : System.EventArgs
+    {
+        //ctor
+        public ActorAI_Logic_EventArgs(ActorAI actor, int abilityIndex, float desiredAnimationMultiplier = 1)
+        {
+            _Actor = actor;
+            _AbilityIndex = abilityIndex;
+            _DesiredAnimationMultiplier = desiredAnimationMultiplier;
+        }
+
+        public Actor _Actor;
+        public int _AbilityIndex;
+        /// <summary>
+        /// Used to rescale the animation clip speed in order to achieve the desired duration of play.
+        /// </summary>
+        public float _DesiredAnimationMultiplier = 1f;
+    }
+}
+
 //This class holds the reigns of any AI. Its goal is to take the ActorAI data structure and drive it during game simulation.
 [RequireComponent(typeof(ActorAI))]
 [RequireComponent(typeof(NavMeshAgent))]
 public class ActorAI_Logic : MonoBehaviour
 {
+    #region Events
+
+
+    // Local events are used here for optimization purposes. The animator proxy should be on the same gameobject so you can just subscribe that way.
+    // As scale increases, we can cut down on potentially hundreds of calls using a method like this.
+    public event System.EventHandler<ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs> OnAttackChargeBegin;
+    protected virtual void Invoke_OnAttackChargeBegin(ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs e) //for subclasses to invoke
+    {
+        OnAttackChargeBegin?.Invoke(this, e);
+    }
+
+
+    public event System.EventHandler<ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs> OnAttackChargeCancel;
+    protected virtual void Invoke_OnAttackChargeCancel(ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs e)
+    {
+        OnAttackChargeCancel?.Invoke(this, e);
+    }
+
+
+    public event System.EventHandler<ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs> OnAttackStart;
+    protected virtual void Invoke_OnAttackStart(ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs e)
+    {
+        OnAttackStart?.Invoke(this, e);
+    }
+
+
+    public event System.EventHandler<ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs> OnAttackEnd;
+    protected virtual void Invoke_OnAttackEnd(ActorSystem.AI.EventArgs.ActorAI_Logic_EventArgs e)
+    {
+        OnAttackEnd?.Invoke(this, e);
+    }
+
+    #endregion
+
     public enum TargetPriority { None, Proximity }
     /// <summary>
     /// Enum containing all possible states for every AI, ever. 
@@ -24,7 +79,10 @@ public class ActorAI_Logic : MonoBehaviour
     ///     Not every state should be implemented in every AI Logic. 
     ///     </para>
     /// </remarks>
-    public enum ActorAILogic_State { Idle, Repositioning, TurningToFaceTarget, ChargingAttack, Attacking, Chasing, PreparingToLunge, Lunging }
+    public enum ActorAILogic_State { 
+        Idle, Repositioning, TurningToFaceTarget, ChargingAttack
+            , Attacking, Chasing, PreparingToLunge, Lunging, ChargingAttack2
+            , Attacking2 }
 
     /// <summary>
     /// For Logic subroutines (minimize cost-per-frame)
@@ -99,8 +157,8 @@ public class ActorAI_Logic : MonoBehaviour
     public ActorAI AttachedActor { get; protected set; }
     public NavMeshAgent NavAgent { get; protected set; }
     public Animator Animator { get; protected set; }
-    public bool CanMove { get { return Info.CanMove; } }
-    public bool CanTurn { get { return Info.CanTurn; } }
+    public bool CanMove { get { return Info.CanMove; } protected set { Info.CanMove = value; } }
+    public bool CanTurn { get { return Info.CanTurn; } protected set { Info.CanTurn = value; } }
     /// <summary>
     /// Returns true when Actor is within the facing tolerances specified by the Preset
     /// </summary>
@@ -122,6 +180,8 @@ public class ActorAI_Logic : MonoBehaviour
     //internal helper
     protected class StateInfo
     {
+        public Rigidbody AttachedRigidbody;
+
         /// <summary>
         /// Acts as a kill switch do disable flocking movement influence should an AI need that behavior such as <see cref="AP2_GenericEnemyAI"/> charging routine.
         /// </summary>
@@ -161,6 +221,12 @@ public class ActorAI_Logic : MonoBehaviour
 
         //these prevent redundant costly math operations, namely the sqrt needed for the vector magnitude computation.
         //note these also preclude intercept computations... Sorry this will be confusing to others and my later self...
+        /// <summary>
+        /// A Vector3 ray FROM CurrentTarget TO transform.position
+        /// </summary>
+        /// <remarks>
+        /// You may need to invert to get the correct directionality. Just multiply by (-1) for that.
+        /// </remarks>
         public Vector3 DistanceToCurrentTarget_AtLastPoll = Vector3.zero;
         public float DistanceToCurrentTargetMagnitude_AtLastPoll = 0f;
     }
@@ -187,12 +253,17 @@ public class ActorAI_Logic : MonoBehaviour
     {
         AttachedActor = GetComponent<ActorAI>();
         NavAgent = GetComponent<NavMeshAgent>();
+        Info.AttachedRigidbody = GetComponent<Rigidbody>();
 
         //Ref Tests
+        if (!Utils.Testing.ReferenceIsValid(Info)) Destroy(gameObject);
+        if (!Utils.Testing.ReferenceIsValid(Info.AttachedRigidbody)) Destroy(gameObject);
         if (!Utils.Testing.ReferenceIsValid(AttachedActor)) Destroy(gameObject);
         if (!Utils.Testing.ReferenceIsValid(NavAgent)) Destroy(gameObject);
         if (!Utils.Testing.ReferenceIsValid(_FlockingPreset)) Destroy(gameObject);
         if (!Utils.Testing.ReferenceIsValid(_Preset)) Destroy(gameObject);
+
+        NavAgent.speed = Preset.Base.MovementSpeed;
 
         Info.PersonalWaypoint = new GameObject("[AI] Personal Waypoint");
         Info.CurrentTarget = Info.PersonalWaypoint;
@@ -211,6 +282,7 @@ public class ActorAI_Logic : MonoBehaviour
         if (gameObject.GetComponent<Rigidbody>() == null) StartCoroutine(I_TurnInterpolate());
         else if (gameObject.GetComponent<Rigidbody>()?.isKinematic == true) StartCoroutine(I_TurnInterpolate());
 
+        StartCoroutine(ContinueUpdateAI());
     }
 
     protected virtual void OnEnable()
@@ -224,6 +296,26 @@ public class ActorAI_Logic : MonoBehaviour
         yield return new WaitForEndOfFrame(); //This hack delays the execution until the mesh is created
         NavAgent.enabled = true;
     }
+
+    /// <summary>
+    /// The main AI loop. Invokes UpdateAI method for subclassing impl of state machine.
+    /// </summary>
+    private IEnumerator ContinueUpdateAI() 
+    {
+        while(true)
+        {
+            UpdateAI();
+            yield return new WaitForSeconds(_RoutineSleepDuration);
+        }
+    }
+    /// <summary>
+    /// This is the base method is where AI Logic updates should be placed.
+    /// </summary>
+    /// <remarks>
+    /// <para> Write an override function for this method! </para>
+    /// <para> Recommended: Hook up a switch statement to the current state and then dispatch to helper methods. </para>
+    /// </remarks>
+    protected virtual void UpdateAI() { }
 
     #endregion
 
@@ -326,6 +418,10 @@ public class ActorAI_Logic : MonoBehaviour
         if (FLAG_Debug)
         {
             Debug.DrawRay(transform.position + new Vector3(0, .5f, 0), v_desiredVelocity, Color.white, Time.fixedDeltaTime);
+            if(CurrentTarget != null)
+            {
+                Debug.DrawRay(CurrentTarget.transform.position + new Vector3(0, 2f, 0), Vector3.up * 4f, Color.red, Time.fixedDeltaTime);
+            }
         }
 
         //end goal, the NavAgent's desired movement is respected more as we get closer to target
@@ -562,7 +658,7 @@ public class ActorAI_Logic : MonoBehaviour
     {
         if (FLAG_Debug)
         {
-            Debug.Log("State Start: " + stateToStart.ToString());
+            Debug.Log("State Begin: " + stateToStart.ToString());
         }
     }
 

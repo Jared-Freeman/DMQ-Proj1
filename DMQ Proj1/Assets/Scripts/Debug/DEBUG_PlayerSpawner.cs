@@ -71,7 +71,7 @@ public class DEBUG_PlayerSpawner : MonoBehaviour
         if (ForceUseSpawnQueue || r.Info._CurrentClassPreset == null)
         {
             g = ClassSpawnQueue[_CurrentClassSpawnIndex]?.InstantiatePlayerActor();
-            _CurrentClassSpawnIndex = _CurrentClassSpawnIndex + 1 % ClassSpawnQueue.Count;
+            _CurrentClassSpawnIndex += 1 % ClassSpawnQueue.Count;
 
             if (g != null)
             {

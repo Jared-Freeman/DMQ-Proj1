@@ -167,7 +167,7 @@ namespace EffectTree
             None, _InitialDirection, _TargetDirection
                 , CollisionNormal, CollisionNormal2D
                 , CollisionReflected, CollisionReflected2D
-                , FromInitialToTarget
+                , FromInitialToTarget, FromCasterToTarget
         }
         /// <summary>
         /// Options for obtaining a position vector from the Context
@@ -285,7 +285,14 @@ namespace EffectTree
                
                 case FacingOptions.CollisionReflected2D:
                     return ContextData._ReflectionVector2D;
-                
+
+                case FacingOptions.FromCasterToTarget:
+                    if(AttackData._Owner != null && AttackData._TargetGameObject != null)
+                    {
+                        return (AttackData._Owner.transform.position - AttackData._TargetGameObject.transform.position).normalized;
+                    }
+                    return zeroVector;
+
                 case FacingOptions.FromInitialToTarget:
                     if(AttackData._InitialGameObject != null && AttackData._TargetGameObject != null)
                     {
@@ -294,8 +301,7 @@ namespace EffectTree
                     return zeroVector;
 
                 default:
-                    Debug.LogError("No direction found for FacingOption specified! Does a direction exist?");
-                    return zeroVector;
+                    throw new System.Exception("No direction found for FacingOption specified! Does an implementation exist?");
             }
         }
 
@@ -348,10 +354,8 @@ namespace EffectTree
                     return false;
 
                 default:
-                    Debug.LogError("Context did not interpret the PositionOption! Does an impl exist?");
-                    break;
+                    throw new System.Exception("Context did not interpret the PositionOption! Does an impl exist?");
             }
-            return false;
         }
 
         /// <summary>
@@ -376,11 +380,8 @@ namespace EffectTree
                     return AttackData._TargetGameObject;
 
                 default:
-                    Debug.LogError("Context did not interpret the TargetOption! Does an impl exist?");
-                    break;
+                    throw new System.Exception("Context did not interpret the TargetOption! Does an impl exist?");
             }
-
-            return null;
         }
 
         #endregion

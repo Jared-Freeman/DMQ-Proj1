@@ -9,7 +9,7 @@ using TMPro;
 public class UIPlayerPanel : MonoBehaviour
 {
     public List<SpriteRenderer> ListRenderers = new List<SpriteRenderer>();
-    public List<GameObject> ListWeaponSlots = new List<GameObject>();
+    public List<GameObject> ListWeaponSlots { get; set; }  = new List<GameObject>();
     public int activeWeaponIndex = 0;
     public int currentWeaponCount = 0;
     public CanvasRenderer _Renderer;

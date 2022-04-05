@@ -36,6 +36,8 @@ public class AIMover : MonoBehaviour
     [Header("If you dont know what this is, don't mess with it!")]
     public float VelocityDecay_tParam = .08f;
 
+    public bool FLAG_DEBUG = false;
+
     public NavMeshAgent Agent { get; protected set; }
     public Rigidbody RB { get; protected set; }
     public ActorAI_Logic Logic { get; protected set; }
@@ -91,7 +93,11 @@ public class AIMover : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-        if (!Logic.CanMove) return;
+        if (!Logic.CanMove)
+        {
+            Agent.nextPosition = RB.position; //Update the NavmeshAgent's internal simulation
+            return;
+        }
 
         //ignore friction contribution to external
         _ExternalContribution = new Vector3(RB.velocity.x, 0, RB.velocity.z) - _DesiredVelocityLastFixedUpdate_Normalized * Time.fixedDeltaTime;
@@ -117,7 +123,10 @@ public class AIMover : MonoBehaviour
             //currently the desired velocity polling rate is lower than fixed update... Could be causing issues at lower values
             //Utils.Physics.PerformFixedContinuousMovement(ref RB, _CurDesiredVelocity, ref Options);
             RB.AddForce((_CurDesiredVelocity - RB.velocity) * RB.mass / Time.fixedDeltaTime, ForceMode.Force);
-            Debug.DrawRay(transform.position, _CurDesiredVelocity, Color.green, Time.fixedDeltaTime);
+
+#if UNITY_EDITOR
+            if(FLAG_DEBUG) Debug.DrawRay(transform.position, _CurDesiredVelocity, Color.green, Time.fixedDeltaTime);
+#endif
 
         }
 
@@ -138,10 +147,4 @@ public class AIMover : MonoBehaviour
 
         _CurDesiredVelocity = t * vector + (1 - t) * _DesiredVelocityLastFixedUpdate_Normalized * Time.fixedDeltaTime;
     }
-
-    //void OnCollisionEnter(Collision c)
-    //{
-    //    Debug.DrawRay(transform.position, -c.impulse * 2f, Color.black, 2);
-    //}
-
 }

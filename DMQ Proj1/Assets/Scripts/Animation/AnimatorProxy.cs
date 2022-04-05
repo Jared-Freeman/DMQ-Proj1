@@ -19,31 +19,39 @@ public class AnimatorProxy : MonoBehaviour
         public Vector3 scale;
     }
 
-    void Awake()
+    protected virtual void Awake()
     {
-        animator = gameObject.GetComponent<Animator>();
-        if (!animator)
-            Debug.Log(gameObject.name + " has no animator");
-        actor = gameObject.GetComponent<Actor>();
-        if (!animator)
-            Debug.Log(gameObject.name + " has no actor");
+        animator = GetComponent<Animator>();
+        actor = GetComponent<Actor>();
+
+
+        if (!Utils.Testing.ReferenceIsValid(animator)) Destroy(this);
+        if (!Utils.Testing.ReferenceIsValid(actor)) Destroy(this);
 
 
         animator.fireEvents = false;
     }
 
-    void Start()
+    protected virtual void Start()
     {
         EventSubscribe();
-
     }
-    void Update()
+
+    protected virtual void Update()
     {
+        if(animator == null) { Debug.LogError("???"); return; }
+
         if (animator.GetCurrentAnimatorStateInfo(0).tagHash == Animator.StringToHash("lastStrike"))
         {
             animator.ResetTrigger("AttackTrigger");
         }
     }
+
+    protected virtual void OnDestroy()
+    {
+        EventUnsubscribe();
+    }
+
     protected virtual void EventSubscribe()
     {
         //Movement updates

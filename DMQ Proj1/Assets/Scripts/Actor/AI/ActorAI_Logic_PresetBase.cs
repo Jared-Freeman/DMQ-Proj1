@@ -71,6 +71,7 @@ namespace ActorSystem.AI
             public float TurningRate = 240;
 
             //should these still be here???
+            public bool UseGrowCurve = false;
             public AnimationCurve GrowCurve;
             public float GrowDuration = 1;
 
