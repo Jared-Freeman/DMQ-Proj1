@@ -395,6 +395,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1934592889878569861}
   - component: {fileID: 1934592889889911487}
+  - component: {fileID: 1319232653764033410}
   m_Layer: 31
   m_Name: Ent_body
   m_TagString: Untagged
@@ -434,8 +435,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 08fdbb96c7363ca439d1302c23aae5ea, type: 2}
-  - {fileID: 2100000, guid: a7c89a2d8d16ae94c85b7104ff79e3bd, type: 2}
+  - {fileID: 2100000, guid: ff6460b5d0bfc9343852e3d35d914828, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -502,6 +502,25 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.0028905869, y: 0.63109815, z: -1.2682065}
     m_Extent: {x: 2.0255985, y: 0.48097482, z: 1.3557702}
   m_DirtyAABB: 0
+--- !u!114 &1319232653764033410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934592889878413221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e4ed3735742a2d4288795944d92fe35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _Renderer: {fileID: 0}
+  _DissolveMaterialIndex: 0
+  _ColliderBoundsReference: {fileID: 1171024737}
+  _ColliderBounds_Add: 0.75
+  _TimeDissolveStart: 1
+  _TimeDissolveEnd: 17.5
+  yCurrent: 0
 --- !u!1 &1934592889878413223
 GameObject:
   m_ObjectHideFlags: 0
@@ -636,7 +655,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33b0cbe41f5564c4d9db8fc358d04d68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Duration: 15
+  Duration: 20
 --- !u!1 &1934592889878413229
 GameObject:
   m_ObjectHideFlags: 0
