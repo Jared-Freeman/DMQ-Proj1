@@ -1595,7 +1595,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6414490692924283609
 Transform:
   m_ObjectHideFlags: 0
@@ -1733,8 +1733,8 @@ SkinnedMeshRenderer:
   m_BlendShapeWeights: []
   m_RootBone: {fileID: 6414490692924283593}
   m_AABB:
-    m_Center: {x: 0, y: 0.9610782, z: -0.14268637}
-    m_Extent: {x: 0.24535877, y: 0.54195136, z: 0.08111587}
+    m_Center: {x: 0, y: 1.8866926, z: -0.28010762}
+    m_Extent: {x: 0.4816638, y: 1.0639046, z: 0.15923858}
   m_DirtyAABB: 0
 --- !u!183 &6020980363898738230
 Cloth:
@@ -14346,8 +14346,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Flag_ActorDebug: 1
   _Team: {fileID: 11400000, guid: 414bc1b9b54c2a143a4a2a46d2db0034, type: 2}
-  Stats: {fileID: 0}
-  Actions: []
   Class: {fileID: 11400000, guid: a13f55a44ed79f4488b73600a23246bf, type: 2}
 --- !u!114 &6496603155098922339
 MonoBehaviour:
@@ -14493,7 +14491,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6496603155098922336}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 29ae07898717ffa4992dc191c0bc505d, type: 3}
   m_Name: 
