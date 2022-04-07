@@ -47,13 +47,6 @@ public class FR_Disintegrate2_Automation : MonoBehaviour
         StartCoroutine(I_ContinueDissolve(_TimeDissolveStart, _TimeDissolveEnd));
     }
 
-    //void Update()
-    //{
-    //    _MatBlock.SetFloat("_CutoffHeight", yCurrent);
-
-    //    _Renderer.SetPropertyBlock(_MatBlock);
-    //}
-
     protected IEnumerator I_ContinueDissolve(float startDelay, float endTime)
     {
         float dissolveDuration = endTime - startDelay;
@@ -76,6 +69,7 @@ public class FR_Disintegrate2_Automation : MonoBehaviour
             {
                 yCurrent = _Renderer.bounds.center.y + _Renderer.bounds.extents.y;
             }
+            //-y current is lowest point in AABB, 2*yCurrent is the height. We take a percentage of height based on time to parameterize the dissolve y
             _MatBlock.SetFloat("_CutoffHeight", -yCurrent + 2 * yCurrent * (1 - elapsedTime / dissolveDuration));
             _Renderer.SetPropertyBlock(_MatBlock);
 
