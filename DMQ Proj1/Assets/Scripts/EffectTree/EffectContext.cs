@@ -255,54 +255,70 @@ namespace EffectTree
         /// Utility for getting a direction from the context using an option interface
         /// </summary>
         /// <param name="option">Choice of direction</param>
+        /// <param name="flip">Reverse the return direction. Default false</param>
         /// <returns>The specified Direction or zero, if none exists</returns>
         /// <remarks>
         /// Results may not be normalized. Check for Vector3.zero to see if this operation failed.
         /// </remarks>
-        public Vector3 RetrieveDirectionVector(FacingOptions option)
+        public Vector3 RetrieveDirectionVector(FacingOptions option, bool flip = false)
         {
-            Vector3 zeroVector = Vector3.zero;
+            Vector3 returnVector = Vector3.zero;
 
             switch(option)
             {
                 case FacingOptions.None:
-                    return zeroVector;
+                    return returnVector;
 
                 case FacingOptions._InitialDirection:
-                    return AttackData._InitialDirection;
+                    returnVector = AttackData._InitialDirection;
+                    break;
 
                 case FacingOptions._TargetDirection:
-                    return AttackData._TargetDirection;
-                
+                    returnVector = AttackData._TargetDirection;
+                    break;
+
                 case FacingOptions.CollisionNormal:
-                    return ContextData._NormalVector;
-                
+                    returnVector = ContextData._NormalVector;
+                    break;
+
                 case FacingOptions.CollisionNormal2D:
-                    return ContextData._NormalVector2D;
-                
+                    returnVector = ContextData._NormalVector2D;
+                    break;
+
                 case FacingOptions.CollisionReflected:
-                    return ContextData._ReflectionVector;
-               
+                    returnVector = ContextData._ReflectionVector;
+                    break;
+
                 case FacingOptions.CollisionReflected2D:
-                    return ContextData._ReflectionVector2D;
+                    returnVector = ContextData._ReflectionVector2D;
+                    break;
 
                 case FacingOptions.FromCasterToTarget:
                     if(AttackData._Owner != null && AttackData._TargetGameObject != null)
                     {
-                        return (AttackData._Owner.transform.position - AttackData._TargetGameObject.transform.position).normalized;
+                        returnVector = (AttackData._TargetGameObject.transform.position - AttackData._Owner.transform.position).normalized;
                     }
-                    return zeroVector;
+                    else return returnVector;
+                    break;
 
                 case FacingOptions.FromInitialToTarget:
                     if(AttackData._InitialGameObject != null && AttackData._TargetGameObject != null)
                     {
-                        return (AttackData._InitialGameObject.transform.position - AttackData._TargetGameObject.transform.position).normalized;
+                        returnVector = (AttackData._TargetGameObject.transform.position - AttackData._InitialGameObject.transform.position).normalized;
                     }
-                    return zeroVector;
+                    else return returnVector;
+                    break;
 
                 default:
                     throw new System.Exception("No direction found for FacingOption specified! Does an implementation exist?");
             }
+
+            if(flip == true)
+            {
+                returnVector *= -1;
+            }
+
+            return returnVector;
         }
 
         /// <summary>

@@ -17,6 +17,7 @@ namespace EffectTree
         /// How the direction is inferred from EffectContext
         /// </summary>
         public EffectContext.FacingOptions Direction = EffectContext.FacingOptions._InitialDirection;
+        public bool FlipDirection = false;
         public enum ImpulseTargetStyles { FromCasterToTarget, ctxInitialDirection, ctxTargetDirection }
         public enum ImpulseForceStyles { Speed, ImpulseForce, ImpulseForceScaledByMass, UseSpeedByMassCurve }
 
@@ -83,7 +84,7 @@ namespace EffectTree
                 }
 
                 Vector3 forceDir = Vector3.zero;
-                forceDir = ctx.RetrieveDirectionVector(Direction);
+                forceDir = ctx.RetrieveDirectionVector(Direction, FlipDirection);
 
                 if (forceDir.sqrMagnitude <= 0) return false;
                 
