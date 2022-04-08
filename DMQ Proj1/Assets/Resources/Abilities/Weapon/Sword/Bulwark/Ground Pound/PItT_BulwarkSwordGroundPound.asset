@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af92f8f596fddad43baa2fa88a379d85, type: 3}
-  m_Name: PItT_BulwarkSwordBasic
+  m_Name: PItT_BulwarkSwordGroundPound
   m_EditorClassIdentifier: 
   Conditions:
     _Conditions: []
   Target: 2
-  Direction: 1
+  Direction: 8
   FlipDirection: 0
   SpeedByMassCurve:
     serializedVersion: 2
@@ -28,24 +28,15 @@ MonoBehaviour:
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.07448424
+      outWeight: 0.09356783
     - serializedVersion: 3
-      time: 16.5
-      value: 1
+      time: 60
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 75
-      value: 0
-      inSlope: -0.00082367874
-      outSlope: -0.00082367874
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.049057107
+      inWeight: 0.039785385
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -54,9 +45,9 @@ MonoBehaviour:
   Options:
     TargetActorsOnly: 0
     DontTargetActors: 0
-    Amount: 14.5
+    Amount: 30
     TargetFilters:
       Enemy: 1
       Ally: 0
-      Neutral: 1
+      Neutral: 0
       Self: 0

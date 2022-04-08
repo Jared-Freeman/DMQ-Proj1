@@ -41,8 +41,25 @@ namespace EffectTree
             TargetRB = Target.GetComponent<Rigidbody>();
             if (TargetRB == null) DestroyHelper();
 
+            //remove existing helpers if they exist. This prevents overlap concerns
+            Effect_ActorRigidbodyMove_Helper[] activeHelpers = GetComponents<Effect_ActorRigidbodyMove_Helper>();
+            foreach( var h in activeHelpers)
+            {
+                if(this != h)
+                    Destroy(h);
+            }
+
             StartTime = Time.time;
             StartCoroutine(I_ContinueMovement(Preset.Duration));
+        }
+
+        /// <summary>
+        /// Cleans up helper prior to destruction. Includes event dispatch
+        /// </summary>
+        void OnDestroy()
+        {
+            OnMovementComplete?.Invoke(this, new CSEventArgs.Effect_ActorRigidbodyMove_HelperEventArgs(this));
+            StopAllCoroutines();
         }
 
         public IEnumerator I_ContinueMovement(float duration)
@@ -63,7 +80,10 @@ namespace EffectTree
             while (Mathf.Abs(Time.time - StartTime) < duration)
             {
 
-                if (TargetRB == null) DestroyHelper();
+                if (TargetRB == null)
+                {
+                    break;
+                }
 
                 //Yes, this code is disgusting. No, it's not worth the time to debug and polish right now.
 
@@ -116,7 +136,6 @@ namespace EffectTree
         /// </summary>
         protected void DestroyHelper()
         {
-            OnMovementComplete?.Invoke(this, new CSEventArgs.Effect_ActorRigidbodyMove_HelperEventArgs(this));
             Destroy(gameObject);
         }
     }

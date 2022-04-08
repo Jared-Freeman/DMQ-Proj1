@@ -19,7 +19,11 @@ MonoBehaviour:
     CanCancelCast: 0
     Time_PrepareAbil: 0
     Time_CastAbil: 0
+  EffectEvents:
+    Effect_CooldownAvailable: {fileID: 11400000, guid: 9f96069f462d74248bacd3acbe02fbe1,
+      type: 2}
+    Effect_CastWhileOnCooldown: {fileID: 0}
   Conditions:
     _Conditions: []
   IconImage: {fileID: 0}
-  Effect: {fileID: 0}
+  Effect: {fileID: 11400000, guid: d95b3456e35fdee459e4b9cb004b4ef5, type: 2}
