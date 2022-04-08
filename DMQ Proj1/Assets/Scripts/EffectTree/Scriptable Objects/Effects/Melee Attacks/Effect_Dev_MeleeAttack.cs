@@ -57,9 +57,9 @@ namespace EffectTree
             if (base.Invoke(ref ctx))
             {
                 Actor attackingActor = ctx.AttackData._Owner.gameObject.GetComponent<Actor>();
-                if(attackingActor)
+                if(attackingActor != null)
                 {
-                    OnMeleeAttack.Invoke(this, new MeleeAttackEventArgs(attackingActor));
+                    OnMeleeAttack?.Invoke(this, new MeleeAttackEventArgs(attackingActor));
                 }
 
                 //Instantiate a melee event object
@@ -85,6 +85,9 @@ namespace EffectTree
                     Mover_MatchTransformPosition mtp = w.AddComponent<Mover_MatchTransformPosition>();
 
                     mtp.ReferenceTransform = ctx.AttackData._Owner.gameObject.transform;
+
+                    mtp.transform.forward = direction;
+                    mtp.RelativeOffset.x = Distance; //TODO: infer more info besides just this?
 
                     //w.transform.parent = ctx.AttackData._Owner.gameObject.transform;
                 }

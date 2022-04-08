@@ -7,10 +7,33 @@ using AbilitySystem;
 using Utils;
 using EffectTree;
 
+
+namespace ItemSystem.Weapons
+{
+    public class Item_Weapon_ClassSpecific_EventArgs : System.EventArgs
+    {
+        public Item_Weapon_ClassSpecific _Weapon;
+
+        public Item_Weapon_ClassSpecific_EventArgs(Item_Weapon_ClassSpecific weapon)
+        {
+            _Weapon = weapon;
+        }
+    }
+
+}
+
 namespace ItemSystem.Weapons
 {
     public class Item_Weapon_ClassSpecific : Item_WeaponBase
     {
+        #region Events
+
+        public static event System.EventHandler<Item_Weapon_ClassSpecific_EventArgs> OnAbility1Invoked;
+        public static event System.EventHandler<Item_Weapon_ClassSpecific_EventArgs> OnAbility2Invoked;
+        public static event System.EventHandler<Item_Weapon_ClassSpecific_EventArgs> OnAbilityBasicAttackInvoked;
+
+        #endregion
+
         #region Members
 
         protected ItemWeapClassSpecific_StateInfo IWCS_StateInfo;
@@ -49,6 +72,20 @@ namespace ItemSystem.Weapons
         public override bool CanAbility2
         {
             get => IWCS_StateInfo.CurrentAbility_2.CanCastAbility;
+        }
+        /// <summary>
+        /// Class of player that currently owns this weapon instance. Can be null
+        /// </summary>
+        public ClassSystem.CharacterClass CurrentClass
+        {
+            get => IWCS_StateInfo.CurrentClass;
+        }
+        /// <summary>
+        /// Player that currently owns this weapon instance. Can be null
+        /// </summary>
+        public Actor_Player CurrentPlayer
+        {
+            get => IWCS_StateInfo.CurrentPlayer;
         }
 
         //for internal convenience
@@ -186,6 +223,8 @@ namespace ItemSystem.Weapons
 
                 EffectContext ec = new EffectContext(ctx);
 
+                OnAbilityBasicAttackInvoked?.Invoke(this, new Item_Weapon_ClassSpecific_EventArgs(this));
+
                 return IWCS_StateInfo.CurrentBasicAttack.ExecuteAbility(ref ec);
             }
             return false;
@@ -199,6 +238,8 @@ namespace ItemSystem.Weapons
 
                 EffectTree.EffectContext ec = new EffectTree.EffectContext(ctx);
 
+                OnAbility1Invoked?.Invoke(this, new Item_Weapon_ClassSpecific_EventArgs(this));
+
                 return (IWCS_StateInfo.CurrentAbility_1.ExecuteAbility(ref ec));
             }
             return false;
@@ -211,6 +252,8 @@ namespace ItemSystem.Weapons
                 if (IWCS_StateInfo.CurrentAbility_2 == null) return false;
 
                 EffectTree.EffectContext ec = new EffectTree.EffectContext(ctx);
+
+                OnAbility2Invoked?.Invoke(this, new Item_Weapon_ClassSpecific_EventArgs(this));
 
                 return (IWCS_StateInfo.CurrentAbility_2.ExecuteAbility(ref ec));
             }

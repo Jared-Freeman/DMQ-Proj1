@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: A_BulwarkSwordBasic
   m_EditorClassIdentifier: 
   Cooldown:
-    _Cooldown: 1
+    _Cooldown: 0.6125
   CastSettings:
     CanMoveWhileCasting: 0
     CanCancelCast: 0
     Time_PrepareAbil: 0
     Time_CastAbil: 0
+  EffectEvents:
+    Effect_CooldownAvailable: {fileID: 0}
+    Effect_CastWhileOnCooldown: {fileID: 0}
   Conditions:
     _Conditions: []
   IconImage: {fileID: 0}

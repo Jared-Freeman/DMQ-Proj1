@@ -24,30 +24,41 @@ public class DamageNumberEventHandler : MonoBehaviour
         ActorStats.OnHealingReceived += ActorStats_OnHealingReceived;
     }
 
-    private void ActorStats_OnHealingReceived(object sender, ActorSystem.EventArgs.ActorHealingReceivedEventArgs e)
+    protected void GenerateDamageProjectile(string message, Vector3 position, Color color)
     {
-        string textMessage = e._Modifiers.HP.Modifier.Add.ToString();
 
-        var bubble = Text_Bubble.CreateTemporaryTextBubble(textMessage, Preset.TextDurationMax, null, Preset.ColorHealing);
-
-        Vector3 bPos = e._Actor.transform.position;
-        bPos.y += 5f;
-
-        bubble.gameObject.transform.position = bPos;
-
-        bubble.text_mesh_pro.fontSize = Preset.FontSizeMax;
-
-        var instProjectile = CreateProjectileInstanceFromPrefab(bPos);
+        var instProjectile = CreateProjectileInstanceFromPrefab(position);
 
         if (instProjectile != null)
         {
+            var bubble = Text_Bubble.CreateTemporaryTextBubble(message, Preset.TextDurationMax, instProjectile.gameObject, color);
+
+            //bubble.gameObject.transform.position = new Vector3(0, 0, 0);
+
+            bubble.text_mesh_pro.fontSize = Preset.FontSizeMax;
+
             var rectTransform = bubble.transform as RectTransform;
             if (rectTransform != null)
             {
                 bubble.transform.SetParent(instProjectile.gameObject.transform, false);
+                //rectTransform.anchoredPosition3D = new Vector3(0, 0, 0);
             }
-            else bubble.transform.parent = instProjectile.gameObject.transform;
+            else
+            {
+                bubble.transform.parent = instProjectile.gameObject.transform;
+            }
+            bubble.transform.localPosition = new Vector3(0, 0, 0);
         }
+    }
+
+    private void ActorStats_OnHealingReceived(object sender, ActorSystem.EventArgs.ActorHealingReceivedEventArgs e)
+    {
+        string textMessage = e._Modifiers.HP.Modifier.Add.ToString();
+
+        Vector3 bPos = e._Actor.transform.position;
+        bPos.y += 5f;
+
+        GenerateDamageProjectile(textMessage, bPos, Preset.ColorHealing);
     }
 
 
@@ -55,26 +66,10 @@ public class DamageNumberEventHandler : MonoBehaviour
     {
         string textMessage = e._DamageMessage._DamageInfo.DamageAmount.ToString();
 
-        var bubble = Text_Bubble.CreateTemporaryTextBubble(textMessage, Preset.TextDurationMax, null, Preset.ColorDamage);
-
         Vector3 bPos = e._Actor.transform.position;
         bPos.y += 5f;
 
-        bubble.gameObject.transform.position = bPos;
-
-        bubble.text_mesh_pro.fontSize = Preset.FontSizeMax;
-
-        var instProjectile = CreateProjectileInstanceFromPrefab(bPos);
-
-        if (instProjectile != null)
-        {
-            var rectTransform = bubble.transform as RectTransform;
-            if (rectTransform != null)
-            {
-                bubble.transform.SetParent(instProjectile.gameObject.transform, false);
-            }
-            else bubble.transform.parent = instProjectile.gameObject.transform;
-        }
+        GenerateDamageProjectile(textMessage, bPos, Preset.ColorDamage);
     }
     protected GenericProjectile CreateProjectileInstanceFromPrefab(Vector3 initialPosition)
     {
