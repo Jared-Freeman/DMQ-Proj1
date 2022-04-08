@@ -95,6 +95,9 @@ GameObject:
   - component: {fileID: 4650027939226017335}
   - component: {fileID: 4650027939226017337}
   - component: {fileID: 8907754425360345485}
+  - component: {fileID: 1702727598820037912}
+  - component: {fileID: 3332344178913406884}
+  - component: {fileID: 2385466937522334709}
   m_Layer: 12
   m_Name: Actor Dummy
   m_TagString: Untagged
@@ -110,7 +113,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4650027939226017339}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4650027938916785101}
@@ -147,13 +150,13 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4650027939226017339}
   serializedVersion: 2
-  m_Mass: 10
-  m_Drag: 0
+  m_Mass: 15
+  m_Drag: 0.5
   m_AngularDrag: 0
-  m_UseGravity: 1
-  m_IsKinematic: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 116
+  m_Constraints: 84
   m_CollisionDetection: 0
 --- !u!136 &4650027939226017332
 CapsuleCollider:
@@ -162,13 +165,13 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4650027939226017339}
-  m_Material: {fileID: 13400000, guid: 7f3046a74a68a9c40830383c83d77c60, type: 2}
+  m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.45
   m_Height: 2
   m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 1.05, z: 0}
 --- !u!114 &4650027939226017335
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,7 +185,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FLAG_Debug: 0
-  Preset: {fileID: 11400000, guid: 714096e6b0a1ff5438bb50f0cf5b10df, type: 2}
+  Preset: {fileID: 11400000, guid: 642ad71fb4438b941a2e40acfdae8e98, type: 2}
   InitialStatusEffects: []
   _ListStatusEffects: []
   m_timeSinceLastHit: 0
@@ -232,8 +235,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Flag_ActorDebug: 0
   _Team: {fileID: 11400000, guid: 01f82bdc72b2c5c4aa8ec5c7ec4188ba, type: 2}
-  Stats: {fileID: 4650027939226017335}
-  Actions: []
+--- !u!114 &1702727598820037912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4650027939226017339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba43020ced6708040b6e95e4725cf605, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Flag_ActorDebug: 0
+  _Team: {fileID: 0}
+  Ragdoll: {fileID: 0}
+--- !u!114 &3332344178913406884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4650027939226017339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10dae449449a96a4eb8694f980213840, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FLAG_Debug: 1
+  _Preset: {fileID: 11400000, guid: 6fe2e1a619608f4489072de6aa21e8b9, type: 2}
+  _FlockingPreset: {fileID: 11400000, guid: 8f16af81bcd70194ab1b238d7b51e0ea, type: 2}
+  CurrentState: 0
+--- !u!114 &2385466937522334709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4650027939226017339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b02aca0fc6ddd48a0578f35027ce12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  VelocityDecay_tParam: 0.08
+  FLAG_DEBUG: 0
 --- !u!1 &8783302764813390964
 GameObject:
   m_ObjectHideFlags: 0
