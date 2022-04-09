@@ -319,6 +319,15 @@ public class ActorAI_Logic : MonoBehaviour
 
     #endregion
 
+    #region Destroy
+
+    protected void OnDestroy()
+    {
+        Destroy(Info.PersonalWaypoint);
+    }
+
+    #endregion
+
     #region Update
 
     /// <summary>
