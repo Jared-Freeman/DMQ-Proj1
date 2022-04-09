@@ -14,6 +14,8 @@ namespace EffectTree
         public float Duration;
         public float Period;
 
+        public bool UpdateContextDuringPersistentEffect = false;
+
         public List<Effect_Base> List_StartEffects = new List<Effect_Base>();
         public List<Effect_Base> List_PeriodicEffects = new List<Effect_Base>();
         public List<Effect_Base> List_DestroyEffects = new List<Effect_Base>();
