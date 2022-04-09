@@ -27,12 +27,17 @@ namespace EffectTree
 
         //assigned by Effect
         public Effect_ActorRigidbodyMove Preset;
-        public EffectContext Context;
+        public Vector3 Direction;
         public Actor Target;
 
         //assigned by self
         protected Rigidbody TargetRB;
         protected float StartTime;
+
+        void Awake()
+        {
+            Direction = Vector3.zero; //just in case
+        }
 
         void Start()
         {
@@ -51,6 +56,9 @@ namespace EffectTree
 
             StartTime = Time.time;
             StartCoroutine(I_ContinueMovement(Preset.Duration));
+
+            if (Direction.sqrMagnitude > 0) Direction.Normalize();
+            else DestroyHelper();
         }
 
         /// <summary>
@@ -71,7 +79,7 @@ namespace EffectTree
             if(Preset.OverrideCurrentVelocity && TargetRB != null && Mathf.Abs(Time.time - StartTime) < duration)
             {
                 TargetRB.AddForce(
-                    Preset.VelocityScaleCurve.Evaluate((Time.time - StartTime) / duration) * Context.AttackData._InitialDirection.normalized
+                    Preset.VelocityScaleCurve.Evaluate((Time.time - StartTime) / duration) * Direction
                     , ForceMode.VelocityChange
                     );
                 yield return new WaitForFixedUpdate();
@@ -88,9 +96,12 @@ namespace EffectTree
                 //Yes, this code is disgusting. No, it's not worth the time to debug and polish right now.
 
                 Vector3 DesiredVelocityDiff = Vector3.zero;
-                Vector3 DashAddVelocity = Vector3.zero;
+                Vector3 DashAddVelocity;
                 float DashSpeedCoef = Preset.VelocityScaleCurve.Evaluate((Time.time - StartTime) / duration);
-                Vector3 DashDesiredVelocity = Context.AttackData._InitialDirection.normalized * DashSpeedCoef * Preset.VelocityDefault;
+
+
+                Vector3 DashDesiredVelocity = Direction * DashSpeedCoef * Preset.VelocityDefault;
+
                 float ForceCoefficient = TargetRB.mass / Time.fixedDeltaTime;
                 Vector3 FilteredRBVelocity = new Vector3(TargetRB.velocity.x, 0, TargetRB.velocity.z);
                 //Filtered velocity represents the maximum velocity we can affect in this timestep (the rigidbody can exceed this by a LOT in normal gameplay)

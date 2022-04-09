@@ -42,7 +42,7 @@ namespace EffectTree
 
             if (ctx.AttackData._InitialGameObject != null)
             {
-                ctx.AttackData._InitialDirection = ctx.AttackData._InitialGameObject.transform.forward;
+                //ctx.AttackData._InitialDirection = ctx.AttackData._InitialGameObject.transform.forward;
                 ctx.AttackData._InitialPosition = ctx.AttackData._InitialGameObject.transform.position;
             }
 

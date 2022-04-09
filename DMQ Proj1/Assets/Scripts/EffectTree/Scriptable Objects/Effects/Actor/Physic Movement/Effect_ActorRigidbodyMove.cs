@@ -45,6 +45,9 @@ namespace EffectTree
     /// <summary>
     /// Adds a movement task to the Actor's Rigidbody, and sends an event
     /// </summary>
+    /// <remarks>
+    /// The helper Component, <see cref="Effect_ActorRigidbodyMove_Helper"/> uses the initial direction to create smooth, interpolated movement over a curve.
+    /// </remarks>
     [CreateAssetMenu(fileName = "ActMove_", menuName = "Effect Tree/Actor/Rigidbody Movement Task", order = 1)]
     public class Effect_ActorRigidbodyMove : Effect_Base
     {
@@ -61,6 +64,8 @@ namespace EffectTree
         public bool OverrideCurrentVelocity = false;
 
         public TargetSelection TargetContext = TargetSelection.EffectTreeOwner;
+
+        public EffectTree.EffectContext.FacingOptions Direction = EffectContext.FacingOptions._InitialDirection;
 
         [Header("A good default is a constant at 1")]
         [Tooltip("The range 0 to 1 is mapped to Duration")]
@@ -96,12 +101,11 @@ namespace EffectTree
                     return false;
                 }
 
-                //pass by VALUE
-                h.Context = new EffectContext(ctx);
-
                 h.Preset = this;
 
-                switch(TargetContext)
+                h.Direction = ctx.RetrieveDirectionVector(Direction);
+
+                switch (TargetContext)
                 {
                     case TargetSelection.EffectTreeOwner:
                         h.Target = ctx.AttackData._Owner;

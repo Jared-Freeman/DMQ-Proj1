@@ -9,10 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e77f0c44579005040820cb10c213cc2b, type: 3}
-  m_Name: SET_BulwarkHeavyFlintlockBasic
+  m_Script: {fileID: 11500000, guid: cab7120c9cf964b4584b7cfddf7c245a, type: 3}
+  m_Name: CPMT_A_BulwarkHeavyFlintlockBasicDelay
   m_EditorClassIdentifier: 
   Conditions:
     _Conditions: []
-  Effects:
-  - {fileID: 11400000, guid: 8ec0fb29a166ed940a2f2b3279b0e01c, type: 2}
+  Duration: 0.3
+  Period: 0
+  List_StartEffects: []
+  List_PeriodicEffects: []
+  List_DestroyEffects:
+  - {fileID: 11400000, guid: c87d74ff11fb0654d915542cd8cb75d2, type: 2}

@@ -307,7 +307,7 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
             _InitialGameObject = gameObject,
 
             _TargetGameObject = null,
-            _TargetDirection = Vector3.zero,
+            _TargetDirection = transform.forward.normalized,
             _TargetPosition = AttackContextInitialPosition.position + aimDir3.normalized * AttackContextInitialPositionForwardOffset,
 
             _Owner = _Actor,

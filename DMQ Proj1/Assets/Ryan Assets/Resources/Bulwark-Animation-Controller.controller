@@ -320,6 +320,9 @@ AnimatorStateMachine:
     second:
     - {fileID: -1573699199113305809}
     - {fileID: -5634796841063752174}
+  - first: {fileID: 8747268205527487654}
+    second:
+    - {fileID: -9222018096446612855}
   - first: {fileID: -2994923509264052063}
     second:
     - {fileID: 1006426802517553429}
@@ -327,9 +330,6 @@ AnimatorStateMachine:
     second:
     - {fileID: -1905978617424383581}
     - {fileID: -5009277206218388032}
-  - first: {fileID: 8747268205527487654}
-    second:
-    - {fileID: -9222018096446612855}
   m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: 220, y: 520, z: 0}
   m_EntryPosition: {x: -100, y: 270, z: 0}
@@ -907,20 +907,20 @@ AnimatorStateMachine:
   m_StateMachineTransitions:
   - first: {fileID: 0}
     second: []
-  - first: {fileID: -5565616625034640962}
-    second:
-    - {fileID: 3314296410058225194}
-    - {fileID: 7608024004149357471}
   - first: {fileID: -4507283336407601389}
     second:
     - {fileID: 7063196659055957089}
     - {fileID: -6036459445501308243}
-  - first: {fileID: 1757783099907878568}
-    second:
-    - {fileID: 7284153266374289325}
   - first: {fileID: 3417981989927212461}
     second:
     - {fileID: 2238336672000611506}
+  - first: {fileID: 1757783099907878568}
+    second:
+    - {fileID: 7284153266374289325}
+  - first: {fileID: -5565616625034640962}
+    second:
+    - {fileID: 3314296410058225194}
+    - {fileID: 7608024004149357471}
   m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: 220, y: 520, z: 0}
   m_EntryPosition: {x: -100, y: 270, z: 0}
@@ -1754,13 +1754,13 @@ AnimatorStateMachine:
   - first: {fileID: -3791425651783760380}
     second:
     - {fileID: -208252657397812484}
+  - first: {fileID: -2416235063657802138}
+    second:
+    - {fileID: 7073388672333665779}
   - first: {fileID: -2456138829649824101}
     second:
     - {fileID: -6103343665028601467}
     - {fileID: -3626518767915788448}
-  - first: {fileID: -2416235063657802138}
-    second:
-    - {fileID: 7073388672333665779}
   m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: 220, y: 520, z: 0}
   m_EntryPosition: {x: -100, y: 270, z: 0}
@@ -2398,6 +2398,13 @@ AnimatorStateMachine:
   m_StateMachineTransitions:
   - first: {fileID: 0}
     second: []
+  - first: {fileID: 1715625444007105938}
+    second:
+    - {fileID: -8779653922980320070}
+    - {fileID: -7203796178090226008}
+  - first: {fileID: 299567555554644510}
+    second:
+    - {fileID: 8005898697301894985}
   - first: {fileID: -4042753083053574673}
     second:
     - {fileID: -9182460638914695602}
@@ -2405,13 +2412,6 @@ AnimatorStateMachine:
     second:
     - {fileID: 1368735147329774811}
     - {fileID: 3852968979998782216}
-  - first: {fileID: 299567555554644510}
-    second:
-    - {fileID: 8005898697301894985}
-  - first: {fileID: 1715625444007105938}
-    second:
-    - {fileID: -8779653922980320070}
-    - {fileID: -7203796178090226008}
   m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: 220, y: 520, z: 0}
   m_EntryPosition: {x: -100, y: 270, z: 0}
@@ -3072,7 +3072,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Shooting-Aiming-Fire-CM 1
-  m_Speed: 1
+  m_Speed: 1.1
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 5323492095370863449}
