@@ -52,6 +52,8 @@ namespace EffectTree
                             Effect.Invoke(ref ecInstance);
                         }
                     }
+
+                    Destroy(go);
                 }
 
                 return true;

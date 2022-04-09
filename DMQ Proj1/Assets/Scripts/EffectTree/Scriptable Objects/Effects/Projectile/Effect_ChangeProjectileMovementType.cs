@@ -17,6 +17,8 @@ namespace EffectTree
         {
             if( base.Invoke(ref ctx))
             {
+                if (ctx.AttackData._InitialGameObject == null) return false;
+
                 GenericProjectile proj = ctx.AttackData._InitialGameObject.GetComponent<GenericProjectile>();
 
                 GenericProjectile.StateInfo newInfo = new GenericProjectile.StateInfo(

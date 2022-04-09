@@ -259,7 +259,7 @@ public class PlayerMovementV3 : MonoBehaviour
     /// </summary>
     void SpecialActionEvent()
     {
-        if(DashAbilityInstance.CanCastAbility)
+        if(DashAbilityInstance.CanCastAbility && FLAG_PlayerMovementEnabled)
         {
             EffectTree.EffectContext ec = new EffectTree.EffectContext();
 

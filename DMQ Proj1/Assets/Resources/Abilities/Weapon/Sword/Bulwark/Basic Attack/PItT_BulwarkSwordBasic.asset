@@ -15,38 +15,48 @@ MonoBehaviour:
   Conditions:
     _Conditions: []
   Target: 2
+  Direction: 1
+  FlipDirection: 0
   SpeedByMassCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 1
-      inSlope: -0.0035661152
-      outSlope: -0.0035661152
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.06401383
+      outWeight: 0.07448424
+    - serializedVersion: 3
+      time: 16.5
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 75
       value: 0
-      inSlope: -0.0021755246
-      outSlope: -0.0021755246
+      inSlope: -0.00082367874
+      outSlope: -0.00082367874
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.015609414
+      inWeight: 0.049057107
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  Direction: 1
   ForceStyle: 3
   Options:
     TargetActorsOnly: 0
     DontTargetActors: 0
-    Amount: 25
+    Amount: 14.5
     TargetFilters:
       Enemy: 1
       Ally: 0
-      Neutral: 0
+      Neutral: 1
       Self: 0

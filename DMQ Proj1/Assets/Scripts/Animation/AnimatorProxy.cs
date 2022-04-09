@@ -58,7 +58,7 @@ public class AnimatorProxy : MonoBehaviour
         PlayerMovementV3.OnVelocityUpdate += PlayerMovementV3_OnVelocityUpdate;
         PlayerMovementV3.OnDash += PlayerMovementV3_OnDash;
         //attack inputs
-        Effect_Dev_MeleeAttack.OnMeleeAttack += Effect_Dev_MeleeAttack_OnMeleeAttack;
+        Item_Weapon_ClassSpecific.OnAbilityBasicAttackInvoked += HandleBasicAttack;
         //Weapon change
         Inventory_Player.OnWeaponChanged += Inventory_Player_OnWeaponChanged;
         //Ability inputs
@@ -74,9 +74,9 @@ public class AnimatorProxy : MonoBehaviour
 
     #region Event Handlers
 
-    private void Effect_Dev_MeleeAttack_OnMeleeAttack(object sender, MeleeAttackEventArgs e)
+    private void HandleBasicAttack(object sender, ItemSystem.Weapons.Item_Weapon_ClassSpecific_EventArgs e)
     {
-        if(e.actor == actor)
+        if(e._Weapon.CurrentPlayer == actor)
         {
             animator.SetTrigger("AttackTrigger");
         }
