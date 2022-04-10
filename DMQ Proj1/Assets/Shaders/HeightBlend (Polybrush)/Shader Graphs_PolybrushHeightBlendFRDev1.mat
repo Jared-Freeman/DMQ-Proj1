@@ -49,7 +49,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _GreenDiffuse:
-        m_Texture: {fileID: 2800000, guid: 1df4e90615c27e5408537bb30aa645bb, type: 3}
+        m_Texture: {fileID: 2800000, guid: debba27f46061e24aa20b44ffba63c36, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _GreenNormal:
@@ -66,16 +66,17 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _BaseStrength: 0.36
-    - _BaseTile: 16
-    - _BlendAmount: 9.72
-    - _BlendCutoffThreshold: 0.9
+    - _BaseTile: 64
+    - _BlendAmount: 16
+    - _BlendCutoffStart: 0.044
+    - _BlendCutoffThreshold: 1
     - _BlueStrength: 1
-    - _BlueTile: 16
+    - _BlueTile: 64
     - _GreenStrength: 1
-    - _GreenTile: 16
-    - _RedStrength: 1
-    - _RedTile: 16
-    - _Shine: 0.2
-    - _ShineAmount: 0.32
+    - _GreenTile: 30.75
+    - _RedStrength: 0.362
+    - _RedTile: 76
+    - _Shine: 1
+    - _ShineAmount: 0.33
     m_Colors:
     - _ShinyTint: {r: 1, g: 1, b: 1, a: 0}
