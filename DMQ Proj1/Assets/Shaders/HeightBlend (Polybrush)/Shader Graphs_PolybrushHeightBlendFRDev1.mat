@@ -33,7 +33,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BlendBlueHeight:
-        m_Texture: {fileID: 2800000, guid: ef14843bb6672e14fa7848d3a8e0b567, type: 3}
+        m_Texture: {fileID: 2800000, guid: e507e2d9db2b94242902305afc737cc6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BlendGreenHeight:
@@ -69,12 +69,13 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _BaseHeightPrescaling: 0.025
-    - _BaseStrength: 0.36
+    - _BaseHeightPrescaling: -42.83
+    - _BaseStrength: 1
     - _BaseTile: 64
-    - _BlendAmount: 16
+    - _BlendAmount: 3.26
     - _BlendCutoffStart: 0
     - _BlendCutoffThreshold: 1
+    - _BlendThreshold: 0
     - _BlueStrength: 1
     - _BlueTile: 128
     - _GreenStrength: 1
