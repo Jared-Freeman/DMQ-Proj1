@@ -97,6 +97,8 @@ public class PlayerMovementV3_DashTrail : MonoBehaviour
             {
                 List_ParticleSystems.Add(CurrentParticleTrail);
 
+                go.transform.position = DashTrailPositionReference.transform.position;
+
                 CurrentParticleTrail.Play();
             }
         }
