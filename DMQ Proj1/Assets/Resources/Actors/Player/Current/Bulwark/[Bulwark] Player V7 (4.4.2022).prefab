@@ -14184,6 +14184,7 @@ GameObject:
   - component: {fileID: 5870394434936012515}
   - component: {fileID: 7089368550907685885}
   - component: {fileID: 3146562299758118315}
+  - component: {fileID: 8251407183355147346}
   m_Layer: 10
   m_Name: '[Bulwark] Player V7 (4.4.2022)'
   m_TagString: Player
@@ -14498,6 +14499,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HealthbarPrefab: {fileID: 4948436434746443024, guid: 89320e8571954c34c99913bba9ab3cca,
     type: 3}
+--- !u!114 &8251407183355147346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6496603155098922336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb221fedf2e9bbe4aabfb63b81ce41ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Preset: {fileID: 11400000, guid: 8c47d57a8acac9d4c81ee7f72f65951a, type: 2}
+  DashTrailPositionReference: {fileID: 6496603155819879852}
 --- !u!1 &6496603155120972374
 GameObject:
   m_ObjectHideFlags: 0

@@ -2144,6 +2144,7 @@ GameObject:
   - component: {fileID: 5506670488072240316}
   - component: {fileID: 9186837611183597986}
   - component: {fileID: 3942513060104521716}
+  - component: {fileID: 9079612025971005886}
   m_Layer: 10
   m_Name: '[Interdictor] Player V7 (4-04-2022)'
   m_TagString: Player
@@ -2458,6 +2459,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HealthbarPrefab: {fileID: 4948436434746443024, guid: 89320e8571954c34c99913bba9ab3cca,
     type: 3}
+--- !u!114 &9079612025971005886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5130964635989323583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb221fedf2e9bbe4aabfb63b81ce41ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Preset: {fileID: 11400000, guid: 8c47d57a8acac9d4c81ee7f72f65951a, type: 2}
+  DashTrailPositionReference: {fileID: 5130964635871420403}
 --- !u!1 &5130964636059911821
 GameObject:
   m_ObjectHideFlags: 0

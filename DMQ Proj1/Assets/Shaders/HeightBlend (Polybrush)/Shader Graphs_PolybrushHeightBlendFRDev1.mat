@@ -21,7 +21,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseDiffuse:
-        m_Texture: {fileID: 2800000, guid: c3d429c72569ab6478c8c20304e8e0fb, type: 3}
+        m_Texture: {fileID: 2800000, guid: 3930f6c09e0b6d54cb82c8e8507ed48c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseNormal:
@@ -29,7 +29,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BlendBlueHeight:
-        m_Texture: {fileID: 2800000, guid: 98153029e99f2194eab499d3ea38cbc1, type: 3}
+        m_Texture: {fileID: 2800000, guid: ef14843bb6672e14fa7848d3a8e0b567, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BlendGreenHeight:
@@ -41,11 +41,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BlueDiffuse:
-        m_Texture: {fileID: 2800000, guid: 245e08755b794834fa8429f1c82eb835, type: 3}
+        m_Texture: {fileID: 2800000, guid: d0d0678d070bd974682f7ad8c22a68b4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BlueNormal:
-        m_Texture: {fileID: 2800000, guid: 7d4d189e4ab27dc4ba0c6c264f1d3849, type: 3}
+        m_Texture: {fileID: 2800000, guid: fd5a9010b9a956048b73889ecb49666a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _GreenDiffuse:
@@ -57,11 +57,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _RedDiffuse:
-        m_Texture: {fileID: 2800000, guid: fd950459b14086d49914c16c29f7ac51, type: 3}
+        m_Texture: {fileID: 2800000, guid: c3d429c72569ab6478c8c20304e8e0fb, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _RedNormal:
-        m_Texture: {fileID: 2800000, guid: 24533fd30a133bb4b85ab42656981ec1, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5806f61243e3cf34d90e9f770bf2bb62, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -71,10 +71,10 @@ Material:
     - _BlendCutoffStart: 0.044
     - _BlendCutoffThreshold: 1
     - _BlueStrength: 1
-    - _BlueTile: 64
+    - _BlueTile: 128
     - _GreenStrength: 1
     - _GreenTile: 30.75
-    - _RedStrength: 0.362
+    - _RedStrength: 1
     - _RedTile: 76
     - _Shine: 1
     - _ShineAmount: 0.33
