@@ -81,7 +81,7 @@ public class Procedural_Prop : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireCube(transform.position + new Vector3(0, VolumeSize / 2, 0), transform.localScale * VolumeSize);
+        Gizmos.DrawWireCube(transform.position + new Vector3(0, (transform.localScale.y * VolumeSize) / 2, 0), transform.localScale * VolumeSize);
 
         //Draw RandomDistance extents icons
         GUIStyle G = new GUIStyle();
