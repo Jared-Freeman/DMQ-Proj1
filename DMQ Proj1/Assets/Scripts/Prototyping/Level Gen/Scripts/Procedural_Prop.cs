@@ -76,12 +76,20 @@ public class Procedural_Prop : MonoBehaviour
 
             go.transform.localScale = modifiedScale;
         }
+
+        //clean up the generator after producing the prop
+        Destroy(gameObject);
     }
 
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireCube(transform.position + new Vector3(0, (transform.localScale.y * VolumeSize) / 2, 0), transform.localScale * VolumeSize);
+        //somewhat hacky solution to better reflect transform mutations to this gameobject
+        Gizmos.matrix = transform.localToWorldMatrix;
+
+        Gizmos.DrawWireCube(/*transform.position + */new Vector3(0, (transform.localScale.y * VolumeSize) / 2, 0), transform.localScale * VolumeSize);
+
+        Gizmos.DrawRay(new Ray(new Vector3(0, transform.localScale.y * VolumeSize * .5f), Vector3.forward));
 
         //Draw RandomDistance extents icons
         GUIStyle G = new GUIStyle();
