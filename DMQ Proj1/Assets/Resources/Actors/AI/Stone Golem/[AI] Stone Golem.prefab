@@ -1878,7 +1878,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FLAG_Debug: 0
-  Preset: {fileID: 11400000, guid: 714096e6b0a1ff5438bb50f0cf5b10df, type: 2}
+  Preset: {fileID: 11400000, guid: 481abe2a5f758f04881d1798d97c1d1e, type: 2}
   InitialStatusEffects: []
   _ListStatusEffects: []
   m_timeSinceLastHit: 0
@@ -1978,6 +1978,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   VelocityDecay_tParam: 0.08
+  FLAG_DEBUG: 0
 --- !u!95 &4638628365580318944
 Animator:
   serializedVersion: 3
@@ -2014,3 +2015,4 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   equippedWeapon: {fileID: 0}
+  weaponLocalTransforms: []
