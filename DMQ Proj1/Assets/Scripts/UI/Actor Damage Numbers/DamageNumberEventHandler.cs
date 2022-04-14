@@ -56,7 +56,7 @@ public class DamageNumberEventHandler : MonoBehaviour
         string textMessage = e._Modifiers.HP.Modifier.Add.ToString();
 
         Vector3 bPos = e._Actor.transform.position;
-        bPos.y += 5f;
+        bPos.y += Preset.Y_BaseOffset;
 
         GenerateDamageProjectile(textMessage, bPos, Preset.ColorHealing);
     }
@@ -67,7 +67,7 @@ public class DamageNumberEventHandler : MonoBehaviour
         string textMessage = e._DamageMessage._DamageInfo.DamageAmount.ToString();
 
         Vector3 bPos = e._Actor.transform.position;
-        bPos.y += 5f;
+        bPos.y += Preset.Y_BaseOffset;
 
         GenerateDamageProjectile(textMessage, bPos, Preset.ColorDamage);
     }

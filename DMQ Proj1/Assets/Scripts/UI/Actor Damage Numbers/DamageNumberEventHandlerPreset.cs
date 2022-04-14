@@ -20,4 +20,6 @@ public class DamageNumberEventHandlerPreset : ScriptableObject
     public GameObject BubbleParentPrefab;
 
     public float RandomXZForceMax = 15f;
+
+    public float Y_BaseOffset = 3.5f;
 }
