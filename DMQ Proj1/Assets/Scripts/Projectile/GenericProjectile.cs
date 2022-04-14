@@ -277,12 +277,22 @@ public class GenericProjectile : MonoBehaviour
     {
         if (CheckOtherIsTrigger(collision.collider)) return;
 
-        _Data.ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, collision.collider, collision);
-
         Info.CollisionEnters++;
-        if (_Data.DestroyOptions.FLAG_UseCollisionEnters && Info.CollisionEnters >= _Data.DestroyOptions.CollisionEnters)
+
+        if (_Data.DestroyOptions.FLAG_UseCollisionEnters)
         {
-            DestroyProjectile();
+            if(Info.CollisionEnters <= _Data.DestroyOptions.CollisionEnters)
+            {
+                _Data.ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, collision.collider, collision);
+            }
+            if(Info.CollisionEnters >= _Data.DestroyOptions.CollisionEnters)
+            {
+                DestroyProjectile();
+            }
+        }
+        else
+        {
+            _Data.ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, collision.collider, collision);
         }
     }
     private void OnCollisionStay(Collision collision)
@@ -310,12 +320,22 @@ public class GenericProjectile : MonoBehaviour
     {
         if (CheckOtherIsTrigger(other)) return;
 
-        _Data.ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, other);
-
         Info.CollisionEnters++;
-        if (_Data.DestroyOptions.FLAG_UseCollisionEnters && Info.CollisionEnters >= _Data.DestroyOptions.CollisionEnters)
+
+        if (_Data.DestroyOptions.FLAG_UseCollisionEnters)
         {
-            DestroyProjectile();
+            if (Info.CollisionEnters <= _Data.DestroyOptions.CollisionEnters)
+            {
+                _Data.ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, other);
+            }
+            if (Info.CollisionEnters >= _Data.DestroyOptions.CollisionEnters)
+            {
+                DestroyProjectile();
+            }
+        }
+        else
+        {
+            _Data.ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, other);
         }
     }
     private void OnTriggerStay(Collider other)
