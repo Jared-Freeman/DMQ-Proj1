@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ProjectileFX:
     EndProjectileEffects:
-      EffectList: []
+      EffectList:
+      - {fileID: 11400000, guid: b3c92c8dd7acc13459fc9b8747f84bf4, type: 2}
       ProjectileFXList: []
     CollisionEnterProjectileEffects:
       EffectList:
@@ -37,8 +38,8 @@ MonoBehaviour:
     FLAG_UseCollisionStayDuration: 0
     CollisionStayDuration: 0
   MoveOptions:
-    FLAG_FaceRigidbodyVelocity: 0
-    MovementType: 1
+    FLAG_FaceRigidbodyVelocity: 1
+    MovementType: 3
     MovementTypeOptions:
       LinearSimpleOptions:
         Speed: 85
@@ -56,9 +57,9 @@ MonoBehaviour:
         ForcePerSecond: 0
       PhysicsImpulseOptions:
         FLAGScaleForceByMass: 0
-        FLAGUseSpeedComputationInsteadOfForce: 0
+        FLAGUseSpeedComputationInsteadOfForce: 1
         Force: 0
-        Speed: 0
+        Speed: 80
       HomingSimpleOptions:
         MovementStyle: 0
         Speed: 0

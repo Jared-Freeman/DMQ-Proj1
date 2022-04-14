@@ -12,6 +12,7 @@ namespace EffectTree
     {
         public GameObject ProjectilePrefab;
         public bool UseTeamNoCollideLayer = false;
+        public bool DoNotChangeProjectileLayer = false;
 
         [Header("To prevent collider clipping")]
         [Tooltip("Can set this to (<length of projectile colldier> / 2) + <tiny offset> for good results.")]
@@ -45,7 +46,7 @@ namespace EffectTree
                 //    return false;
                 //}
 
-                if (ctx.AttackData._Team != null)
+                if (ctx.AttackData._Team != null && !DoNotChangeProjectileLayer)
                 {
                     if (UseTeamNoCollideLayer)
                     {

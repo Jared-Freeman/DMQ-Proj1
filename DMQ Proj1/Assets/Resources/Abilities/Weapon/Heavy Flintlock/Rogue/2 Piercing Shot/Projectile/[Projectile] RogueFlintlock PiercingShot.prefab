@@ -16,7 +16,8 @@ GameObject:
   - component: {fileID: 3440268844733953498}
   - component: {fileID: 4866324391302468831}
   - component: {fileID: 8457580840947317568}
-  m_Layer: 8
+  - component: {fileID: 3819665098539586414}
+  m_Layer: 31
   m_Name: '[Projectile] RogueFlintlock PiercingShot'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31,11 +32,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3440268844733953477}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1.99}
-  m_LocalScale: {x: 1.33, y: 1.33, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -2.8665}
+  m_LocalScale: {x: 2.432437, y: 2.432437, z: 1.8289}
   m_Children:
   - {fileID: 9177523431826212696}
   - {fileID: 5768800725551088694}
+  - {fileID: 8487553881480097296}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -95,10 +97,10 @@ BoxCollider:
   m_GameObject: {fileID: 3440268844733953477}
   m_Material: {fileID: 13400000, guid: a43acfe435787e24193166f4d98c48ac, type: 2}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
-  m_Size: {x: 0.6, y: 0.6, z: 0.6}
-  m_Center: {x: 0, y: 0, z: 2.1}
+  m_Size: {x: 0.87, y: 1.48, z: 0.73}
+  m_Center: {x: 0, y: 0, z: 2.16}
 --- !u!54 &3440268844733953496
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4884,6 +4886,19 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!135 &3819665098539586414
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3440268844733953477}
+  m_Material: {fileID: 13400000, guid: a43acfe435787e24193166f4d98c48ac, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.14
+  m_Center: {x: 0, y: 0, z: 2.5}
 --- !u!1 &5662116326699717647
 GameObject:
   m_ObjectHideFlags: 0
@@ -4896,7 +4911,7 @@ GameObject:
   - component: {fileID: 5447344782597965143}
   - component: {fileID: 2735400208052881070}
   - component: {fileID: 5135853808285570977}
-  m_Layer: 8
+  m_Layer: 31
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4989,7 +5004,7 @@ GameObject:
   - component: {fileID: 5768800725551088694}
   - component: {fileID: 5768800725551088695}
   - component: {fileID: 5768800725551088688}
-  m_Layer: 0
+  m_Layer: 31
   m_Name: '[ParticleTrail] Trail 1 PS'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5004,8 +5019,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5768800725551088689}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 2.15}
-  m_LocalScale: {x: 0.66, y: 0.66, z: 0.66}
+  m_LocalPosition: {x: 0, y: 0, z: 0.562}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3440268844733953500}
   m_RootOrder: 1
@@ -9790,3 +9805,47 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!1 &8429003100085174516
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8487553881480097296}
+  - component: {fileID: 9184299341393291629}
+  m_Layer: 10
+  m_Name: Trigger Host
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8487553881480097296
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8429003100085174516}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3440268844733953500}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &9184299341393291629
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8429003100085174516}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.72, y: 1.08, z: 2.22}
+  m_Center: {x: 0, y: 0, z: 1.41}
