@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cab7120c9cf964b4584b7cfddf7c245a, type: 3}
+  m_Name: CPMT_A_RogueFlintlock2PiercingShot Delay
+  m_EditorClassIdentifier: 
+  Conditions:
+    _Conditions: []
+  Duration: 0.75
+  Period: 0
+  UpdateContextDuringPersistentEffect: 0
+  List_StartEffects: []
+  List_PeriodicEffects: []
+  List_DestroyEffects:
+  - {fileID: 11400000, guid: a8bdf98cfa115d046839ce22440e6229, type: 2}
