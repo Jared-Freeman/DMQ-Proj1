@@ -14,8 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Conditions:
     _Conditions: []
-  ForwardVectorSelection: 0
-  FlipDirection: 0
-  PlayPosition: 3
+  ForwardVectorSelection: 4
+  FlipDirection: 1
+  RelativeOffset: {x: 0, y: 0, z: 0}
+  AttachToTarget: 3
+  AttachToTarget_UseOnlyParentPosition: 1
+  PlayPosition: 1
   ParticleSystemPrefab: {fileID: 4947320415110627212, guid: 4df48324d9a91684480b137cfc53d356,
     type: 3}
