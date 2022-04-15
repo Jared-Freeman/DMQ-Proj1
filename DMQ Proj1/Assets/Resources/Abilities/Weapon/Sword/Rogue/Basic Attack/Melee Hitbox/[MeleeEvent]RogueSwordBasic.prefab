@@ -99,8 +99,8 @@ GameObject:
   - component: {fileID: 4572360316778280914}
   - component: {fileID: 4286904864394219929}
   - component: {fileID: 6921947660622257523}
-  - component: {fileID: 3806462193449920171}
   - component: {fileID: 6577817112294887378}
+  - component: {fileID: 6295413695204060955}
   m_Layer: 0
   m_Name: '[MeleeEvent]RogueSwordBasic'
   m_TagString: Untagged
@@ -116,7 +116,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8477736069838407597}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.856659, y: 1.83, z: -18.922012}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children:
   - {fileID: 7753388878397626707}
@@ -135,8 +135,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.58441913, y: 1, z: 0.107477665}
-  m_Center: {x: 0, y: 0, z: 0.07710627}
+  m_Size: {x: 0.7, y: 1, z: 1.0170431}
+  m_Center: {x: 0, y: 0, z: 0.08}
 --- !u!114 &6921947660622257523
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,19 +150,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Preset: {fileID: 11400000, guid: e8c7a352f56360545be83abd11d0a352, type: 2}
---- !u!65 &3806462193449920171
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8477736069838407597}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.33378953, y: 1, z: 0.08125504}
-  m_Center: {x: -0.33310533, y: 0, z: 0.04088652}
 --- !u!65 &6577817112294887378
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -174,5 +161,18 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.33378953, y: 1, z: 0.08125504}
-  m_Center: {x: 0.3331053, y: 0, z: 0.04088652}
+  m_Size: {x: 0.33378953, y: 1, z: 1.0237359}
+  m_Center: {x: 0.3331053, y: 0, z: -0.43035397}
+--- !u!65 &6295413695204060955
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8477736069838407597}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.33378953, y: 1, z: 1.0237359}
+  m_Center: {x: -0.3331053, y: 0, z: -0.43035397}

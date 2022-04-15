@@ -9,19 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a350b9b33c1bc944bb07030c83cb97e, type: 3}
-  m_Name: DMA_RogueSwordBasicAttack
+  m_Script: {fileID: 11500000, guid: e77f0c44579005040820cb10c213cc2b, type: 3}
+  m_Name: SET_RogueSwordTargetSet
   m_EditorClassIdentifier: 
   Conditions:
     _Conditions: []
-  AttachAttackToCaster: 1
-  TargetFilters:
-    Enemy: 1
-    Ally: 0
-    Neutral: 0
-    Self: 0
-  meleeAttackEventObject: {fileID: 8477736069838407597, guid: 84192bb6957fdcd49b215b8265e5c88f,
-    type: 3}
-  EffectList:
+  Effects:
+  - {fileID: 11400000, guid: 41b369e6e320a504794947d0df700081, type: 2}
   - {fileID: 11400000, guid: 33c83f862930b8b46b99cbf67e86a660, type: 2}
-  EffectDuration: 0.75

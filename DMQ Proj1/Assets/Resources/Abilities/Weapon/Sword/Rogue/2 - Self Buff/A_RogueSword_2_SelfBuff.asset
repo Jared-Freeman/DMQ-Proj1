@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52ab4fc83c914234e82db0526fddd037, type: 3}
-  m_Name: A_RogueSwordBasicAttack
+  m_Name: A_RogueSword_2_SelfBuff
   m_EditorClassIdentifier: 
   Cooldown:
-    _Cooldown: 0.6
+    _Cooldown: 1
   CastSettings:
     CanMoveWhileCasting: 0
     CanCancelCast: 0
@@ -24,5 +24,5 @@ MonoBehaviour:
     Effect_CastWhileOnCooldown: {fileID: 0}
   Conditions:
     _Conditions: []
-  IconImage: {fileID: 0}
-  Effect: {fileID: 11400000, guid: 0654443933f42eb4180bd461513c880d, type: 2}
+  IconImage: {fileID: 21300000, guid: ea58b42e73e6cfa4d8e22d986d1363b5, type: 3}
+  Effect: {fileID: 11400000, guid: 001e212cc8d05af43a972bb7c027694c, type: 2}
