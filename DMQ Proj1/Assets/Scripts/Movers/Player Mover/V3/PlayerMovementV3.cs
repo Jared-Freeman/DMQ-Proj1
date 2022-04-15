@@ -342,7 +342,6 @@ public class PlayerMovementV3 : MonoBehaviour
 
     void Start()
     {
-
         EffectTree.Effect_ActorRigidbodyMove.OnRigidbodyMovementAppliedToActor += Effect_ActorRigidbodyMove_OnRigidbodyMovementAppliedToActor;
     }
 
@@ -354,7 +353,14 @@ public class PlayerMovementV3 : MonoBehaviour
 
             //subscribe to local event
             e.MovementCookie.OnMovementComplete += MovementCookie_OnMovementComplete;
+            e.MovementCookie.OnMovementStart += MovementCookie_OnMovementStart;
         }
+    }
+
+    private void MovementCookie_OnMovementStart(object sender, CSEventArgs.Effect_ActorRigidbodyMove_HelperEventArgs e)
+    {
+        ChangeState(State.MovementInterrupted);
+        if (FLAGDisplayDebugGizmos) Debug.Log("Movement Interrupted");
     }
 
     private void MovementCookie_OnMovementComplete(object sender, CSEventArgs.Effect_ActorRigidbodyMove_HelperEventArgs e)
@@ -365,6 +371,7 @@ public class PlayerMovementV3 : MonoBehaviour
 
         //unsubscribe from event before it is inevitably destroyed lol
         e.MovementHelper.OnMovementComplete -= MovementCookie_OnMovementComplete;
+        e.MovementHelper.OnMovementStart -= MovementCookie_OnMovementStart;
     }
 
     #endregion

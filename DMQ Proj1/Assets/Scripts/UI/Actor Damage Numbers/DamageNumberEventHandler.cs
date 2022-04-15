@@ -24,15 +24,15 @@ public class DamageNumberEventHandler : MonoBehaviour
         ActorStats.OnHealingReceived += ActorStats_OnHealingReceived;
     }
 
-    protected void GenerateDamageProjectile(string message, Vector3 position, Color color)
+    protected void GenerateDamageProjectile(string message, Vector3 position, Color color, Material mat = null, TMPro.TMP_FontAsset font = null)
     {
 
         var instProjectile = CreateProjectileInstanceFromPrefab(position);
 
         if (instProjectile != null)
         {
-            var bubble = Text_Bubble.CreateTemporaryTextBubble(message, Preset.TextDurationMax, instProjectile.gameObject, color);
-
+            var bubble = Text_Bubble.CreateTemporaryTextBubble(message, Preset.TextDurationMax, instProjectile.gameObject, mat, font);
+            bubble.text_mesh_pro.color = color;
             //bubble.gameObject.transform.position = new Vector3(0, 0, 0);
 
             bubble.text_mesh_pro.fontSize = Preset.FontSizeMax;
@@ -58,7 +58,7 @@ public class DamageNumberEventHandler : MonoBehaviour
         Vector3 bPos = e._Actor.transform.position;
         bPos.y += Preset.Y_BaseOffset;
 
-        GenerateDamageProjectile(textMessage, bPos, Preset.ColorHealing);
+        GenerateDamageProjectile(textMessage, bPos, Preset.ColorHealing, Preset.HealingMaterial, Preset.Font);
     }
 
 
@@ -69,7 +69,7 @@ public class DamageNumberEventHandler : MonoBehaviour
         Vector3 bPos = e._Actor.transform.position;
         bPos.y += Preset.Y_BaseOffset;
 
-        GenerateDamageProjectile(textMessage, bPos, Preset.ColorDamage);
+        GenerateDamageProjectile(textMessage, bPos, Preset.ColorDamage, Preset.DamageMaterial, Preset.Font);
     }
     protected GenericProjectile CreateProjectileInstanceFromPrefab(Vector3 initialPosition)
     {

@@ -11,6 +11,10 @@ public class DamageNumberEventHandlerPreset : ScriptableObject
     public Color ColorHealing = Color.green;
     public Color ColorDamage = Color.red;
 
+    public TMPro.TMP_FontAsset Font = null;
+    public Material HealingMaterial;
+    public Material DamageMaterial;
+
     public float TextDurationMin = 1f;
     public float TextDurationMax = 3f;
 
