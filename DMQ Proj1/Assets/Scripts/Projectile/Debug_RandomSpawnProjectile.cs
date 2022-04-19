@@ -11,6 +11,9 @@ public class Debug_RandomSpawnProjectile : MonoBehaviour
 
     public GameObject Projectile;
 
+    public bool FLAG_UseDirection = false;
+    public Vector3 SpawnDirection = Vector3.up;
+
     private void Start()
     {
         if(Projectile == null)
@@ -27,8 +30,14 @@ public class Debug_RandomSpawnProjectile : MonoBehaviour
         {
             if(Spawn && Projectile.GetComponent<GenericProjectile>())
             {
-                GenericProjectile.SpawnProjectile(Projectile.GetComponent<GenericProjectile>(), transform.position, Random.insideUnitSphere.normalized, Random.insideUnitCircle, null);
-
+                if(FLAG_UseDirection)
+                {
+                    GenericProjectile.SpawnProjectile(Projectile.GetComponent<GenericProjectile>(), transform.position, SpawnDirection, new Vector2(SpawnDirection.x, SpawnDirection.z), null);
+                }
+                else
+                {
+                    GenericProjectile.SpawnProjectile(Projectile.GetComponent<GenericProjectile>(), transform.position, Random.insideUnitSphere.normalized, Random.insideUnitCircle, null);
+                }
                 yield return new WaitForSeconds(ProjectileSpawnInterval);
             }
             else yield return null;
