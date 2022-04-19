@@ -2,7 +2,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using DuloGames.UI.Tweens;
-
+/// <summary>
+/// Event contains a reference to the icon's index
+/// </summary>
+public class UIToggleActiveTransitionEventArgs : System.EventArgs
+{
+    public int index;
+    public UIToggleActiveTransitionEventArgs(int i)
+    {
+        index = i;
+    }
+}
 namespace DuloGames.UI
 {
     [ExecuteInEditMode, AddComponentMenu("UI/Toggle Active Transition")]
@@ -54,7 +64,10 @@ namespace DuloGames.UI
         #pragma warning restore 0649
 
         private bool m_Active = false;
-        
+
+        public static event System.EventHandler<UIToggleActiveTransitionEventArgs> OnIconSelected; //called when the icon is 'activated'
+        private int m_iconIndex; //The index of the icon, it's location on the menu that identifies which player/class combo is being selected
+
         /// <summary>
         /// Gets or sets the transition type.
         /// </summary>
@@ -162,6 +175,11 @@ namespace DuloGames.UI
 
             if (this.m_TargetToggle != null)
                 this.m_Active = this.m_TargetToggle.isOn;
+
+            //Had to do it this way because for some reason variables within this class don't appear in the inspector.
+            CharacterSelect_IconIndex charSelIconIndex = GetComponent<CharacterSelect_IconIndex>();
+            if (charSelIconIndex)
+                m_iconIndex = charSelIconIndex.iconIndex;
         }
 
         protected void OnEnable()
@@ -218,6 +236,9 @@ namespace DuloGames.UI
 
                 this.animator.SetBool(this.m_ActiveBool, this.m_Active);
             }
+            //Character selection
+            if (m_Active)
+                OnIconSelected?.Invoke(this, new UIToggleActiveTransitionEventArgs(m_iconIndex));
 
             this.DoStateTransition(this.m_Active ? VisualState.Active : VisualState.Normal, false);
         }
