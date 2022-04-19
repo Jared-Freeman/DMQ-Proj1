@@ -190,6 +190,13 @@ public class GenericProjectile : MonoBehaviour
     //Some movement methods need state variables to aid their movement (or to cache to improve performance)
     void InitializeMovementMethod()
     {
+        //reinit state info if passed-in info is not valid
+        if (Info.InitialDirection.sqrMagnitude == 0)
+        {
+            Info = new StateInfo(transform.forward, new Vector2(transform.forward.x, transform.forward.z), null);
+            Info.CurrentMoveType = _Data.MoveOptions.MovementType;
+        }
+
         switch (Info.CurrentMoveType)
         {
             case ProjectileMoveStyle.None:
@@ -222,6 +229,7 @@ public class GenericProjectile : MonoBehaviour
                 InitHomingSimple();
                 break;
         };
+
     }
     #endregion
 
