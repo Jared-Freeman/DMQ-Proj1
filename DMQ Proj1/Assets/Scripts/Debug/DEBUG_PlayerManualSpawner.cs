@@ -12,6 +12,9 @@ public class DEBUG_PlayerManualSpawner : MonoBehaviour
     public static event System.EventHandler<CSEventArgs.GameObjectListEventArgs> OnPlayerAgentsInstantiated;
     void Start()
     {
+
+        Debug.LogError("SPAWN init");
+
         List<GameObject> Glist = new List<GameObject>();
         if (PlayerDataManager.InstanceExists)
         {
@@ -37,6 +40,8 @@ public class DEBUG_PlayerManualSpawner : MonoBehaviour
     }
     void InitPlayerActor(GameObject g, PlayerInput p)
     {
+        Debug.LogError("SPAWN PLAYER: " + g.name);
+
         if(currentPlayerIndex == 0)
             g.transform.position = transform.position;
         else
