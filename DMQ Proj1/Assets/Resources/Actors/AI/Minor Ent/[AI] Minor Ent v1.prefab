@@ -100,6 +100,7 @@ GameObject:
   - component: {fileID: 2256496668428570005}
   - component: {fileID: 762632789080426447}
   - component: {fileID: 2307693648848702804}
+  - component: {fileID: 1886226215550043448}
   m_Layer: 12
   m_Name: '[AI] Minor Ent v1'
   m_TagString: Untagged
@@ -333,6 +334,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Ability: {fileID: 11400000, guid: e034046cac20d6d4f855c564bfdc2fec, type: 2}
+--- !u!114 &1886226215550043448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1067155110567542786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 019e528c19a5d474386e7a27c58f0143, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1067155110916556277
 GameObject:
   m_ObjectHideFlags: 0
