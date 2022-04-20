@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using ClassSystem;
 using UnityEngine.InputSystem;
 
 /// <summary>
@@ -88,7 +88,15 @@ public class PlayerDataManager : Singleton<PlayerDataManager>
 
         return OutString;
     }
-
+    /// <summary>
+    /// Update the class preset of a specified player
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="charClass"></param>
+    public void UpdateCharacterClassPreset(int index, CharacterClass charClass)
+    {
+        _Data[index].Info._CurrentClassPreset = charClass;
+    }
     #endregion
 
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace EffectTree
 {
@@ -11,6 +12,7 @@ namespace EffectTree
     public class Effect_PlayAudioClip : Effect_Base
     {
         public AudioClip clip;
+        public AudioMixerGroup SFX;
         public enum AudioSourceObjectOptions { Owner, Target, None }
         /// <summary>
         /// Determines the source of the audio clip 
@@ -34,6 +36,11 @@ namespace EffectTree
                 AudioSource source;/* = new AudioSource();*/
                 GameObject hostGO = new GameObject("Audio Clip Host");
                 source = hostGO.AddComponent<AudioSource>();
+                if(SFX != null)
+                {
+                    source.outputAudioMixerGroup = SFX;
+                }
+
 
                 Effect_PlayAudioClip_Helper helper = hostGO.AddComponent<Effect_PlayAudioClip_Helper>();
                 helper.ctx = ctx;

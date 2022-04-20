@@ -1,19 +1,21 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GraphicsManager : MonoBehaviour
 {
     //Create dropdown variable
-    public TMPro.TMP_Dropdown dropdown;
+    public Dropdown screenResolution;
+    //public TMPro.TMP_Dropdown dropdown;
     public static float brightness;
-    public TMPro.TMP_Dropdown quality;
+    public Dropdown quality;
 
     //Create Resolutions array
     Resolution[] resolutions;
     void Start()
     {
         //var dropdown = transform.GetComponent<Dropdown>();
-        dropdown.options.Clear();
+        screenResolution.options.Clear();
         //Populate resolutions array with system available resolutions
         resolutions = Screen.resolutions;
         //Create a string list
@@ -39,14 +41,14 @@ public class GraphicsManager : MonoBehaviour
         foreach(var item in items)
         {
             //add eash item to dropdown menu
-            dropdown.options.Add(new TMPro.TMP_Dropdown.OptionData() { text = item });
+            screenResolution.options.Add(new Dropdown.OptionData() { text = item });
         }
         //update current dropdown menu index value
-        dropdown.value = currentResoluionIndex;
+        screenResolution.value = currentResoluionIndex;
         //Refresh dropdown to reflect correct selection
-        dropdown.RefreshShownValue();
+        screenResolution.RefreshShownValue();
         //Add listener to dropdown
-        dropdown.onValueChanged.AddListener(delegate { setGameResolution(dropdown.value); });
+        screenResolution.onValueChanged.AddListener(delegate { setGameResolution(screenResolution.value); });
         quality.value = QualitySettings.GetQualityLevel();
         Debug.Log(quality.value);
         quality.RefreshShownValue();
