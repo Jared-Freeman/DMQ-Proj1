@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DuloGames.UI;
 using System.Linq;
 
 public class FR_LGP_Generator : MonoBehaviour
@@ -810,9 +810,32 @@ public class FR_LGP_Generator : MonoBehaviour
 
             Vector3 SpawnPosition = new Vector3(i * Options.GridSize, 0, j * Options.GridSize);
 
-            var GO = Instantiate(PlayerSpawner);
-            if (GO != null)
-                GO.transform.position = SpawnPosition;
+            //Character selection logic
+            if(CharacterSelect.InstanceExists)
+            {
+                GameObject spawnPosCopy = PlayerSpawner; //Making a copy to avoid overwriting the prefab
+                DEBUG_PlayerSpawner dPs = spawnPosCopy.GetComponentInChildren<DEBUG_PlayerSpawner>();
+                if (dPs != null)
+                {
+                    //Update the spawner's class queue with values from the character select screen
+                    for (int k = 0; k < 4; k++)
+                    {
+                        dPs.ClassSpawnQueue[k] = CharacterSelect.Instance.GetCharClassAtIndex(k);
+                    }
+                    var GO = Instantiate(spawnPosCopy);
+                    if (GO != null)
+                        GO.transform.position = SpawnPosition;
+                }
+            }
+            else
+            {
+                var GO = Instantiate(PlayerSpawner);
+                if (GO != null)
+                    GO.transform.position = SpawnPosition;
+            }
+
+
+            
 
             //This grid space can no longer be used
             remainingEntries.Remove(remainingEntries[index]);
