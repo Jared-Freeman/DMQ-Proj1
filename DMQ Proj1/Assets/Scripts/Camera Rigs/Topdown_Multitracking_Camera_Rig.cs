@@ -330,4 +330,12 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
 
         return false;
     }
+
+    /// <summary>
+    /// Instantly teleports the camera to its desired target.
+    /// </summary>
+    public void WarpToCurrentDesiredLocation()
+    {
+        transform.position = CamPositionDesired;
+    }
 }

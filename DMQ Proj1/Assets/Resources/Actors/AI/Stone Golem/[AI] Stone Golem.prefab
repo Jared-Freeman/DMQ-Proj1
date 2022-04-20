@@ -1825,6 +1825,8 @@ GameObject:
   - component: {fileID: 8651123600478929976}
   - component: {fileID: 4638628365580318944}
   - component: {fileID: 4638628365580318945}
+  - component: {fileID: 4231987018192857812}
+  - component: {fileID: -1820100563918496507}
   m_Layer: 12
   m_Name: '[AI] Stone Golem'
   m_TagString: Untagged
@@ -2016,3 +2018,29 @@ MonoBehaviour:
   - {fileID: 0}
   equippedWeapon: {fileID: 0}
   weaponLocalTransforms: []
+--- !u!114 &4231987018192857812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8651123600478929927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ef1b328248d6146bdd7675ee7ffaf8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Ability: {fileID: 11400000, guid: 6b47250458b7d204d81fd5698e3f1ae7, type: 2}
+--- !u!114 &-1820100563918496507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8651123600478929927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21abf626f1b46714cb2667af75faf8ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Ability: {fileID: 11400000, guid: 435d184353a3b874a87b2b6fb89a9cdd, type: 2}

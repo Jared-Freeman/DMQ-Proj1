@@ -23,6 +23,7 @@ public class Actor : MonoBehaviour
     public static event System.EventHandler<CSEventArgs.ActorEventArgs> OnActorCreated;
     public static event System.EventHandler<CSEventArgs.ActorEventArgs> OnActorDestroyed;
     public static event System.EventHandler<CSEventArgs.ActorEventArgs> OnActorDead;
+    public event System.EventHandler<CSEventArgs.ActorEventArgs> OnActorDead_Local;
 
     #endregion
 
@@ -85,6 +86,8 @@ public class Actor : MonoBehaviour
         //OnDestroy();
 
         OnActorDead?.Invoke(this, new CSEventArgs.ActorEventArgs(this));
+        OnActorDead_Local?.Invoke(this, new CSEventArgs.ActorEventArgs(this));
+
         Destroy(gameObject); // could delay using coroutine here if we wanted.
 
         //gameObject.SetActive(false);
