@@ -300,6 +300,13 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
     protected Utils.AttackContext CreateAttackContext()
     {
         var aimDir3 = new Vector3(AimDirection.x, 0, AimDirection.y);
+
+        //catch non-aim here
+        if(aimDir3.sqrMagnitude == 0)
+        {
+            aimDir3 = new Vector3(transform.forward.x, 0, transform.forward.z);
+        }
+
         var ctx = new Utils.AttackContext
         {
             _InitialDirection = aimDir3,
