@@ -190,6 +190,13 @@ public class GenericProjectile : MonoBehaviour
     //Some movement methods need state variables to aid their movement (or to cache to improve performance)
     void InitializeMovementMethod()
     {
+        //reinit state info if passed-in info is not valid
+        if (Info.InitialDirection.sqrMagnitude == 0)
+        {
+            Info = new StateInfo(transform.forward, new Vector2(transform.forward.x, transform.forward.z), null);
+            Info.CurrentMoveType = _Data.MoveOptions.MovementType;
+        }
+
         switch (Info.CurrentMoveType)
         {
             case ProjectileMoveStyle.None:
@@ -222,6 +229,7 @@ public class GenericProjectile : MonoBehaviour
                 InitHomingSimple();
                 break;
         };
+
     }
     #endregion
 
@@ -277,12 +285,22 @@ public class GenericProjectile : MonoBehaviour
     {
         if (CheckOtherIsTrigger(collision.collider)) return;
 
-        _Data.ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, collision.collider, collision);
-
         Info.CollisionEnters++;
-        if (_Data.DestroyOptions.FLAG_UseCollisionEnters && Info.CollisionEnters >= _Data.DestroyOptions.CollisionEnters)
+
+        if (_Data.DestroyOptions.FLAG_UseCollisionEnters)
         {
-            DestroyProjectile();
+            if(Info.CollisionEnters <= _Data.DestroyOptions.CollisionEnters)
+            {
+                _Data.ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, collision.collider, collision);
+            }
+            if(Info.CollisionEnters >= _Data.DestroyOptions.CollisionEnters)
+            {
+                DestroyProjectile();
+            }
+        }
+        else
+        {
+            _Data.ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, collision.collider, collision);
         }
     }
     private void OnCollisionStay(Collision collision)
@@ -310,12 +328,22 @@ public class GenericProjectile : MonoBehaviour
     {
         if (CheckOtherIsTrigger(other)) return;
 
-        _Data.ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, other);
-
         Info.CollisionEnters++;
-        if (_Data.DestroyOptions.FLAG_UseCollisionEnters && Info.CollisionEnters >= _Data.DestroyOptions.CollisionEnters)
+
+        if (_Data.DestroyOptions.FLAG_UseCollisionEnters)
         {
-            DestroyProjectile();
+            if (Info.CollisionEnters <= _Data.DestroyOptions.CollisionEnters)
+            {
+                _Data.ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, other);
+            }
+            if (Info.CollisionEnters >= _Data.DestroyOptions.CollisionEnters)
+            {
+                DestroyProjectile();
+            }
+        }
+        else
+        {
+            _Data.ProjectileFX.CollisionEnterProjectileEffects.PerformProjectileEffects(this, other);
         }
     }
     private void OnTriggerStay(Collider other)

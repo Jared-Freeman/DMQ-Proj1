@@ -69,6 +69,21 @@ public class Text_Bubble : MonoBehaviour
         if (parent != null) txt.gameObject.transform.SetParent(parent.transform);
         return txt;
     }
+    //Public Methods:
+    public static Text_Bubble CreateTemporaryTextBubble(string message, float duration, GameObject parent, Material material = null, TMPro.TMP_FontAsset font = null)
+    {
+        Text_Bubble txt = CreateTemporaryTextBubble(message, duration);
+        if(material != null)
+        {
+            txt.text_mesh_pro.material = material;
+        }
+        if(font != null)
+        {
+            txt.text_mesh_pro.font = font;
+        }
+        if (parent != null) txt.gameObject.transform.SetParent(parent.transform);
+        return txt;
+    }
     public static Text_Bubble CreateTemporaryTextBubble(string message, float duration, GameObject parent, Color color)
     {
         Text_Bubble txt = CreateTemporaryTextBubble(message, duration, parent);

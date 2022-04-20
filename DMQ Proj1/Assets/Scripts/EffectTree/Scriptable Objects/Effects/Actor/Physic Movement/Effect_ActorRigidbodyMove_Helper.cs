@@ -24,6 +24,7 @@ namespace EffectTree
     {
         //events
         public event System.EventHandler<CSEventArgs.Effect_ActorRigidbodyMove_HelperEventArgs> OnMovementComplete;
+        public event System.EventHandler<CSEventArgs.Effect_ActorRigidbodyMove_HelperEventArgs> OnMovementStart;
 
         //assigned by Effect
         public Effect_ActorRigidbodyMove Preset;
@@ -43,6 +44,9 @@ namespace EffectTree
         {
             if (Preset == null) DestroyHelper();
 
+            if (Direction.sqrMagnitude > 0) Direction.Normalize();
+            else DestroyHelper();
+
             TargetRB = Target.GetComponent<Rigidbody>();
             if (TargetRB == null) DestroyHelper();
 
@@ -50,15 +54,17 @@ namespace EffectTree
             Effect_ActorRigidbodyMove_Helper[] activeHelpers = GetComponents<Effect_ActorRigidbodyMove_Helper>();
             foreach( var h in activeHelpers)
             {
-                if(this != h)
-                    Destroy(h);
+                if (this != h)
+                {
+                    Debug.LogWarning("Destroying existing RB helper");
+                    h.DestroyHelper();
+                }
             }
 
+            OnMovementStart?.Invoke(this, new CSEventArgs.Effect_ActorRigidbodyMove_HelperEventArgs(this));
             StartTime = Time.time;
             StartCoroutine(I_ContinueMovement(Preset.Duration));
 
-            if (Direction.sqrMagnitude > 0) Direction.Normalize();
-            else DestroyHelper();
         }
 
         /// <summary>
@@ -66,7 +72,6 @@ namespace EffectTree
         /// </summary>
         void OnDestroy()
         {
-            OnMovementComplete?.Invoke(this, new CSEventArgs.Effect_ActorRigidbodyMove_HelperEventArgs(this));
             StopAllCoroutines();
         }
 
@@ -147,7 +152,9 @@ namespace EffectTree
         /// </summary>
         protected void DestroyHelper()
         {
-            Destroy(gameObject);
+            StopAllCoroutines();
+            OnMovementComplete?.Invoke(this, new CSEventArgs.Effect_ActorRigidbodyMove_HelperEventArgs(this));
+            Destroy(this);
         }
     }
 

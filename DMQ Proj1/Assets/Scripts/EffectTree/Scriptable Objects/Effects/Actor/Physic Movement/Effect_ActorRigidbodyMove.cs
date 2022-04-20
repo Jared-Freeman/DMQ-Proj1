@@ -92,35 +92,36 @@ namespace EffectTree
         {
             if( base.Invoke(ref ctx))
             {
-                GameObject go = new GameObject("RigidbodyMovement Cookie");
-                var h = go?.AddComponent<Effect_ActorRigidbodyMove_Helper>();
-
-                if(h == null)
-                {
-                    Destroy(go);
-                    return false;
-                }
-
-                h.Preset = this;
-
-                h.Direction = ctx.RetrieveDirectionVector(Direction);
+                Actor moveTarget;
 
                 switch (TargetContext)
                 {
                     case TargetSelection.EffectTreeOwner:
-                        h.Target = ctx.AttackData._Owner;
+                        moveTarget = ctx.AttackData._Owner;
                         break;
                     case TargetSelection.InitialGameObject:
-                        h.Target = ctx.AttackData._InitialGameObject.GetComponent<Actor>();
+                        moveTarget = ctx.AttackData._InitialGameObject.GetComponent<Actor>();
                         break;
                     case TargetSelection.TargetGameObject:
-                        h.Target = ctx.AttackData._TargetGameObject.GetComponent<Actor>();
+                        moveTarget = ctx.AttackData._TargetGameObject.GetComponent<Actor>();
                         break;
 
                     default:
                         Debug.LogError("No implementation for specified TargetContext. Does an Implementation exist?");
-                        break;
+                        return false;
                 }
+
+                var h = moveTarget.gameObject.AddComponent<Effect_ActorRigidbodyMove_Helper>();
+
+                if(h == null)
+                {
+                    return false;
+                }
+
+                h.Preset = this;
+                h.Direction = ctx.RetrieveDirectionVector(Direction);
+                h.Target = moveTarget;
+
 
 
                 OnRigidbodyMovementAppliedToActor?.Invoke(this, new CSEventArgs.ActorRigidbodyMoveEventArgs(ctx, h.Target, h));

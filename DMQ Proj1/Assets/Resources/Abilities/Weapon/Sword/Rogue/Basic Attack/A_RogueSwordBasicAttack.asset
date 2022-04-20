@@ -13,13 +13,16 @@ MonoBehaviour:
   m_Name: A_RogueSwordBasicAttack
   m_EditorClassIdentifier: 
   Cooldown:
-    _Cooldown: 1
+    _Cooldown: 0.78
   CastSettings:
     CanMoveWhileCasting: 0
     CanCancelCast: 0
     Time_PrepareAbil: 0
     Time_CastAbil: 0
+  EffectEvents:
+    Effect_CooldownAvailable: {fileID: 0}
+    Effect_CastWhileOnCooldown: {fileID: 0}
   Conditions:
     _Conditions: []
   IconImage: {fileID: 0}
-  Effect: {fileID: 11400000, guid: 0654443933f42eb4180bd461513c880d, type: 2}
+  Effect: {fileID: 11400000, guid: 9e8681c233c81254a950b173d5ba0301, type: 2}
