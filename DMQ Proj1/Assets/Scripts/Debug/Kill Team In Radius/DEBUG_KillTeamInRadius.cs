@@ -26,7 +26,7 @@ public class DEBUG_KillTeamInRadius : MonoBehaviour
         {
             if( a._Team == DesiredTeam && (a.transform.position - transform.position).sqrMagnitude < Mathf.Pow(Radius,2))
             {
-                Debug.LogError("radial dead act");
+                //Debug.LogError("radial dead act");
 
                 Destroy(a.gameObject);
             }
