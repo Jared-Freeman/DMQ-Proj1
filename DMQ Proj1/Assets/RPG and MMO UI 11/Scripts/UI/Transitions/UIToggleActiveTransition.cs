@@ -66,7 +66,7 @@ namespace DuloGames.UI
         private bool m_Active = false;
 
         public static event System.EventHandler<UIToggleActiveTransitionEventArgs> OnIconSelected; //called when the icon is 'activated'
-        private int m_iconIndex; //The index of the icon, it's location on the menu that identifies which player/class combo is being selected
+        [SerializeField] private int m_iconIndex; //The index of the icon, it's location on the menu that identifies which player/class combo is being selected
 
         /// <summary>
         /// Gets or sets the transition type.
@@ -180,6 +180,8 @@ namespace DuloGames.UI
             CharacterSelect_IconIndex charSelIconIndex = GetComponent<CharacterSelect_IconIndex>();
             if (charSelIconIndex)
                 m_iconIndex = charSelIconIndex.iconIndex;
+
+            
         }
 
         protected void OnEnable()
