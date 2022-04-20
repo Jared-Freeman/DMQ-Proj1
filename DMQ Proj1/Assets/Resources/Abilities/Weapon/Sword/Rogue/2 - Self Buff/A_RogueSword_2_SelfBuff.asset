@@ -13,14 +13,15 @@ MonoBehaviour:
   m_Name: A_RogueSword_2_SelfBuff
   m_EditorClassIdentifier: 
   Cooldown:
-    _Cooldown: 1
+    _Cooldown: 15
   CastSettings:
     CanMoveWhileCasting: 0
     CanCancelCast: 0
     Time_PrepareAbil: 0
     Time_CastAbil: 0
   EffectEvents:
-    Effect_CooldownAvailable: {fileID: 0}
+    Effect_CooldownAvailable: {fileID: 11400000, guid: 9f96069f462d74248bacd3acbe02fbe1,
+      type: 2}
     Effect_CastWhileOnCooldown: {fileID: 0}
   Conditions:
     _Conditions: []
