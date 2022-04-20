@@ -37,6 +37,8 @@ namespace LevelTransition
             float curTime = Time.unscaledTime;
             while(Mathf.Abs(curTime - startTime) < delay_time)
             {
+                curTime = Time.unscaledTime;
+
                 Singleton<GameState.GameStateManager>.Instance.InvokePause();
 
                 yield return null;
