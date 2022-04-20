@@ -14,6 +14,6 @@ public class PauseMenu : MonoBehaviour
 
     public void UnPause()
     {
-
+        Singleton<GameState.GameStateManager>.Instance.InvokeResume();
     }
 }
