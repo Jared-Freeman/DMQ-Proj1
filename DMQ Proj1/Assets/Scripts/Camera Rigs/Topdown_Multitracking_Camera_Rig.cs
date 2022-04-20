@@ -99,7 +99,17 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
 
         DEBUG_PlayerSpawner.OnPlayerAgentsInstantiated += DEBUG_PlayerSpawner_OnPlayerAgentsInstantiated;
 
+        DEBUG_PlayerManualSpawner.OnPlayerAgentsInstantiated += DEBUG_PlayerManualSpawner_OnPlayerAgentsInstantiated;
+
         Actor.OnActorDestroyed += Actor_OnActorDestroyed;
+    }
+
+    private void DEBUG_PlayerManualSpawner_OnPlayerAgentsInstantiated(object sender, CSEventArgs.GameObjectListEventArgs e)
+    {
+        foreach (var g in e.gameObjects)
+        {
+            TargetList.Add(g);
+        }
     }
 
     private void Actor_OnActorDestroyed(object sender, CSEventArgs.ActorEventArgs e)
@@ -121,6 +131,7 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
         PlayerInputMgr.onPlayerLeft -= PlayerInputMgr_onPlayerLeft;
 
         DEBUG_PlayerSpawner.OnPlayerAgentsInstantiated -= DEBUG_PlayerSpawner_OnPlayerAgentsInstantiated;
+        DEBUG_PlayerManualSpawner.OnPlayerAgentsInstantiated -= DEBUG_PlayerManualSpawner_OnPlayerAgentsInstantiated;
 
         Actor.OnActorDestroyed -= Actor_OnActorDestroyed;
     }
