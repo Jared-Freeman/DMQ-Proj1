@@ -242,7 +242,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 9100250999270524133}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 0
+  m_Enabled: 1
   m_Radius: 0.5000001
   m_Height: 2
   m_Direction: 1
@@ -259,7 +259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3ea412e8920a21469649df654811a84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Loader: {fileID: 0}
+  Loader: {fileID: 491126841078033430}
 --- !u!114 &8740292494114232028
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -389,6 +389,14 @@ PrefabInstance:
     - target: {fileID: 400000, guid: 35498b8fbe9bf2244b3244ee6b9bf6cc, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 19800000, guid: 35498b8fbe9bf2244b3244ee6b9bf6cc, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 0.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 19800000, guid: 35498b8fbe9bf2244b3244ee6b9bf6cc, type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 0.38
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 35498b8fbe9bf2244b3244ee6b9bf6cc, type: 3}
