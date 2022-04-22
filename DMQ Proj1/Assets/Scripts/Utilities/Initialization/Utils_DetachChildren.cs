@@ -44,7 +44,6 @@ namespace Utils
             //get list of children. The heap fears me for my sins
             foreach (Transform t in targetTransform)
             {
-                print(t.gameObject.name);
                 dTransforms.Add(t);
             }
 

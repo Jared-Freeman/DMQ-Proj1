@@ -5,9 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class GameOverLogic : MonoBehaviour
 {
-    public Topdown_Multitracking_Camera_Rig camera_Rig;
+    private Topdown_Multitracking_Camera_Rig camera_Rig;
 
-    bool playerWasSpawned = false;
+    private bool playerWasSpawned = false;
 
     public string sceneToLoad;
 
