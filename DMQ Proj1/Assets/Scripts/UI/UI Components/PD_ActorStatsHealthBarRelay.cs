@@ -27,7 +27,7 @@ public class PD_ActorStatsHealthBarRelay : MonoBehaviour
         {
             _HB.curHealth = _Stats.HpCurrent;
 
-            _HB.maxHealth = _Stats.Preset.Data.HP.Default.Max * _PercentageOfFullCircle_reciprocal;
+            _HB.maxHealth = _Stats.Preset.Data.HP.Default.Max;
             _HB.maxHealthTotal = _Stats.Preset.Data.HP.Default.Max * _PercentageOfFullCircle_reciprocal;
         }
     }
