@@ -1271,7 +1271,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &279727570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5245,7 +5245,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1351254728
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5323,6 +5323,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ScreenResolutions: {fileID: 373187463}
   GraphicQualtiy: {fileID: 1340199930}
+  FSToggle: {fileID: 1785718887}
 --- !u!1 &1361758327
 GameObject:
   m_ObjectHideFlags: 0
@@ -6354,6 +6355,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1822976548}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1785718887 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6182122560412753735, guid: 247a54bb8abb1e845ae1f77341a1c6e1,
+    type: 3}
+  m_PrefabInstance: {fileID: 1822976548}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1796741859
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7017,22 +7030,22 @@ PrefabInstance:
     - target: {fileID: 6182122558909914528, guid: 247a54bb8abb1e845ae1f77341a1c6e1,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6182122558909914528, guid: 247a54bb8abb1e845ae1f77341a1c6e1,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6182122558909914528, guid: 247a54bb8abb1e845ae1f77341a1c6e1,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6182122558909914528, guid: 247a54bb8abb1e845ae1f77341a1c6e1,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6182122559268696405, guid: 247a54bb8abb1e845ae1f77341a1c6e1,
         type: 3}
