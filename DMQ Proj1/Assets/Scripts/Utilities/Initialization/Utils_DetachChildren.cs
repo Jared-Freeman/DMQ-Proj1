@@ -39,34 +39,43 @@ namespace Utils
         /// <returns></returns>
         public static bool DetachChildren(Transform targetTransform, bool recursivelyDetachAllChildren = false)
         {
-            if(recursivelyDetachAllChildren)
+            List<Transform> dTransforms = new List<Transform>();
+
+            //get list of children. The heap fears me for my sins
+            foreach (Transform t in targetTransform)
+            {
+                print(t.gameObject.name);
+                dTransforms.Add(t);
+            }
+
+            //behavior based on the recursive arg
+            if (recursivelyDetachAllChildren)
             {
                 targetTransform.parent = null;
-                foreach (Transform t in targetTransform)
+
+                foreach (Transform t in dTransforms)
                 {
                     DetachChildren(t, true);
                 }
             }
             else
             {
-                foreach (Transform t in targetTransform)
+                foreach (Transform t in dTransforms)
                 {
                     t.parent = null;
                 }
             }
 
-            return false;
+            //why did i do this...
+            return true;
         }
 
         void Awake()
         {
-            //Does NOT detach this host GameObject from any parentage.
-            foreach (Transform t in transform)
-            {
-                DetachChildren(t, FlattenHierarchyCompletely);
-            }
-
+            DetachChildren(transform, FlattenHierarchyCompletely);
             Destroy(this);
         }
+
+
     }
 }

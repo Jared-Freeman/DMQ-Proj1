@@ -11,6 +11,16 @@ public class GameOverLogic : MonoBehaviour
 
     public string sceneToLoad;
 
+    void Start()
+    {
+        camera_Rig = Singleton<Topdown_Multitracking_Camera_Rig>.Instance;
+
+        if (!Utils.Testing.ReferenceIsValid(camera_Rig))
+        {
+            throw new System.Exception("Camera Singleton Not Found");
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {

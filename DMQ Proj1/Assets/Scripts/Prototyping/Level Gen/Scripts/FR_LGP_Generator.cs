@@ -59,6 +59,7 @@ public class FR_LGP_Generator : MonoBehaviour
     public CR C_Repo;
 
     //refs
+    [Header("Parent == Origin of the dungeon")]
     public GameObject Parent;
     public GameObject Instance;
 
@@ -777,7 +778,10 @@ public class FR_LGP_Generator : MonoBehaviour
 
                     GO.transform.parent = Parent.transform;
                     GO.name = "Room Instance";
-                    GO.transform.position = SpawnPosition;
+                    GO.transform.position = SpawnPosition; //corrected spawn pos offset using parent transform as ref
+
+                    //flatten out hierarchy a bit to improve general performance
+                    GO.AddComponent<Utils.Utils_DetachChildren>();
 
                     ////draw connection rays
 
