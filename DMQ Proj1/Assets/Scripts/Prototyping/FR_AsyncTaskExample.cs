@@ -8,10 +8,12 @@ using System.Threading.Tasks;
 // This MonoBehavior uses nested async Tasks with a CancellationToken generated from a CancellationTokenSource, allowing cancellation to be invoked in Start() after 1000 ms
 public class FR_AsyncTaskExample : MonoBehaviour
 {
+    public float TaskDuration = 1f;
+
     private void Start()
     {
         var cts = new System.Threading.CancellationTokenSource();
-        cts.CancelAfter(1000);
+        cts.CancelAfter((int)(TaskDuration * 1000f));
         var T1 = ExampleTask(cts.Token);
         Debug.Log("start");
     }
@@ -46,13 +48,13 @@ public class FR_AsyncTaskExample : MonoBehaviour
         System.Threading.CancellationTokenSource cts = System.Threading.CancellationTokenSource.CreateLinkedTokenSource(ct);
         try
         {
-            float timestart = Time.time;
+            float timestart = Time.unscaledTime;
             while (!ct.IsCancellationRequested)
             {
                 Debug.Log("test");
                 await Task.Yield();
             }
-            Debug.Log("Routine Duration: " + (Time.time - timestart));
+            Debug.Log("Routine Duration: " + (Time.unscaledTime - timestart) * 1000 * .5f + "ms"); //why is this DOUBLE realtime?
         }
         catch (System.OperationCanceledException)
         {
