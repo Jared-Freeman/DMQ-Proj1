@@ -10,16 +10,17 @@ public class HealthBar : MonoBehaviour
     public MaterialPropertyBlock matProperties;
     protected SpriteRenderer _Renderer;
 
+    [Range(0, 1)]
+    public float _Alpha = 1.0f;
 
-    public float maxHealth;
-    public float curHealth;
-    public float maxHealthTotal;
-    public float healthPercentage;
+    public float maxHealth { get; set; }
+    public float curHealth { get; set; }
+    public float maxHealthTotal { get; set; }
+    private float healthPercentage;
 
     private float red = 0.0f;
     private float green = 1.0f;
     private float blue = 0.0f;
-    private float albedo = 1.0f;
     private Color color = new Color(0.0f, 1.0f, 0.0f, 1.0f);
 
     void Awake()
@@ -68,7 +69,7 @@ public class HealthBar : MonoBehaviour
             red = 1.0f;
             green = 1.0f - ((1.0f - healthPercentage));
         }
-        color = new Color(red, green, blue, albedo);
+        color = new Color(red, green, blue, _Alpha);
 
         matProperties.SetColor("_Color", color);
 
