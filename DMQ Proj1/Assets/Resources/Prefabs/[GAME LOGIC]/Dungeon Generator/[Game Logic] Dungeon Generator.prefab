@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8263547441844060255}
   - component: {fileID: 8263547441844060240}
   m_Layer: 0
-  m_Name: Dungeon Generator Logic
+  m_Name: '[Game Logic] Dungeon Generator'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,7 +46,7 @@ MonoBehaviour:
   FLAG_Debug: 0
   FLAG_UseResourcePaths: 1
   Options:
-    GenerationDimensions: {x: 7, y: 7}
+    GenerationDimensions: {x: 4, y: 4}
     GridSize: 80
   C_Repo:
     ConnectionLists:
@@ -63,7 +63,7 @@ MonoBehaviour:
       NESW_Connections: Level Gen/Forest V2/Tileset/NESW
   Parent: {fileID: 0}
   Instance: {fileID: 0}
-  PlayerSpawner: {fileID: 2024918051708933202, guid: 49c8ac051e8df454da1d340e5c896506,
+  PlayerSpawner: {fileID: 8345652598814738503, guid: efd4a0bf562e48a4aba68dc86f7fcf1c,
     type: 3}
   ExitPrefab: {fileID: 491126841078033429, guid: 5fdf2b5717e86a342aeca1e050590892,
     type: 3}
