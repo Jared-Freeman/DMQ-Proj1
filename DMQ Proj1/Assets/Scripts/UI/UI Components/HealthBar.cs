@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class HealthBar : MonoBehaviour
 {
-    public Material healthBar;
+    //public Material healthBar;
 
     public MaterialPropertyBlock matProperties;
     protected SpriteRenderer _Renderer;
