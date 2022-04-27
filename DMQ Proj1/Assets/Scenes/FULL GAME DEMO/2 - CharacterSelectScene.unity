@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -744,7 +744,12 @@ PrefabInstance:
     - target: {fileID: 3787777345040614614, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 99.20667
+      value: 134.71458
+      objectReference: {fileID: 0}
+    - target: {fileID: 3787777345040614617, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
+        type: 3}
+      propertyPath: m_Text
+      value: Interdictor
       objectReference: {fileID: 0}
     - target: {fileID: 3787777345072038556, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
@@ -764,7 +769,7 @@ PrefabInstance:
     - target: {fileID: 3787777345291437600, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 124.00834
+      value: 107.31502
       objectReference: {fileID: 0}
     - target: {fileID: 3787777345410933916, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
@@ -959,12 +964,12 @@ PrefabInstance:
     - target: {fileID: 3787777345839294753, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 103.716064
+      value: 105.031715
       objectReference: {fileID: 0}
     - target: {fileID: 3787777345859012878, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 105.970764
+      value: 125.5814
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b7d05c1c1280b145b64de5b83e38dbe, type: 3}
@@ -1634,7 +1639,12 @@ PrefabInstance:
     - target: {fileID: 3787777345040614614, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 99.20667
+      value: 134.71458
+      objectReference: {fileID: 0}
+    - target: {fileID: 3787777345040614617, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
+        type: 3}
+      propertyPath: m_Text
+      value: Interdictor
       objectReference: {fileID: 0}
     - target: {fileID: 3787777345072038556, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
@@ -1654,7 +1664,7 @@ PrefabInstance:
     - target: {fileID: 3787777345291437600, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 124.00834
+      value: 107.31502
       objectReference: {fileID: 0}
     - target: {fileID: 3787777345410933916, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
@@ -1854,12 +1864,12 @@ PrefabInstance:
     - target: {fileID: 3787777345839294753, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 103.716064
+      value: 105.031715
       objectReference: {fileID: 0}
     - target: {fileID: 3787777345859012878, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 105.970764
+      value: 125.5814
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b7d05c1c1280b145b64de5b83e38dbe, type: 3}
@@ -2377,7 +2387,12 @@ PrefabInstance:
     - target: {fileID: 3787777345040614614, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 99.20667
+      value: 134.71458
+      objectReference: {fileID: 0}
+    - target: {fileID: 3787777345040614617, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
+        type: 3}
+      propertyPath: m_Text
+      value: Interdictor
       objectReference: {fileID: 0}
     - target: {fileID: 3787777345072038553, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
@@ -2402,7 +2417,12 @@ PrefabInstance:
     - target: {fileID: 3787777345291437600, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 124.00834
+      value: 107.31502
+      objectReference: {fileID: 0}
+    - target: {fileID: 3787777345291437603, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
+        type: 3}
+      propertyPath: m_Text
+      value: Bulwark
       objectReference: {fileID: 0}
     - target: {fileID: 3787777345410933916, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
@@ -2622,12 +2642,17 @@ PrefabInstance:
     - target: {fileID: 3787777345839294753, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 103.716064
+      value: 105.031715
       objectReference: {fileID: 0}
     - target: {fileID: 3787777345859012878, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 105.970764
+      value: 125.5814
+      objectReference: {fileID: 0}
+    - target: {fileID: 3787777345859012881, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
+        type: 3}
+      propertyPath: m_Text
+      value: Enchanter
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b7d05c1c1280b145b64de5b83e38dbe, type: 3}
@@ -2956,12 +2981,17 @@ PrefabInstance:
     - target: {fileID: 3787777345040614614, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 99.20667
+      value: 134.71458
+      objectReference: {fileID: 0}
+    - target: {fileID: 3787777345040614617, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
+        type: 3}
+      propertyPath: m_Text
+      value: Interdictor
       objectReference: {fileID: 0}
     - target: {fileID: 3787777345291437600, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 124.00834
+      value: 107.31502
       objectReference: {fileID: 0}
     - target: {fileID: 3787777345410933916, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
@@ -3146,12 +3176,12 @@ PrefabInstance:
     - target: {fileID: 3787777345839294753, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 103.716064
+      value: 105.031715
       objectReference: {fileID: 0}
     - target: {fileID: 3787777345859012878, guid: 7b7d05c1c1280b145b64de5b83e38dbe,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 105.970764
+      value: 125.5814
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b7d05c1c1280b145b64de5b83e38dbe, type: 3}
