@@ -293,9 +293,11 @@ namespace Utils
     /// Maintains a generic _Cooldown based in (scaled) Time.
     /// </summary>
     [System.Serializable]
-    public class CooldownTracker
+    public class CooldownTracker : System.IDisposable
     {
         #region Members
+
+        private static bool s_FLAG_DEBUG = false;
 
         private static float s_MIN_COOLDOWN = .0001f;
         private static float s_MAX_COOLDOWN_RATE = 1 / s_MIN_COOLDOWN;
@@ -312,27 +314,22 @@ namespace Utils
         /// <summary>
         /// Fires when the Cooldown is available to use again.
         /// </summary>
+        /// <remarks>
+        /// This is a LOCAL event. NOT globally-accessible!
+        /// </remarks>
         public event System.EventHandler<CooldownTrackerEventArgs> OnCooldownAvailable;
+        /// <summary>
+        /// Fires when the Cooldown is consumed.
+        /// </summary>
+        /// <remarks>
+        /// This is a LOCAL event. NOT globally-accessible!
+        /// </remarks>
         public event System.EventHandler<CooldownTrackerEventArgs> OnCooldownUsed;
 
-        #region Helpers
-
         /// <summary>
-        /// Event args for cooldown events.
+        /// Async controller for handling cancellation
         /// </summary>
-        public class CooldownTrackerEventArgs : System.EventArgs
-        {
-            public CooldownTracker cooldown;
-
-            public CooldownTrackerEventArgs(CooldownTracker cd)
-            {
-                cooldown = cd;
-            }
-        }
-
-        #endregion
-
-        #endregion
+        System.Threading.CancellationTokenSource _CancellationTokenSource = new System.Threading.CancellationTokenSource();
 
         #region Properties
         public float TimeRemaining
@@ -382,8 +379,44 @@ namespace Utils
 
         #endregion
 
+        #region Helpers
+
+        /// <summary>
+        /// Event args for cooldown events.
+        /// </summary>
+        public class CooldownTrackerEventArgs : System.EventArgs
+        {
+            public CooldownTracker cooldown;
+
+            public CooldownTrackerEventArgs(CooldownTracker cd)
+            {
+                cooldown = cd;
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Destructor
+
+        /// <summary>
+        /// Dtor releases any resources associated with this tracker (via async library)
+        /// </summary>
+        ~CooldownTracker()
+        {
+            _CancellationTokenSource.Dispose();
+        }
+
+        #endregion
+
+        #region Constructors
+
         public CooldownTracker()
         {
+            _CancellationTokenSource = new System.Threading.CancellationTokenSource(); // for some reason this doesnt work in base ctor.
+                                                                                       // I placed heap init in member init instead ~Jared F
+            //if(s_FLAG_DEBUG) Debug.Log("[CONSTRUCTOR]: ct source created");
         }
         /// <summary>
         /// Copy constructor
@@ -399,11 +432,23 @@ namespace Utils
             Cooldown = CooldownTime;
         }
 
+        #endregion
+
         //Must be called to start running the _Cooldown tracker
         public void InitializeCooldown()
         {
             LastUsedTime = Time.time - Cooldown; //makes cooldown immediately avaiable
         }
+
+        /// <summary>
+        /// Dispose all used resources.
+        /// </summary>
+        public void Dispose()
+        {
+            _CancellationTokenSource.Cancel(); //early cancel request
+            _CancellationTokenSource.Dispose();
+        }
+
 
         /// <summary>
         /// Places this tracker on cooldown, if it's available
@@ -415,7 +460,12 @@ namespace Utils
             {
                 LastUsedTime = Time.time;
 
-                System.Threading.Tasks.Task t = DelayedCooldownAvailableTask();
+                if (_CancellationTokenSource == null)
+                {
+                    Debug.LogError("no source");
+                    return false;
+                }
+                System.Threading.Tasks.Task t = DelayedCooldownAvailableTask(_CancellationTokenSource.Token);
 
                 OnCooldownUsed?.Invoke(this, new CooldownTrackerEventArgs(this));
                 return true;
@@ -426,10 +476,25 @@ namespace Utils
         /// <summary>
         /// Schedules a CooldownAvailable event to fire once the cooldown duration has finished.
         /// </summary>
-        protected async System.Threading.Tasks.Task DelayedCooldownAvailableTask()
+        protected async System.Threading.Tasks.Task DelayedCooldownAvailableTask(System.Threading.CancellationToken ct)
         {
-            await System.Threading.Tasks.Task.Delay((int)(1000 * Cooldown) + 1);
-            OnCooldownAvailable?.Invoke(this, new CooldownTrackerEventArgs(this));
+            System.Threading.CancellationTokenSource cts = System.Threading.CancellationTokenSource.CreateLinkedTokenSource(ct);
+            try
+            {
+                await System.Threading.Tasks.Task.Delay((int)(1000 * Cooldown) + 1, cts.Token);
+                OnCooldownAvailable?.Invoke(this, new CooldownTrackerEventArgs(this));
+            }
+            catch (System.OperationCanceledException)
+            {
+                //how do we handle cancel?
+                //OnCooldownAvailable?.Invoke(this, new CooldownTrackerEventArgs(this));
+                if(s_FLAG_DEBUG) Debug.Log(ToString() + ": Task Canceled early!");
+            }
+            finally
+            {
+                if(s_FLAG_DEBUG) Debug.Log(ToString() + ": Disposal of Cancellation Token Source!");
+                cts.Dispose();
+            }
         }
 
         //Return true if _Cooldown CAN be used

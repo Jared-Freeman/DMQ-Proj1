@@ -7,13 +7,14 @@ using UnityEngine.InputSystem;
 
 public class DEBUG_PlayerManualSpawner : MonoBehaviour
 {
+    private static bool s_DEBUG = false;
+
     private int currentPlayerIndex = 0;
     public Vector3 playerSpawnOffset;
     public static event System.EventHandler<CSEventArgs.GameObjectListEventArgs> OnPlayerAgentsInstantiated;
     void Start()
     {
-
-        Debug.LogError("SPAWN init");
+        if(s_DEBUG) Debug.Log("SPAWNPOINT INITIALIZATION");
 
         List<GameObject> Glist = new List<GameObject>();
         if (PlayerDataManager.InstanceExists)
@@ -40,7 +41,7 @@ public class DEBUG_PlayerManualSpawner : MonoBehaviour
     }
     void InitPlayerActor(GameObject g, PlayerInput p)
     {
-        Debug.LogError("SPAWN PLAYER: " + g.name);
+        if (s_DEBUG) Debug.Log("SPAWN PLAYER: " + g.name);
 
         if(currentPlayerIndex == 0)
             g.transform.position = transform.position;

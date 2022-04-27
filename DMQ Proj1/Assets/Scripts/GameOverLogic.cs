@@ -5,11 +5,21 @@ using UnityEngine.SceneManagement;
 
 public class GameOverLogic : MonoBehaviour
 {
-    public Topdown_Multitracking_Camera_Rig camera_Rig;
+    private Topdown_Multitracking_Camera_Rig camera_Rig;
 
-    bool playerWasSpawned = false;
+    private bool playerWasSpawned = false;
 
     public string sceneToLoad;
+
+    void Start()
+    {
+        camera_Rig = Singleton<Topdown_Multitracking_Camera_Rig>.Instance;
+
+        if (!Utils.Testing.ReferenceIsValid(camera_Rig))
+        {
+            throw new System.Exception("Camera Singleton Not Found");
+        }
+    }
 
     // Update is called once per frame
     void Update()

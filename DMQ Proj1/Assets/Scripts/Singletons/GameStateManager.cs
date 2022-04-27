@@ -215,10 +215,10 @@ namespace GameState
                 case GameState.Gameplay:
                     break;
                 case GameState.Paused:
-                    Debug.LogWarning("pause begin");
+                    //Debug.LogWarning("pause begin");
                     if (Singleton<GameSpeedManager>.Instance.AcquireTimeControlToken(this))
                     {
-                        Debug.LogWarning("token acquired");
+                        //Debug.LogWarning("token acquired");
                         Singleton<GameSpeedManager>.Instance.ModifyTimeScale(this, 0f);
                     }
                     break;

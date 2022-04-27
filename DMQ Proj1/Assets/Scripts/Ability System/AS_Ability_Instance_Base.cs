@@ -141,6 +141,9 @@ namespace AbilitySystem
             {
                 Cooldown.OnCooldownUsed -= Cooldown_OnCooldownUsed;
                 Cooldown.OnCooldownAvailable -= Cooldown_OnCooldownAvailable;
+
+                //Debug.Log("Disposal of rsc");
+                Cooldown.Dispose();
             }
         }
 

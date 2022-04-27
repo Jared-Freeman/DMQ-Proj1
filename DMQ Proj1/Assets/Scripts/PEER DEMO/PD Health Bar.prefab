@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 352278177690647057}
   - component: {fileID: 617139048099770254}
+  - component: {fileID: 3811160694659794099}
+  - component: {fileID: 4331235902839474878}
   m_Layer: 0
   m_Name: PD Health Bar
   m_TagString: Untagged
@@ -26,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 4948436434746443024}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 1, z: 2}
   m_Children:
   - {fileID: 3992947853648663510}
   m_Father: {fileID: 0}
@@ -45,6 +47,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ReferenceTransform: {fileID: 0}
+  RelativeOffset: {x: 0, y: -1.938, z: 0}
+--- !u!114 &3811160694659794099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4948436434746443024}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 019e528c19a5d474386e7a27c58f0143, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4331235902839474878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4948436434746443024}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce959640a610b9440a71d3efba4277ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ReferenceObject: {fileID: 0}
 --- !u!1001 &6171485319175152975
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -112,6 +140,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7119146311594161818, guid: 90775c39badcb8546ad4de4d36cec7f6,
+        type: 3}
+      propertyPath: _Alpha
+      value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 7119146311594161819, guid: 90775c39badcb8546ad4de4d36cec7f6,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 235c9f2cfcf467240841c7fadb0dc4f8, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 90775c39badcb8546ad4de4d36cec7f6, type: 3}
 --- !u!4 &3992947853648663510 stripped

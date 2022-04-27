@@ -7,6 +7,9 @@ using System.Linq;
 public class FR_LGP_Generator : MonoBehaviour
 {
     #region Members
+
+    public static bool s_FLAG_DEBUG = false;
+
     //helper structs
     #region Structs
     [System.Serializable]
@@ -56,6 +59,7 @@ public class FR_LGP_Generator : MonoBehaviour
     public CR C_Repo;
 
     //refs
+    [Header("Parent == Origin of the dungeon")]
     public GameObject Parent;
     public GameObject Instance;
 
@@ -254,7 +258,7 @@ public class FR_LGP_Generator : MonoBehaviour
                 Grid[i, j] = Entry;
                 PropagateAdjacency(i, j);
             }
-            else Debug.Log("Level Generator: Grid Index OOB");
+            //else Debug.Log("Level Generator: Grid Index OOB");
 
         }
 
@@ -417,7 +421,8 @@ public class FR_LGP_Generator : MonoBehaviour
                     if (Mask[i, j] > max) max = Mask[i, j];
                 }
             }
-            Debug.Log("MAX: " + max + ", MIN: " + min + ", RATIO: " + max / min);
+
+            if(s_FLAG_DEBUG) Debug.Log("MAX: " + max + ", MIN: " + min + ", RATIO: " + max / min);
 
             for (int i = 0; i < NumCols; i++)
             {
@@ -506,7 +511,7 @@ public class FR_LGP_Generator : MonoBehaviour
 
                 Islands.Add(NextIslandSet);
             }
-            Debug.Log("Island count: " + count);
+            //Debug.Log("Island count: " + count);
 
             return Islands;
         }
@@ -647,7 +652,7 @@ public class FR_LGP_Generator : MonoBehaviour
             {
                 i++;
             }
-            Debug.Log(i);
+            //Debug.Log(i);
         }
 
         //GMask.PlaceGridMask(2, 2, new GridEntry(false, false, false, true));
@@ -773,7 +778,10 @@ public class FR_LGP_Generator : MonoBehaviour
 
                     GO.transform.parent = Parent.transform;
                     GO.name = "Room Instance";
-                    GO.transform.position = SpawnPosition;
+                    GO.transform.position = SpawnPosition; //corrected spawn pos offset using parent transform as ref
+
+                    //flatten out hierarchy a bit to improve general performance
+                    GO.AddComponent<Utils.Utils_DetachChildren>();
 
                     ////draw connection rays
 
