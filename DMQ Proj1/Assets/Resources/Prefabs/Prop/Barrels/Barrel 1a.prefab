@@ -74,6 +74,7 @@ GameObject:
   - component: {fileID: 7536224305503665184}
   - component: {fileID: 6156598944153699030}
   - component: {fileID: 4214801953965982616}
+  - component: {fileID: 3025826220510929902}
   m_Layer: 0
   m_Name: Barrel 1a
   m_TagString: Untagged
@@ -210,3 +211,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 045c1cc5b8cb1b64ab39f3bb242e8bc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!208 &3025826220510929902
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8208867078340174264}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.43, y: 0.46600002, z: 0.43}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
