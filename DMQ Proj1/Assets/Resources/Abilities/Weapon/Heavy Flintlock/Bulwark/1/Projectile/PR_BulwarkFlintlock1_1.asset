@@ -20,6 +20,8 @@ MonoBehaviour:
       EffectList:
       - {fileID: 11400000, guid: dd5a8d4acd13a4d4ea882805f8723d49, type: 2}
       - {fileID: 11400000, guid: 62a71ec9d6f68ba48af4bdfc676cecc7, type: 2}
+      - {fileID: 11400000, guid: 172fa5d4f23403f4a88d9b12f3540fb3, type: 2}
+      - {fileID: 11400000, guid: efdb39a298c5f164486175635f9278de, type: 2}
       ProjectileFXList:
       - {fileID: 11400000, guid: ca0b0f50a832bf64b95a21feb2fd02e5, type: 2}
     CollisionStayProjectileEffects:
@@ -40,7 +42,7 @@ MonoBehaviour:
     CollisionStayDuration: 0
   MoveOptions:
     FLAG_FaceRigidbodyVelocity: 1
-    MovementType: 1
+    MovementType: 3
     MovementTypeOptions:
       LinearSimpleOptions:
         Speed: 30
@@ -58,9 +60,9 @@ MonoBehaviour:
         ForcePerSecond: 0
       PhysicsImpulseOptions:
         FLAGScaleForceByMass: 0
-        FLAGUseSpeedComputationInsteadOfForce: 0
+        FLAGUseSpeedComputationInsteadOfForce: 1
         Force: 0
-        Speed: 0
+        Speed: 20
       HomingSimpleOptions:
         MovementStyle: 0
         Speed: 0
