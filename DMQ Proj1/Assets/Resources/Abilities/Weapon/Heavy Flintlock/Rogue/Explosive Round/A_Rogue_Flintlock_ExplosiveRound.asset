@@ -13,14 +13,15 @@ MonoBehaviour:
   m_Name: A_Rogue_Flintlock_ExplosiveRound
   m_EditorClassIdentifier: 
   Cooldown:
-    _Cooldown: 3.5
+    _Cooldown: 4.5
   CastSettings:
     CanMoveWhileCasting: 0
     CanCancelCast: 0
     Time_PrepareAbil: 0
     Time_CastAbil: 0
   EffectEvents:
-    Effect_CooldownAvailable: {fileID: 0}
+    Effect_CooldownAvailable: {fileID: 11400000, guid: 6ae9eefd9390c4b46bd2df5d7e954184,
+      type: 2}
     Effect_CastWhileOnCooldown: {fileID: 0}
   Conditions:
     _Conditions: []

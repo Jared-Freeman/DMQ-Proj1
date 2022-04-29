@@ -13,14 +13,15 @@ MonoBehaviour:
   m_Name: A_RogueFlintlockBasic
   m_EditorClassIdentifier: 
   Cooldown:
-    _Cooldown: 1
+    _Cooldown: 2.125
   CastSettings:
     CanMoveWhileCasting: 0
     CanCancelCast: 0
     Time_PrepareAbil: 0
     Time_CastAbil: 0
   EffectEvents:
-    Effect_CooldownAvailable: {fileID: 0}
+    Effect_CooldownAvailable: {fileID: 11400000, guid: 6620709fb19a6df499e0c9b68a98e9e5,
+      type: 2}
     Effect_CastWhileOnCooldown: {fileID: 0}
   Conditions:
     _Conditions: []
