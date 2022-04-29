@@ -22,8 +22,10 @@ namespace ItemSystem
             /// How much inventory capacity does this item consume?
             /// </summary>
             public int CapacityCost = 1;
-
-            public AbilitySystem.AS_Ability_Base Ability_OnItemPickedUp;
+            /// <summary>
+            /// Item name
+            /// </summary>
+            public string name;
         }
 
         public IS_Options BaseOptions;
