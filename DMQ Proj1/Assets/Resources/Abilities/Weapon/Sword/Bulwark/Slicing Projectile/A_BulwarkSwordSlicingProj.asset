@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: A_BulwarkSwordSlicingProj
   m_EditorClassIdentifier: 
   Cooldown:
-    _Cooldown: 3.5
+    _Cooldown: 5.5
   CastSettings:
     CanMoveWhileCasting: 0
     CanCancelCast: 0
     Time_PrepareAbil: 0
     Time_CastAbil: 0
   EffectEvents:
-    Effect_CooldownAvailable: {fileID: 11400000, guid: 9f96069f462d74248bacd3acbe02fbe1,
+    Effect_CooldownAvailable: {fileID: 11400000, guid: eb73e433d0a8ab94fa072071f8cfce9e,
       type: 2}
     Effect_CastWhileOnCooldown: {fileID: 0}
   Conditions:

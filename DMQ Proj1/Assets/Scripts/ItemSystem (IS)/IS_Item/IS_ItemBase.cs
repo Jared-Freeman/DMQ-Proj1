@@ -77,7 +77,7 @@ namespace ItemSystem
         [System.Serializable]
         public struct IS_BaseInfo
         {
-
+            public AbilitySystem.AS_Ability_Instance_Base Ability_PickUp_Instance;
         }
         #endregion
 
@@ -102,6 +102,11 @@ namespace ItemSystem
                 sc.isTrigger = true;
                 gameObject.layer = 0; //Default
 
+            }
+
+            if(Preset.BaseOptions.Ability_OnItemPickedUp != null)
+            {
+                _BaseInfo.Ability_PickUp_Instance = Preset.BaseOptions.Ability_OnItemPickedUp.GetInstance(gameObject);
             }
         }
 
@@ -179,6 +184,25 @@ namespace ItemSystem
         protected virtual void OnItemAddedToInventory(IS_InventoryBase inv) 
         {
             if (s_FLAG_ITEM_DEBUG) Debug.Log(ToString() + " added to inventory: " + inv.ToString());
+
+            if (_BaseInfo.Ability_PickUp_Instance != null && _BaseInfo.Ability_PickUp_Instance.CanCastAbility) 
+            {
+                EffectTree.EffectContext ctx = new EffectTree.EffectContext()
+                {
+                    AttackData = new Utils.AttackContext()
+                    {
+                        _InitialDirection = transform.forward,
+                        _InitialGameObject = gameObject,
+                        _InitialPosition = transform.position,
+
+                        _TargetDirection = inv.transform.forward,
+                        _TargetGameObject = inv.gameObject,
+                        _TargetPosition = inv.transform.position
+                    }
+                };
+
+                _BaseInfo.Ability_PickUp_Instance.ExecuteAbility(ref ctx);
+            }
         }
 
 

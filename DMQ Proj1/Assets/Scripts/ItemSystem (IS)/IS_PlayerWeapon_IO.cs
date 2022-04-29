@@ -22,6 +22,7 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
     public PlayerInput _Input { get { return InputHost.CurrentPlayerInput; } }
     protected PlayerControls _Controls;
     protected Actor _Actor;
+    protected Rigidbody _RB;
 
     protected Vector2 AimDirection = Vector2.zero;
 
@@ -30,11 +31,16 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
 
     protected StateInfo _Info;
 
+    [Header("allows for a sub hierarchy to follow aim direction")]
+    [SerializeField] GameObject AimTransformHost;
+
     public struct StateInfo
     {
         public bool AttackButtonHeld;
         public bool Ability1ButtonHeld;
         public bool Ability2ButtonHeld;
+
+        public bool AimedThisFrame;
     }
     #endregion
 
@@ -63,6 +69,9 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
             Debug.LogError(ToString() + ": No Input Host instance found! Destroying.");
             Destroy(this);
         }
+
+        _RB = GetComponent<Rigidbody>();
+        if (!Utils.Testing.ReferenceIsValid(_RB)) Destroy(this);
 
         InitInput();
     }
@@ -111,6 +120,7 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
 
     private void _Input_onActionTriggered(InputAction.CallbackContext ctx)
     {
+
         ////MOUSE AND KEYBOARD EVENTS REGISTER //////////////////////////////////////
         if (ctx.action.actionMap.name == _Controls.MouseAndKeyboardScheme.name)
         {
@@ -135,6 +145,8 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
                 else if (ctx.action.name == _Controls.MouseAndKeyboard.Aim.name)
                 {
                     if (Camera.main == null) return;
+
+                    _Info.AimedThisFrame = true;
 
                     Vector2 In = ctx.ReadValue<Vector2>();
 
@@ -192,6 +204,10 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
                 {
                     _Info.Ability2ButtonHeld = false;
                 }
+                else if (ctx.action.name == _Controls.MouseAndKeyboard.Aim.name)
+                {
+                    _Info.AimedThisFrame = false;
+                }
             }
         }
 
@@ -218,7 +234,11 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
                     _Info.Ability2ButtonHeld = true;
                     if (TryInvokeAbility2()) Ability2Event();
                 }
-                else if (ctx.action.name == _Controls.Gamepad.Aim.name) AimDirection = ctx.ReadValue<Vector2>().normalized;
+                else if (ctx.action.name == _Controls.Gamepad.Aim.name)
+                {
+                    _Info.AimedThisFrame = true;
+                    AimDirection = ctx.ReadValue<Vector2>().normalized;
+                }
 
             }
 
@@ -238,6 +258,10 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
                 if (ctx.action.name == _Controls.Gamepad.Ability2.name)
                 {
                     _Info.Ability2ButtonHeld = false;
+                }
+                else if (ctx.action.name == _Controls.Gamepad.Aim.name)
+                {
+                    _Info.AimedThisFrame = false;
                 }
             }
         }
@@ -351,5 +375,7 @@ public class IS_PlayerWeapon_IO : MonoBehaviour
         {
             TryInvokeAbility2();
         }
+        if (!_Info.AimedThisFrame) AimDirection = new Vector2(transform.forward.x, transform.forward.z).normalized;
+        AimTransformHost.transform.forward = new Vector3(AimDirection.x, 0, AimDirection.y);
     }
 }

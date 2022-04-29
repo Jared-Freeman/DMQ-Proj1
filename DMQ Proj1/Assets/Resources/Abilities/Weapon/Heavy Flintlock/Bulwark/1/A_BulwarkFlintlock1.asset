@@ -13,12 +13,16 @@ MonoBehaviour:
   m_Name: A_BulwarkFlintlock1
   m_EditorClassIdentifier: 
   Cooldown:
-    _Cooldown: 5
+    _Cooldown: 7.5
   CastSettings:
     CanMoveWhileCasting: 0
     CanCancelCast: 1
     Time_PrepareAbil: 0
     Time_CastAbil: 0
+  EffectEvents:
+    Effect_CooldownAvailable: {fileID: 11400000, guid: 5c09624d15656e64da1c3559d4dbea39,
+      type: 2}
+    Effect_CastWhileOnCooldown: {fileID: 0}
   Conditions:
     _Conditions: []
   IconImage: {fileID: 0}

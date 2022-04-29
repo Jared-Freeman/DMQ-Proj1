@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 442cd49177849294ab449c577b42b28f, type: 3}
+  m_Name: PR_BulwarkFlintlock1_1
+  m_EditorClassIdentifier: 
+  ProjectileFX:
+    EndProjectileEffects:
+      EffectList: []
+      ProjectileFXList: []
+    CollisionEnterProjectileEffects:
+      EffectList:
+      - {fileID: 11400000, guid: 3c5d07190ee5c694e8da82184a70412b, type: 2}
+      - {fileID: 11400000, guid: 62a71ec9d6f68ba48af4bdfc676cecc7, type: 2}
+      - {fileID: 11400000, guid: 172fa5d4f23403f4a88d9b12f3540fb3, type: 2}
+      - {fileID: 11400000, guid: efdb39a298c5f164486175635f9278de, type: 2}
+      ProjectileFXList:
+      - {fileID: 11400000, guid: ca0b0f50a832bf64b95a21feb2fd02e5, type: 2}
+    CollisionStayProjectileEffects:
+      EffectList: []
+      ProjectileFXList: []
+    CollisionExitProjectileEffects:
+      EffectList: []
+      ProjectileFXList: []
+    StartProjectileEffects:
+      EffectList: []
+      ProjectileFXList: []
+  DestroyOptions:
+    FLAG_UseDuration: 1
+    Duration: 15
+    FLAG_UseCollisionEnters: 1
+    CollisionEnters: 1
+    FLAG_UseCollisionStayDuration: 0
+    CollisionStayDuration: 0
+  MoveOptions:
+    FLAG_FaceRigidbodyVelocity: 1
+    MovementType: 3
+    MovementTypeOptions:
+      LinearSimpleOptions:
+        Speed: 30
+      ParabolicSimpleOptions:
+        TravelTime: 0
+        HeightOverTime:
+          serializedVersion: 2
+          m_Curve: []
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+        MaxHeight: 0
+      PhysicsContinuousForceOptions:
+        FLAGScaleForceByMass: 0
+        ForcePerSecond: 0
+      PhysicsImpulseOptions:
+        FLAGScaleForceByMass: 0
+        FLAGUseSpeedComputationInsteadOfForce: 1
+        Force: 0
+        Speed: 28
+      HomingSimpleOptions:
+        MovementStyle: 0
+        Speed: 0
+        TurnRate: 0

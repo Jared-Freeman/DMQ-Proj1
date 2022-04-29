@@ -43,8 +43,7 @@ namespace AbilitySystem
         /// <param name="e"></param>
         private void Actor_OnActorDead_Local(object sender, CSEventArgs.ActorEventArgs e)
         {
-            Debug.LogError("lol owwrwr");
-
+            //
             actor.OnActorDead_Local -= Actor_OnActorDead_Local;
 
             if (AbilityInstance.CanCastAbility)

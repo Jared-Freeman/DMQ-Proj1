@@ -187,7 +187,7 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
                     }
                     else if (ctx.action.name == controls.MouseAndKeyboard.Jump.name)
                     {
-                        DropFirstItem();
+                        //DropFirstItem();
                     }
                     else if (ctx.action.name == controls.MouseAndKeyboard.Wepon1Equip.name)
                     {
@@ -222,7 +222,7 @@ public class Inventory_Player : ItemSystem.IS_InventoryBase
                     }
                     else if (ctx.action.name == controls.Gamepad.Jump.name)
                     {
-                        DropFirstItem();
+                        //DropFirstItem();
                     }
                     else if (ctx.action.name == controls.Gamepad.Wepon1Equip.name)
                     {
