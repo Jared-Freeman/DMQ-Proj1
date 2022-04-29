@@ -1356,7 +1356,7 @@ RectTransform:
   - {fileID: 2022533723}
   - {fileID: 2106516455}
   m_Father: {fileID: 1165199567}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -3103,7 +3103,7 @@ RectTransform:
   - {fileID: 2000816696}
   - {fileID: 426685147}
   m_Father: {fileID: 1165199567}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -4008,7 +4008,6 @@ Transform:
   - {fileID: 1125575026}
   - {fileID: 5451701928759779420}
   - {fileID: 8254012217691523029}
-  - {fileID: 928357312}
   - {fileID: 1165199567}
   m_Father: {fileID: 0}
   m_RootOrder: 2
@@ -4021,7 +4020,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1046660933}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 653dafc2f45c3aa419a1f27f82e6c0f0, type: 2}
   m_CullingMode: 0
@@ -4178,12 +4177,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 2560, y: 1440}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -4197,7 +4196,7 @@ Canvas:
   m_GameObject: {fileID: 1125575025}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 2
+  m_RenderMode: 0
   m_Camera: {fileID: 1862511322}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -4555,7 +4554,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_UiScaleMode: 1
-  m_ReferencePixelsPerUnit: 500
+  m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 2560, y: 1440}
   m_ScreenMatchMode: 0
@@ -4596,13 +4595,14 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
+  - {fileID: 928357312}
   - {fileID: 279727572}
   - {fileID: 1444843698}
   - {fileID: 753935137}
   - {fileID: 1351254728}
   - {fileID: 1653728468}
   m_Father: {fileID: 1046660934}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -5310,7 +5310,7 @@ RectTransform:
   - {fileID: 84313708}
   - {fileID: 1796741860}
   m_Father: {fileID: 1165199567}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -5520,7 +5520,7 @@ RectTransform:
   - {fileID: 272248202}
   - {fileID: 1815113242}
   m_Father: {fileID: 1165199567}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -5900,7 +5900,7 @@ RectTransform:
   - {fileID: 1898809177}
   - {fileID: 442041423}
   m_Father: {fileID: 1165199567}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -9493,12 +9493,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 2560, y: 1440}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -9623,7 +9623,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 1046660934}
+    m_TransformParent: {fileID: 1165199567}
     m_Modifications:
     - target: {fileID: 5542774299046550972, guid: 008fc60d47166ff43bb68191663b8121,
         type: 3}
@@ -9638,27 +9638,42 @@ PrefabInstance:
     - target: {fileID: 5542774299046550972, guid: 008fc60d47166ff43bb68191663b8121,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5542774299046550978, guid: 008fc60d47166ff43bb68191663b8121,
         type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5542774299046550978, guid: 008fc60d47166ff43bb68191663b8121,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 12.974228
+      objectReference: {fileID: 0}
+    - target: {fileID: 5542774299046550978, guid: 008fc60d47166ff43bb68191663b8121,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 12.974228
+      objectReference: {fileID: 0}
+    - target: {fileID: 5542774299046550978, guid: 008fc60d47166ff43bb68191663b8121,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 12.974228
       objectReference: {fileID: 0}
     - target: {fileID: 5542774299046550978, guid: 008fc60d47166ff43bb68191663b8121,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 750
+      value: 9730.671
       objectReference: {fileID: 0}
     - target: {fileID: 5542774299046550978, guid: 008fc60d47166ff43bb68191663b8121,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 500
+      value: 6487.114
       objectReference: {fileID: 0}
     - target: {fileID: 5542774299046550978, guid: 008fc60d47166ff43bb68191663b8121,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -1297.4229
       objectReference: {fileID: 0}
     - target: {fileID: 5542774299046550978, guid: 008fc60d47166ff43bb68191663b8121,
         type: 3}
@@ -9716,6 +9731,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1046660934}
     m_Modifications:
+    - target: {fileID: 945147856663289878, guid: 4b9faee9eed610c42a02a69a980d0b08,
+        type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: -181032433053871140, guid: 38c76f692c46bae4293a5c79085f7cc3,
+        type: 2}
     - target: {fileID: 945147856663289879, guid: 4b9faee9eed610c42a02a69a980d0b08,
         type: 3}
       propertyPath: m_Name

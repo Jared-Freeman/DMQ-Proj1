@@ -21,7 +21,11 @@ namespace ItemSystem
             /// <summary>
             /// How much inventory capacity does this item consume?
             /// </summary>
-            public int CapacityCost = 1; 
+            public int CapacityCost = 1;
+            /// <summary>
+            /// Item name
+            /// </summary>
+            public string name;
         }
 
         public IS_Options BaseOptions;
