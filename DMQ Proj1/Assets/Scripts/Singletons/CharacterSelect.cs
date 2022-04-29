@@ -14,6 +14,12 @@ namespace DuloGames.UI
         {
             base.Awake();
             UIToggleActiveTransition.OnIconSelected += UIToggleActiveTransition_OnIconSelected;
+            PlayerDataManager.OnPlayerActivated += PlayerDataManager_OnPlayerActivated;
+        }
+
+        private void PlayerDataManager_OnPlayerActivated(object sender, PlayerDataManager.PlayerDataSessionEventArgs e)
+        {
+            e.Data.Info._CurrentClassPreset = classes[0]; //Initialize class to rogue
         }
 
         /// <summary>
