@@ -101,6 +101,8 @@ public class Topdown_Multitracking_Camera_Rig : MonoBehaviour
 
         DEBUG_PlayerManualSpawner.OnPlayerAgentsInstantiated += DEBUG_PlayerManualSpawner_OnPlayerAgentsInstantiated;
 
+        Innov_PVPArena.OnPlayerAgentsInstantiated += DEBUG_PlayerSpawner_OnPlayerAgentsInstantiated;
+
         Actor.OnActorDestroyed += Actor_OnActorDestroyed;
     }
 

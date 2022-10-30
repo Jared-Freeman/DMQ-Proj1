@@ -26,6 +26,8 @@ namespace ItemSystem
             /// Item name
             /// </summary>
             public string name;
+
+            public AbilitySystem.AS_Ability_Base Ability_OnItemPickedUp;
         }
 
         public IS_Options BaseOptions;
